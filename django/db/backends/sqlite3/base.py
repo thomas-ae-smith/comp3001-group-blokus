@@ -24,6 +24,7 @@ try:
         from pysqlite2 import dbapi2 as Database
     except ImportError, e1:
         from sqlite3 import dbapi2 as Database
+        print "-"*50
 except ImportError, exc:
     import sys
     from django.core.exceptions import ImproperlyConfigured
