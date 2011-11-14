@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<script src="js/lib/jquery.js"></script>
+	<script src="js/lib/underscore.js"></script>
+	<script src="js/lib/backbone.js"></script>
+	<title>Blockus</title>
+	<script>
+		(function () {
+			var blockus = window.blockus = function () {};
+
+			_(blockus).extend({
+
+				urls: {
+					game: "/api/rest/game/",
+					pieceMaster: "/api/rest/piece-master/",
+					piece: "/api/rest/piece/",
+					player: "/api/rest/player/"
+				}
+
+				// MODELS
+
+				Game: Backbone.Model.extend({
+					defaults: {
+						id: undefined,
+						playerIds: undefined,
+						colourTurn: undefined // Colour whose turn it is
+					}
+				}),
+
+				PieceMaster: Backbone.Model.extend({
+					defaults: {
+						id: undefined,
+						data: undefined
+					}
+				}),
+
+				Piece: Backbone.Model.extend({
+					defaults: {
+						id: undefined,
+						x: undefined,
+						y: undefined,
+						rotation: undefined,
+						flip: undefined
+					}
+				}),
+
+				Player: Backbone.Model.extend({
+					defaults: {
+						id: undefined,
+						colours: undefined
+					}
+				}),
+
+				
+				// COLLECTIONs
+
+				GameCollection: Backbone.Collection.extend({
+					model: Game,
+					url: urls.game
+				}),
+				
+				PieceMasterCollection: Backbone.Collection.extend({
+					model: PieceMaster,
+					url: urls.pieceMaster
+				}),
+
+				PieceCollection: Backbone.Collection.extend({
+					model: Piece,
+					url: urls.piece
+				}),
+
+				PlayerCollection: Backbone.Collection.extend({
+					model: Player,
+					url: urls.player
+				}),
+
+				pieceMasters: new PieceMasterCollection()
+			});
+			
+			// TMP
+			pieceMasters.add([
+				{
+					id: 0,
+					data: [	[0, 1, 0],
+							[1, 1, 1],
+							[0, 0, 1]	]
+				},
+				{
+					id: 1,
+					data: [	[0, 1, 0],
+							[1, 1, 0]	]
+				},
+				{
+					id: 2,
+					data: [	[1, 1],
+							[1, 1],
+							[0, 1]	]
+				}
+			]);
+
+			pieces = new PieceCollection();
+			pieces.add([
+				{
+					pieceMaster: 2,
+					rotation: 0
+					x: 2
+					y: 9
+					flip: true
+				}
+			])
+
+
+
+		}());
+	</script>
+</head>
+<body>
+</body>
+</html>
