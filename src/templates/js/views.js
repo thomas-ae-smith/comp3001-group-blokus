@@ -28,7 +28,7 @@
 				this_.drawPlayer(10, y, player.get("name"));
 				y += 120;
 			});
-			
+
 			// Gameboard
 			this.paper.rect(290, 10, 510, 510, 5).attr("fill", "#GGGGGG");
 			this.paper.rect(295, 15, 500, 500).attr("fill", "#AAAAAA");
