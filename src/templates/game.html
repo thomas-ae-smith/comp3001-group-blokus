@@ -15,6 +15,8 @@
 		<link rel="stylesheet" href="css/layout.css" type="text/css"/>
 		<script src="js/jquery.js"></script>
 		<script src="js/raphael.js"></script>
+		<script src="js/underscore.js"></script>
+		<script src="js/backbone.js"></script>
 		<script>
 			//Ensure HTML 5 elements are styled by IE
 			document.createElement('header');
@@ -22,30 +24,51 @@
 			document.createElement('section');
 			document.createElement('article');
 			document.createElement('aside');
-
+			
+			var drawPlayer = function(paper, x, y, name){
+				paper.rect(x, y, 250, 110, 5).attr("fill", "#E3EEF2");
+				paper.text(x + 8, y + 10, name).attr({
+					"text-anchor":"start",
+					"font-family":"Tahoma",
+					"font-weight":"bold",
+					"font-size":14
+				});
+			};
+			
 			$(document).ready(function(){
-				var paper = Raphael("gameboard", 510, 510);
-				paper.rect(0, 0, 510, 510, 5).attr("fill", "#GGGGGG");
-				paper.rect(5, 5, 500, 500).attr("fill", "#AAAAAA");
+				var paper = Raphael("gameboard", 800, 600);
+				var players = ["zanders3", "timzo", "bob", "superzico"];
+				
+				//Player list with pieces
+				var y = 30;
+				for (var i in players) {
+					drawPlayer(paper, 10, y, players[i]);
+					y += 120;
+				}
+				
+				//Gameboard
+				paper.rect(290, 10, 510, 510, 5).attr("fill", "#GGGGGG");
+				paper.rect(295, 15, 500, 500).attr("fill", "#AAAAAA");
 			});
 		</script>
 	</head>
 
 	<body>
-		<div id="container">
-			<header>
-				<img src="img/logo.png" alt="Blokus Logo"/>
+		<header>
+			<div>
+				<img id="logo" src="img/logo.png" alt="Blokus Logo"/>
+				<div id="gamerbox">
+					<img title="zanders3's Avatar" />
+					<p>zanders3</p>
+					<p>Won: 5 Lost: 2</p>
+				</div>
 				<nav>
-					<a href="#" class="button">Logout</a>
+					<a href="home.html" class="button">Logout</a>
 					<a href="#" class="button">Help</a>
 				</nav>
-				<div id="gamerbox">
-					<h1>zanders3</h1>
-					<img alt="zanders3's Avatar" />
-				</div>
-			</header>
-			<div id="players">
 			</div>
+		</header>
+		<div id="container">
 			<div id="gameboard">
 			</div>
 		</div>

@@ -30,8 +30,6 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
-	background: #30C4C9;
-	font-family: Helvetica, Georgia, sans-serif;
 }
 ol, ul {
 	list-style: none;
@@ -72,7 +70,82 @@ html[xmlns] .clearfix {
 
 /*************************************/
 
+html {
+	background: #E3EEF2;
+	background: -moz-linear-gradient(top, #BCD6E1, #E3EEF2);
+	background: -webkit-gradient(linear, left top, left bottom, from(#BCD6E1), to(#E3EEF2));
+	font-family: Tahoma, Helvetica, Georgia, sans-serif;
+	height: 100%;
+}
+
+.button {
+	background: #8AB7CB;
+	background: -moz-linear-gradient(top, #FFFFFF, #8AB7CB);
+	background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#8AB7CB));
+	padding: 5px;
+	font-family: Berlin Sans FB, Tahoma, Helvetica, Georgia, sans-serif;
+	text-decoration: none;
+	color: black;
+	font-size: 22px;
+	border: 2px solid black;
+	font-weight: bold;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+}
+
+.button:hover {
+	background: #FFFFFF;
+	background: -moz-linear-gradient(top, #8AB7CB, #FFFFFF);
+	background: -webkit-gradient(linear, left top, left bottom, from(#8AB7CB), to(#FFFFFF));
+}
+
 #container {
 	margin: 0px auto;
 	width: 800px;
+}
+
+header {
+	background: #BCD6E1;
+	border-bottom: 2px solid black;
+}
+
+header div {
+	margin: 0px auto;
+	width: 800px;
+	height:67px;
+}
+
+header div img#logo {
+	margin-left:21px;
+	margin-top:16px;
+}
+
+nav {
+	float: right;
+	margin-top:22px;
+	margin-right: 10px;
+}
+
+#gamerbox {
+	float: right;
+	width: 220px;
+	height: 50px;
+	margin-top: 7px;
+	border-left: 2px solid black;
+}
+
+#gamerbox img {
+	width: 50px;
+	height: 50px;
+	float:right;
+	background: white;
+	border: 2px solid black;
+}
+
+#gamerbox p {
+	float: left;
+	clear: left;
+	margin-left:10px;
+	margin-top:5px;
+	font-weight: bold;
 }
