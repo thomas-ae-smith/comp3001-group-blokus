@@ -6,21 +6,19 @@
 	<script src="js/lib/backbone.js"></script>
 	<title>Blockus</title>
 	<script>
-		(function () {
-			var blockus = window.blockus = function () {};
+		window.blokus = (function () {
 
-			_(blockus).extend({
-
-				urls: {
+				// URLs for REST
+			var urls = {
 					game: "/api/rest/game/",
 					pieceMaster: "/api/rest/piece-master/",
 					piece: "/api/rest/piece/",
 					player: "/api/rest/player/"
-				}
+				},
 
 				// MODELS
 
-				Game: Backbone.Model.extend({
+				Game = Backbone.Model.extend({
 					defaults: {
 						id: undefined,
 						playerIds: undefined,
@@ -28,14 +26,14 @@
 					}
 				}),
 
-				PieceMaster: Backbone.Model.extend({
+				PieceMaster = Backbone.Model.extend({
 					defaults: {
 						id: undefined,
 						data: undefined
 					}
 				}),
 
-				Piece: Backbone.Model.extend({
+				Piece = Backbone.Model.extend({
 					defaults: {
 						id: undefined,
 						x: undefined,
@@ -45,7 +43,7 @@
 					}
 				}),
 
-				Player: Backbone.Model.extend({
+				Player = Backbone.Model.extend({
 					defaults: {
 						id: undefined,
 						colours: undefined
@@ -55,30 +53,31 @@
 				
 				// COLLECTIONs
 
-				GameCollection: Backbone.Collection.extend({
+				GameCollection = Backbone.Collection.extend({
 					model: Game,
 					url: urls.game
 				}),
 				
-				PieceMasterCollection: Backbone.Collection.extend({
+				PieceMasterCollection = Backbone.Collection.extend({
 					model: PieceMaster,
 					url: urls.pieceMaster
 				}),
 
-				PieceCollection: Backbone.Collection.extend({
+				PieceCollection = Backbone.Collection.extend({
 					model: Piece,
 					url: urls.piece
 				}),
 
-				PlayerCollection: Backbone.Collection.extend({
+				PlayerCollection = Backbone.Collection.extend({
 					model: Player,
 					url: urls.player
-				}),
+				});
 
-				pieceMasters: new PieceMasterCollection()
-			});
+
+			// Define the collection of piece masters
+			var pieceMasters = new PieceMasterCollection()
 			
-			// TMP
+			// TODO: replace with pieceMasters.fetch();
 			pieceMasters.add([
 				{
 					id: 0,
@@ -100,19 +99,69 @@
 			]);
 
 			pieces = new PieceCollection();
+
+			// TODO: replace the pieces.fetch()
 			pieces.add([
 				{
 					pieceMaster: 2,
-					rotation: 0
-					x: 2
-					y: 9
-					flip: true
+					rotation: 0,
+					x: 2,
+					y: 9,
+					flip: true,
+					colour: "red"
+				},
+				{
+					pieceMaster: 0,
+					rotation: 1,
+					x: 4,
+					y: 2,
+					flip: false,
+					colour: "blue"
 				}
-			])
+			]);
 
 
+			var createBoard = function () {
+				
+			};
 
-		}());
+			$(document).ready(function () {
+				createBoard();
+			});
+
+			var Board = function () {
+				
+			}
+
+			_(Board.prototype).extend({
+				addPiece: function() {},
+				removePiece: function () {}
+			})
+			
+			var board1 = new Board();
+
+			return {
+				urls: urls,
+
+				// Models
+				Game: Game,
+				PieceMaster: PieceMaster,
+				Piece: Piece,
+				Player: Player,
+
+				// Collections
+				GameCollection: GameCollection,
+				PieceMasterCollection: PieceMasterCollection,
+				PieceCollection: PieceCollection,
+				PlayerCollection: PlayerCollection,
+
+				pieceMasters: pieceMasters,
+				pieces: pieces,
+
+				/*createBoard: createBoard*/
+			};
+
+		}(jQuery));
 	</script>
 </head>
 <body>
