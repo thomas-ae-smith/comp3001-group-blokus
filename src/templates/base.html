@@ -1,53 +1,44 @@
-<!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-    dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}"
-    xml:lang="{% firstof LANGUAGE_CODE 'en' %}"
-    lang="{% firstof LANGUAGE_CODE 'en' %}">
-  <head>
-    <title>{% block title %}{% endblock %} - Nonrel-testapp</title>
-
-    {% block css %}
-    {% endblock %}
-
-    {% block preload_js %}
-    {% endblock %}
-
-    {% block extra-head %}{% endblock %}
-  </head>
-
-  <body>
-    <div id="header">
-      <a id="logo" href="/">Nonrel-testapp</a>
-    </div>
-
-    <div class="columns">
-      <div id="content" class="column">
-        {% block content-header %}
-          {% if error %}<div class="error">{{ error }}</div>{% endif %}
-          {% if info %}<div class="info">{{ info }}</div>{% endif %}
-          {% if messages %}
-            {% for message in messages %}
-              <div class="info">{{ message }}</div>
-            {% endfor %}
-          {% endif %}
-        {% endblock %}
-
-        {% block content %}{% endblock %}
-      </div>
-
-      <div id="sidebar" class="column">
-        {% block sidebar %}
-        {% endblock %}
-      </div>
-    </div>
-
-    <div id="footer">
-      <p>Powered by <a href="http://www.allbuttonspressed.com/projects/django-nonrel">Django-nonrel</a></p>
-    </div>
-
-    {% block js %}
-    {% endblock %}
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<title>Blokus{% block title %}{% endblock %}</title>
+		<meta name="description" content="Blokus Game" />
+		<meta name="author" content="Comp3001 Group Blokus" />
+		<link rel="shortcut icon" href="favicon.ico" />
+		<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
+		{% block extracss %}{% endblock %}
+		<script src="{{ STATIC_URL }}js/jquery.js"></script>
+		<script src="{{ STATIC_URL }}js/raphael.js"></script>
+		<script src="{{ STATIC_URL }}js/underscore.js"></script>
+		<script src="{{ STATIC_URL }}js/backbone.js"></script>
+		
+		{% block extrajs %}{% endblock %}
+	</head>
+	<body>
+		{% block header %}
+		<header>
+			<div>
+				<img id="logo" src="{{ STATIC_URL }}img/logo.png" alt="Blokus Logo"/>
+				<div id="gamerbox">
+					<img title="zanders3's Avatar" />
+					<p>zanders3</p>
+					<p>Won: 5 Lost: 2</p>
+				</div>
+				<nav>
+					{% block navbuttons %}
+					{% endblock %}
+				</nav>
+			</div>
+		</header>
+		{% endblock %}
+		<div id="container">
+			{% block content %}
+			{% endblock %}
+		</div>
+	</body>
 </html>
