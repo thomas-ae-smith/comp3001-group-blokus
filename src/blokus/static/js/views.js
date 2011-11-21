@@ -5,9 +5,9 @@
 
 		paper: undefined,
 
-		drawPlayer: function (x, y, name) {
+		drawPlayer: function (x, y, player) {
 			this.paper.rect(x, y, 250, 110, 5).attr("fill", "#E3EEF2");
-			this.paper.text(x + 8, y + 10, name).attr({
+			this.paper.text(x + 8, y + 10, player.name).attr({
 				"text-anchor": "start",
 				"font-family": "Tahoma",
 				"font-weight": "bold",
@@ -20,12 +20,13 @@
 			// Reset element
 			$(this.el).html("");
 
+			// Make the Raphael element 800 x 600 in this view
 			this.paper = Raphael(this.el, 800, 600);
 
 			// Player list with pieces
 			var y = 30;
 			this.options.players.each(function (player) {
-				this_.drawPlayer(10, y, player.get("name"));
+				this_.drawPlayer(10, y, player.toJSON());
 				y += 120;
 			});
 

@@ -8,5 +8,6 @@ urlpatterns = patterns('',
     ('^_ah/warmup$', 'djangoappengine.views.warmup'),
     ('^$', 'django.views.generic.simple.direct_to_template',
      {'template': 'game.html'}),
+	url(r'^lobby/', 'django.views.generic.simple.direct_to_template', {'template':'lobby.html'}),
     url(r'^admin/', include(admin.site.urls)),
 )

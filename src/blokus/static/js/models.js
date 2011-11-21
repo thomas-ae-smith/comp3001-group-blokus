@@ -1,6 +1,15 @@
 // Define the models used by blokus
 (function ($, _, Backbone) {
-	var Game = Backbone.Model.extend({
+	var UserProfile = Backbone.Model.extend({
+			defaults: {
+				id: undefined,
+				name: undefined,
+				wins: undefined,
+				losses: undefined
+			}
+		}),
+
+		Game = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
 				playerIds: undefined,
@@ -28,6 +37,7 @@
 		Player = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
+				userId: undefined,
 				colours: undefined
 			}
 		});
