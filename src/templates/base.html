@@ -8,8 +8,6 @@
 		<title>Blokus{% block title %}{% endblock %}</title>
 		<meta name="description" content="Blokus Game" />
 		<meta name="author" content="Comp3001 Group Blokus" />
-
-		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
@@ -18,11 +16,6 @@
 		<script src="{{ STATIC_URL }}js/raphael.js"></script>
 		<script src="{{ STATIC_URL }}js/underscore.js"></script>
 		<script src="{{ STATIC_URL }}js/backbone.js"></script>
-
-		<!-- blokus core -->
-		<script src="{{ STATIC_URL }}js/blokus.js"></script>
-		<script src="{{ STATIC_URL }}js/models.js"></script>
-		<script src="{{ STATIC_URL }}js/collections.js"></script>
 		
 		{% block extrajs %}{% endblock %}
 	</head>

@@ -7,6 +7,27 @@
 	<a href="#" class="button">Logout</a>
 {% endblock %}
 
+{% block extracss %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}css/lobby.css" type="text/css"/>
+{% endblock %}
+
 {% block content %}
-<p>Why, hi there! This will be the lobby screen.</p>
+	<ul class="lobbylist">
+		<li><a href="#">Table 1</a></li>
+		<li><a href="#">Table 2</a></li>
+		<li><a href="#">Table 3</a></li>
+		<li><a href="#">Table 4</a></li>
+		<li><a href="#" class="sel">Table 5</a></li>
+		<li><a href="#">Table 6</a></li>
+	</ul>
+	<aside>
+		<h1>Table 5</h1>
+		<ul>
+			<li>zanders3</li>
+			<li>cooldude</li>
+			<li class="available">Available Slot</li>
+			<li class="available">Available Slot</li>
+		</ul>
+		<a href="#" class="button">Play</a>
+	</aside>
 {% endblock %}
