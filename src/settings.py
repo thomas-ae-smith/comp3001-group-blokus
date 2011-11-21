@@ -17,12 +17,17 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.auth',
     'django.contrib.sessions',
+	'django.contrib.staticfiles',
     'djangotoolbox',
     'autoload',
     'dbindexer',
 	'blokus',
     # djangoappengine should come last, so it can override a few manage.py commands
     'djangoappengine',
+)
+
+STATIC_URL = (
+	'/static/'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -38,6 +43,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
     'django.core.context_processors.media',
+	'django.core.context_processors.static',
 )
 
 # This test runner captures stdout and associates tracebacks with their
