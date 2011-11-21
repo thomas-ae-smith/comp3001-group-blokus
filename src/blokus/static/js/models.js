@@ -1,8 +1,6 @@
 // Define the models used by blokus
 (function ($, _, Backbone) {
-	var MakeModel = Backbone.Model.extend;
-
-	var UserProfile = MakeModel({
+	var UserProfile = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
 				name: undefined,
@@ -11,7 +9,7 @@
 			}
 		}),
 
-		Game = MakeModel({
+		Game = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
 				playerIds: undefined,
@@ -19,14 +17,14 @@
 			}
 		}),
 
-		PieceMaster = MakeModel({
+		PieceMaster = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
 				data: undefined
 			}
 		}),
 
-		Piece = MakeModel({
+		Piece = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
 				x: undefined,
@@ -36,7 +34,7 @@
 			}
 		}),
 
-		Player = MakeModel({
+		Player = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
 				userId: undefined,

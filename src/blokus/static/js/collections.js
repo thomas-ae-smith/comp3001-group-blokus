@@ -21,7 +21,7 @@
 		});
 	
 	// Define the collection of piece masters
-	var pieceMasters = new PieceMasterCollection()
+	var pieceMasters = new PieceMasterCollection();
 
 	// TODO: replace with pieceMasters.fetch();
 	pieceMasters.add([
