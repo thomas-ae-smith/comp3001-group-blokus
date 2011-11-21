@@ -12,22 +12,21 @@
 		<meta name="viewport" content="width=device-width; initial-scale=1.0" />
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel="apple-touch-icon" href="apple-touch-icon.png" />
-		<link rel="stylesheet" href="css/layout.css" type="text/css"/>
-		<script src="js/jquery.js"></script>
-		<script src="js/raphael.js"></script>
-		<script src="js/underscore.js"></script>
-		<script src="js/backbone.js"></script>
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
+		<script src="{{ STATIC_URL }}js/jquery.js"></script>
+		<script src="{{ STATIC_URL }}js/raphael.js"></script>
+		<script src="{{ STATIC_URL }}js/underscore.js"></script>
+		<script src="{{ STATIC_URL }}js/backbone.js"></script>
 
 		<!-- blokus core -->
-		<script src="js/blokus.js"></script>
-		<script src="js/models.js"></script>
-		<script src="js/collections.js"></script>
-		<script src="js/views.js"></script>
+		<script src="{{ STATIC_URL }}js/blokus.js"></script>
+		<script src="{{ STATIC_URL }}js/models.js"></script>
+		<script src="{{ STATIC_URL }}js/collections.js"></script>
 	</head>
 	<body>
 		<header>
 			<div>
-				<img id="logo" src="img/logo.png" alt="Blokus Logo"/>
+				<img id="logo" src="{{ STATIC_URL }}img/logo.png" alt="Blokus Logo"/>
 				<div id="gamerbox">
 					<img title="zanders3's Avatar" />
 					<p>zanders3</p>
@@ -39,7 +38,10 @@
 				</nav>
 			</div>
 		</header>
-		<div id="container"></div>
+		<div id="container">
+			<div id="gameboard">
+			</div>
+		</div>
 	</body>
 </html>
 
