@@ -38,7 +38,45 @@
 		}
 	});
 
+	var GameList = Backbone.View.extend({
+		tagName: "url",
+		className: "lobbylist",
+
+		$items: undefined,
+
+		render: function () {
+			var this_ = this,
+				$el = $(this.el);
+
+			this.$items = [];
+
+			// Reset element
+			$el.html("");
+
+			// Render li tag for each game
+			$.fn.append.apply($el, this.options.gameCollection.map(function (game) {
+				var $item = this_.$items[game.get("id")] = $('<li><a href="javascript:;">' + 
+					game.get("name") + '</a></li>');
+				
+				$item.click(function () {
+					this_.selectItem(game);
+				});
+
+				return $item;
+			}));
+
+			return this;
+		},
+
+		selectItem: function (game) {
+			var $item = this.$items[game.get("id")];
+			$item.find("a").addClass("sel");
+			$item.siblings().find("a").removeClass("sel");
+		}
+	});
+
 	_(window.blokus).extend({
-		GameBoard: GameBoard
+		GameBoard: GameBoard,
+		GameList: GameList
 	});
 }(jQuery, _, Backbone));
