@@ -1,5 +1,5 @@
 // Define the collections used by blokus
-(function () {
+(function ($, _, Backbone) {
 	var GameCollection = Backbone.Collection.extend({
 			model: blokus.Game,
 			url: blokus.urls.game
@@ -75,4 +75,4 @@
 		pieceMasters: pieceMasters,
 		pieces: pieces
 	});
-}());
+}(jQuery, _, Backbone));

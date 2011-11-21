@@ -1,5 +1,5 @@
 // Define the models used by blokus
-(function () {
+(function ($, _, Backbone) {
 	var Game = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
@@ -38,4 +38,4 @@
 		Piece: Piece,
 		Player: Player
 	});
-}());
+}(jQuery, _, Backbone));

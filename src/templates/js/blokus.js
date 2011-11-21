@@ -1,4 +1,4 @@
-// Create the blokus module
+// Create the blokus core module
 window.blokus = (function ($, _, Backbone, Raphael) {
 
 	var DEBUG = true,
