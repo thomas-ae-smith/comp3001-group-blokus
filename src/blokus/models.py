@@ -23,7 +23,18 @@ class Game(models.Model):
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Repretented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
 
-	#def get_bitmap(self, rot, flip):
+	def get_bitmap(self):
+		tup = []
+		for row in self.piece_data.split(','):
+			rowlist = []
+			for letter in row:
+				if letter == 'T':
+					rowlist.append(True)
+				elif letter == 'F':
+					rowlist.append(False)
+			tup.append(tuple(rowlist))
+			
+		return tuple(tup)
 
 class UserProfile(models.Model):
 	name = models.CharField(max_length=30)
