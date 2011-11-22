@@ -61,6 +61,11 @@ class Player(models.Model):
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	user = models.ForeignKey(UserProfile)
 
+	def __init__(self, game, user, colour):
+		self.game = game		#TODO: Exception if game is full?
+		self.user = user
+		self.colour = colour	#TODO: Get 'next colour' from game.
+
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
 	player = models.ForeignKey(Player)
