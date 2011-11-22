@@ -4,11 +4,14 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 	var DEBUG = true,
 		
 		// URLs for REST
+		restRootUrl = "/api/v1/rest/",
+
 		urls = {
-			game: "/api/rest/game/",
-			pieceMaster: "/api/rest/piece-master/",
-			piece: "/api/rest/piece/",
-			player: "/api/rest/player/"
+			user: restRootUrl + "user/",
+			game: restRootUrl + "game/",
+			pieceMaster: restRootUrl + "piece-master/",
+			piece: restRootUrl + "piece/",
+			player: restRootUrl + "player/"
 		};
 
 	// Ensure HTML 5 elements are styled by IE
@@ -64,7 +67,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			{ id: 2, name: "battle of teh awsumz" /* players */ }
 		]);
 
-		
+
 		/* TEMP */
 		_(blokus).extend({
 			users: users,
