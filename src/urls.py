@@ -7,8 +7,10 @@ admin.autodiscover()
 handler500 = 'djangotoolbox.errorviews.server_error'
 rest_api = Api(api_name='rest')
 rest_api.register(UserResource())
-
-
+rest_api.register(GameResource())
+rest_api.register(PieceMasterResource())
+rest_api.register(PieceResource())
+rest_api.register(PlayerResource())
 
 urlpatterns = patterns('',
 	('^_ah/warmup$', 'djangoappengine.views.warmup'),
