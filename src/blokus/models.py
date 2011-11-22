@@ -30,7 +30,6 @@ class Player(models.Model):
 	user = models.ForeignKey(UserProfile)
 
 class Piece(models.Model):
-	game = models.ForeignKey(Game)
 	master = models.ForeignKey(PieceMaster)
 	player = models.ForeignKey(Player)
 
@@ -38,7 +37,17 @@ class Piece(models.Model):
 	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True)
 
 	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)])
-	flip = models.BooleanField()
+	flip = models.BooleanField() #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
-	#def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
-	#def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' should be a bool; T for clockwise rotation, F for anticlockwise.
+	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
+		return master.get_bitmap(rotation, flip)
+
+	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
+		self.flip = not self.flip
+		self.rotation = rotate(horizontal)
+
+	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' should be a bool; T for clockwise rotation, F for anticlockwise.
+		if (clockwise):
+			self.rotation = (self.rotation + 1) % 4
+		else:
+			self.rotation = (self.rotation - 1) % 4
