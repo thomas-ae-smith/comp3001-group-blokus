@@ -25,8 +25,9 @@
 
 			// Player list with pieces
 			var y = 30;
-			this.options.players.each(function (player) {
-				this_.drawPlayer(10, y, player.toJSON());
+			this.options.game.get("players").each(function (player) {
+				var user = blokus.users.get(player.get("userId"));
+				this_.drawPlayer(10, y, user.toJSON());
 				y += 120;
 			});
 
@@ -54,7 +55,7 @@
 			$el.html("");
 
 			// Render li tag for each game
-			$.fn.append.apply($el, this.options.gameCollection.map(function (game) {
+			$.fn.append.apply($el, this.options.games.map(function (game) {
 				var $item = this_.$items[game.get("id")] = $('<li><a href="javascript:;">' + 
 					game.get("name") + '</a></li>');
 				
