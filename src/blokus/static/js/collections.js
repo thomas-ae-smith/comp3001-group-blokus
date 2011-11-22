@@ -1,24 +1,30 @@
 // Define the collections used by blokus
 (function ($, _, Backbone) {
-	var UserCollection = Backbone.Collection.extend({
+	var Collection = Backbone.Collection.extend({
+		parse: function(response) {
+			return response.objects;
+		}
+	});
+
+	var UserCollection = Collection.extend({
 			model: blokus.User,
 			url: blokus.urls.user
 		}),
-		UserProfileCollection = Backbone.Collection.extend({
+		UserProfileCollection = Collection.extend({
 			model: blokus.UserProfile,
 			url: blokus.urls.user
 		}),
-		GameCollection = Backbone.Collection.extend({
+		GameCollection = Collection.extend({
 			model: blokus.Game,
 			url: blokus.urls.game
 		}),
 		
-		PieceMasterCollection = Backbone.Collection.extend({
+		PieceMasterCollection = Collection.extend({
 			model: blokus.PieceMaster,
 			url: blokus.urls.pieceMaster
 		}),
 
-		PieceCollection = Backbone.Collection.extend({
+		PieceCollection = Collection.extend({
 			model: blokus.Piece,
 			url: blokus.urls.piece
 		}),

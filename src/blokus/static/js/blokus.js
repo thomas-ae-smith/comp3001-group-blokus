@@ -4,7 +4,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 	var DEBUG = true,
 		
 		// URLs for REST
-		restRootUrl = "/api/v1/rest/",
+		restRootUrl = "/api/rest/",
 
 		urls = {
 			user: restRootUrl + "user/",
