@@ -40,11 +40,11 @@ class Piece(models.Model):
 	flip = models.BooleanField() #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
-		return master.get_bitmap(rotation, flip)
+		return self.master.get_bitmap(self.rotation, self.flip)
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
 		self.flip = not self.flip
-		self.rotation = rotate(horizontal)
+		self.rotation = self.rotate(horizontal)
 
 	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' should be a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
