@@ -15,6 +15,20 @@
 			});
 		},
 
+		drawBoard: function (x, y, width, height) {
+			// Gameboard
+			this.paper.rect(x, y, width+10, height+10, 5).attr("fill", "#GGGGGG");
+			this.paper.rect(x+5, y+5, width, height).attr("fill", "#AAAAAA");
+			var cellXSize = width/20;
+			var cellYSize = height/20;
+			for (var i = x+5+cellXSize; i<=width+x ; i+=cellXSize) {
+				this.paper.path("M"+i+","+(y+5)+"L"+i+","+(height+y+5)+"z");
+			}
+			for (var j = y+5+cellYSize; j<=height+y ; j+=cellYSize) {
+				this.paper.path("M"+(x+5)+","+j+"L"+(x+width+5)+","+j+"z");
+			}
+		}, 
+
 		render: function () {
 			var this_ = this;
 			// Reset element
@@ -31,9 +45,7 @@
 				y += 120;
 			});
 
-			// Gameboard
-			this.paper.rect(290, 10, 510, 510, 5).attr("fill", "#GGGGGG");
-			this.paper.rect(295, 15, 500, 500).attr("fill", "#AAAAAA");
+			this.drawBoard(290, 10, 500, 500);
 
 			return this;
 		}
