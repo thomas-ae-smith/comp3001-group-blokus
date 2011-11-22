@@ -1,9 +1,15 @@
 // Define the models used by blokus
 (function ($, _, Backbone) {
-	var UserProfile = Backbone.Model.extend({
+	var User = Backbone.Model.extend({
 			defaults: {
 				id: undefined,
-				name: undefined,
+				name: undefined
+			}
+		}),
+
+		UserProfile = Backbone.Model.extend({
+			defaults: {
+				userId: undefined,
 				wins: undefined,
 				losses: undefined
 			}
@@ -43,6 +49,8 @@
 		});
 	
 	_(window.blokus).extend({
+		User: User,
+		UserProfile: UserProfile,
 		Game: Game,
 		PieceMaster: PieceMaster,
 		Piece: Piece,
