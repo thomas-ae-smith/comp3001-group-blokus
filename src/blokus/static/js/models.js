@@ -1,13 +1,24 @@
 // Define the models used by blokus
 (function ($, _, Backbone) {
-	var User = Backbone.Model.extend({
+	var Model = Backbone.Model.extend({
+		url : function () {
+            if (this.get('resource_uri')) {
+                return this.get('resource_uri');
+            } else if (this.collection) {
+                return this.collection.url + this.id + "/";
+            } else {
+                throw "Does not have resource url or collection";
+            }
+        }
+	});
+	var User = Model.extend({
 			defaults: {
 				id: undefined,
 				name: undefined
 			}
 		}),
 
-		UserProfile = Backbone.Model.extend({
+		UserProfile = Model.extend({
 			defaults: {
 				userId: undefined,
 				wins: undefined,
@@ -15,7 +26,7 @@
 			}
 		}),
 
-		Game = Backbone.Model.extend({
+		Game = Model.extend({
 			defaults: {
 				id: undefined,
 				playerIds: undefined,
@@ -23,14 +34,14 @@
 			}
 		}),
 
-		PieceMaster = Backbone.Model.extend({
+		PieceMaster = Model.extend({
 			defaults: {
 				id: undefined,
 				data: undefined
 			}
 		}),
 
-		Piece = Backbone.Model.extend({
+		Piece = Model.extend({
 			defaults: {
 				id: undefined,
 				x: undefined,
@@ -40,7 +51,7 @@
 			}
 		}),
 
-		Player = Backbone.Model.extend({
+		Player = Model.extend({
 			defaults: {
 				id: undefined,
 				userId: undefined,
