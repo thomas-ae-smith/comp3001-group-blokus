@@ -1,6 +1,14 @@
 // Define the collections used by blokus
 (function ($, _, Backbone) {
-	var GameCollection = Backbone.Collection.extend({
+	var UserCollection = Backbone.Collection.extend({
+			model: blokus.User,
+			url: blokus.urls.user
+		}),
+		UserProfileCollection = Backbone.Collection.extend({
+			model: blokus.UserProfile,
+			url: blokus.urls.user
+		}),
+		GameCollection = Backbone.Collection.extend({
 			model: blokus.Game,
 			url: blokus.urls.game
 		}),
@@ -41,38 +49,24 @@
 			data: [	[1, 1],
 					[1, 1],
 					[0, 1]	]
-		}
-	]);
-
-	// Temp hard-coded pieces
-	var pieces = new PieceCollection();
-
-	pieces.add([
-		{
-			pieceMaster: 2,
-			rotation: 0,
-			x: 2,
-			y: 9,
-			flip: true,
-			colour: "red"
 		},
 		{
-			pieceMaster: 0,
-			rotation: 1,
-			x: 4,
-			y: 2,
-			flip: false,
-			colour: "blue"
+			id: 3,
+			data: [	[1, 1],
+					[1, 1],
+					[0, 1],
+					[0, 1]	]
 		}
 	]);
 
 	_(window.blokus).extend({
+		UserCollection: UserCollection,
+		UserProfileCollection: UserProfileCollection,
 		GameCollection: GameCollection,
 		PieceMasterCollection: PieceMasterCollection,
 		PieceCollection: PieceCollection,
 		PlayerCollection: PlayerCollection,
 
-		pieceMasters: pieceMasters,
-		pieces: pieces
+		pieceMasters: pieceMasters
 	});
 }(jQuery, _, Backbone));
