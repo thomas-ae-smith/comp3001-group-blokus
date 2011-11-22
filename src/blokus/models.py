@@ -14,14 +14,17 @@ class Game(models.Model):
 			self._adjacent_to_same_colour(piece)
 		)
 
-	def _not_obstructed(piece):	#Skeletal function
+	def _not_obstructed(self, piece):	#Skeletal function
 		return true
 
-	def _adjacent_to_same_colour(piece):	#Skeletal function
+	def _adjacent_to_same_colour(self, piece):	#Skeletal function
 		return true
 
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Repretented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
+
+	def __init__(self, data):
+		self.piece_data = data
 
 	def get_bitmap(self):
 		tup = []
@@ -33,7 +36,6 @@ class PieceMaster(models.Model):
 				elif letter == 'F':
 					rowlist.append(False)
 			tup.append(tuple(rowlist))
-			
 		return tuple(tup)
 
 class UserProfile(models.Model):
@@ -63,7 +65,7 @@ class Piece(models.Model):
 	flip = models.BooleanField() #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
-		return master.get_bitmap(rotation, flip)
+		return self.master.get_bitmap()	#Need to implement rotation and transposition.
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
 		self.flip = not self.flip
