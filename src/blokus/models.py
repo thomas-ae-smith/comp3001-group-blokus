@@ -64,6 +64,14 @@ class Piece(models.Model):
 	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)])
 	flip = models.BooleanField() #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
+	def __init__(self, player, master):
+		self.player = player
+		self.master = master
+		self.x = 0
+		self.y = 0
+		self.rotation = 0
+		self.flip = False
+
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		return self.master.get_bitmap()	#Need to implement rotation and transposition.
 
