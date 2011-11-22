@@ -6,7 +6,19 @@ class Game(models.Model):
 	game_type = models.IntegerField()
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)])
 
-	#def place_piece(self, piece):
+	#def place_piece(self, piece):	#Places a piece and returns TRUE if the placement is valued, otherwise returns FALSE.
+
+	def _validate_placement(self, piece):	#Returns TRUE if the placement is valid, FALSE otherwise.
+		return (
+			self._not_obstructed(piece) and
+			self._adjacent_to_same_colour(piece)
+		)
+
+	def _not_obstructed(piece):	#Skeletal function
+		return true
+
+	def _adjacent_to_same_colour(piece):	#Skeletal function
+		return true
 
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Repretented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
