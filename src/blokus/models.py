@@ -1,10 +1,17 @@
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator, RegexValidator
 from django.db import models
+from datetime import datetime
+
 
 class Game(models.Model):
 	start_time = models.DateTimeField()
 	game_type = models.IntegerField()
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)])
+
+	def __init__(self, game_type):
+		self.start_time = datetime.now()
+		self.game_type = game_type
+		self.player_turn = 0
 
 	#def place_piece(self, piece):	#Places a piece and returns TRUE if the placement is valued, otherwise returns FALSE.
 
@@ -79,7 +86,7 @@ class Piece(models.Model):
 		self.flip = not self.flip
 		self.rotation = rotate(horizontal)
 
-	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' should be a bool; T for clockwise rotation, F for anticlockwise.
+	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
 			self.rotation = (self.rotation + 1) % 4
 		else:
