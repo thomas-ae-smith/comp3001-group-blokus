@@ -1,0 +1,149 @@
+[
+	{
+		"model": "blokus.piecemaster",
+		"pk": "1",
+		"fields" : {
+			"piece_data": "T"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "2",
+		"fields" : {
+			"piece_data": "T,T"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "3",
+		"fields" : {
+			"piece_data": "T,T,T"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "4",
+		"fields" : {
+			"piece_data": "TF,TT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "5",
+		"fields" : {
+			"piece_data": "T,T,T,T"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "6",
+		"fields" : {
+			"piece_data": "FT,FT,TT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "7",
+		"fields" : {
+			"piece_data": "TF,TT,TF"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "8",
+		"fields" : {
+			"piece_data": "TT,TT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "9",
+		"fields" : {
+			"piece_data": "TTF,FTT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "10",
+		"fields" : {
+			"piece_data": "T,T,T,T,T"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "11",
+		"fields" : {
+			"piece_data": "FT,FT,FT,TT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "12",
+		"fields" : {
+			"piece_data": "FT,FT,TT,TF"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "13",
+		"fields" : {
+			"piece_data": "FT,TT,TT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "14",
+		"fields" : {
+			"piece_data": "TT,FT,TT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "15",
+		"fields" : {
+			"piece_data": "TF,TT,TF,TF"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "16",
+		"fields" : {
+			"piece_data": "FTF,FTF,TTT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "17",
+		"fields" : {
+			"piece_data": "TFF,TFF,TTT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "18",
+		"fields" : {
+			"piece_data": "TTF,FTT,FFT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "19",
+		"fields" : {
+			"piece_data": "TFF,TTT,FFT"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "20",
+		"fields" : {
+			"piece_data": "TFF,TTT,FTF"
+		}
+	},
+	{
+		"model": "blokus.piecemaster",
+		"pk": "21",
+		"fields" : {
+			"piece_data": "FTF,TTT,FTF"
+		}
+	}
+]
