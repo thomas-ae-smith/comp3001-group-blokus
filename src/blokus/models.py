@@ -4,14 +4,9 @@ from datetime import datetime
 
 
 class Game(models.Model):
-	start_time = models.DateTimeField()
+	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
-	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)])
-
-	def __init__(self, game_type):
-		self.start_time = datetime.now()
-		self.game_type = game_type
-		self.player_turn = 0
+	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 
 	#def place_piece(self, piece):	#Places a piece and returns TRUE if the placement is valued, otherwise returns FALSE.
 
@@ -29,9 +24,6 @@ class Game(models.Model):
 
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Repretented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
-
-	def __init__(self, data):
-		self.piece_data = data
 
 	def get_bitmap(self):
 		tup = []
@@ -61,28 +53,15 @@ class Player(models.Model):
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	user = models.ForeignKey(UserProfile)
 
-	def __init__(self, game, user, colour):
-		self.game = game		#TODO: Exception if game is full?
-		self.user = user
-		self.colour = colour	#TODO: Get 'next colour' from game.
-
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
 	player = models.ForeignKey(Player)
 
-	x = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True)
-	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True)
+	x = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
+	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 
-	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)])
-	flip = models.BooleanField() #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
-
-	def __init__(self, player, master):
-		self.player = player
-		self.master = master
-		self.x = 0
-		self.y = 0
-		self.rotation = 0
-		self.flip = False
+	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
+	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		return self.master.get_bitmap()	#Need to implement rotation and transposition.
