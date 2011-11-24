@@ -84,8 +84,11 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 		} else {
 			var gameboard = new blokus.GameBoard({ game: games.get(0) });
 			$("#container").append(gameboard.render().el);
+			//Temp just show that I can draw things
+			data = blokus.pieceMasters.get(3).get("data");
+			blokus.drawPiece(50,23,data, gameboard.paper)
 		}
-
+		
 	});
 
 	return {

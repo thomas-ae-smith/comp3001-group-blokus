@@ -19,7 +19,9 @@
 			// Gameboard
 			this.paper.rect(x, y, width+10, height+10, 5).attr("fill", "#GGGGGG");
 			this.paper.rect(x+5, y+5, width, height).attr("fill", "#AAAAAA");
+			//Size of cell on X axis
 			var cellXSize = width/20;
+			//Size of cell on Y axis
 			var cellYSize = height/20;
 			for (var i = x+5+cellXSize; i<=width+x ; i+=cellXSize) {
 				this.paper.path("M"+i+","+(y+5)+"L"+i+","+(height+y+5)+"z");
@@ -88,8 +90,43 @@
 		}
 	});
 
+	//blokus.pieceMasters.get(3).get("data")
+	function drawPiece (x, y, data, paper) {
+		var cellSize = 25;
+		var numRows = data.length;
+		var numCols = data[0].length;
+		var shape_set = paper.set();
+		for (var rowI = 0; rowI < numRows; rowI++){
+			for (var colJ = 0; colJ <= numCols; colJ++) {
+				if (data[rowI][colJ] == 1) {
+					var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+								cellSize, cellSize);
+					cell.attr({fill:'#323'});
+					shape_set.push(cell);
+				}
+			}
+		}
+		shape_set.drag(
+				function(dx,dy,x,y, e){
+					//on move
+					shape_set.translate(dx - shape_set.x, dy - shape_set.y) ;
+					shape_set.x = dx;
+					shape_set.y = dy;
+					//console.log(dx + " " + dy);
+				},
+				function (x, y, e){
+					// on Start
+					shape_set.x = 0;
+					shape_set.y = 0;
+				}, 
+				null
+				);
+
+	}
+
 	_(window.blokus).extend({
 		GameBoard: GameBoard,
-		GameList: GameList
+		GameList: GameList,
+		drawPiece: drawPiece,
 	});
 }(jQuery, _, Backbone));
