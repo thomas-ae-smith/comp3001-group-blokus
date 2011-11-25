@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -29,11 +29,7 @@
 		<header>
 			<div>
 				<img id="logo" src="{{ STATIC_URL }}img/logo.png" alt="Blokus Logo"/>
-				<div id="gamerbox">
-					<img title="zanders3's Avatar" />
-					<p>zanders3</p>
-					<p>Won: 5 Lost: 2</p>
-				</div>
+				<a href="#" onmouseover="showProfileMenu()" onmouseout="hideProfileMenu()" id="profileButton">Sign in ▾</a>
 				<nav>
 					{% block navbuttons %}
 					{% endblock %}
@@ -44,6 +40,15 @@
 		<div id="container">
 			{% block content %}
 			{% endblock %}
+		</div>
+		<div id="profileMenu" onmouseover="showProfileMenu()" onmouseout="hideProfileMenu()">
+			Username<br/>
+			<input type="text" id="loginUsername" /><br/>
+			Password<br/>
+			<input type="password" id="loginPassword" /><br/><br/>
+			<a href="#">Forgot?</a>
+			<a href="#">Register</a>
+			<a href="#" class="button">Sign in</a>
 		</div>
 	</body>
 </html>

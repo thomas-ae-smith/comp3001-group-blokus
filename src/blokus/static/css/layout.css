@@ -72,8 +72,8 @@ html[xmlns] .clearfix {
 
 html {
 	background: #E3EEF2;
-	background: -moz-linear-gradient(top, #BCD6E1, #E3EEF2);
-	background: -webkit-gradient(linear, left top, left bottom, from(#BCD6E1), to(#E3EEF2));
+	background: -moz-linear-gradient(top, #E3EEF2, #BCD6E1);
+	background: -webkit-gradient(linear, left top, left bottom, from(#E3EEF2), to(#BCD6E1));
 	font-family: Tahoma, Helvetica, Georgia, sans-serif;
 	height: 100%;
 }
@@ -107,6 +107,9 @@ html {
 header {
 	background: #BCD6E1;
 	border-bottom: 2px solid black;
+	-moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
+	box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
 }
 
 header div {
@@ -122,30 +125,60 @@ header div img#logo {
 
 nav {
 	float: right;
-	margin-top:22px;
-	margin-right: 10px;
+	margin-top:34px;
+	margin-right: 5px;
 }
 
-#gamerbox {
+#profileButton {
 	float: right;
-	width: 220px;
-	height: 50px;
-	margin-top: 7px;
-	border-left: 2px solid black;
-}
-
-#gamerbox img {
-	width: 50px;
-	height: 50px;
-	float:right;
-	background: white;
+	width: 150px;
+	height: 29px;
+	margin-top: 26px;
 	border: 2px solid black;
+	/*border-bottom: 2px solid #B3D0DD;*/
+	padding-top: 10px;
+	padding-bottom:0;
+	background: #BCD6E1;
+	text-align: center;
+	border-radius: 5px 5px 0px 0px;
+	-moz-border-radius: 5px 5px 0px 0px;
+	font-size: 18px;
+	color: black;
+	text-decoration: none;
+	font-family: Tahoma, Helvetica, Georgia, sans-serif;
 }
 
-#gamerbox p {
-	float: left;
-	clear: left;
-	margin-left:10px;
-	margin-top:5px;
-	font-weight: bold;
+#profileButton:hover {
+	background: #E3EEF2;
+	border-bottom: 2px solid #E3EEF2;
+}
+
+#profileButton.sel {
+	background: #E3EEF2;
+	border-bottom: 2px solid #E3EEF2;
+}
+
+#profileMenu {
+	display: none;
+	position: absolute;
+	background: #E3EEF2;
+	left: 0px; top:0px;
+	width: 240px;
+	border: 2px solid black;
+	border-top: 0;
+	border-radius: 0px 0px 5px 5px;
+	-moz-border-radius: 0px 0px 5px 5px;
+	padding: 10px;
+	padding-top: 30px;
+	-moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
+	box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
+}
+
+#profileMenu a.button {
+	float:right;
+}
+
+#profileMenu input {
+	width: 220px;
 }

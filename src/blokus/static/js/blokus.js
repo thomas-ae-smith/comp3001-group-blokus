@@ -1,3 +1,13 @@
+var showProfileMenu = function() {
+	$("#profileMenu").show();
+	$("#profileButton").addClass("sel");
+}
+
+var hideProfileMenu = function() {
+	$("#profileMenu").hide();
+	$("#profileButton").removeClass("sel");
+}
+
 // Create the blokus core module
 window.blokus = (function ($, _, Backbone, Raphael) {
 
@@ -22,6 +32,15 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 	document.createElement('aside');
 	
 	$(document).ready(function () {
+	
+		//Position the profile menu underneath the profile button
+		var profileButton = $("#profileButton");
+		var buttonOffset = profileButton.offset();
+		$("#profileMenu").css({
+			'left': buttonOffset.left - $("#profileMenu").outerWidth() + profileButton.outerWidth(),
+			'top': buttonOffset.top + profileButton.outerHeight()
+		});
+		
 		// TEMP: Hard coded players
 		var users = new blokus.UserCollection([
 			{ id: 10, name: "zanders3" },
@@ -73,7 +92,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			users: users,
 			games: games
 		})
-
+		
 		// TEMP HACK
 		if (location.href.indexOf("game") > -1) {
 			
