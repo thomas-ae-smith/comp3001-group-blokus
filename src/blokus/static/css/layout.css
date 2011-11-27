@@ -163,22 +163,68 @@ nav {
 	position: absolute;
 	background: #E3EEF2;
 	left: 0px; top:0px;
-	width: 240px;
 	border: 2px solid black;
 	border-top: 0;
+	padding-bottom:10px;
 	border-radius: 0px 0px 5px 5px;
 	-moz-border-radius: 0px 0px 5px 5px;
-	padding: 10px;
-	padding-top: 30px;
 	-moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
 	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
 	box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 3px 0px;
 }
 
-#profileMenu a.button {
+#signedOutMenu {
+	width: 240px;
+	padding: 10px;
+	padding-top: 30px;
+}
+
+#signedOutMenu a.button {
 	float:right;
 }
 
-#profileMenu input {
+#signedOutMenu input {
 	width: 220px;
+}
+
+#signedInMenu {
+	display:none;
+}
+
+#signedInMenu div {
+	width:180px;
+	padding: 10px;
+	padding-top: 20px;
+}
+
+#signedInMenu div ul {
+	float:left;
+	width:auto;
+	margin-left:10px;
+	margin-top:5px;
+}
+
+#signedInMenu div ul li {
+	margin-top: 5px;
+}
+
+#signedInMenu div img {
+	float:right;
+	width:60px;
+	height:60px;
+	border: 2px solid black;
+}
+
+#signedInMenu ul.menu li a {
+	background: #E3EEF2;
+	width:180px;
+	display:block;
+	border-top: 1px solid #6A7276;
+	padding: 10px;
+	text-decoration:none;
+	color:black;
+}
+
+#signedInMenu ul.menu li a:hover {
+	background: #BCD6E1;
 }

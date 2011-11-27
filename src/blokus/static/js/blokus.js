@@ -1,4 +1,4 @@
-var showProfileMenu = function() {
+﻿var showProfileMenu = function() {
 	$("#profileMenu").show();
 	$("#profileButton").addClass("sel");
 }
@@ -6,6 +6,32 @@ var showProfileMenu = function() {
 var hideProfileMenu = function() {
 	$("#profileMenu").hide();
 	$("#profileButton").removeClass("sel");
+}
+
+var signIn = function(name) {
+	$("#signedOutMenu").hide();
+	$("#signedInMenu").show();
+	$("#profileButton").html(name + " ▾");
+	positionProfileMenu();
+	showProfileMenu();
+}
+
+var signOut = function() {
+	$("#signedInMenu").hide();
+	$("#signedOutMenu").show();
+	$("#profileButton").html("Sign in  ▾");
+	positionProfileMenu();
+	showProfileMenu();
+}
+
+//Position the profile menu underneath the profile button
+var positionProfileMenu = function() {
+	var profileButton = $("#profileButton");
+	var buttonOffset = profileButton.offset();
+	$("#profileMenu").css({
+		'left': buttonOffset.left - $("#profileMenu").outerWidth() + profileButton.outerWidth(),
+		'top': buttonOffset.top + profileButton.outerHeight()
+	});
 }
 
 // Create the blokus core module
@@ -33,13 +59,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 	
 	$(document).ready(function () {
 	
-		//Position the profile menu underneath the profile button
-		var profileButton = $("#profileButton");
-		var buttonOffset = profileButton.offset();
-		$("#profileMenu").css({
-			'left': buttonOffset.left - $("#profileMenu").outerWidth() + profileButton.outerWidth(),
-			'top': buttonOffset.top + profileButton.outerHeight()
-		});
+		positionProfileMenu();
 		
 		// TEMP: Hard coded players
 		var users = new blokus.UserCollection([

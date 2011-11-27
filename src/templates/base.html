@@ -42,13 +42,27 @@
 			{% endblock %}
 		</div>
 		<div id="profileMenu" onmouseover="showProfileMenu()" onmouseout="hideProfileMenu()">
-			Username<br/>
-			<input type="text" id="loginUsername" /><br/>
-			Password<br/>
-			<input type="password" id="loginPassword" /><br/><br/>
-			<a href="#">Forgot?</a>
-			<a href="#">Register</a>
-			<a href="#" class="button">Sign in</a>
+			<div id="signedOutMenu">
+				Username<br/>
+				<input type="text" id="loginUsername" /><br/>
+				Password<br/>
+				<input type="password" id="loginPassword" /><br/><br/>
+				<a href="#">Forgot?</a>
+				<a href="#">Register</a>
+				<a href="#" class="button" onclick="signIn('zanders3')">Sign in</a>
+			</div>
+			<div id="signedInMenu">
+				<div class="clearfix">
+					<ul>
+						<li>3 wins</li>
+						<li>2 losses</li>
+					</ul>
+					<img title="zanders3's Avatar"/>
+				</div>
+				<ul class="menu">
+					<li><a href="#" onclick="signOut()">Sign Out</a></li>
+				</ul>
+			</div>
 		</div>
 	</body>
 </html>
