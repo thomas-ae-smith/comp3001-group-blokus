@@ -87,3 +87,17 @@ def _transpose_bitmap(bitmap):
 		transposed_bitmap.append(tuple(transposed_row))
 
 	return transposed_bitmap
+
+def _rotate_bitmap(bitmap, times):
+	rotated_bitmap = bitmap
+	for time in range(times):
+		for row in range(len(rotated_bitmap)):
+			rotated_row = []
+			for col in range(len(rotated_bitmap[0])):
+				rotated_row.append(
+					bitmap
+						[(row + len(rotated_bitmap[0])) % len(rotated_bitmap)]
+						[(col + len(rotated_bitmap)) % len(rotated_bitmap[0])]
+					)
+			rotated_bitmap.append(tuple(rotated_row))
+	return rotated_bitmap
