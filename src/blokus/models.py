@@ -69,7 +69,7 @@ class Piece(models.Model):
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
 		self.flip = not self.flip
-		self.rotation = rotate(horizontal)
+		self.rotation = self.rotate(horizontal)
 
 	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
@@ -77,7 +77,7 @@ class Piece(models.Model):
 		else:
 			self.rotation = (self.rotation - 1) % 4
 
-def transpose_bitmap(bitmap):
+def _transpose_bitmap(bitmap):
 	transposed_bitmap = []
 
 	for row in range(0, len(bitmap)):
