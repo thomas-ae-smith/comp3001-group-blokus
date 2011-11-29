@@ -64,7 +64,8 @@ class Piece(models.Model):
 	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
-		return self.master.get_bitmap()	#Need to implement rotation and transposition.
+		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
+		return bitmap
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
 		self.flip = not self.flip
@@ -75,3 +76,14 @@ class Piece(models.Model):
 			self.rotation = (self.rotation + 1) % 4
 		else:
 			self.rotation = (self.rotation - 1) % 4
+
+def transpose_bitmap(bitmap):
+	transposed_bitmap = []
+
+	for row in range(0, len(bitmap)):
+		transposed_row = []
+		for col in range(0, len(bitmap[0])):
+			transposed_row.append(bitmap[col][row])
+		transposed_bitmap.append(tuple(transposed_row))
+
+	return transposed_bitmap
