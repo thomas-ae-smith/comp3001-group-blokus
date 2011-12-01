@@ -3,8 +3,7 @@
 {% block title %} Lobby{% endblock %}
 
 {% block navbuttons %}
-	<a href="#" class="button">Profile</a>
-	<a href="#" class="button">Logout</a>
+	<a href="#" class="button">Help</a>
 {% endblock %}
 
 {% block extracss %}
@@ -12,15 +11,21 @@
 {% endblock %}
 
 {% block content %}
-	<div id="lobbylist-container"></div>
-	<aside>
-		<h1>Table 5</h1>
-		<ul>
-			<li>zanders3</li>
-			<li>cooldude</li>
-			<li class="available">Available Slot</li>
-			<li class="available">Available Slot</li>
+	<div id="lobby">
+		<h2>Welcome!</h2>
+		<p>Please select a game mode:</p>
+		<ul class="modelist">
+			<li><a href="#" onclick="selectMode(0);">Quick Play</a></li>
+			<li><a href="#" onclick="selectMode(1);">2 Players</a></li>
+			<li><a href="#" onclick="selectMode(2);">3 Players</a></li>
+			<li id="privatebutton"><a href="#" onclick="selectMode(3);">Private</a></li>
 		</ul>
-		<a href="#" class="button">Play</a>
-	</aside>
+		<div id="privatelobby" class="clearfix">
+			<ul class="lobbylist">
+				<li>zanders3</li>
+			</ul>
+			<a href="#">Join URL</a>: Send this to your friends!<br/></br/>
+			Waiting for players to join...<a href="#" class="button">Start Game</a>
+		</div>
+	</div>
 {% endblock %}

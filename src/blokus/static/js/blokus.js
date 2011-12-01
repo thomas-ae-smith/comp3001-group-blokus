@@ -24,6 +24,19 @@ var signOut = function() {
 	showProfileMenu();
 }
 
+var selectMode = function(mode) {
+	var buttons = $(".modelist li");
+	buttons.removeClass("sel");
+	buttons.eq(mode).addClass("sel");
+	
+	if (mode == 3){
+		$("#privatelobby").slideDown("slow");
+	}
+	else {
+		$("#privatelobby").slideUp("slow");
+	}
+}
+
 //Position the profile menu underneath the profile button
 var positionProfileMenu = function() {
 	var profileButton = $("#profileButton");
@@ -118,8 +131,9 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			
 
 		} else if (location.href.indexOf("lobby") > -1) {
-			var gameList = new blokus.GameList({ games: games });
-			$("#lobbylist-container").append(gameList.render().el);
+			/*var gameList = new blokus.GameList({ games: games });
+			$("#lobbylist-container").append(gameList.render().el);*/
+			
 		} else {
 			var gameboard = new blokus.GameBoard({ game: games.get(0) });
 			$("#container").append(gameboard.render().el);
