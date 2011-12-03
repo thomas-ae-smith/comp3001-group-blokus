@@ -4,6 +4,17 @@
 		className: "gameboard",
 
 		paper: undefined,
+		board: undefined,
+
+		x: undefined,
+		y: undefined,
+		width: undefined,
+		height: undefined,
+		cellXSize: undefined,
+		cellYSize: undefined,
+		numXCells: 20,
+		numYCells: 20,
+
 
 		drawPlayer: function (x, y, player) {
 			this.paper.rect(x, y, 250, 110, 5).attr("fill", "#E3EEF2");
@@ -17,17 +28,56 @@
 
 		drawBoard: function (x, y, width, height) {
 			// Gameboard
-			this.paper.rect(x, y, width+10, height+10, 5).attr("fill", "#GGGGGG");
-			this.paper.rect(x+5, y+5, width, height).attr("fill", "#AAAAAA");
-			//Size of cell on X axis
-			var cellXSize = width/20;
-			//Size of cell on Y axis
-			var cellYSize = height/20;
+			//this.paper.rect(x, y, width+10, height+10, 5).attr("fill", "#GGGGGG");
+			//this.paper.rect(x+5, y+5, width, height).attr("fill", "#AAAAAA");
+			var numXCells = this.numXCells;
+			var numYCells = this.numYCells;
+			
+			var cellXSize = width/numXCells; //Size of cell on X axis
+			var cellYSize = height/numYCells; //Size of cell on Y axis
+
+			//Init the values of the board;
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			this.cellXSize = cellXSize;
+			this.cellYSize = cellYSize;
+			/*
 			for (var i = x+5+cellXSize; i<=width+x ; i+=cellXSize) {
 				this.paper.path("M"+i+","+(y+5)+"L"+i+","+(height+y+5)+"z");
 			}
 			for (var j = y+5+cellYSize; j<=height+y ; j+=cellYSize) {
 				this.paper.path("M"+(x+5)+","+j+"L"+(x+width+5)+","+j+"z");
+			}
+			*/
+			// Adding the contains function to the rectangles of Raphael
+			_(this.paper.rect.prototype.__proto__).extend(
+				{contains: function (x, y) { 
+								var startX = this.attrs.x;
+								var startY = this.attrs.y;
+								var endX = this.attrs.x + this.attrs.width;
+								var endY = this.attrs.y + this.attrs.height;
+								if (x >= startX && y >= startY && 
+										x <= endX && y <= endY){
+									return true;
+								}
+								else {
+									return false;
+								}
+							}
+				}
+			);
+			this.board = new Array(numXCells);
+			for (var i=x, iBoard=0; i<width+x ; i+=cellXSize, iBoard++) {
+				this.board[iBoard] = new Array(numYCells);
+				for (var j = y, jBoard=0; j<height+y ; j+=cellYSize, jBoard++) {
+					var cell = this.paper.rect(i, j, cellXSize-2, cellYSize-2);
+					this.board[iBoard][jBoard] = cell;
+					//cell.onDragOver(function (elem){console.log("tmp");});
+					cell.mouseover(function(){this.attr("fill", "#AAA");});
+					cell.mouseout(function(){this.attr("fill", "#GGG")});
+				}
 			}
 		}, 
 
@@ -91,15 +141,15 @@
 	});
 
 	//blokus.pieceMasters.get(3).get("data")
-	function drawPiece (x, y, data, paper) {
+	function drawPiece (x, y, data, gameboard) {
 		var cellSize = 25;
 		var numRows = data.length;
 		var numCols = data[0].length;
-		var shape_set = paper.set();
+		var shape_set = gameboard.paper.set();
 		for (var rowI = 0; rowI < numRows; rowI++){
 			for (var colJ = 0; colJ <= numCols; colJ++) {
 				if (data[rowI][colJ] == 1) {
-					var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+					var cell = gameboard.paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
 								cellSize, cellSize);
 					cell.attr({fill:'#323'});
 					shape_set.push(cell);
@@ -112,7 +162,7 @@
 					shape_set.translate(dx - shape_set.x, dy - shape_set.y) ;
 					shape_set.x = dx;
 					shape_set.y = dy;
-					//console.log(dx + " " + dy);
+					//console.log(x,y, e.layerX, e.layerY,x - blokus.gameboard.paper.canvas.offsetLeft);
 				},
 				function (x, y, e){
 					// on Start
