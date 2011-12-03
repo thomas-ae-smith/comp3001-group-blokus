@@ -13,7 +13,9 @@
 		cellXSize: undefined,
 		cellYSize: undefined,
 		numXCells: 20,
+		xBorder: 2,
 		numYCells: 20,
+		yBorder: 2,
 
 
 		drawPlayer: function (x, y, player) {
@@ -72,7 +74,7 @@
 			for (var i=x, iBoard=0; i<width+x ; i+=cellXSize, iBoard++) {
 				this.board[iBoard] = new Array(numYCells);
 				for (var j = y, jBoard=0; j<height+y ; j+=cellYSize, jBoard++) {
-					var cell = this.paper.rect(i, j, cellXSize-2, cellYSize-2);
+					var cell = this.paper.rect(i, j, cellXSize - this.xBorder, cellYSize - this.yBorder);
 					this.board[iBoard][jBoard] = cell;
 					//cell.onDragOver(function (elem){console.log("tmp");});
 					cell.mouseover(function(){this.attr("fill", "#AAA");});
@@ -177,11 +179,26 @@
 					shape_set.dx = dx;
 					shape_set.dy = dy;
 					var offsets = $(gameboard.paper.canvas).position()
-					if (shape_set.x >= gameboard.x &&  
-							shape_set.y >= gameboard.y && 
-							shape_set.x <= gameboard.x + gameboard.width &&
-							shape_set.y <= gameboard.y + gameboard.height){
-						console.log("in");
+					// game board bounds
+					var gbBounds = {
+						sx: gameboard.x,
+						sy: gameboard.y,
+						ex: gameboard.x + gameboard.width,
+						ey:gameboard.y + gameboard.height
+					};
+					if (bBox.x >= gbBounds.sx &&  
+						bBox.y >= gbBounds.sy &&
+						bBox.x <= gbBounds.ex &&
+						bBox.y <= gbBounds.ey) {
+						var cellIndex = {
+							x: Math.floor((bBox.x - gbBounds.sx)/ gameboard.cellXSize),
+							y: Math.floor((bBox.y - gbBounds.sy)/ gameboard.cellYSize),
+						}
+						var cell = gameboard.board[cellIndex.x][cellIndex.y];
+						cell.attr("fill", "#AAA");
+						shape_set.dest_x = cell.attr("x");
+						shape_set.dest_y = cell.attr("y");
+						blokus.log(shape_set.dest_x, shape_set.dest_y, bBox.x, bBox.y);
 					}
 					//console.log(x, y, e.layerX, e.layerY, first_cell.attrs.x + first_cell._.dx, e, shape_set.x, shape_set.y);
 				},
@@ -191,9 +208,9 @@
 					shape_set.dy = 0;
 				}, 
 				function (x, y, e){
-					//var tmp_x = 290;
-					//var tmp_y = 10;
-					//shape_set.animate({transform: "t"+tmp_x+" "+tmp_y} , 500);
+					var tmp_x = shape_set.dest_x - 50;
+					var tmp_y = shape_set.dest_y - 25;
+					shape_set.animate({transform: "T"+tmp_x+" "+tmp_y} , 500);
 					//shape_set.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
 				}
 				);
