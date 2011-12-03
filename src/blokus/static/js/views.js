@@ -159,20 +159,20 @@
 		shape_set.drag(
 				function(dx,dy,x,y, e){
 					//on move
-					first_cell = shape_set[0];
-					var tmpx = first_cell.attrs.x + first_cell._.dx + dx - shape_set.dx;
-					var tmpy = first_cell.attrs.y + first_cell._.dy + dy - shape_set.dy;
+					var bBox = shape_set.getBBox();
 					var xMove = 0;
 					var yMove = 0;
-					if (tmpx >= 0) {
+					var futureX = bBox.x + dx - shape_set.dx -1;
+					var futureY = bBox.y + dy - shape_set.dy;
+					var futureWidth = bBox.x + bBox.width + dx - shape_set.dx + 1;
+					var futureHeigth = bBox.y + bBox.height + dy - shape_set.dy;
+					if ( futureX >= 0 && futureWidth <= $(blokus.gameboard.paper.canvas).attr("width")) {
 						xMove = dx - shape_set.dx;
 					}
-					if (tmpy >= 0) {
+					if ( futureY >= 0 && futureHeigth <= $(blokus.gameboard.paper.canvas).attr("height")) {
 						yMove = dy - shape_set.dy;
 					}
 
-					shape_set.x = first_cell.attrs.x + first_cell._.dx;
-					shape_set.y = first_cell.attrs.y + first_cell._.dy;
 					shape_set.translate(xMove, yMove);
 					shape_set.dx = dx;
 					shape_set.dy = dy;
