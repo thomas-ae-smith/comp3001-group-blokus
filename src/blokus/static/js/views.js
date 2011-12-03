@@ -210,7 +210,7 @@
 				function (x, y, e){
 					var tmp_x = shape_set.dest_x - 50;
 					var tmp_y = shape_set.dest_y - 25;
-					shape_set.animate({transform: "T"+tmp_x+" "+tmp_y} , 500);
+					shape_set.animate({transform: "t"+tmp_x+" "+tmp_y} , 500);
 					//shape_set.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
 				}
 				);
