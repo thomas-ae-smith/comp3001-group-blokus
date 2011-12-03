@@ -141,7 +141,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			blokus.gameboard = gameboard;
 			//Temp just show that I can draw things
 			data = blokus.pieceMasters.get(3).get("data");
-			blokus.drawPiece(50,23,data, gameboard)
+			shape_set = blokus.drawPiece(50,23,data, gameboard)
 		}
 		
 	});

@@ -159,19 +159,45 @@
 		shape_set.drag(
 				function(dx,dy,x,y, e){
 					//on move
-					shape_set.translate(dx - shape_set.x, dy - shape_set.y) ;
-					shape_set.x = dx;
-					shape_set.y = dy;
-					//console.log(x,y, e.layerX, e.layerY,x - blokus.gameboard.paper.canvas.offsetLeft);
+					first_cell = shape_set[0];
+					var tmpx = first_cell.attrs.x + first_cell._.dx + dx - shape_set.dx;
+					var tmpy = first_cell.attrs.y + first_cell._.dy + dy - shape_set.dy;
+					var xMove = 0;
+					var yMove = 0;
+					if (tmpx >= 0) {
+						xMove = dx - shape_set.dx;
+					}
+					if (tmpy >= 0) {
+						yMove = dy - shape_set.dy;
+					}
+
+					shape_set.x = first_cell.attrs.x + first_cell._.dx;
+					shape_set.y = first_cell.attrs.y + first_cell._.dy;
+					shape_set.translate(xMove, yMove);
+					shape_set.dx = dx;
+					shape_set.dy = dy;
+					var offsets = $(gameboard.paper.canvas).position()
+					if (shape_set.x >= gameboard.x &&  
+							shape_set.y >= gameboard.y && 
+							shape_set.x <= gameboard.x + gameboard.width &&
+							shape_set.y <= gameboard.y + gameboard.height){
+						console.log("in");
+					}
+					//console.log(x, y, e.layerX, e.layerY, first_cell.attrs.x + first_cell._.dx, e, shape_set.x, shape_set.y);
 				},
 				function (x, y, e){
 					// on Start
-					shape_set.x = 0;
-					shape_set.y = 0;
+					shape_set.dx = 0;
+					shape_set.dy = 0;
 				}, 
-				null
+				function (x, y, e){
+					//var tmp_x = 290;
+					//var tmp_y = 10;
+					//shape_set.animate({transform: "t"+tmp_x+" "+tmp_y} , 500);
+					//shape_set.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
+				}
 				);
-
+		return shape_set;
 	}
 
 	_(window.blokus).extend({
