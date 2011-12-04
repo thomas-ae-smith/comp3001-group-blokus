@@ -76,7 +76,6 @@
 				for (var j = y, jBoard=0; j<height+y ; j+=cellYSize, jBoard++) {
 					var cell = this.paper.rect(i, j, cellXSize - this.xBorder, cellYSize - this.yBorder);
 					this.board[iBoard][jBoard] = cell;
-					//cell.onDragOver(function (elem){console.log("tmp");});
 					cell.mouseover(function(){this.attr("fill", "#AAA");});
 					cell.mouseout(function(){this.attr("fill", "#GGG")});
 				}
@@ -142,6 +141,7 @@
 		}
 	});
 
+
 	//blokus.pieceMasters.get(3).get("data")
 	function drawPiece (x, y, data, gameboard) {
 		var cellSize = 25;
@@ -159,61 +159,62 @@
 			}
 		}
 		shape_set.drag(
-				function(dx,dy,x,y, e){
-					//on move
-					var bBox = shape_set.getBBox();
-					var xMove = 0;
-					var yMove = 0;
-					var futureX = bBox.x + dx - shape_set.dx -1;
-					var futureY = bBox.y + dy - shape_set.dy;
-					var futureWidth = bBox.x + bBox.width + dx - shape_set.dx + 1;
-					var futureHeigth = bBox.y + bBox.height + dy - shape_set.dy;
-					if ( futureX >= 0 && futureWidth <= $(blokus.gameboard.paper.canvas).attr("width")) {
-						xMove = dx - shape_set.dx;
-					}
-					if ( futureY >= 0 && futureHeigth <= $(blokus.gameboard.paper.canvas).attr("height")) {
-						yMove = dy - shape_set.dy;
-					}
-
-					shape_set.translate(xMove, yMove);
-					shape_set.dx = dx;
-					shape_set.dy = dy;
-					var offsets = $(gameboard.paper.canvas).position()
-					// game board bounds
-					var gbBounds = {
-						sx: gameboard.x,
-						sy: gameboard.y,
-						ex: gameboard.x + gameboard.width,
-						ey:gameboard.y + gameboard.height
-					};
-					if (bBox.x >= gbBounds.sx &&  
-						bBox.y >= gbBounds.sy &&
-						bBox.x <= gbBounds.ex &&
-						bBox.y <= gbBounds.ey) {
-						var cellIndex = {
-							x: Math.floor((bBox.x - gbBounds.sx)/ gameboard.cellXSize),
-							y: Math.floor((bBox.y - gbBounds.sy)/ gameboard.cellYSize),
-						}
-						var cell = gameboard.board[cellIndex.x][cellIndex.y];
-						cell.attr("fill", "#AAA");
-						shape_set.dest_x = cell.attr("x");
-						shape_set.dest_y = cell.attr("y");
-						blokus.log(shape_set.dest_x, shape_set.dest_y, bBox.x, bBox.y);
-					}
-					//console.log(x, y, e.layerX, e.layerY, first_cell.attrs.x + first_cell._.dx, e, shape_set.x, shape_set.y);
-				},
-				function (x, y, e){
-					// on Start
-					shape_set.dx = 0;
-					shape_set.dy = 0;
-				}, 
-				function (x, y, e){
-					var tmp_x = shape_set.dest_x - 50;
-					var tmp_y = shape_set.dest_y - 25;
-					shape_set.animate({transform: "t"+tmp_x+" "+tmp_y} , 500);
-					//shape_set.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
+			function(dx,dy,x,y, e){
+				//on move
+				var bBox = shape_set.getBBox();
+				var xMove = 0;
+				var yMove = 0;
+				var futureX = bBox.x + dx - shape_set.dx -1;
+				var futureY = bBox.y + dy - shape_set.dy;
+				var futureWidth = bBox.x + bBox.width + dx - shape_set.dx + 1;
+				var futureHeigth = bBox.y + bBox.height + dy - shape_set.dy;
+				if ( futureX >= 0 && futureWidth <= $(blokus.gameboard.paper.canvas).attr("width")) {
+					xMove = dx - shape_set.dx;
 				}
-				);
+				if ( futureY >= 0 && futureHeigth <= $(blokus.gameboard.paper.canvas).attr("height")) {
+					yMove = dy - shape_set.dy;
+				}
+				shape_set.translate(xMove, yMove);
+				shape_set.dx = dx;
+				shape_set.dy = dy;
+				var offsets = $(gameboard.paper.canvas).position()
+				// game board bounds
+				var gbBounds = {
+					sx: gameboard.x,
+					sy: gameboard.y,
+					ex: gameboard.x + gameboard.width,
+					ey:gameboard.y + gameboard.height
+				};
+				blokus.log(bBox.y, bBox.height, gameboard.cellYSize, gbBounds.ey);
+				if (bBox.x >= gbBounds.sx &&  
+					bBox.y >= gbBounds.sy &&
+					bBox.x + bBox.width - gameboard.cellXSize < gbBounds.ex &&
+					bBox.y + bBox.height - gameboard.cellYSize < gbBounds.ey) {
+					var cellIndex = {
+						x: Math.floor((bBox.x - gbBounds.sx)/ gameboard.cellXSize),
+						y: Math.floor((bBox.y - gbBounds.sy)/ gameboard.cellYSize),
+					}
+					var cell = gameboard.board[cellIndex.x][cellIndex.y];
+					cell.attr("fill", "#AAA");
+					shape_set.dest_x = cell.attr("x");
+					shape_set.dest_y = cell.attr("y");
+				}
+			},
+			function (x, y, e){
+				// on Start
+				shape_set.dx = 0;
+				shape_set.dy = 0;
+				shape_set.animate({"opacity": 0.5}, 0);
+			}, 
+			function (x, y, e){
+				// on end
+				var tmp_x = shape_set.dest_x - 50;
+				var tmp_y = shape_set.dest_y - 25;
+				shape_set.animate({transform: "t"+tmp_x+" "+tmp_y} , 500);
+				shape_set.animate({"opacity": 1}, 500);
+				//shape_set.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
+			}
+		);
 		return shape_set;
 	}
 
