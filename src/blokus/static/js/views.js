@@ -75,9 +75,10 @@
 				this.board[iBoard] = new Array(numYCells);
 				for (var j = y, jBoard=0; j<height+y ; j+=cellYSize, jBoard++) {
 					var cell = this.paper.rect(i, j, cellXSize - this.xBorder, cellYSize - this.yBorder);
+					cell.attr("fill", "#GGG");
 					this.board[iBoard][jBoard] = cell;
-					cell.mouseover(function(){this.attr("fill", "#AAA");});
-					cell.mouseout(function(){this.attr("fill", "#GGG")});
+					//cell.mouseover(function(){this.attr("fill", "#AAA");});
+					//cell.mouseout(function(){this.attr("fill", "#GGG")});
 				}
 			}
 		}, 
@@ -158,6 +159,7 @@
 				}
 			}
 		}
+		var highlighted_set = gameboard.paper.set();
 		shape_set.drag(
 			function(dx,dy,x,y, e){
 				//on move
@@ -186,6 +188,7 @@
 					ey:gameboard.y + gameboard.height
 				};
 				blokus.log(bBox.y, bBox.height, gameboard.cellYSize, gbBounds.ey);
+				// Check shapes to be in the gameboard
 				if (bBox.x >= gbBounds.sx &&  
 					bBox.y >= gbBounds.sy &&
 					bBox.x + bBox.width - gameboard.cellXSize < gbBounds.ex &&
@@ -194,8 +197,21 @@
 						x: Math.floor((bBox.x - gbBounds.sx)/ gameboard.cellXSize),
 						y: Math.floor((bBox.y - gbBounds.sy)/ gameboard.cellYSize),
 					}
+
+					if (highlighted_set.length != 0){
+						console.log(highlighted_set);
+						highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
+						highlighted_set = gameboard.paper.set();
+					}
+					for (var rowI = 0; rowI < numRows; rowI++){
+						for (var colJ = 0; colJ <= numCols; colJ++) {
+							if (data[rowI][colJ] == 1) {
+								highlighted_set.push(gameboard.board[cellIndex.x+colJ][cellIndex.y+rowI]);
+							}
+						}
+					}
 					var cell = gameboard.board[cellIndex.x][cellIndex.y];
-					cell.attr("fill", "#AAA");
+					highlighted_set.forEach(function (shape) {shape.attr({"fill": "#EEE"})});
 					shape_set.dest_x = cell.attr("x");
 					shape_set.dest_y = cell.attr("y");
 				}
