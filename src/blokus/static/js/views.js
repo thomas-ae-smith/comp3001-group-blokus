@@ -159,7 +159,7 @@
 				}
 			}
 		}
-		shape_set.initIndex = {
+		shape_set.initCoordinates = {
 			x:x,
 			y:y
 		};
@@ -219,8 +219,8 @@
 					shape_set.dest_y = cell.attr("y");
 				}
 				else {
-					shape_set.dest_x = shape_set.initIndex.x;
-					shape_set.dest_y = shape_set.initIndex.y;
+					shape_set.dest_x = shape_set.initCoordinates.x;
+					shape_set.dest_y = shape_set.initCoordinates.y;
 					if (highlighted_set.length != 0){
 						highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 						highlighted_set = gameboard.paper.set();
