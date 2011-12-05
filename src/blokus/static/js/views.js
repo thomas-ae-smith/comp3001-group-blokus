@@ -1,6 +1,34 @@
 // Define the views used by blokus
-(function ($, _, Backbone) {
-	var GameBoard = Backbone.View.extend({
+(function ($, _, Backbone, blokus) {
+	var HelpView = Backbone.View.extend({
+		render: function () {
+			// Use underscore templating.
+			var template = _.template($('#help-template').html());
+			$(this.el).html(template());
+			return this;
+		}
+	});
+
+	var RegisterView = Backbone.View.extend({
+		render: function () {
+			var template = _.template($('#register-template').html());
+			$(this.el).html(template());
+			return this;
+		}
+	});
+
+	var ForgotView = Backbone.View.extend({
+		render: function () {
+			var template = _.template($('#forgot-template').html());
+			$(this.el).html(template());
+			return this;
+		}
+	});
+
+	var ProfileView = Backbone.View.extend({
+	});
+
+	var GameView = Backbone.View.extend({
 		className: "gameboard",
 
 		paper: undefined,
@@ -34,7 +62,7 @@
 			//this.paper.rect(x+5, y+5, width, height).attr("fill", "#AAAAAA");
 			var numXCells = this.numXCells;
 			var numYCells = this.numYCells;
-			
+
 			var cellXSize = width/numXCells; //Size of cell on X axis
 			var cellYSize = height/numYCells; //Size of cell on Y axis
 
@@ -55,12 +83,12 @@
 			*/
 			// Adding the contains function to the rectangles of Raphael
 			_(this.paper.rect.prototype.__proto__).extend(
-				{contains: function (x, y) { 
+				{contains: function (x, y) {
 								var startX = this.attrs.x;
 								var startY = this.attrs.y;
 								var endX = this.attrs.x + this.attrs.width;
 								var endY = this.attrs.y + this.attrs.height;
-								if (x >= startX && y >= startY && 
+								if (x >= startX && y >= startY &&
 										x <= endX && y <= endY){
 									return true;
 								}
@@ -81,31 +109,52 @@
 					//cell.mouseout(function(){this.attr("fill", "#GGG")});
 				}
 			}
-		}, 
+		},
 
 		render: function () {
-			var this_ = this;
+			var this_ = this,
+				loading = $('<div class="loading"></div>');
 			// Reset element
-			$(this.el).html("");
+			$(this.el).html("").append(loading);
 
-			// Make the Raphael element 800 x 600 in this view
-			this.paper = Raphael(this.el, 800, 600);
+			this.game = new blokus.Game({ id: this.options.id });
 
-			// Player list with pieces
-			var y = 30;
-			this.options.game.get("players").each(function (player) {
-				var user = blokus.users.get(player.get("userId"));
-				this_.drawPlayer(10, y, user.toJSON());
-				y += 120;
+			// Get information about the game
+			this.game.fetch({
+				success: function () {
+					loading.fadeOut(200, function () { loading.remove(); });
+
+					// Make the Raphael element 800 x 600 in this view
+					this_.paper = Raphael(this_.el, 800, 600);
+
+					// Player list with pieces
+					var y = 30;
+					this_.game.get("players").each(function (player) {
+						var user = blokus.users.get(player.get("userId"));
+						this_.drawPlayer(10, y, user.toJSON());
+						y += 120;
+					});
+
+					this_.drawBoard(290, 10, 500, 500);
+				},
+				error: function (model, response) {
+					var msg = '';
+					if (response.status === 404) {
+						loading.fadeOut(200, function () { loading.remove(); });
+						msg = "This game does not exist";
+					} else {
+						msg = response.responseText || "An error occured";
+					}
+					$(this_.el).html('<div class="error">' + msg + '</div>');
+				}
 			});
 
-			this.drawBoard(290, 10, 500, 500);
 
 			return this;
 		}
 	});
 
-	var GameList = Backbone.View.extend({
+	var LobbyView = Backbone.View.extend({
 		tagName: "url",
 		className: "lobbylist",
 
@@ -122,9 +171,9 @@
 
 			// Render li tag for each game
 			$.fn.append.apply($el, this.options.games.map(function (game) {
-				var $item = this_.$items[game.get("id")] = $('<li><a href="javascript:;">' + 
+				var $item = this_.$items[game.get("id")] = $('<li><a href="javascript:;">' +
 					game.get("name") + '</a></li>');
-				
+
 				$item.click(function () {
 					this_.selectItem(game);
 				});
@@ -193,7 +242,7 @@
 					ey:gameboard.y + gameboard.height
 				};
 				// Check shapes to be in the gameboard
-				if (bBox.x >= gbBounds.sx &&  
+				if (bBox.x >= gbBounds.sx &&
 					bBox.y >= gbBounds.sy &&
 					bBox.x + bBox.width - gameboard.cellXSize < gbBounds.ex &&
 					bBox.y + bBox.height - gameboard.cellYSize < gbBounds.ey) {
@@ -232,7 +281,7 @@
 				shape_set.dx = 0;
 				shape_set.dy = 0;
 				shape_set.animate({"opacity": 0.5}, 0);
-			}, 
+			},
 			function (x, y, e){
 				// on end
 				var tmp_x = shape_set.dest_x - 50;
@@ -245,9 +294,13 @@
 		return shape_set;
 	}
 
-	_(window.blokus).extend({
-		GameBoard: GameBoard,
-		GameList: GameList,
+	_(blokus).extend({
+		HelpView: HelpView,
+		RegisterView: RegisterView,
+		ForgotView: ForgotView,
+		ProfileView: ProfileView,
+		GameView: GameView,
+		LobbyView: LobbyView,
 		drawPiece: drawPiece,
 	});
-}(jQuery, _, Backbone));
+}(jQuery, _, Backbone, blokus));

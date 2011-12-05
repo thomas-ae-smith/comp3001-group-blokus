@@ -2,8 +2,8 @@
 (function ($, _, Backbone) {
 	var Model = Backbone.Model.extend({
 		url : function () {
-            if (this.get('resource_uri')) {
-                return this.get('resource_uri');
+            if (this.resourceUrl) {
+	            return this.resourceUrl + (this.id ? this.id + "/" : "");
             } else if (this.collection) {
                 return this.collection.url + this.id + "/";
             } else {
@@ -12,53 +12,33 @@
         }
 	});
 	var User = Model.extend({
-			defaults: {
-				id: undefined,
-				name: undefined
-			}
+			resourceUrl: blokus.urls.user
 		}),
 
 		UserProfile = Model.extend({
-			defaults: {
-				userId: undefined,
-				wins: undefined,
-				losses: undefined
-			}
+			resourceUrl: blokus.urls.userProfile
 		}),
 
 		Game = Model.extend({
-			defaults: {
-				id: undefined,
-				playerIds: undefined,
-				colourTurn: undefined // Colour whose turn it is
+			resourceUrl: blokus.urls.game,
+
+			// Hacked in bootstrap, baby
+			fetch: function (options) {
+				this.set(blokus.games.at(0).toJSON());
+				options.success.call();
 			}
 		}),
 
 		PieceMaster = Model.extend({
-			defaults: {
-				id: undefined,
-				data: undefined
-			}
+			resourceUrl: blokus.urls.pieceMaster
 		}),
 
 		Piece = Model.extend({
-			defaults: {
-				id: undefined,
-				x: undefined,
-				y: undefined,
-				rotation: undefined,
-				flip: undefined
-			}
 		}),
 
 		Player = Model.extend({
-			defaults: {
-				id: undefined,
-				userId: undefined,
-				colours: undefined
-			}
 		});
-	
+
 	_(window.blokus).extend({
 		User: User,
 		UserProfile: UserProfile,

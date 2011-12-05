@@ -21,7 +21,7 @@
 		<script src="{{ STATIC_URL }}js/models.js"></script>
 		<script src="{{ STATIC_URL }}js/collections.js"></script>
 		<script src="{{ STATIC_URL }}js/views.js"></script>
-		
+
 		{% block extrajs %}{% endblock %}
 	</head>
 	<body>
@@ -64,6 +64,50 @@
 					<li><a href="#" onclick="signOut()">Sign Out</a></li>
 				</ul>
 			</div>
+		</div>
+		<div class="templates">
+			<script type="text/html" id="lobby-template">
+			</script>
+			<script type="text/html" id="game-template">
+			</script>
+			<script type="text/html" id="help-template">
+				<h2>How to play blokus</h2>
+				<p>Blokus is a 2 or 4 player game which.... yada yada</p>
+			</script>
+			<script type="text/html" id="register-template">
+				<h2>Register</h2>
+				<p>We just need a few details and you'll be on your way!</p>
+				<form>
+					<label for="username">Username:</label>
+						<input type="text" name="username" placeholder="username">
+					<label for="email">Email address:</label>
+						<input type="email" name="email" placeholder="email address">
+					<label for="password1">Password:</label>
+						<input type="password" name="password1" placeholder="password">
+					<label for="password2">Confirm password:</label>
+						<input type="password" name="password2" placeholder="confirm password">
+					<input type="submit">
+				</form>
+			</script>
+			<script type="text/html" id="forgot-template">
+				<h2>Forgot your password</h2>
+				<p>Enter your email address below to recieve a new password [or whatever mechanism we'll use]</p>
+				<form>
+					<input type="email" placeholder="email address">
+					<input type="submit">
+				</form>
+			</script>
+			<script type="text/html" id="profile-template">
+				<h2><%= username %>'s profile</h2>
+				<dl>
+					<dt>Joined</dt><dd><%= joined %></dd>
+					<dt>Wins</dt><dd><%= wins %></dd>
+					<dt>Losses</dt><dd><%= losses %></dd>
+				</dl>
+				<% if (username === blip.user.get("username")) { %>
+					<input type="button" value="Edit">
+				<% } %>
+			</script>
 		</div>
 	</body>
 </html>
