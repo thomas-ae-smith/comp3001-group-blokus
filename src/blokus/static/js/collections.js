@@ -18,7 +18,7 @@
 			model: blokus.Game,
 			url: blokus.urls.game
 		}),
-		
+
 		PieceMasterCollection = Collection.extend({
 			model: blokus.PieceMaster,
 			url: blokus.urls.pieceMaster
@@ -33,7 +33,7 @@
 			model: blokus.Player,
 			url: blokus.urls.player
 		});
-	
+
 	// Define the collection of piece masters
 	var pieceMasters = new PieceMasterCollection();
 
