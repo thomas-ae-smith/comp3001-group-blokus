@@ -12,6 +12,23 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			userProfile: restRootUrl + "userProfile/",
 			game: restRootUrl + "game/",
 			pieceMaster: restRootUrl + "piece-master/"
+		},
+
+		keyDownMappings = {},
+		keyUpMappings = {},
+
+		mapKeyDown = function (keyCode, callback) {
+			if (!keyDownMappings.hasOwnProperty(keyCode)) {
+				keyDownMappings[keyCode] = [];
+			}
+			keyDownMappings[keyCode].push(callback);
+		},
+
+		mapKeyUp = function (keyCode, callback) {
+			if (!keyUpMappings.hasOwnProperty(keyCode)) {
+				keyUpMappings[keyCode] = [];
+			}
+			keyUpMappings[keyCode].push(callback);
 		};
 
 	// Ensure HTML 5 elements are styled by IE
@@ -118,13 +135,27 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 		// When window loads or is resized, Set profile/login panel position to below button 
 		$(window).bind("resize load", positionProfileMenu);
 
+		$(window).keyup(function (e) {
+			blokus.log("Key up. Key code: " + e.keyCode);
+			if (keyUpMappings.hasOwnProperty(e.keyCode)) {
+				_(keyUpMappings[e.keyCode]).each(function (f) { f.call() });
+			}
+		}).keydown(function (e) {
+			blokus.log("Key down. Key code: " + e.keyCode);
+			if (keyDownMappings.hasOwnProperty(e.keyCode)) {
+				_(keyDownMappings[e.keyCode]).each(function (f) { f.call() });
+			}
+		});
+
 	});
 
 	return {
 		DEBUG: DEBUG,
 		log: function () { if (DEBUG) console.log.apply(console, arguments); },
 		error: function () { if (DEBUG) console.error.apply(console, arguments); },
-		urls: urls
+		urls: urls,
+		mapKeyUp: mapKeyUp,
+		mapKeyDown: mapKeyDown
 	};
 
 }(jQuery, _, Backbone, Raphael));
