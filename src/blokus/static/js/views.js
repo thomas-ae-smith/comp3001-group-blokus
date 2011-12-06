@@ -19,8 +19,9 @@
 
 
 		drawPlayer: function (x, y, player) {
+			var user = blokus.users.get(player.userId).toJSON();
 			this.paper.rect(x, y, 250, 110, 5).attr("fill", "#E3EEF2");
-			this.paper.text(x + 8, y + 10, player.name).attr({
+			this.paper.text(x + 8, y + 10, user.name + " (" + player.colours.join(", ") + ")").attr({
 				"text-anchor": "start",
 				"font-family": "Tahoma",
 				"font-weight": "bold",
@@ -94,8 +95,7 @@
 			// Player list with pieces
 			var y = 30;
 			this.options.game.get("players").each(function (player) {
-				var user = blokus.users.get(player.get("userId"));
-				this_.drawPlayer(10, y, user.toJSON());
+				this_.drawPlayer(10, y, player.toJSON());
 				y += 120;
 			});
 
