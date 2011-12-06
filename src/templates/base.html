@@ -29,28 +29,29 @@
 		{% block header %}
 		<header>
 			<div>
-				<img id="logo" src="{{ STATIC_URL }}img/logo.png" alt="Blokus Logo"/>
-				<a href="#" onmouseover="showProfileMenu()" onmouseout="hideProfileMenu()" id="profileButton">Sign in ▾</a>
+				<a href="#"><img id="logo" src="{{ STATIC_URL }}img/logo.png" alt="Blokus Logo"/></a>
+				<a href="javascript:;" id="profileButton">Sign in ▾</a>
 				<nav>
-					{% block navbuttons %}
-					{% endblock %}
+					<a href="#help" class="button">Help</a>
+					<a href="#" class="button">Quit</a>
 				</nav>
 			</div>
 		</header>
 		{% endblock %}
-		<div id="container">
-			{% block content %}
-			{% endblock %}
-		</div>
-		<div id="profileMenu" onmouseover="showProfileMenu()" onmouseout="hideProfileMenu()">
+
+		<div id="container"></div>
+
+		<div id="profileMenu">
 			<div id="signedOutMenu">
-				Username<br/>
-				<input type="text" id="loginUsername" /><br/>
-				Password<br/>
-				<input type="password" id="loginPassword" /><br/><br/>
-				<a href="#">Forgot?</a>
-				<a href="#">Register</a>
-				<a href="#" class="button" onclick="signIn('zanders3')">Sign in</a>
+				<form>
+					Username<br/>
+					<input type="text" id="loginUsername" /><br/>
+					Password<br/>
+					<input type="password" id="loginPassword" /><br/><br/>
+					<a href="#forgot">Forgot?</a>
+					<a href="#register">Register</a>
+					<input id="signin-button" type="submit" value="Sign in">
+				</form>
 			</div>
 			<div id="signedInMenu">
 				<div class="clearfix">
@@ -62,20 +63,21 @@
 				</div>
 				<ul class="menu">
 					<li><a href="#">Settings</a></li>
-					<li><a href="#" onclick="signOut()">Sign Out</a></li>
+					<li><a href="javascript:;" id="signout-button">Sign Out</a></li>
 				</ul>
 			</div>
 		</div>
+
 		<div class="templates">
 			<script type="text/html" id="lobby-template">
 				<h2>Welcome!</h2>
 				<p>Please select a game mode:</p>
 				<p><a href="#game/1">[test game]</a></p>
 				<ul class="modelist">
-					<li><a href="#" onclick="selectMode(0);">Quick Play</a></li>
-					<li><a href="#" onclick="selectMode(1);">2 Players</a></li>
-					<li><a href="#" onclick="selectMode(2);">3 Players</a></li>
-					<li id="privatebutton"><a href="#" onclick="selectMode(3);">Private</a></li>
+					<li><a href="javascript:;">Quick Play</a></li>
+					<li><a href="javascript:;">2 Players</a></li>
+					<li><a href="javascript:;">4 Players</a></li>
+					<li id="privatebutton"><a href="javascript:;">Private</a></li>
 				</ul>
 				<div id="privatelobby" class="clearfix">
 					<ul class="lobbylist">
@@ -126,5 +128,6 @@
 				<% } %>
 			</script>
 		</div>
+
 	</body>
 </html>
