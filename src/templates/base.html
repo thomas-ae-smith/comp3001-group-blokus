@@ -11,6 +11,7 @@
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/lobby.css" type="text/css"/>
 		{% block extracss %}{% endblock %}
 		<script src="{{ STATIC_URL }}js/jquery.js"></script>
 		<script src="{{ STATIC_URL }}js/raphael.js"></script>
@@ -67,6 +68,22 @@
 		</div>
 		<div class="templates">
 			<script type="text/html" id="lobby-template">
+				<h2>Welcome!</h2>
+				<p>Please select a game mode:</p>
+				<p><a href="#game/1">[test game]</a></p>
+				<ul class="modelist">
+					<li><a href="#" onclick="selectMode(0);">Quick Play</a></li>
+					<li><a href="#" onclick="selectMode(1);">2 Players</a></li>
+					<li><a href="#" onclick="selectMode(2);">3 Players</a></li>
+					<li id="privatebutton"><a href="#" onclick="selectMode(3);">Private</a></li>
+				</ul>
+				<div id="privatelobby" class="clearfix">
+					<ul class="lobbylist">
+						<li>zanders3</li>
+					</ul>
+					<a href="#">Join URL</a>: Send this to your friends!<br/></br/>
+					Waiting for players to join...<a href="#" class="button">Start Game</a>
+				</div>
 			</script>
 			<script type="text/html" id="game-template">
 			</script>

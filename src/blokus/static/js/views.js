@@ -28,6 +28,14 @@
 	var ProfileView = Backbone.View.extend({
 	});
 
+	var LobbyView = Backbone.View.extend({
+		render: function () {
+			var template = _.template($('#lobby-template').html());
+			$(this.el).html(template());
+			return this;
+		}
+	});
+
 	var GameView = Backbone.View.extend({
 		className: "gameboard",
 
@@ -153,44 +161,6 @@
 			return this;
 		}
 	});
-
-	var LobbyView = Backbone.View.extend({
-		tagName: "url",
-		className: "lobbylist",
-
-		$items: undefined,
-
-		render: function () {
-			var this_ = this,
-				$el = $(this.el);
-
-			this.$items = [];
-
-			// Reset element
-			$el.html("");
-
-			// Render li tag for each game
-			$.fn.append.apply($el, this.options.games.map(function (game) {
-				var $item = this_.$items[game.get("id")] = $('<li><a href="javascript:;">' +
-					game.get("name") + '</a></li>');
-
-				$item.click(function () {
-					this_.selectItem(game);
-				});
-
-				return $item;
-			}));
-
-			return this;
-		},
-
-		selectItem: function (game) {
-			var $item = this.$items[game.get("id")];
-			$item.find("a").addClass("sel");
-			$item.siblings().find("a").removeClass("sel");
-		}
-	});
-
 
 	//blokus.pieceMasters.get(3).get("data")
 	function drawPiece (x, y, data, gameboard) {
