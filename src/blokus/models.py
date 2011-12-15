@@ -65,11 +65,13 @@ class Piece(models.Model):
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
-		return bitmap
+		if self.flip:
+			bitmap = _transpose_bitmap(bitmap)
+		return _rotate_bitmap(bitmap, self.rotation)
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
 		self.flip = not self.flip
-		self.rotation = self.rotate(horizontal)
+		self.rotate(horizontal)
 
 	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
