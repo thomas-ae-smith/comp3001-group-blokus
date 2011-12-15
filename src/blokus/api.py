@@ -5,6 +5,15 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.validation import CleanedDataFormValidation
 from django.forms import ModelForm, ValidationError
+from django.core import serializers
+
+
+class PieceMasterResource(ModelResource):
+	class Meta:
+		queryset = PieceMaster.objects.all()
+		resource_name = 'piecemaster'
+		allowed_methods = ['get']
+		authorization = Authorization()
 
 class UserResource(ModelResource):
 	class Meta:
@@ -14,17 +23,27 @@ class UserResource(ModelResource):
 		allowed_methods = ['get','put']
 		authorization = Authorization()
 
+
 class GameResource(ModelResource):
+	players = fields.ToManyField('blokus.api.PlayerResource', 'player_set', full=True)
 	class Meta:
 		queryset = Game.objects.all()
 		resource_name = 'game'
 		allowed_methods = ['get']
+		authorization = Authorization()
 
-class PieceMasterResource(ModelResource):
+
+
+class PlayerResource(ModelResource):
+	game = fields.ForeignKey(GameResource, 'game')
+	pieces = fields.ToManyField('blokus.api.PieceResource', 'piece_set', full=True)
+	
 	class Meta:
-		queryset = PieceMaster.objects.all()
-		resource_name = 'piecemaster'
+		queryset = Player.objects.all()
+		resource_name = 'player'
 		allowed_methods = ['get']
+		authorization = Authorization()
+
 
 class PieceForm(ModelForm):
 	class Meta:
@@ -38,22 +57,15 @@ class PieceForm(ModelForm):
 		return cleaned_data
 
 class PieceResource(ModelResource):
+	player = fields.ForeignKey(PlayerResource, 'player')
+
 	class Meta:
 		queryset = Piece.objects.all()
 		resource_name = 'piece'
 		allowed_methods = ['get']
 		validation = CleanedDataFormValidation(form_class=PieceForm)
+		authorization = Authorization()
 
-	def obj_create(self, bundle, request=None, **kwargs):
-		if bundle.obj.player.user != request.user:
-			return False
-		return super(PieceResource, self).obj_create(bundle, request, user=request.user)
-
-class PlayerResource(ModelResource):
-	class Meta:
-		queryset = Player.objects.all()
-		resource_name = 'player'
-		allowed_methods = ['get']
 
 
 
