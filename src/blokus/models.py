@@ -16,9 +16,9 @@ class Game(models.Model):
 		for player in players:
 			pieces = player.piece_set.all()
 			for piece in pieces:
-				piece_tuple = piece.get_bitmap()
-				for row_number, row_data in enumerate(piece_tuple):
-					for column_number, cell in enumerate(row_data)
+				piece_bitmap = piece.get_bitmap()
+				for row_number, row_data in enumerate(piece_bitmap):
+					for column_number, cell in enumerate(row_data):
 						grid[piece.x+column_number][piece.y+row_number] = cell
 		return grid
 
@@ -85,6 +85,15 @@ class Piece(models.Model):
 
 	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
+
+	def is_valid_position(self):
+		grid = self.player.game.get_grid()
+		piece_bitmap = self.get_bitmap()
+		for row_number, row_data in enumerate(piece_bitmap):
+			for column_number, cell in enumerate(row_data):
+				if grid[piece.x+column_number][piece.y+row_number]:
+					return false
+		return true
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.

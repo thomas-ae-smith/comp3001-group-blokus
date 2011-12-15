@@ -32,7 +32,10 @@ class PieceForm(ModelForm):
 
 	def clean(self):
 		cleaned_data = self.cleaned_data
-        return cleaned_data
+		piece = self.save(commit=False)
+		if not piece.is_valid_position():
+			raise ValidationError("Not a valid move")
+		return cleaned_data
 
 class PieceResource(ModelResource):
 	class Meta:
