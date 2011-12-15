@@ -1,10 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator, RegexValidator
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
 from datetime import datetime
 from blokus.common import *
-
 
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
