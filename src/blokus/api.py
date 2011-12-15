@@ -30,6 +30,11 @@ class PieceResource(ModelResource):
 		resource_name = 'piece'
 		allowed_methods = ['get']
 
+	def obj_create(self, bundle, request=None, **kwargs):
+		if bundle.obj.player.user != request.user:
+			return False
+        return super(PieceResource, self).obj_create(bundle, request, user=request.user)
+
 class PlayerResource(ModelResource):
 	class Meta:
 		queryset = Player.objects.all()

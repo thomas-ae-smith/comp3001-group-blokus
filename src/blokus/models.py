@@ -1,4 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator, RegexValidator
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from django.db import models
 from datetime import datetime
 
@@ -35,23 +37,20 @@ class PieceMaster(models.Model):
 				elif letter == 'F':
 					rowlist.append(False)
 			tup.append(tuple(rowlist))
-		return tuple(tup)
+		return tupl
+
 
 class UserProfile(models.Model):
-	name = models.CharField(max_length=30)
-
+	user = models.OneToOneField(User)
 	wins = models.IntegerField()
 	losses = models.IntegerField()
-
-	#def __init__(self, name, password):
-	#Currently accepts 'master' with any username so functions can be worked on before authentication is implemented.
 
 _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
 	game = models.ForeignKey(Game)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
-	user = models.ForeignKey(UserProfile)
+	user = models.ForeignKey(User)
 
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
@@ -87,3 +86,9 @@ def transpose_bitmap(bitmap):
 		transposed_bitmap.append(tuple(transposed_row))
 
 	return transposed_bitmap
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+post_save.connect(create_user_profile, sender=User)
