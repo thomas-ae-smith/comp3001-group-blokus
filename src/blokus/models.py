@@ -92,8 +92,8 @@ class Piece(models.Model):
 		for row_number, row_data in enumerate(piece_bitmap):
 			for column_number, cell in enumerate(row_data):
 				if grid[piece.x+column_number][piece.y+row_number]:
-					return false
-		return true
+					return False
+		return True
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
