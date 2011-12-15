@@ -3,6 +3,8 @@ from blokus.models import *
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
+from tastypie.validation import CleanedDataFormValidation
+from django.forms import ModelForm, ValidationError
 
 class UserResource(ModelResource):
 	class Meta:
@@ -24,16 +26,25 @@ class PieceMasterResource(ModelResource):
 		resource_name = 'piecemaster'
 		allowed_methods = ['get']
 
+class PieceForm(ModelForm):
+	class Meta:
+		model = Piece
+
+	def clean(self):
+		cleaned_data = self.cleaned_data
+        return cleaned_data
+
 class PieceResource(ModelResource):
 	class Meta:
 		queryset = Piece.objects.all()
 		resource_name = 'piece'
 		allowed_methods = ['get']
+		validation = CleanedDataFormValidation(form_class=PieceForm)
 
 	def obj_create(self, bundle, request=None, **kwargs):
 		if bundle.obj.player.user != request.user:
 			return False
-        return super(PieceResource, self).obj_create(bundle, request, user=request.user)
+		return super(PieceResource, self).obj_create(bundle, request, user=request.user)
 
 class PlayerResource(ModelResource):
 	class Meta:

@@ -9,8 +9,19 @@ class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
+	
+	def get_grid(self):
+		grid = [[False]*20 for x in xrange(20)]
+		players = self.player_set.all()
+		for player in players:
+			pieces = player.piece_set.all()
+			for piece in pieces:
+				piece_tuple = piece.get_bitmap()
+				for row_number, row_data in enumerate(piece_tuple):
+					for column_number, cell in enumerate(row_data)
+						grid[piece.x+column_number][piece.y+row_number] = cell
+		return grid
 
-	#def place_piece(self, piece):	#Places a piece and returns TRUE if the placement is valued, otherwise returns FALSE.
 
 	def _validate_placement(self, piece):	#Returns TRUE if the placement is valid, FALSE otherwise.
 		return (
@@ -42,15 +53,28 @@ class PieceMaster(models.Model):
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
-	wins = models.IntegerField()
-	losses = models.IntegerField()
+	wins = models.IntegerField(default=0)
+	losses = models.IntegerField(default=0)
+
+
 
 _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
-	game = models.ForeignKey(Game)
+
+	status_choices = (
+		('offline','Offline'),
+		('ingame','In game'),
+		('looking_for_any','Looking for any game'),
+		('looking_for_2','Looking for 2 player game'),
+		('looking_for_4','Looking for 4 player game'),
+		('private','In private lobby'),
+	)
+
+	game = models.ForeignKey(Game,null=True)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	user = models.ForeignKey(User)
+	status = models.CharField(max_length=255,choices=status_choices)
 
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
@@ -88,7 +112,7 @@ def transpose_bitmap(bitmap):
 	return transposed_bitmap
 
 def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
+	if created:
+		UserProfile.objects.create(user=instance)
 
 post_save.connect(create_user_profile, sender=User)
