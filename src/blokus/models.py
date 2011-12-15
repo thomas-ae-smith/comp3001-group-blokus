@@ -60,6 +60,7 @@ class UserProfile(models.Model):
 
 _colour_regex = r"^(red|yellow|green|blue)$"
 
+
 class Player(models.Model):
 
 	status_choices = (
@@ -91,7 +92,7 @@ class Piece(models.Model):
 		piece_bitmap = self.get_bitmap()
 		for row_number, row_data in enumerate(piece_bitmap):
 			for column_number, cell in enumerate(row_data):
-				if grid[piece.x+column_number][piece.y+row_number]:
+				if grid[piece.x+column_number][piece.y+row_number] and cell:
 					return False
 		return True
 

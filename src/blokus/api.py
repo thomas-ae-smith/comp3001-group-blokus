@@ -14,6 +14,12 @@ class UserResource(ModelResource):
 		allowed_methods = ['get','put']
 		authorization = Authorization()
 
+	def dispatch(self, request_type, request, **kwargs):
+		print kwargs
+		kwargs['pieces'] = PieceMaster.objects.all()
+		return super(UserResource, self).dispatch(request_type, request, **kwargs)
+
+
 class GameResource(ModelResource):
 	class Meta:
 		queryset = Game.objects.all()
@@ -43,11 +49,6 @@ class PieceResource(ModelResource):
 		resource_name = 'piece'
 		allowed_methods = ['get']
 		validation = CleanedDataFormValidation(form_class=PieceForm)
-
-	def obj_create(self, bundle, request=None, **kwargs):
-		if bundle.obj.player.user != request.user:
-			return False
-		return super(PieceResource, self).obj_create(bundle, request, user=request.user)
 
 class PlayerResource(ModelResource):
 	class Meta:
