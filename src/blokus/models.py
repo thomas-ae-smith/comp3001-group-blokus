@@ -105,4 +105,4 @@ def _transpose_bitmap(bitmap):
 					[col]
 				)
 		transposed_bitmap.append(tuple(transposed_row))
-	return _transpose_bitmap(tuple(transposed_bitmap))
+	return transposed_bitmap
