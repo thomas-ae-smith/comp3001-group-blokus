@@ -1,6 +1,9 @@
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator, RegexValidator
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from datetime import datetime
+from blokus.common import *
 
 
 class Game(models.Model):
@@ -8,19 +11,18 @@ class Game(models.Model):
 	game_type = models.IntegerField()
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 
-	#def place_piece(self, piece):	#Places a piece and returns TRUE if the placement is valued, otherwise returns FALSE.
+	def get_grid(self):
+		grid = [[False]*20 for x in xrange(20)]
+		players = self.player_set.all()
+		for player in players:
+			pieces = player.piece_set.all()
+			for piece in pieces:
+				piece_bitmap = piece.get_bitmap()
+				for row_number, row_data in enumerate(piece_bitmap):
+					for column_number, cell in enumerate(row_data):
+						grid[piece.x+column_number][piece.y+row_number] = cell
+		return grid
 
-	def _validate_placement(self, piece):	#Returns TRUE if the placement is valid, FALSE otherwise.
-		return (
-			self._not_obstructed(piece) and
-			self._adjacent_to_same_colour(piece)
-		)
-
-	def _not_obstructed(self, piece):	#Skeletal function
-		return true
-
-	def _adjacent_to_same_colour(self, piece):	#Skeletal function
-		return true
 
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Repretented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
@@ -38,20 +40,30 @@ class PieceMaster(models.Model):
 		return tuple(tup)
 
 class UserProfile(models.Model):
-	name = models.CharField(max_length=30)
 
+	status_choices = (
+		('offline','Offline'),
+		('ingame','In game'),
+		('looking_for_any','Looking for any game'),
+		('looking_for_2','Looking for 2 player game'),
+		('looking_for_4','Looking for 4 player game'),
+		('private','In private lobby'),
+	)
+
+
+	user = models.OneToOneField(User)
+	status = models.CharField(max_length=255,choices=status_choices)
 	wins = models.IntegerField()
 	losses = models.IntegerField()
 
-	#def __init__(self, name, password):
-	#Currently accepts 'master' with any username so functions can be worked on before authentication is implemented.
+
 
 _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
 	game = models.ForeignKey(Game)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
-	user = models.ForeignKey(UserProfile)
+	user = models.ForeignKey(User)
 
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
@@ -62,6 +74,15 @@ class Piece(models.Model):
 
 	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
+
+	def is_valid_position(self):
+		grid = self.player.game.get_grid()
+		piece_bitmap = self.get_bitmap()
+		for row_number, row_data in enumerate(piece_bitmap):
+			for column_number, cell in enumerate(row_data):
+				if grid[piece.x+column_number][piece.y+row_number] and cell:
+					return False
+		return True
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
@@ -79,30 +100,3 @@ class Piece(models.Model):
 			self.rotation = (self.rotation + 1) % 4
 		else:
 			self.rotation = (self.rotation - 1) % 4
-
-def _rotate_bitmap(bitmap, times):
-	if (times % 4) > 0:
-		rotated_bitmap = []
-		for row in range(len(bitmap[0])):
-			rotated_row = []
-			for col in range(len(bitmap)):
-				rotated_row.append(
-					bitmap[len(bitmap) - 1 - col][row]
-					)
-			rotated_bitmap.append(tuple(rotated_row))
-		return _rotate_bitmap(rotated_bitmap, times - 1)
-	else:
-		return tuple(bitmap)
-
-def _transpose_bitmap(bitmap):
-	transposed_bitmap = []
-	for col in range(len(bitmap[0])):
-		transposed_row = []
-		for row in range(len(bitmap)):
-			transposed_row.append(
-				bitmap
-					[row]
-					[col]
-				)
-		transposed_bitmap.append(tuple(transposed_row))
-	return tuple(transposed_bitmap)
