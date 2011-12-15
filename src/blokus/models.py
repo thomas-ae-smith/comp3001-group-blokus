@@ -77,27 +77,30 @@ class Piece(models.Model):
 		else:
 			self.rotation = (self.rotation - 1) % 4
 
-def _transpose_bitmap(bitmap):
-	transposed_bitmap = []
-
-	for row in range(0, len(bitmap)):
-		transposed_row = []
-		for col in range(0, len(bitmap[0])):
-			transposed_row.append(bitmap[col][row])
-		transposed_bitmap.append(tuple(transposed_row))
-
-	return transposed_bitmap
-
 def _rotate_bitmap(bitmap, times):
-	rotated_bitmap = bitmap
-	for time in range(times):
-		for row in range(len(rotated_bitmap)):
+	if (times % 4) > 0:
+		rotated_bitmap = []
+		for row in range(len(bitmap[0])):
 			rotated_row = []
-			for col in range(len(rotated_bitmap[0])):
+			for col in range(len(bitmap)):
 				rotated_row.append(
-					bitmap
-						[(row + len(rotated_bitmap[0])) % len(rotated_bitmap)]
-						[(col + len(rotated_bitmap)) % len(rotated_bitmap[0])]
+					bitmap[len(bitmap) - 1 - col][row]
 					)
 			rotated_bitmap.append(tuple(rotated_row))
-	return rotated_bitmap
+		return _rotate_bitmap(rotated_bitmap, times - 1)
+	else:
+		return bitmap
+
+def _transpose_bitmap(bitmap):
+	transposed_bitmap = []
+	for col in range(len(bitmap[0])):
+		transposed_row = []
+		for row in range(len(bitmap)):
+			print row, col
+			transposed_row.append(
+				bitmap
+					[row]
+					[col]
+				)
+		transposed_bitmap.append(tuple(transposed_row))
+	return _transpose_bitmap(tuple(transposed_bitmap))
