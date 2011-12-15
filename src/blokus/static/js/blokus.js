@@ -1,53 +1,34 @@
-﻿var showProfileMenu = function() {
-	$("#profileMenu").show();
-	$("#profileButton").addClass("sel");
-}
-
-var hideProfileMenu = function() {
-	$("#profileMenu").hide();
-	$("#profileButton").removeClass("sel");
-}
-
-var signIn = function(name) {
-	$("#signedOutMenu").hide();
-	$("#signedInMenu").show();
-	$("#profileButton").html(name + " ▾");
-	positionProfileMenu();
-	showProfileMenu();
-}
-
-var signOut = function() {
-	$("#signedInMenu").hide();
-	$("#signedOutMenu").show();
-	$("#profileButton").html("Sign in  ▾");
-	positionProfileMenu();
-	showProfileMenu();
-}
-
-//Position the profile menu underneath the profile button
-var positionProfileMenu = function() {
-	var profileButton = $("#profileButton");
-	var buttonOffset = profileButton.offset();
-	$("#profileMenu").css({
-		'left': buttonOffset.left - $("#profileMenu").outerWidth() + profileButton.outerWidth(),
-		'top': buttonOffset.top + profileButton.outerHeight()
-	});
-}
-
-// Create the blokus core module
+﻿// Create the blokus core module
 window.blokus = (function ($, _, Backbone, Raphael) {
+	"use strict";
 
 	var DEBUG = true,
-		
+
 		// URLs for REST
 		restRootUrl = "/api/rest/",
 
 		urls = {
 			user: restRootUrl + "user/",
+			userProfile: restRootUrl + "userProfile/",
 			game: restRootUrl + "game/",
-			pieceMaster: restRootUrl + "piece-master/",
-			piece: restRootUrl + "piece/",
-			player: restRootUrl + "player/"
+			pieceMaster: restRootUrl + "piece-master/"
+		},
+
+		keyDownMappings = {},
+		keyUpMappings = {},
+
+		mapKeyDown = function (keyCode, callback) {
+			if (!keyDownMappings.hasOwnProperty(keyCode)) {
+				keyDownMappings[keyCode] = [];
+			}
+			keyDownMappings[keyCode].push(callback);
+		},
+
+		mapKeyUp = function (keyCode, callback) {
+			if (!keyUpMappings.hasOwnProperty(keyCode)) {
+				keyUpMappings[keyCode] = [];
+			}
+			keyUpMappings[keyCode].push(callback);
 		};
 
 	// Ensure HTML 5 elements are styled by IE
@@ -56,78 +37,116 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 	document.createElement('section');
 	document.createElement('article');
 	document.createElement('aside');
-	
+
+
 	$(document).ready(function () {
-	
-		positionProfileMenu();
-		
-		// TEMP: Hard coded players
-		var users = new blokus.UserCollection([
-			{ id: 10, name: "zanders3" },
-			{ id: 11, name: "timzo" },
-			{ id: 12, name: "bob" },
-			{ id: 13, name: "superzico" },
-		]);
 
-		var games = new blokus.GameCollection([
-			{ 
-				id: 0,
-				name: "game 1",
-				selected: true,
-				colourTurn: "red",
-				players: new blokus.PlayerCollection([
-					{ id: 0, userId: 10, colours: [ "red" ] },
-					{ id: 1, userId: 13, colours: [ "green" ] },
-					{ id: 2, userId: 12, colours: [ "blue" ] },
-					{ id: 3, userId: 11, colours: [ "yellow" ] },
-				]),
-				pieces: {
-					red: new blokus.PieceCollection([
-						/* Unplaced pieces */
-						{ master: 0 }, { master: 1 }, { master: 2 },
-						/* Placed pieces. Identified by non-negative x value? */
-						{ master: 3, x: 0, y: 2, flip: 1 }
-					]),
-					green: new blokus.PieceCollection([
-						{ master: 0 }, { master: 2, rotation: 1 }, { master: 3 },
-						{ master: 1, x: 5, y: 1, rotation: 2 }
-					]),
-					blue: new blokus.PieceCollection([
-						{ master: 0 }, { master: 3, flip: 1 }, { master: 2 },
-						{ master: 1, x: 10, y: 2, rotation: 0 }
-					]),
-					yellow: new blokus.PieceCollection([
-						{ master: 3 }, { master: 1 }, { master: 2 },
-						{ master: 0, x: 10, y: 13, rotation: 0 }
-					])
-				}
-			},
-			{ id: 1, name: "the colourblinds" /* players */ },
-			{ id: 2, name: "battle of teh awsumz" /* players */ }
-		]);
-
-
-		/* TEMP */
-		_(blokus).extend({
-			users: users,
-			games: games
-		})
-		
-		// TEMP HACK
-		if (location.href.indexOf("game") > -1) {
+		// Switch to a different view (lobby, game, help etc)
+		function switchToView (view) {
+			var $oldview = $("#container > div"),
+				// render new view
+				$newview = $(view.render().el);
 			
-
-		} else if (location.href.indexOf("lobby") > -1) {
-			var gameList = new blokus.GameList({ games: games });
-			$("#lobbylist-container").append(gameList.render().el);
-		} else {
-			var gameboard = new blokus.GameBoard({ game: games.get(0) });
-			$("#container").append(gameboard.render().el);
-			//Temp just show that I can draw things
-			data = blokus.pieceMasters.get(3).get("data");
-			blokus.drawPiece(50,23,data, gameboard.paper)
+			// Fade out old view then remove
+			$oldview.fadeOut(200, function () { $oldview.remove(); });
+			// Fade in new view
+			$("#container").append($newview);
 		}
-		
+
+		// Make a new router
+		new (Backbone.Router.extend({
+			routes: {
+				"": "lobby",
+				"game/:id": "game",
+				"help": "help",
+				"register": "register",
+				"forgot": "forgot",
+				"profile/:id": "profile"
+			},
+
+			lobby: 		function () 	{ switchToView(new blokus.LobbyView()); },
+			game: 		function (id) 	{ switchToView(new blokus.GameView({ id: id })); },
+			help: 		function () 	{ switchToView(new blokus.HelpView()); },
+			register: 	function () 	{ switchToView(new blokus.RegisterView()); },
+			forgot: 	function () 	{ switchToView(new blokus.ForgotView()); },
+			profile: 	function (id) 	{ switchToView(new blokus.ProfileView({ id: id })); }
+		}));
+
+		// Start backbone history to allow routing
+		Backbone.history.start();
+
+		var $profileButton = $("#profileButton"),
+			$profileMenu = $("#profileMenu"),
+			mouseInProfilePanel = false,
+			panelMouseOutTimeouts = [],
+
+			hideProfileMenu = function () {
+		        $profileMenu.slideUp();
+		        $profileButton.removeClass("sel");
+			},
+
+			positionProfileMenu = function () {
+				var buttonOffset = $profileButton.offset();
+
+		        $profileMenu.css({
+	                'left': buttonOffset.left - $profileMenu.outerWidth() + $profileButton.outerWidth(),
+	                'top': buttonOffset.top + $profileButton.outerHeight()
+		        });
+			};
+
+		// Make profile/login panel visible when moving mouse onto profile button or menu
+		$("#profileButton, #profileMenu").mouseover(function() {
+			mouseInProfilePanel = true;
+	        $profileMenu.slideDown();
+	        $profileButton.addClass("sel");
+	        // clear all timeouts
+	        _(panelMouseOutTimeouts).each(clearTimeout);
+	        panelMouseOutTimeouts = [];
+		}).mouseout(function () {
+			mouseInProfilePanel = false;
+			// Close panel 200ms after mouse leaves
+			panelMouseOutTimeouts.push(setTimeout(function () {
+				if (!mouseInProfilePanel) {
+					hideProfileMenu();
+			    }
+			}, 300));
+		});
+
+		$("#profileMenu a").click(hideProfileMenu);
+
+		// Handle sign in
+		$("#profileMenu #signin-button").click(function () {
+			var name = "zanders3";
+			$("#signedOutMenu").hide();
+	        $("#signedInMenu").show();
+	        $("#profileButton").html(name + " ▾");
+	        positionProfileMenu();
+	        return false;
+		});
+
+		// Handle sign out
+		$("#profileMenu #signout-button").click(function () {
+			$("#signedInMenu").hide();
+	        $("#signedOutMenu").show();
+	        $("#profileButton").html("Sign in  ▾");
+	        positionProfileMenu()
+		});
+
+		// When window loads or is resized, Set profile/login panel position to below button 
+		$(window).bind("resize load", positionProfileMenu);
+
+		$(window).keyup(function (e) {
+			blokus.log("Key up. Key code: " + e.keyCode);
+			if (keyUpMappings.hasOwnProperty(e.keyCode)) {
+				_(keyUpMappings[e.keyCode]).each(function (f) { f.call() });
+			}
+		}).keydown(function (e) {
+			blokus.log("Key down. Key code: " + e.keyCode);
+			if (keyDownMappings.hasOwnProperty(e.keyCode)) {
+				_(keyDownMappings[e.keyCode]).each(function (f) { f.call() });
+			}
+		});
+
 	});
 
 	return {
@@ -135,6 +154,8 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 		log: function () { if (DEBUG) console.log.apply(console, arguments); },
 		error: function () { if (DEBUG) console.error.apply(console, arguments); },
 		urls: urls,
+		mapKeyUp: mapKeyUp,
+		mapKeyDown: mapKeyDown
 	};
 
 }(jQuery, _, Backbone, Raphael));

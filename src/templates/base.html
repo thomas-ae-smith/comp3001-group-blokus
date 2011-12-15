@@ -11,6 +11,7 @@
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/lobby.css" type="text/css"/>
 		{% block extracss %}{% endblock %}
 		<script src="{{ STATIC_URL }}js/jquery.js"></script>
 		<script src="{{ STATIC_URL }}js/raphael.js"></script>
@@ -21,35 +22,36 @@
 		<script src="{{ STATIC_URL }}js/models.js"></script>
 		<script src="{{ STATIC_URL }}js/collections.js"></script>
 		<script src="{{ STATIC_URL }}js/views.js"></script>
-		
+
 		{% block extrajs %}{% endblock %}
 	</head>
 	<body>
 		{% block header %}
 		<header>
 			<div>
-				<img id="logo" src="{{ STATIC_URL }}img/logo.png" alt="Blokus Logo"/>
-				<a href="#" onmouseover="showProfileMenu()" onmouseout="hideProfileMenu()" id="profileButton">Sign in ▾</a>
+				<a href="#"><img id="logo" src="{{ STATIC_URL }}img/logo.png" alt="Blokus Logo"/></a>
+				<a href="javascript:;" id="profileButton">Sign in ▾</a>
 				<nav>
-					{% block navbuttons %}
-					{% endblock %}
+					<a href="#help" class="button">Help</a>
+					<a href="#" class="button">Quit</a>
 				</nav>
 			</div>
 		</header>
 		{% endblock %}
-		<div id="container">
-			{% block content %}
-			{% endblock %}
-		</div>
-		<div id="profileMenu" onmouseover="showProfileMenu()" onmouseout="hideProfileMenu()">
+
+		<div id="container"></div>
+
+		<div id="profileMenu">
 			<div id="signedOutMenu">
-				Username<br/>
-				<input type="text" id="loginUsername" /><br/>
-				Password<br/>
-				<input type="password" id="loginPassword" /><br/><br/>
-				<a href="#">Forgot?</a>
-				<a href="#">Register</a>
-				<a href="#" class="button" onclick="signIn('zanders3')">Sign in</a>
+				<form>
+					Username<br/>
+					<input type="text" id="loginUsername" /><br/>
+					Password<br/>
+					<input type="password" id="loginPassword" /><br/><br/>
+					<a href="#forgot">Forgot?</a>
+					<a href="#register">Register</a>
+					<input id="signin-button" type="submit" value="Sign in">
+				</form>
 			</div>
 			<div id="signedInMenu">
 				<div class="clearfix">
@@ -61,9 +63,71 @@
 				</div>
 				<ul class="menu">
 					<li><a href="#">Settings</a></li>
-					<li><a href="#" onclick="signOut()">Sign Out</a></li>
+					<li><a href="javascript:;" id="signout-button">Sign Out</a></li>
 				</ul>
 			</div>
 		</div>
+
+		<div class="templates">
+			<script type="text/html" id="lobby-template">
+				<h2>Welcome!</h2>
+				<p>Please select a game mode:</p>
+				<p><a href="#game/1">[test game]</a></p>
+				<ul class="modelist">
+					<li><a href="javascript:;">Quick Play</a></li>
+					<li><a href="javascript:;">2 Players</a></li>
+					<li><a href="javascript:;">4 Players</a></li>
+					<li id="privatebutton"><a href="javascript:;">Private</a></li>
+				</ul>
+				<div id="privatelobby" class="clearfix">
+					<ul class="lobbylist">
+						<li>zanders3</li>
+					</ul>
+					<a href="#">Join URL</a>: Send this to your friends!<br/></br/>
+					Waiting for players to join...<a href="#" class="button">Start Game</a>
+				</div>
+			</script>
+			<script type="text/html" id="game-template">
+			</script>
+			<script type="text/html" id="help-template">
+				<h2>How to play blokus</h2>
+				<p>Blokus is a 2 or 4 player game which.... yada yada</p>
+			</script>
+			<script type="text/html" id="register-template">
+				<h2>Register</h2>
+				<p>We just need a few details and you'll be on your way!</p>
+				<form>
+					<label for="username">Username:</label>
+						<input type="text" name="username" placeholder="username">
+					<label for="email">Email address:</label>
+						<input type="email" name="email" placeholder="email address">
+					<label for="password1">Password:</label>
+						<input type="password" name="password1" placeholder="password">
+					<label for="password2">Confirm password:</label>
+						<input type="password" name="password2" placeholder="confirm password">
+					<input type="submit">
+				</form>
+			</script>
+			<script type="text/html" id="forgot-template">
+				<h2>Forgot your password</h2>
+				<p>Enter your email address below to recieve a new password [or whatever mechanism we'll use]</p>
+				<form>
+					<input type="email" placeholder="email address">
+					<input type="submit">
+				</form>
+			</script>
+			<script type="text/html" id="profile-template">
+				<h2><%= username %>'s profile</h2>
+				<dl>
+					<dt>Joined</dt><dd><%= joined %></dd>
+					<dt>Wins</dt><dd><%= wins %></dd>
+					<dt>Losses</dt><dd><%= losses %></dd>
+				</dl>
+				<% if (username === blip.user.get("username")) { %>
+					<input type="button" value="Edit">
+				<% } %>
+			</script>
+		</div>
+
 	</body>
 </html>

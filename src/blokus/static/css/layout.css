@@ -63,7 +63,7 @@ table {
 html[xmlns] .clearfix {
 	display: block;
 }
- 
+
 * html .clearfix {
 	height: 1%;
 }
@@ -102,6 +102,13 @@ html {
 #container {
 	margin: 0px auto;
 	width: 800px;
+	position: relative;
+}
+
+#container > div {
+	position: absolute;
+	top: 0; left: 0; right: 0;
+	min-height: 400px;
 }
 
 header {
@@ -227,4 +234,11 @@ nav {
 
 #signedInMenu ul.menu li a:hover {
 	background: #BCD6E1;
+}
+
+.loading {
+	position: absolute;
+	left: 0; top: 0; right: 0; bottom: 0;
+	/* TODO: replace with something nicer */
+	background: white url(../img/loading.gif) no-repeat center;
 }
