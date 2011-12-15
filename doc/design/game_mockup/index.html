@@ -1,0 +1,140 @@
+<html>
+<head>
+<style>
+	.container {
+		position: relative;
+		border: 1px solid red;
+		width: 1024px;
+		height: 768px;
+		margin: 0 auto;
+	}
+
+	.container > div {
+		position: absolute;
+	}
+
+	.header {
+		top: 0; left: 0; right: 0;
+		background: #333;
+		color: white;
+		height: 40px;
+	}
+
+		.header > div {
+			position: absolute;
+			bottom: 0;
+		}
+
+		.logo {
+			bottom: 0; left: 0;
+		}
+		.contextmenu {
+			bottom: 0; left: 150px;
+		}
+		.usermenu {
+			bottom: 0; right: 0;
+		}
+
+	.leftpanel {
+		top: 40px; bottom: 0; left: 0;
+		width: 150px;
+		border-right: 1px solid red;
+	}
+
+	.middlepanel {
+		top: 40px; bottom: 0; left: 150px; right: 150px;
+	}
+
+	.rightpanel {
+		top: 40px; bottom: 0; right: 0;
+		width: 150px;
+		border-left: 1px solid red;
+	}
+		.rightpanel > div {
+			position: absolute;
+			left: 0; right: 0;
+			height: 33%;
+		}
+		.pane1 {
+			top: 0;
+			border-bottom: 1px solid red;
+		}
+		.pane2 {
+			top: 33%;
+			border-bottom: 1px solid red;
+		}
+		.pane3 {
+			top: 66%;
+		}
+
+	.leftpanel .shape {
+		display: inline-block;
+		width: 120px;
+		height: 120px;
+		background: red;
+		margin: 10px;
+	}
+
+	.rightpanel .shape {
+		display: inline-block;
+		width: 40px;
+		height: 40px;
+		margin: 3px;
+	}
+
+	.pane1 .shape {
+		background: green;
+	}
+
+	.pane2 .shape {
+		background: blue;
+	}
+
+	.pane3 .shape {
+		background: yellow;
+	}
+
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="logo">Blokus</div>
+			<div class="contextmenu">
+				<a href="javascript:;">Help</a>
+				<a href="javascript:;">Quit game</a>
+			</div>
+			<div class="usermenu">Peter</div>
+		</div>
+		<div class="leftpanel">
+			<div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div>
+		</div>
+		<div class="middlepanel">
+			<div class="gameboard"></div>
+		</div>
+		<div class="rightpanel">
+			<div class="pane1">
+				<div class="name">Player 2</div>
+				<div class="score"><b>Score</b>: 10</div>
+				<div class="shapeset">
+					<div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div>
+				</div>
+			</div>
+			<div class="pane2">
+				<div class="name">Player 2</div>
+				<div class="score"><b>Score</b>: 10</div>
+				<div class="shapeset">
+					<div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div>
+				</div>
+			</div>
+			<div class="pane3">
+				<div class="name">Player 2</div>
+				<div class="score"><b>Score</b>: 10</div>
+				<div class="shapeset">
+					<div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div><div class="shape"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

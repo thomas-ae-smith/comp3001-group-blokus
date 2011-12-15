@@ -1,0 +1,61 @@
+<html>
+<head>
+<style>
+	.container {
+		border: 1px solid red;
+		width: 1024px;
+		height: 768px;
+	}
+
+	.header {
+		background: #333;
+		color: white;
+		position: relative
+		height: 40px;
+	}
+
+	.logo {
+		position: absolute;
+		bottom: 0
+		left: 0;
+	}
+	.contextmenu {
+		position: absolute;
+		bottom: 0;
+		left: 20%;
+	}
+	.usermenu {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+	}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="logo">Blokus</div>
+			<div class="contextmenu">
+				<a href="javascript:;">Help</a>
+				<a href="javascript:;">Quit game</a>
+			</div>
+			<div class="usermenu">Peter</div>
+		</div>
+		<div class="leftpanel">
+			<div class="shape"></div>
+			<div class="shape"></div>
+			<div class="shape"></div>
+			<div class="shape"></div>
+			<div class="shape"></div>
+			<div class="shape"></div>
+			<div class="shape"></div>
+		</div>
+		<div class="middlepanel">
+			<div class="gameboard"></div>
+		</div>
+		<div class="rightpanel">
+			<div class=""
+		</div>
+	</div>
+</body>
+</html>
