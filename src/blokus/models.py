@@ -48,7 +48,7 @@ class PieceMaster(models.Model):
 				elif letter == 'F':
 					rowlist.append(False)
 			tup.append(tuple(rowlist))
-		return tupl
+		return tuple(tup)
 
 
 class UserProfile(models.Model):
@@ -85,7 +85,7 @@ class Piece(models.Model):
 	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 
 	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
-	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
+	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def is_valid_position(self):
 		grid = self.player.game.get_grid()
@@ -98,11 +98,13 @@ class Piece(models.Model):
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
-		return bitmap
+		if self.transposed:
+			bitmap = _transpose_bitmap(bitmap)
+		return _rotate_bitmap(bitmap, self.rotation)
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
-		self.flip = not self.flip
-		self.rotation = rotate(horizontal)
+		self.transposed = not self.transposed
+		self.rotate(horizontal)
 
 	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
@@ -110,15 +112,32 @@ class Piece(models.Model):
 		else:
 			self.rotation = (self.rotation - 1) % 4
 
-def transpose_bitmap(bitmap):
+def _rotate_bitmap(bitmap, times):
+	if (times % 4) > 0:
+		rotated_bitmap = []
+		for row in range(len(bitmap[0])):
+			rotated_row = []
+			for col in range(len(bitmap)):
+				rotated_row.append(
+					bitmap[len(bitmap) - 1 - col][row]
+					)
+			rotated_bitmap.append(tuple(rotated_row))
+		return _rotate_bitmap(rotated_bitmap, times - 1)
+	else:
+		return bitmap
+
+def _transpose_bitmap(bitmap):
 	transposed_bitmap = []
-
-	for row in range(0, len(bitmap)):
+	for col in range(len(bitmap[0])):
 		transposed_row = []
-		for col in range(0, len(bitmap[0])):
-			transposed_row.append(bitmap[col][row])
+		for row in range(len(bitmap)):
+			print row, col
+			transposed_row.append(
+				bitmap
+					[row]
+					[col]
+				)
 		transposed_bitmap.append(tuple(transposed_row))
-
 	return transposed_bitmap
 
 def create_user_profile(sender, instance, created, **kwargs):
