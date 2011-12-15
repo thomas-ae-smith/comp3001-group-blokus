@@ -154,12 +154,20 @@
 		}
 	},
 	{
+		"model": "auth.user",
+		"pk": "100",
+		"fields" : {
+			"username": "test",
+			"password": "sdasadsad"
+		}
+	},
+	{
 		"model": "blokus.player",
 		"pk": "1",
 		"fields" : {
 			"game": 1,
 			"colour": "red",
-			"user": 5,
+			"user": 100,
 			"status": "ingame"
 		}
 	},
