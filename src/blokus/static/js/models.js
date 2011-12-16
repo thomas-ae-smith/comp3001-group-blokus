@@ -37,14 +37,12 @@
 		}),
 
 		Player = Model.extend({
-		});
+		}),
 
+		// Will be the logged in user
+		user = new User(),
+		userProfile = new UserProfile();
 
-	// TODO: Do not enable lobby until user/userProfile fetched
-	blokus.user = new User({ id: 10 });
-	blokus.user.fetch();
-	blokus.userProfile = new UserProfile({ id: 10 });
-	blokus.userProfile.fetch();
 
 	_(window.blokus).extend({
 		User: User,
@@ -52,6 +50,9 @@
 		Game: Game,
 		PieceMaster: PieceMaster,
 		Piece: Piece,
-		Player: Player
+		Player: Player,
+
+		user: user,
+		userProfile: userProfile
 	});
 }(jQuery, _, Backbone));
