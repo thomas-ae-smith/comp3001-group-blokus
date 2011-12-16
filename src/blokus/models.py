@@ -3,6 +3,7 @@ from django.db import models
 from datetime import datetime
 from blokus.common import *
 
+
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
