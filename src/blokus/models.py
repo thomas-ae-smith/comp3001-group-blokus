@@ -50,8 +50,8 @@ class UserProfile(models.Model):
 
 	user = models.OneToOneField(User)
 	status = models.CharField(max_length=255,choices=status_choices)
-	wins = models.IntegerField()
-	losses = models.IntegerField()
+	wins = models.IntegerField(default=0)
+	losses = models.IntegerField(default=0)
 
 
 
