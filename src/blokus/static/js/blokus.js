@@ -125,7 +125,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 				data: {
 					username: username,
 					password: password
-				}
+				},
 				success: function (model) {
 					blokus.user.set(model);
 					blokus.user.fetch();
