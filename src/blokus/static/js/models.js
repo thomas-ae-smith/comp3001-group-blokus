@@ -12,7 +12,14 @@
         }
 	});
 	var User = Model.extend({
-			resourceUrl: blokus.urls.user
+			resourceUrl: blokus.urls.user,
+			parse: function (model) {
+		        // Set the user profile
+		        blokus.userProfile.set(model.userProfile);
+		        model.unset(userProfile, { silent: true });
+
+				return model;
+			}
 		}),
 
 		UserProfile = Model.extend({

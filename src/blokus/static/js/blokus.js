@@ -116,20 +116,41 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 
 		// Handle sign in
 		$("#profileMenu #signin-button").click(function () {
-			var name = "zanders3";
-			$("#signedOutMenu").hide();
-	        $("#signedInMenu").show();
-	        $("#profileButton").html(name + " ▾");
+			var username = $("#loginUsername").html(),
+				password = $("#loginPassword").html();
+			
+			$.ajax({
+				url: "/login",
+				type: "POST",
+				data: {
+					username: username,
+					password: password
+				}
+				success: function (model) {
+					blokus.user.set(model);
+					blokus.user.fetch();
+				},
+				error: function () {
+					// TODO
+				}
+			})
+
 	        return false;
 		});
 
 		// Handle sign out
 		$("#profileMenu #signout-button").click(function () {
-			// TODO: Ajax signout
+			// Log out
+			$.ajax({
+				url: "/logout",
+				success: function (model) {
+		        	blokus.user.set(model);
+				},
+				error: function () {
+					// TODO
+				}
+			})
 		});
-
-		// Will be the list of logged in users
-		var usersLoggedIn = new blokus.UserCollection();
 
 		// One the logged in user is known, show user information (or login is user is anonymous)
         blokus.user.bind("change", function () {
@@ -147,17 +168,16 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 	        }
         });
 
-        // Get the list of logged in users
-        usersLoggedIn.fetch({
-			success: function (models) {
-				var user = models.at(0),
-					id = user.get("id");
-				// Set the currently logged in user
-		        blokus.user.set(user);
-		        // Get the user profile
-		        blokus.userProfile.set({ id: id }).fetch();
-			}
-		});
+        // Get currently logged in user (or anonymous user if not logged in)
+        $.ajax({
+        	url: "/get_logged_in_user",
+        	success: function (model) {
+		        blokus.user.set(model);
+        	},
+        	error: function () {
+        		// TODO
+        	}
+        });
 
 		// When window loads or is resized, Set profile/login panel position to below button 
 		$(window).bind("resize load", positionProfileMenu);
