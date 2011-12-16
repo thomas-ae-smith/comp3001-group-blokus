@@ -41,14 +41,23 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 
 	$(document).ready(function () {
 
+		var currentView;
+
 		// Switch to a different view (lobby, game, help etc)
 		function switchToView (view) {
-			var $oldview = $("#container > div"),
+			var oldView = currentView,
 				// render new view
 				$newview = $(view.render().el);
-			
-			// Fade out old view then remove
-			$oldview.fadeOut(200, function () { $oldview.remove(); });
+
+			if (oldView) {
+				// Fade out old view then remove
+				$(oldView.el).fadeOut(200, function () {
+					oldView.remove();
+				});
+			}
+
+			currentView = view;
+
 			// Fade in new view
 			$("#container").append($newview);
 		}
@@ -116,6 +125,9 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 
 		// Handle sign in
 		$("#profileMenu #signin-button").click(function () {
+			// HACK
+			location = "/login";
+
 			var username = $("#loginUsername").html(),
 				password = $("#loginPassword").html();
 			
@@ -155,7 +167,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 		// One the logged in user is known, show user information (or login is user is anonymous)
         blokus.user.bind("change", function () {
         	var name = blokus.user.get("username");
-        	if (name === "anon") {
+        	if (!name || name === "anon") {
 	        	$("#signedInMenu").hide();
 		        $("#signedOutMenu").show();
 		        $("#profileButton .name").html("Sign in");
@@ -176,6 +188,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
         	},
         	error: function () {
         		// TODO
+        		blokus.user.clear()
         	}
         });
 

@@ -3,11 +3,15 @@ blokus.LobbyView = Backbone.View.extend({
 
     initialize: function () {
         var this_ = this;
-        setInterval(function() {
+
+        function poll () {
             if (this_.pollUser) {
                 blokus.user.fetch();
             }
-        }, 1000);
+            setTimeout(poll, 1000);
+        }
+        poll();
+
         blokus.userProfile.bind("change:gameId", function (user, gameId) {
             if (gameUri) {
                 blokus.game = new GameModel({ id: gameId });
