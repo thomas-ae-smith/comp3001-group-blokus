@@ -109,10 +109,10 @@ class Piece(models.Model):
 							bool(grid[this_row + self.y][this_col + self.x - 1])):
 						return False
 					#If cell is adjacent to cell of the same colour, allow placement.
-					if (bool(grid[this_row + self.y - 1][this_col + self.x]) or
-							bool(grid[this_row + self.y + 1][this_col + self.x]) or
-							bool(grid[this_row + self.y][this_col + self.x + 1]) or
-							bool(grid[this_row + self.y][this_col + self.x - 1])):
+					if (bool(grid[this_row + self.y - 1][this_col + self.x - 1]) or
+							bool(grid[this_row + self.y - 1][this_col + self.x + 1]) or
+							bool(grid[this_row + self.y + 1][this_col + self.x - 1]) or
+							bool(grid[this_row + self.y + 1][this_col + self.x + 1])):
 						adjacent = True
 
 		return adjacent
@@ -133,3 +133,7 @@ class Piece(models.Model):
 			self.rotation = (self.rotation + 1) % 4
 		else:
 			self.rotation = (self.rotation - 1) % 4
+
+class Moves(model.Model):
+	piece = models.ForeignKey(Piece)
+	move_num = models.IntegerField()
