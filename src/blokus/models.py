@@ -73,6 +73,10 @@ class Piece(models.Model):
 	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def is_valid_position(self):
+		return (does_not_overlap() and is_only_adjacent())
+
+	#Returns TRUE if the piece does not overlap with any other piece on the board.
+	def does_not_overlap(self):
 		grid = self.player.game.get_grid()
 		piece_bitmap = self.get_bitmap()
 		for row_number, row_data in enumerate(piece_bitmap):
@@ -80,6 +84,38 @@ class Piece(models.Model):
 				if grid[piece.x+column_number][piece.y+row_number] and cell:
 					return False
 		return True
+
+	#Returns TRUE if the piece is adjacent (touching the corner) of a piece of the same colour, but does not actually touch another piece of the same colour.
+	def is_only_adjacent(self):
+		this_bitmap = self.get_bitmap()
+
+		#Construct grid of pieces of the same colour.
+		grid = [[False]*20 for x in xrange(20)]
+		for that_piece in player.piece_set.all():
+			that_bitmap = that_piece.get_bitmap()
+			for that_row in that_bitmap:
+				for that_col in that_bitmap[that_row]:
+					grid[that_row+that_piece.y][that_col+that_piece.x] = that_bitmap[that_row][that_col]
+
+		#Compare piece being placed to pieces near it on the grid.
+		adjacent = False
+		for this_row in this_bitmap:
+			for this_col in this_bitmap[this_row]:
+				if bool(this_bitmap[this_row][this_col]):
+					#If cell touches another cell of the same colour, invalid placement.
+					if (bool(grid[this_row + self.y - 1][this_col + self.x]) or
+							bool(grid[this_row + self.y + 1][this_col + self.x]) or
+							bool(grid[this_row + self.y][this_col + self.x + 1]) or
+							bool(grid[this_row + self.y][this_col + self.x - 1])):
+						return False
+					#If cell is adjacent to cell of the same colour, allow placement.
+					if (bool(grid[this_row + self.y - 1][this_col + self.x]) or
+							bool(grid[this_row + self.y + 1][this_col + self.x]) or
+							bool(grid[this_row + self.y][this_col + self.x + 1]) or
+							bool(grid[this_row + self.y][this_col + self.x - 1])):
+						adjacent = True
+
+		return adjacent
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
