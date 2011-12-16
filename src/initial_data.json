@@ -158,8 +158,7 @@
 		"pk": "100",
 		"fields" : {
 			"username": "test",
-			"password": "sdasadsad",
-			"status": "offline"
+			"password": "sdasadsad"
 		}
 	},
 	{
