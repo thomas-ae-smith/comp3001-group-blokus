@@ -159,6 +159,7 @@
 		"fields" : {
 			"username": "test",
 			"password": "sdasadsad"
+			"status": "offline"
 		}
 	},
 	{
@@ -168,7 +169,6 @@
 			"game": 1,
 			"colour": "red",
 			"user": 100,
-			"status": "ingame"
 		}
 	},
 	{
