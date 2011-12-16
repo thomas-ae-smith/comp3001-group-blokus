@@ -13,11 +13,22 @@ class UserResource(ModelResource):
 		resource_name = 'user'
 		default_format = 'application/json'
 		excludes = ['password', 'is_staff', 'is_superuser']
-		list_allowed_methods = []
+		list_allowed_methods = ['get']
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
 
-class UserProfileResource(models.Model):
+	def get_object_list(self, request):
+		collection = super(UserResource, self).get_object_list(request)
+		if not request.user:
+			return collection
+		try:
+			return collection.filter(pk=request.user.id)
+		except DatabaseError:
+			return collection
+
+			
+
+class UserProfileResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')
 
 	class Meta:
