@@ -2,8 +2,8 @@
 (function ($, _, Backbone) {
 	var Model = Backbone.Model.extend({
 		url : function () {
-            if (this.resourceUrl) {
-	            return this.resourceUrl + (this.id ? this.id + "/" : "");
+			if (this.resourceUrl) {
+	            return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
             } else if (this.collection) {
                 return this.collection.url + this.id + "/";
             } else {
@@ -38,6 +38,13 @@
 
 		Player = Model.extend({
 		});
+
+
+	// TODO: Do not enable lobby until user/userProfile fetched
+	blokus.user = new User({ id: 10 });
+	blokus.user.fetch();
+	blokus.userProfile = new UserProfile({ id: 10 });
+	blokus.userProfile.fetch();
 
 	_(window.blokus).extend({
 		User: User,

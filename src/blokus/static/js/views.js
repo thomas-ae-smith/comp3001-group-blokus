@@ -29,6 +29,26 @@
 	});
 
 	var LobbyView = Backbone.View.extend({
+        pollUser: false,
+
+        initialize: function () {
+            var this_ = this;
+            setInterval(function() {
+                if (this_.pollUser) {
+                    blokus.user.fetch();
+                }
+            }, 1000);
+            blokus.userProfile.bind("change:gameId", function (user, gameId) {
+                if (gameUri) {
+                    blokus.game = new GameModel({ id: gameId });
+                    blokus.game.fetch();
+                    blokus.router.navigate("game/" + id, true);
+                } else {
+                    blokus.game = undefined;
+                }
+            });
+        },
+
 		render: function () {
 			var this_ = this,
 				template = _.template($('#lobby-template').html());
@@ -43,12 +63,30 @@
 				$button.addClass("sel")
 					.siblings().removeClass("sel");
 		        
-		        if (mode == 3) {
-		            this_.$("#privatelobby").slideDown();
-		        } 
-		        else {
+		        if (mode !== 3) {
 		            this_.$("#privatelobby").slideUp();
 		        }
+
+                switch (mode) {
+                case 0:
+                    blokus.userProfile.save({ status: "looking_for_any" });
+                    this_.pollUser = true;
+                    break;
+                case 1:
+                    blokus.userProfile.save({ status: "looking_for_2" });
+                    this_.pollUser = true;
+                    break;
+                case 2:
+                    blokus.userProfile.save({ status: "looking_for_4" });
+                    this_.pollUser = true;
+                    break;
+                case 3:
+                    blokus.userProfile.save({ status: "private" });
+                    this_.pollUser = false;
+                    this_.$("#privatelobby").slideDown();
+                    break;
+                }
+
 			});
 
 			return this;
@@ -167,6 +205,7 @@
                     //Temp just show that I can draw things
                     var data = window.data = blokus.pieceMasters.get(3).get("data");
                     window.shapeSet = drawPiece(50,23,data, this_);
+					window.gb = this_;
             	},
             	error: function (model, response) {
                     var msg = '';
@@ -204,16 +243,16 @@
 		return rotatedData;
 	}
 
-    function drawPiece (x, y, data, gameboard) {
+    function drawPiece (x, y, data, gameScreen) {
 		var cellSize = 25;
 		var numRows = data.length;
 		var numCols = data[0].length;
-		var shapeSet = gameboard.paper.set();
+		var shapeSet = gameScreen.paper.set();
 		shapeSet.dataArr = _(data).clone();
 		for (var rowI = 0; rowI < numRows; rowI++){
 			for (var colJ = 0; colJ < numCols; colJ++) {
 				if (data[rowI][colJ] == 1) {
-					var cell = gameboard.paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+					var cell = gameScreen.paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
 											cellSize, cellSize);
 					cell.attr({fill:'#323'});
 					shapeSet.push(cell);
@@ -228,7 +267,7 @@
 		};
 		shapeSet.isSelected = false;
 		shapeSet.rotation = 0;
-		var highlighted_set = gameboard.paper.set();
+		var highlighted_set = gameScreen.paper.set();
 		$(window).mousemove(
 			function(e){
 				//on move
@@ -241,64 +280,83 @@
 					width : shapeSet.getBBox().width,
 					height : shapeSet.getBBox().height,
 				};
-				var tmpR = Math.abs(shapeSet.rotation % 4);
+
+				var canvas = $(gameScreen.paper.canvas);
+				var GSBox = {
+					top: canvas.offset().top,
+					left: canvas.offset().left,
+					right: canvas.offset().left + canvas.width(),
+					bottom: canvas.offset().top + canvas.height(),
+				};
 
 				var futureX = undefined, 
 					futureY = undefined,
 					futureWidth = undefined,
 					futureHeigth = undefined;
+
+				var tmpR = Math.abs(shapeSet.rotation % 4);
 				if (tmpR == 0){
-					var dx = e.pageX - shapeSet.x;
-					var dy = e.pageY - shapeSet.y;
+					var distX = e.pageX - shapeSet.mousePageX;
+					var distY = e.pageY - shapeSet.mousePageY;
 				}
 				if (tmpR == 1){
-					var dy = e.pageX - shapeSet.x;
-					var dx = -(e.pageY - shapeSet.y);
+					var distY = e.pageX - shapeSet.mousePageX;
+					var distX = -(e.pageY - shapeSet.mousePageY);
 				}
 				else if (tmpR == 2){
-					var dy = -(e.pageY - shapeSet.y);
-					var dx = -(e.pageX - shapeSet.x);
+					var distY = -(e.pageY - shapeSet.mousePageY);
+					var distX = -(e.pageX - shapeSet.mousePageX);
 				}
 				else if (tmpR == 3){
-					var dx = (e.pageY - shapeSet.y);
-					var dy = -(e.pageX - shapeSet.x);
+					var distX = (e.pageY - shapeSet.mousePageY);
+					var distY = -(e.pageX - shapeSet.mousePageX);
 				}
-				futureX = SBBox.x + dx - shapeSet.dx -1;
-				futureY = SBBox.y + dy - shapeSet.dy;
-				futureWidth = SBBox.x + SBBox.width + dx - shapeSet.dx + 1;
-				futureHeigth = SBBox.y + SBBox.height + dy - shapeSet.dy;
-				var xMove = 0;
-				var yMove = 0;
-				if ( futureX >= 0 && futureWidth <= $(gameboard.paper.canvas).attr("width")) {
-					xMove = dx - shapeSet.dx;
+				if (GSBox.left < e.pageX && GSBox.right > e.pageX ){
+					//if(SBBox.x < e.offsetX && SBBox.x + SBBox.width > e.offsetX){
+						futureX = SBBox.x + (distX - shapeSet.prevDistX);
+					//}
 				}
-				if ( futureY >= 0 && futureHeigth <= $(gameboard.paper.canvas).attr("height")) {
-					yMove = dy - shapeSet.dy;
+				if (GSBox.top < e.pageY && GSBox.bottom > e.pageY ){
+					//if(SBBox.y < e.offsetY && SBBox.y + SBBox.height > e.offsetY){
+						futureY = SBBox.y + (distY - shapeSet.prevDistY);
+					//}
 				}
-				shapeSet.translate(xMove, yMove);
-				shapeSet.dx = dx;
-				shapeSet.dy = dy;
-				var offsets = $(gameboard.paper.canvas).position()
+				futureWidth = SBBox.x + SBBox.width + (distX - shapeSet.prevDistX);
+				futureHeigth = SBBox.y + SBBox.height + (distY - shapeSet.prevDistY);
+				var xMove = 0,
+					yMove = 0;
+				var sthChanged = false;
+				if ( futureX > 0 && futureWidth <= $(gameScreen.paper.canvas).attr("width")) {
+					xMove = distX - shapeSet.prevDistX;
+				}
+				if ( futureY > 0 && futureHeigth <= $(gameScreen.paper.canvas).attr("height")) {
+					yMove = distY - shapeSet.prevDistY;
+				}
+				if (GSBox.top < e.pageY && GSBox.bottom > e.pageY && GSBox.left < e.pageX && GSBox.right > e.pageX ){
+					shapeSet.translate(xMove, yMove);
+					shapeSet.prevDistX = distX;
+					shapeSet.prevDistY = distY;
+				}
 				// game board bounds
 				var gbBounds = {
-					sx: gameboard.x,
-					sy: gameboard.y,
-					ex: gameboard.x + gameboard.width,
-					ey:gameboard.y + gameboard.height
+					sx: gameScreen.x,
+					sy: gameScreen.y,
+					ex: gameScreen.x + gameScreen.width,
+					ey:gameScreen.y + gameScreen.height
 				};
-				// Check shapes to be in the gameboard
+				// Check shapes to be in the gameScreen
 				if (SBBox.x >= gbBounds.sx &&
 					SBBox.y >= gbBounds.sy &&
-					SBBox.x + SBBox.width - gameboard.cellXSize < gbBounds.ex &&
-					SBBox.y + SBBox.height - gameboard.cellYSize < gbBounds.ey) {
+					SBBox.x + SBBox.width - gameScreen.cellXSize < gbBounds.ex &&
+					SBBox.y + SBBox.height - gameScreen.cellYSize < gbBounds.ey) {
 					var cellIndex = {
-						x: Math.floor((SBBox.x - gbBounds.sx)/ gameboard.cellXSize),
-						y: Math.floor((SBBox.y - gbBounds.sy)/ gameboard.cellYSize),
+						x: Math.floor((SBBox.x - gbBounds.sx)/ gameScreen.cellXSize),
+						y: Math.floor((SBBox.y - gbBounds.sy)/ gameScreen.cellYSize),
 					}
 
 					if (highlighted_set.length != 0){
 						highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
-						highlighted_set = gameboard.paper.set();
+						highlighted_set = gameScreen.paper.set();
 					}
 					tmpData = rotateMatrix(data, shapeSet.rotation);
 					var numRows = tmpData.length;
@@ -306,13 +364,13 @@
 					for (var rowI = 0; rowI < numRows; rowI++){
 						for (var colJ = 0; colJ <= numCols; colJ++) {
 							if (tmpData[rowI][colJ] == 1) {
-								highlighted_set.push(gameboard.board[cellIndex.x+colJ][cellIndex.y+rowI]);
+								highlighted_set.push(gameScreen.board[cellIndex.x+colJ][cellIndex.y+rowI]);
 							}
 						}
 					}
 					var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 					var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-					var cell = gameboard.board[cellIndex.x][cellIndex.y];
+					var cell = gameScreen.board[cellIndex.x][cellIndex.y];
 					highlighted_set.forEach(function (shape) {shape.attr({"fill": "#EEE"})});
 					shapeSet.dest_x = cell.attr("x");
 					shapeSet.dest_y = cell.attr("y");
@@ -322,7 +380,7 @@
 					shapeSet.dest_y = shapeSet.initBBox.y;
 					if (highlighted_set.length != 0){
 						highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
-						highlighted_set = gameboard.paper.set();
+						highlighted_set = gameScreen.paper.set();
 					}
 				}
 			}
@@ -332,10 +390,10 @@
 				// on Start
 				if(!shapeSet.isSelected){
 					shapeSet.isSelected = true;
-					shapeSet.dx = 0;
-					shapeSet.dy = 0;
-					shapeSet.x = e.pageX;
-					shapeSet.y = e.pageY;
+					shapeSet.prevDistX = 0;
+					shapeSet.prevDistY = 0;
+					shapeSet.mousePageX = e.pageX;
+					shapeSet.mousePageY = e.pageY;
 					shapeSet.animate({"opacity": 0.5}, 0);
 				}
 				else {

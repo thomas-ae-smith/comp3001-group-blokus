@@ -54,7 +54,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 		}
 
 		// Make a new router
-		new (Backbone.Router.extend({
+		blokus.router = new (Backbone.Router.extend({
 			routes: {
 				"": "lobby",
 				"game/:id": "game",
@@ -155,7 +155,9 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 		error: function () { if (DEBUG) console.error.apply(console, arguments); },
 		urls: urls,
 		mapKeyUp: mapKeyUp,
-		mapKeyDown: mapKeyDown
+		mapKeyDown: mapKeyDown,
+		game: undefined,
+		user: undefined
 	};
 
 }(jQuery, _, Backbone, Raphael));
