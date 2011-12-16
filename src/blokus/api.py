@@ -80,7 +80,7 @@ class PieceForm(ModelForm):
 		return cleaned_data
 
 class PieceResource(ModelResource):
-	piecemaster = fields.ForeignKey(PieceMasterResource, 'piecemaster')
+	master = fields.ForeignKey(PieceMasterResource, 'master')
 	player = fields.ForeignKey(PlayerResource, 'player')
 
 	class Meta:
