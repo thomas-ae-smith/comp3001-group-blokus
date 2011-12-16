@@ -7,6 +7,7 @@ class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
+	number_of_moves = models.PositiveIntegerField(default=0)
 
 	def get_grid(self):
 		grid = [[False]*20 for x in xrange(20)]
