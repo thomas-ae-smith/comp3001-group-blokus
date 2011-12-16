@@ -145,5 +145,38 @@
 		"fields" : {
 			"piece_data": "FTF,TTT,FTF"
 		}
+	},
+	{
+		"model": "blokus.game",
+		"pk": "1",
+		"fields" : {
+			"game_type": "1"
+		}
+	},
+	{
+		"model": "auth.user",
+		"pk": "100",
+		"fields" : {
+			"username": "test",
+			"password": "sdasadsad"
+		}
+	},
+	{
+		"model": "blokus.player",
+		"pk": "1",
+		"fields" : {
+			"game": 1,
+			"colour": "red",
+			"user": 100,
+			"status": "ingame"
+		}
+	},
+	{
+		"model": "blokus.piece",
+		"pk": "1",
+		"fields" : {
+			"master": 1,
+			"player": 1
+		}
 	}
 ]

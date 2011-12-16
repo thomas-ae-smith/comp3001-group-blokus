@@ -1,15 +1,13 @@
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator, RegexValidator
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
 from django.db import models
 from datetime import datetime
-
+from blokus.common import *
 
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
-	
+
 	def get_grid(self):
 		grid = [[False]*20 for x in xrange(20)]
 		players = self.player_set.all()
@@ -23,20 +21,8 @@ class Game(models.Model):
 		return grid
 
 
-	def _validate_placement(self, piece):	#Returns TRUE if the placement is valid, FALSE otherwise.
-		return (
-			self._not_obstructed(piece) and
-			self._adjacent_to_same_colour(piece)
-		)
-
-	def _not_obstructed(self, piece):	#Skeletal function
-		return true
-
-	def _adjacent_to_same_colour(self, piece):	#Skeletal function
-		return true
-
 class PieceMaster(models.Model):
-	piece_data = models.CharField(max_length=12)	#Repretented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
+	piece_data = models.CharField(max_length=12)	#Represented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
 
 	def get_bitmap(self):
 		tup = []
@@ -48,19 +34,9 @@ class PieceMaster(models.Model):
 				elif letter == 'F':
 					rowlist.append(False)
 			tup.append(tuple(rowlist))
-		return tupl
-
+		return tuple(tup)
 
 class UserProfile(models.Model):
-	user = models.OneToOneField(User)
-	wins = models.IntegerField(default=0)
-	losses = models.IntegerField(default=0)
-
-
-
-_colour_regex = r"^(red|yellow|green|blue)$"
-
-class Player(models.Model):
 
 	status_choices = (
 		('offline','Offline'),
@@ -71,10 +47,20 @@ class Player(models.Model):
 		('private','In private lobby'),
 	)
 
-	game = models.ForeignKey(Game,null=True)
+
+	user = models.OneToOneField(User)
+	status = models.CharField(max_length=255,choices=status_choices)
+	wins = models.IntegerField(default=0)
+	losses = models.IntegerField(default=0)
+
+
+
+_colour_regex = r"^(red|yellow|green|blue)$"
+
+class Player(models.Model):
+	game = models.ForeignKey(Game)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	user = models.ForeignKey(User)
-	status = models.CharField(max_length=255,choices=status_choices)
 
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
@@ -84,24 +70,63 @@ class Piece(models.Model):
 	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 
 	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
-	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
+	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def is_valid_position(self):
+		return (does_not_overlap() and is_only_adjacent())
+
+	#Returns TRUE if the piece does not overlap with any other piece on the board.
+	def does_not_overlap(self):
 		grid = self.player.game.get_grid()
 		piece_bitmap = self.get_bitmap()
 		for row_number, row_data in enumerate(piece_bitmap):
 			for column_number, cell in enumerate(row_data):
-				if grid[piece.x+column_number][piece.y+row_number]:
+				if grid[piece.x+column_number][piece.y+row_number] and cell:
 					return False
 		return True
 
+	#Returns TRUE if the piece is adjacent (touching the corner) of a piece of the same colour, but does not actually touch another piece of the same colour.
+	def is_only_adjacent(self):
+		this_bitmap = self.get_bitmap()
+
+		#Construct grid of pieces of the same colour.
+		grid = [[False]*20 for x in xrange(20)]
+		for that_piece in player.piece_set.all():
+			that_bitmap = that_piece.get_bitmap()
+			for that_row in that_bitmap:
+				for that_col in that_bitmap[that_row]:
+					grid[that_row+that_piece.y][that_col+that_piece.x] = that_bitmap[that_row][that_col]
+
+		#Compare piece being placed to pieces near it on the grid.
+		adjacent = False
+		for this_row in this_bitmap:
+			for this_col in this_bitmap[this_row]:
+				if bool(this_bitmap[this_row][this_col]):
+					#If cell touches another cell of the same colour, invalid placement.
+					if (bool(grid[this_row + self.y - 1][this_col + self.x]) or
+							bool(grid[this_row + self.y + 1][this_col + self.x]) or
+							bool(grid[this_row + self.y][this_col + self.x + 1]) or
+							bool(grid[this_row + self.y][this_col + self.x - 1])):
+						return False
+					#If cell is adjacent to cell of the same colour, allow placement.
+					if (bool(grid[this_row + self.y - 1][this_col + self.x - 1]) or
+							bool(grid[this_row + self.y - 1][this_col + self.x + 1]) or
+							bool(grid[this_row + self.y + 1][this_col + self.x - 1]) or
+							bool(grid[this_row + self.y + 1][this_col + self.x + 1])):
+						adjacent = True
+
+		return adjacent
+
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
-		return bitmap
+		if self.transposed:
+			return transpose_bitmap(rotate_bitmap(bitmap, self.rotation))
+		else:
+			return rotate_bitmap(bitmap, self.rotation)
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
-		self.flip = not self.flip
-		self.rotation = rotate(horizontal)
+		self.rotate(not(bool(self.transposed) ^ bool(horizontal)))
+		self.transposed = not self.transposed
 
 	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
@@ -109,19 +134,6 @@ class Piece(models.Model):
 		else:
 			self.rotation = (self.rotation - 1) % 4
 
-def transpose_bitmap(bitmap):
-	transposed_bitmap = []
-
-	for row in range(0, len(bitmap)):
-		transposed_row = []
-		for col in range(0, len(bitmap[0])):
-			transposed_row.append(bitmap[col][row])
-		transposed_bitmap.append(tuple(transposed_row))
-
-	return transposed_bitmap
-
-def create_user_profile(sender, instance, created, **kwargs):
-	if created:
-		UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
+class Moves(model.Model):
+	piece = models.ForeignKey(Piece)
+	move_num = models.IntegerField()
