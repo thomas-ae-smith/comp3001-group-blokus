@@ -166,7 +166,7 @@
 
                     //Temp just show that I can draw things
                     var data = window.data = blokus.pieceMasters.get(3).get("data");
-                    window.shape_set = drawPiece(50,23,data, this_);
+                    window.shapeSet = drawPiece(50,23,data, this_);
             	},
             	error: function (model, response) {
                     var msg = '';
@@ -185,106 +185,197 @@
         }
     });
 
-    function drawPiece (x, y, data, gameboard) {
-            var cellSize = 25;
-            var numRows = data.length;
-            var numCols = data[0].length;
-            var shape_set = gameboard.paper.set();
-            for (var rowI = 0; rowI < numRows; rowI++){
-                for (var colJ = 0; colJ <= numCols; colJ++) {
-                    if (data[rowI][colJ] == 1) {
-                        var cell = gameboard.paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
-                                                cellSize, cellSize);
-                        cell.attr({fill:'#323'});
-                        shape_set.push(cell);
-                    }
-                }
-            }
-            shape_set.initCoordinates = {
-                x:x,
-                y:y
-            };
-            var highlighted_set = gameboard.paper.set();
-            shape_set.drag(
-                    function(dx,dy,x,y, e){
-                        //on move
-                        var bBox = shape_set.getBBox();
-                        var xMove = 0;
-                        var yMove = 0;
-                        var futureX = bBox.x + dx - shape_set.dx -1;
-                        var futureY = bBox.y + dy - shape_set.dy;
-                        var futureWidth = bBox.x + bBox.width + dx - shape_set.dx + 1;
-                        var futureHeigth = bBox.y + bBox.height + dy - shape_set.dy;
-                        if ( futureX >= 0 && futureWidth <= $(gameboard.paper.canvas).attr("width")) {
-                            xMove = dx - shape_set.dx;
-                        }
-                        if ( futureY >= 0 && futureHeigth <= $(gameboard.paper.canvas).attr("height")) {
-                            yMove = dy - shape_set.dy;
-                        }
-                        shape_set.translate(xMove, yMove);
-                        blokus.log(xMove, yMove);
-                        shape_set.dx = dx;
-                        shape_set.dy = dy;
-                        var offsets = $(gameboard.paper.canvas).position()
-                        // game board bounds
-                        var gbBounds = {
-                            sx: gameboard.x,
-                            sy: gameboard.y,
-                            ex: gameboard.x + gameboard.width,
-                            ey:gameboard.y + gameboard.height
-                        };
-                        // Check shapes to be in the gameboard
-                        if (bBox.x >= gbBounds.sx &&
-                            bBox.y >= gbBounds.sy &&
-                            bBox.x + bBox.width - gameboard.cellXSize < gbBounds.ex &&
-                            bBox.y + bBox.height - gameboard.cellYSize < gbBounds.ey) {
-                            var cellIndex = {
-                                x: Math.floor((bBox.x - gbBounds.sx)/ gameboard.cellXSize),
-                                y: Math.floor((bBox.y - gbBounds.sy)/ gameboard.cellYSize),
-                            }
+	function rotateMatrix(data, rotation){
+		rotation = Math.abs(rotation % 4);
+		var rotatedData = _(data).clone();
+		for (var numRotation  = 0; numRotation < rotation; numRotation++){
+			var rotatedDataTmp = new Array();
+			var numRows = rotatedData.length;
+			var numCols = rotatedData[0].length;
+			for (var colJ = numCols-1; colJ >= 0 ; colJ--) {
+				var reverseCol = Array();
+				for (var rowI = 0; rowI < numRows; rowI++){
+					reverseCol.push(rotatedData[rowI][colJ]);
+				}
+				rotatedDataTmp.push(reverseCol);
+			}
+			rotatedData = _(rotatedDataTmp).clone();
+		}
+		return rotatedData;
+	}
 
-                            if (highlighted_set.length != 0){
-                                highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
-                                highlighted_set = gameboard.paper.set();
-                            }
-                            for (var rowI = 0; rowI < numRows; rowI++){
-                                for (var colJ = 0; colJ <= numCols; colJ++) {
-                                    if (data[rowI][colJ] == 1) {
-                                        highlighted_set.push(gameboard.board[cellIndex.x+colJ][cellIndex.y+rowI]);
-                                    }
-                                }
-                            }
-                            var cell = gameboard.board[cellIndex.x][cellIndex.y];
-                            highlighted_set.forEach(function (shape) {shape.attr({"fill": "#EEE"})});
-                            shape_set.dest_x = cell.attr("x");
-                            shape_set.dest_y = cell.attr("y");
-                        }
-                        else {
-                            shape_set.dest_x = shape_set.initCoordinates.x;
-                            shape_set.dest_y = shape_set.initCoordinates.y;
-                            if (highlighted_set.length != 0){
-                                highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
-                                highlighted_set = gameboard.paper.set();
-                            }
-                        }
-                    },
-                    function (x, y, e){
-                        // on Start
-                        shape_set.dx = 0;
-                        shape_set.dy = 0;
-                        shape_set.animate({"opacity": 0.5}, 0);
-                    },
-                    function (x, y, e){
-                        // on end
-                        var tmp_x = shape_set.dest_x - 50;
-                        var tmp_y = shape_set.dest_y - 25;
-                        shape_set.animate({transform: "t"+tmp_x+" "+tmp_y} , 500);
-                        shape_set.animate({"opacity": 1}, 500);
-                        //shape_set.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
-                    }
-            );
-            return shape_set;
+    function drawPiece (x, y, data, gameboard) {
+		var cellSize = 25;
+		var numRows = data.length;
+		var numCols = data[0].length;
+		var shapeSet = gameboard.paper.set();
+		shapeSet.dataArr = _(data).clone();
+		for (var rowI = 0; rowI < numRows; rowI++){
+			for (var colJ = 0; colJ < numCols; colJ++) {
+				if (data[rowI][colJ] == 1) {
+					var cell = gameboard.paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+											cellSize, cellSize);
+					cell.attr({fill:'#323'});
+					shapeSet.push(cell);
+				}
+			}
+		}
+		shapeSet.initBBox = {
+			x:x,
+			y:y,
+			width: shapeSet.getBBox().width,
+			height: shapeSet.getBBox().height,
+		};
+		shapeSet.isSelected = false;
+		shapeSet.rotation = 0;
+		var highlighted_set = gameboard.paper.set();
+		$(window).mousemove(
+			function(e){
+				//on move
+				if (!shapeSet.isSelected ){
+					return 0;	
+				}
+				var SBBox = {
+					x : shapeSet.getBBox().x,
+					y : shapeSet.getBBox().y,
+					width : shapeSet.getBBox().width,
+					height : shapeSet.getBBox().height,
+				};
+				var tmpR = Math.abs(shapeSet.rotation % 4);
+
+				var futureX = undefined, 
+					futureY = undefined,
+					futureWidth = undefined,
+					futureHeigth = undefined;
+				if (tmpR == 0){
+					var dx = e.pageX - shapeSet.x;
+					var dy = e.pageY - shapeSet.y;
+				}
+				if (tmpR == 1){
+					var dy = e.pageX - shapeSet.x;
+					var dx = -(e.pageY - shapeSet.y);
+				}
+				else if (tmpR == 2){
+					var dy = -(e.pageY - shapeSet.y);
+					var dx = -(e.pageX - shapeSet.x);
+				}
+				else if (tmpR == 3){
+					var dx = (e.pageY - shapeSet.y);
+					var dy = -(e.pageX - shapeSet.x);
+				}
+				futureX = SBBox.x + dx - shapeSet.dx -1;
+				futureY = SBBox.y + dy - shapeSet.dy;
+				futureWidth = SBBox.x + SBBox.width + dx - shapeSet.dx + 1;
+				futureHeigth = SBBox.y + SBBox.height + dy - shapeSet.dy;
+				var xMove = 0;
+				var yMove = 0;
+				if ( futureX >= 0 && futureWidth <= $(gameboard.paper.canvas).attr("width")) {
+					xMove = dx - shapeSet.dx;
+				}
+				if ( futureY >= 0 && futureHeigth <= $(gameboard.paper.canvas).attr("height")) {
+					yMove = dy - shapeSet.dy;
+				}
+				shapeSet.translate(xMove, yMove);
+				shapeSet.dx = dx;
+				shapeSet.dy = dy;
+				var offsets = $(gameboard.paper.canvas).position()
+				// game board bounds
+				var gbBounds = {
+					sx: gameboard.x,
+					sy: gameboard.y,
+					ex: gameboard.x + gameboard.width,
+					ey:gameboard.y + gameboard.height
+				};
+				// Check shapes to be in the gameboard
+				if (SBBox.x >= gbBounds.sx &&
+					SBBox.y >= gbBounds.sy &&
+					SBBox.x + SBBox.width - gameboard.cellXSize < gbBounds.ex &&
+					SBBox.y + SBBox.height - gameboard.cellYSize < gbBounds.ey) {
+					var cellIndex = {
+						x: Math.floor((SBBox.x - gbBounds.sx)/ gameboard.cellXSize),
+						y: Math.floor((SBBox.y - gbBounds.sy)/ gameboard.cellYSize),
+					}
+
+					if (highlighted_set.length != 0){
+						highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
+						highlighted_set = gameboard.paper.set();
+					}
+					tmpData = rotateMatrix(data, shapeSet.rotation);
+					var numRows = tmpData.length;
+					var numCols = tmpData[0].length;
+					for (var rowI = 0; rowI < numRows; rowI++){
+						for (var colJ = 0; colJ <= numCols; colJ++) {
+							if (tmpData[rowI][colJ] == 1) {
+								highlighted_set.push(gameboard.board[cellIndex.x+colJ][cellIndex.y+rowI]);
+							}
+						}
+					}
+					var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+					var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+					var cell = gameboard.board[cellIndex.x][cellIndex.y];
+					highlighted_set.forEach(function (shape) {shape.attr({"fill": "#EEE"})});
+					shapeSet.dest_x = cell.attr("x");
+					shapeSet.dest_y = cell.attr("y");
+				}
+				else {
+					shapeSet.dest_x = shapeSet.initBBox.x;
+					shapeSet.dest_y = shapeSet.initBBox.y;
+					if (highlighted_set.length != 0){
+						highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
+						highlighted_set = gameboard.paper.set();
+					}
+				}
+			}
+		);
+		shapeSet.click(
+			function (e, x, y){
+				// on Start
+				if(!shapeSet.isSelected){
+					shapeSet.isSelected = true;
+					shapeSet.dx = 0;
+					shapeSet.dy = 0;
+					shapeSet.x = e.pageX;
+					shapeSet.y = e.pageY;
+					shapeSet.animate({"opacity": 0.5}, 0);
+				}
+				else {
+					shapeSet.isSelected = false;
+					var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+					var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+					var rotation = shapeSet.rotation * 90;
+					var xadd = -50,
+						yadd = -25;
+					if (shapeSet.rotation % 2 != 0){
+						xadd = -25;
+						yadd = -50;
+					}
+					var tmp_x = shapeSet.dest_x + xadd;
+					var tmp_y = shapeSet.dest_y + yadd;
+					shapeSet.animate({transform: "t"+tmp_x+" "+tmp_y+"r"+rotation+" "+xrot+" "+yrot} , 500);
+					shapeSet.animate({"opacity": 1}, 500);
+					//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
+				}
+			}
+		);
+		blokus.mapKeyDown(37, 
+			function () {
+				var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+				var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+				shapeSet.rotate(90, xrot, yrot);
+				shapeSet.rotation += 1;
+			}
+		);
+		blokus.mapKeyDown(39, 
+			function () {
+				var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+				var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+				shapeSet.rotate(-90, xrot, yrot);
+				shapeSet.rotation -= 1;
+			}
+		);
+		return shapeSet;
     }
+
 
 	_(blokus).extend({
 		HelpView: HelpView,
