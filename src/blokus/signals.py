@@ -14,3 +14,4 @@ def record_move(sender, **kwargs):
 	move = Move()
 	move.piece = sender
 	move.move_number = sender.player.game.number_of_moves + 1
+	sender.player.game.number_of_moves = sender.player.game.number_of_moves + 1
