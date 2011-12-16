@@ -3,7 +3,6 @@ from django.db import models
 from datetime import datetime
 from blokus.common import *
 
-
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
@@ -139,3 +138,10 @@ class Piece(models.Model):
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	move_number = models.PositiveIntegerField()
+
+
+def create_user_profile(sender, instance, created, **kwargs):
+	if created:
+		UserProfile.objects.create(user=instance)
+
+post_save.connect(create_user_profile, sender=User)

@@ -3,11 +3,10 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from blokus.models import UserProfile,Piece, Move
 
+@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
 
 @receiver(post_save, sender=Piece)
 def record_move(sender, **kwargs):
