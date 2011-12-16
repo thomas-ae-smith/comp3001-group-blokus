@@ -120,16 +120,43 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			$("#signedOutMenu").hide();
 	        $("#signedInMenu").show();
 	        $("#profileButton").html(name + " ▾");
-	        positionProfileMenu();
 	        return false;
 		});
 
 		// Handle sign out
 		$("#profileMenu #signout-button").click(function () {
-			$("#signedInMenu").hide();
-	        $("#signedOutMenu").show();
-	        $("#profileButton").html("Sign in  ▾");
-	        positionProfileMenu()
+			// TODO: Ajax signout
+		});
+
+		// Will be the list of logged in users
+		var usersLoggedIn = new blokus.UserCollection();
+
+		// One the logged in user is known, show user information (or login is user is anonymous)
+        blokus.user.bind("change", function () {
+        	var name = blokus.user.get("username");
+        	if (name === "anon") {
+	        	$("#signedInMenu").hide();
+		        $("#signedOutMenu").show();
+		        $("#profileButton .name").html("Sign in");
+	        	positionProfileMenu();
+            } else {
+	        	$("#signedInMenu").show();
+		        $("#signedOutMenu").hide();
+		        $("#profileButton .name").html(name);
+	        	positionProfileMenu();
+	        }
+        });
+
+        // Get the list of logged in users
+        usersLoggedIn.fetch({
+			success: function (models) {
+				var user = models.at(0),
+					id = user.get("id");
+				// Set the currently logged in user
+		        blokus.user.set(user);
+		        // Get the user profile
+		        blokus.userProfile.set({ id: id }).fetch();
+			}
 		});
 
 		// When window loads or is resized, Set profile/login panel position to below button 
