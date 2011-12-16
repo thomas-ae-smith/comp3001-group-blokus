@@ -138,3 +138,10 @@ class Piece(models.Model):
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	move_number = models.PositiveIntegerField()
+
+
+def create_user_profile(sender, instance, created, **kwargs):
+	if created:
+		UserProfile.objects.create(user=instance)
+
+post_save.connect(create_user_profile, sender=User)

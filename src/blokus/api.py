@@ -8,6 +8,8 @@ from django.forms import ModelForm, ValidationError
 from django.core import serializers
 
 class UserResource(ModelResource):
+	userprofile = fields.ToOneField('blokus.api.UserProfileResource', 'userprofile', full=True)
+
 	class Meta:
 		queryset = User.objects.all()
 		resource_name = 'user'
@@ -16,15 +18,6 @@ class UserResource(ModelResource):
 		list_allowed_methods = ['get']
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
-
-	def get_object_list(self, request):
-		collection = super(UserResource, self).get_object_list(request)
-		if not request.user:
-			return collection
-		try:
-			return collection.filter(pk=request.user.id)
-		except DatabaseError:
-			return collection
 
 			
 
