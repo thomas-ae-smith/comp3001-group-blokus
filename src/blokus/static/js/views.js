@@ -235,13 +235,18 @@
 				if (!shapeSet.isSelected ){
 					return 0;	
 				}
-				var bBox = {
+				var SBBox = {
 					x : shapeSet.getBBox().x,
 					y : shapeSet.getBBox().y,
 					width : shapeSet.getBBox().width,
 					height : shapeSet.getBBox().height,
 				};
 				var tmpR = Math.abs(shapeSet.rotation % 4);
+
+				var futureX = undefined, 
+					futureY = undefined,
+					futureWidth = undefined,
+					futureHeigth = undefined;
 				if (tmpR == 0){
 					var dx = e.pageX - shapeSet.x;
 					var dy = e.pageY - shapeSet.y;
@@ -258,12 +263,12 @@
 					var dx = (e.pageY - shapeSet.y);
 					var dy = -(e.pageX - shapeSet.x);
 				}
+				futureX = SBBox.x + dx - shapeSet.dx -1;
+				futureY = SBBox.y + dy - shapeSet.dy;
+				futureWidth = SBBox.x + SBBox.width + dx - shapeSet.dx + 1;
+				futureHeigth = SBBox.y + SBBox.height + dy - shapeSet.dy;
 				var xMove = 0;
 				var yMove = 0;
-				var futureX = bBox.x + dx - shapeSet.dx -1;
-				var futureY = bBox.y + dy - shapeSet.dy;
-				var futureWidth = bBox.x + bBox.width + dx - shapeSet.dx + 1;
-				var futureHeigth = bBox.y + bBox.height + dy - shapeSet.dy;
 				if ( futureX >= 0 && futureWidth <= $(gameboard.paper.canvas).attr("width")) {
 					xMove = dx - shapeSet.dx;
 				}
@@ -282,13 +287,13 @@
 					ey:gameboard.y + gameboard.height
 				};
 				// Check shapes to be in the gameboard
-				if (bBox.x >= gbBounds.sx &&
-					bBox.y >= gbBounds.sy &&
-					bBox.x + bBox.width - gameboard.cellXSize < gbBounds.ex &&
-					bBox.y + bBox.height - gameboard.cellYSize < gbBounds.ey) {
+				if (SBBox.x >= gbBounds.sx &&
+					SBBox.y >= gbBounds.sy &&
+					SBBox.x + SBBox.width - gameboard.cellXSize < gbBounds.ex &&
+					SBBox.y + SBBox.height - gameboard.cellYSize < gbBounds.ey) {
 					var cellIndex = {
-						x: Math.floor((bBox.x - gbBounds.sx)/ gameboard.cellXSize),
-						y: Math.floor((bBox.y - gbBounds.sy)/ gameboard.cellYSize),
+						x: Math.floor((SBBox.x - gbBounds.sx)/ gameboard.cellXSize),
+						y: Math.floor((SBBox.y - gbBounds.sy)/ gameboard.cellYSize),
 					}
 
 					if (highlighted_set.length != 0){
