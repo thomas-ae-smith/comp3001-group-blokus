@@ -135,5 +135,5 @@ class Piece(models.Model):
 			self.rotation = (self.rotation - 1) % 4
 
 class Move(models.Model):
-	piece = fields.ForeignKey(Piece)
-	move_number = fields.PositiveIntegerField()
+	piece = models.ForeignKey(Piece)
+	move_number = models.PositiveIntegerField()
