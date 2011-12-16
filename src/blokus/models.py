@@ -30,9 +30,9 @@ class PieceMaster(models.Model):
 		for row in self.piece_data.split(','):
 			rowlist = []
 			for letter in row:
-				if letter == 'T':
+				if letter == '1':
 					rowlist.append(True)
-				elif letter == 'F':
+				elif letter == '0':
 					rowlist.append(False)
 			tup.append(tuple(rowlist))
 		return tuple(tup)
