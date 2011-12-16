@@ -22,7 +22,7 @@ class Game(models.Model):
 
 
 class PieceMaster(models.Model):
-	piece_data = models.CharField(max_length=12)	#Repretented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
+	piece_data = models.CharField(max_length=12)	#Represented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
 
 	def get_bitmap(self):
 		tup = []
