@@ -74,24 +74,36 @@
 					if (tmpR == 0){
 						var distX = e.pageX - shapeSet.mousePageX;
 						var distY = e.pageY - shapeSet.mousePageY;
+						futureX = SBBox.x + (distX - shapeSet.prevDistX);
+						futureY = SBBox.y + (distY - shapeSet.prevDistY);
+						futureWidth = SBBox.x + SBBox.width + (distX - shapeSet.prevDistX);
+						futureHeigth = SBBox.y + SBBox.height + (distY - shapeSet.prevDistY);
 					}
 					if (tmpR == 1){
+						//dist the coordinates have been rotated by 90 degrees
 						var distY = e.pageX - shapeSet.mousePageX;
 						var distX = -(e.pageY - shapeSet.mousePageY);
+						futureY = SBBox.x + (distY - shapeSet.prevDistY);
+						futureX = SBBox.y - (distX - shapeSet.prevDistX);
+						futureHeigth = SBBox.x + SBBox.width + (distY - shapeSet.prevDistY);
+						futureWidth = SBBox.y + SBBox.height + (distX - shapeSet.prevDistX);
+						//GSBOX.height = 800 it has to be reversed
 					}
 					else if (tmpR == 2){
 						var distY = -(e.pageY - shapeSet.mousePageY);
 						var distX = -(e.pageX - shapeSet.mousePageX);
+						futureX = SBBox.x - (distX - shapeSet.prevDistX);
+						futureY = SBBox.y - (distY - shapeSet.prevDistY);
 					}
 					else if (tmpR == 3){
 						var distX = (e.pageY - shapeSet.mousePageY);
 						var distY = -(e.pageX - shapeSet.mousePageX);
+						futureY = SBBox.x - (distY - shapeSet.prevDistY);
+						futureX = SBBox.y + (distX - shapeSet.prevDistX);
 					}
 					//console.log(distX, shapeSet.prevDistX, SBBox.x);
-					futureX = SBBox.x + (distX - shapeSet.prevDistX);
-					futureY = SBBox.y + (distY - shapeSet.prevDistY);
-					futureWidth = SBBox.x + SBBox.width + (distX - shapeSet.prevDistX);
-					futureHeigth = SBBox.y + SBBox.height + (distY - shapeSet.prevDistY);
+					//futureX = SBBox.x + (distX - shapeSet.prevDistX);
+					//futureY = SBBox.y + (distY - shapeSet.prevDistY);
 					var xMove = 0,
 						yMove = 0;
 					var sthChanged = false;
@@ -101,6 +113,7 @@
 					if ( futureY > 0 && futureHeigth <= GSBox.height) {
 						yMove = distY - shapeSet.prevDistY;
 					}
+					console.log(yMove, futureHeigth, GSBox.height, SBBox.y, SBBox.height,  distX, shapeSet.prevDistX );
 					if (GSBox.top < e.pageY && GSBox.bottom > e.pageY && GSBox.left < e.pageX && GSBox.right > e.pageX ){
 						shapeSet.translate(xMove, yMove);
 						shapeSet.prevDistX = distX;
