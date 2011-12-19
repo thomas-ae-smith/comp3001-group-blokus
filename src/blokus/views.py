@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadReque
 from django.views.decorators.http import require_http_methods
 
 def execute_garbage_collection(request):
-	print 'ITS THE CRON! It works :)'
+	return HttpResponseNotFound('<h1>ZOMG, CRON JOB!</h1>')
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):
