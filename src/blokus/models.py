@@ -51,6 +51,7 @@ class UserProfile(models.Model):
 
 	user = models.OneToOneField(User)
 	status = models.CharField(max_length=255,choices=status_choices)
+	last_activity = models.DateTimeField(default=datetime.now())
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 

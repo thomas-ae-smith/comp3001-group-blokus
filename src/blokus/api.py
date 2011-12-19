@@ -6,6 +6,7 @@ from tastypie.authorization import Authorization
 from tastypie.validation import CleanedDataFormValidation
 from django.forms import ModelForm, ValidationError
 from django.core import serializers
+from datetime import datetime
 
 class UserResource(ModelResource):
 	userprofile = fields.ToOneField('blokus.api.UserProfileResource', 'userprofile', full=True)
@@ -43,6 +44,12 @@ class GameResource(ModelResource):
 		list_allowed_methods = []
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
+
+	def get_object_list(self, request):
+		if request.user.id is not None:
+			request.user.last_activity = datetime.now()
+			request.user.save()
+		return super(GameResource, self).get_object_list(request)
 
 
 
