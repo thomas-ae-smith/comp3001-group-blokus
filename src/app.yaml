@@ -25,6 +25,10 @@ handlers:
   script: djangoappengine.deferred.handler.application
   login: admin
 
+- url: /_ah/gc
+  script: blokus/garbage_collection.py
+  login: admin
+
 - url: /_ah/stats/.*
   script: djangoappengine.appstats.application
 

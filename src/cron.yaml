@@ -1,4 +1,4 @@
 cron:
 - description: Garbage-collect every 10 minutes.
-  url: /tasks/summary
+  url: /_ah/gc
   schedule: every 10 mintes
