@@ -28,4 +28,5 @@ def transpose_bitmap(bitmap):
 		transposed_bitmap.append(tuple(transposed_row))
 	return tuple(transposed_bitmap)
 
-
+def garbage_collect():
+	print "################################################################"
