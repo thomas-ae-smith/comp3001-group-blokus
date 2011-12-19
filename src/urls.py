@@ -22,5 +22,5 @@ urlpatterns = patterns('',
 	(r'^api/', include(rest_api.urls)),
 	(r'^lobby/', 'django.views.generic.simple.direct_to_template', {'template':'lobby.html'}),
 	(r'^admin/', include(admin.site.urls)),
-	(r'^gc$', 'blokus.common.garbage_collect'),
+	(r'^gc/$', 'blokus.views.execute_garbage_collection'),
 )

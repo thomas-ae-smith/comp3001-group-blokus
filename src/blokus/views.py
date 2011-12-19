@@ -3,6 +3,9 @@ from blokus.api import UserResource
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 
+def execute_garbage_collection(request):
+	print 'ITS THE CRON! It works :)'
+
 @require_http_methods(["GET"])
 def get_logged_in_user(request):
 	if not request.is_ajax():
