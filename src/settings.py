@@ -6,8 +6,18 @@ from djangoappengine.settings_base import *
 import os
 
 # Activate django-dbindexer for the default database
-DATABASES['native'] = DATABASES['default']
+
 DATABASES['default'] = {'ENGINE': 'dbindexer', 'TARGET': 'native'}
+DATABASES['native'] = { 
+    'ENGINE': 'djangoappengine.db', 
+    'HIGH_REPLICATION': True, 
+    'DEV_APPSERVER_OPTIONS': { 
+        'high_replication' : True, 
+        'use_sqlite': True, 
+    } 
+} 
+
+
 AUTOLOAD_SITECONF = 'indexes'
 
 SECRET_KEY = '=r-$b*8hglm+858&9t043hlm6-&6-3d3vfc4((7yd0dbrakhvi'
