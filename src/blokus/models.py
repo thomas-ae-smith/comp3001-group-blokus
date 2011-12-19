@@ -51,7 +51,6 @@ class UserProfile(models.Model):
 
 	user = models.OneToOneField(User)
 	status = models.CharField(max_length=255,choices=status_choices)
-	last_activity = models.DateTimeField(default=datetime.now())
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 
@@ -61,8 +60,9 @@ _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
 	game = models.ForeignKey(Game)
-	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	user = models.ForeignKey(User)
+	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
+	last_activity = models.DateTimeField(default=datetime.now())
 
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
