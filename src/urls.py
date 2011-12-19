@@ -20,6 +20,7 @@ urlpatterns = patterns('',
 	(r'^logout/$', 'django.contrib.auth.views.logout'),
 	(r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'game.html'}),
 	(r'^api/', include(rest_api.urls)),
-	(r'^lobby/', 'django.views.generic.simple.direct_to_template', {'template':'lobby.html'}),	
+	(r'^lobby/', 'django.views.generic.simple.direct_to_template', {'template':'lobby.html'}),
 	(r'^admin/', include(admin.site.urls)),
+	(r'^gc$', 'blokus.common.garbage_collect'),
 )
