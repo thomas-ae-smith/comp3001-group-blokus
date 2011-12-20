@@ -9,9 +9,15 @@ def execute_garbage_collection(request):
 	TIMEOUT_IN_SECONDS = 60 * 2
 
 	#If any player has been disconnected for longer than TIMEOUT_IN_SECONDS, delete them and the game they were in.
+	remove_set = set()
 	for player in Player.objects.all():
 		if (datetime.now - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
-			#do stuff
+			for dead_game_player in player.game.player_set.all():
+				remove_set.add(dead_game_player)
+			player.game.delete()
+
+	for player in remove_set:
+		player.delete()
 
 	#A view must return a "web response".
 	return HttpResponseNotFound('<h1>ZOMG, CRON JOB!</h1>')
