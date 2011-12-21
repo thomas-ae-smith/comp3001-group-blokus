@@ -10,19 +10,16 @@ def execute_garbage_collection(request):
 	# The amount of time which a single player may be disconnected for before the game is garbage-collected.
 	TIMEOUT_IN_SECONDS = 60 * 2 #The 10 minutes mentioned in the design doc seems like ages, but feel free to change this.
 
-	# If any player has been disconnected for longer than TIMEOUT_IN_SECONDS, delete them and the game they were in.
+	# If any game contains a player who has not been seen online in TIMEOUT_IN_SECONDS,
+	# delete the game and all its players.
 	remove_set = set()
-	for player in Player.objects.all():
-		if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
-			for dead_game_player in player.game.player_set.all():
-				remove_set.add(dead_game_player)
-			player.game.delete()
-
-	# Players to be removed are added to a removal set because if they were
-	# removed in the above loop then odd things could happen while looping
-	# through Player.objects.all().
-	for player in remove_set:
-		player.delete()
+	for game in Game.objects.all():
+		for player in game.player_set.all():
+			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
+				for player_dead in game.player_set.all():
+					player_dead.delete()
+				game.delete()
+				break
 
 	# A view must return a "web response".
 	return HttpResponseNotFound('<h1>ZOMG, CRON JOB!</h1>')
