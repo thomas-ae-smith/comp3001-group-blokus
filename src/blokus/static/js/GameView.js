@@ -1,5 +1,6 @@
 (function ($, _, Backbone, blokus) {
 
+	//Helper function to visually rotate a piece
     function rotateMatrix(data, rotation){
         rotation = Math.abs(rotation % 4);
         var rotatedData = _(data).clone();
@@ -19,6 +20,7 @@
         return rotatedData;
     }
 
+	//Draws a single piece
     function drawPiece (x, y, data, gameScreen) {
         var cellSize = 25;
         var numRows = data.length;
@@ -47,7 +49,7 @@
         $(window).mousemove(
             function(e){
                 //on move
-                if (shapeSet.isSelected ){
+                if ( shapeSet.isSelected ){
 					var SBBox = {
 						x : shapeSet.getBBox().x,
 						y : shapeSet.getBBox().y,
@@ -204,6 +206,7 @@
         return shapeSet;
     }
 
+	//The GameView class handles rendering, block selection and placement.
     blokus.GameView = Backbone.View.extend({
         className: "gameboard",
 
@@ -220,74 +223,59 @@
         xBorder: 2,
         numYCells: 20,
         yBorder: 2,
+		playerPositions: [
+			{ x:0, y:0, w:100, h:500 },
+			{ x:640, y:0, w:160, h:200 },
+			{ x:640, y:200, w:160, h:200 },
+			{ x:640, y:640, w:160, h:200 }
+		],
+		boardPos: { x:120, y:55, w:500, h:500 },
 
-
-        drawPlayer: function (x, y, player) {
-                this.paper.rect(x, y, 250, 110, 5).attr("fill", "#E3EEF2");
-                this.paper.text(x + 8, y + 10, player.name).attr({
-                        "text-anchor": "start",
+		//Draws the player box containing pieces
+        drawPlayer: function (pos, player) {
+                this.paper.rect(pos.x, pos.y, pos.w, pos.h).attr("fill", "white");
+				this.paper.rect(pos.x, pos.y, pos.w, 20).attr("fill", "gray");
+				this.paper.text(pos.x + 8, pos.y + 10, player.name).attr({
+					"text-anchor": "start",
                         "font-family": "Tahoma",
                         "font-weight": "bold",
                         "font-size": 14
-                });
+				});
         },
 
-        drawBoard: function (x, y, width, height) {
-                // Gameboard
-                //this.paper.rect(x, y, width+10, height+10, 5).attr("fill", "#GGGGGG");
-                //this.paper.rect(x+5, y+5, width, height).attr("fill", "#AAAAAA");
-                var numXCells = this.numXCells;
-                var numYCells = this.numYCells;
+		//Draw the game board squares
+        drawBoard: function () {
+			// Gameboard
+			//this.paper.rect(x, y, width+10, height+10, 5).attr("fill", "#GGGGGG");
+			//this.paper.rect(x+5, y+5, width, height).attr("fill", "#AAAAAA");
+			var numXCells = this.numXCells;
+			var numYCells = this.numYCells;
 
-                var cellXSize = width/numXCells; //Size of cell on X axis
-                var cellYSize = height/numYCells; //Size of cell on Y axis
+			var cellXSize = pos.width/numXCells; //Size of cell on X axis
+			var cellYSize = pos.height/numYCells; //Size of cell on Y axis
 
-                //Init the values of the board;
-                this.x = x;
-                this.y = y;
-                this.width = width;
-                this.height = height;
-                this.cellXSize = cellXSize;
-                this.cellYSize = cellYSize;
-                /*
-                for (var i = x+5+cellXSize; i<=width+x ; i+=cellXSize) {
-                        this.paper.path("M"+i+","+(y+5)+"L"+i+","+(height+y+5)+"z");
-                }
-                for (var j = y+5+cellYSize; j<=height+y ; j+=cellYSize) {
-                        this.paper.path("M"+(x+5)+","+j+"L"+(x+width+5)+","+j+"z");
-                }
-                */
-                // Adding the contains function to the rectangles of Raphael
-                /*_(this.paper.rect.prototype.__proto__).extend(
-                        {contains: function (x, y) {
-                                                        var startX = this.attrs.x;
-                                                        var startY = this.attrs.y;
-                                                        var endX = this.attrs.x + this.attrs.width;
-                                                        var endY = this.attrs.y + this.attrs.height;
-                                                        if (x >= startX && y >= startY &&
-                                                                        x <= endX && y <= endY){
-                                                                return true;
-                                                        }
-                                                        else {
-                                                                return false;
-                                                        }
-                                                }
-                        }
-                );*/
-                this.board = new Array(numXCells);
-                for (var i=x, iBoard=0; i<width+x ; i+=cellXSize, iBoard++) {
-                    this.board[iBoard] = new Array(numYCells);
-                    for (var j = y, jBoard=0; j<height+y ; j+=cellYSize, jBoard++) {
-                        var cell = this.paper.rect(i, j, cellXSize - this.xBorder, cellYSize - this.yBorder);
-                        cell.attr("fill", "#GGG");
-                        this.board[iBoard][jBoard] = cell;
-                        //cell.mouseover(function(){this.attr("fill", "#AAA");});
-                        //cell.mouseout(function(){this.attr("fill", "#GGG")});
-                    }
-                }
+			//Init the values of the board;
+			this.x = boardPos.x;
+			this.y = boardPos.y;
+			this.width = boardPos.width;
+			this.height = boardPos.height;
+			this.cellXSize = cellXSize;
+			this.cellYSize = cellYSize;
+			this.board = new Array(numXCells);
+			for (var i=boardPos.x, iBoard=0; i<boardPos.width+boardPos.x ; i+=cellXSize, iBoard++) {
+				this.board[iBoard] = new Array(numYCells);
+				for (var j = boardPos.y, jBoard=0; j<boardPos.height+boardPos.y ; j+=cellYSize, jBoard++) {
+					var cell = this.paper.rect(i, j, cellXSize - this.xBorder, cellYSize - this.yBorder);
+					cell.attr("fill", "#GGG");
+					this.board[iBoard][jBoard] = cell;
+					//cell.mouseover(function(){this.attr("fill", "#AAA");});
+					//cell.mouseout(function(){this.attr("fill", "#GGG")});
+				}
+			}
         },
 
         render: function () {
+
             var this_ = this,
                     loading = $('<div class="loading"></div>');
             // Reset element
@@ -303,15 +291,19 @@
                     // Make the Raphael element 800 x 600 in this view
                     this_.paper = Raphael(this_.el, 800, 600);
 
-                    // Player list with pieces
-                    var y = 30;
+					// Main board
+                    this_.drawBoard();
+					
+                    // Player list with pieces		
+					var i = 0;					
                     this_.game.get("players").each(function (player) {
-                            var user = blokus.users.get(player.get("userId"));
-                            this_.drawPlayer(10, y, user.toJSON());
-                            y += 120;
+						if (i < playerPositions.length) {
+							//TODO: add piece list for each player, and add it into drawPlayer()
+							var user = blokus.users.get(player.get("userId"));
+							this_.drawPlayer(this.playerPositions[i], user.toJSON());
+							++i;
+						}
                     });
-
-                    this_.drawBoard(290, 10, 500, 500);
 
                     //Temp just show that I can draw things
                     var data = window.data = blokus.pieceMasters.get(3).get("data");
@@ -329,7 +321,6 @@
                     $(this_.el).html('<div class="error">' + msg + '</div>');
                 }
             });
-
 
             return this;
         }
