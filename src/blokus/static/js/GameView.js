@@ -223,53 +223,60 @@
         xBorder: 2,
         numYCells: 20,
         yBorder: 2,
+		width: 860,
+		height: 620,
 		playerPositions: [
-			{ x:0, y:0, w:100, h:500 },
-			{ x:640, y:0, w:160, h:200 },
-			{ x:640, y:200, w:160, h:200 },
-			{ x:640, y:640, w:160, h:200 }
+			{ x:1, y:19, w:160, h:440 },
+			{ x:699, y:19, w:160, h:200 },
+			{ x:699, y:219, w:160, h:200 },
+			{ x:699, y:419, w:160, h:200 }
 		],
-		boardPos: { x:120, y:55, w:500, h:500 },
+		stagingPos: { x:1, y:459, w:160, h:160 },
+		boardPos: { x:180, y:75, w:500, h:500 },
+		imgStaticDir: "static/img/",
 
 		//Draws the player box containing pieces
         drawPlayer: function (pos, player) {
-                this.paper.rect(pos.x, pos.y, pos.w, pos.h).attr("fill", "white");
-				this.paper.rect(pos.x, pos.y, pos.w, 20).attr("fill", "gray");
-				this.paper.text(pos.x + 8, pos.y + 10, player.name).attr({
-					"text-anchor": "start",
-                        "font-family": "Tahoma",
-                        "font-weight": "bold",
-                        "font-size": 14
-				});
+			this.paper.rect(pos.x, pos.y, pos.w, pos.h, 10).attr({"fill":"gray", "stroke-width":2});
+			this.paper.rect(pos.x + 3, pos.y + 30, pos.w - 6, pos.h - 33, 10).attr({"fill":"white", "stroke-width":2});
+			this.paper.text(pos.x + 10, pos.y + 20, player.name).attr({
+				"text-anchor": "start",
+				"font-family": "Verdana",
+				"font-weight": "bold",
+				"font-size": 16
+			});
         },
-
-		//Draw the game board squares
-        drawBoard: function () {
+		drawRotationButton: function(x, y, img) {
+			this.paper.rect(x, y, 30, 30, 10).attr({"fill":"gray"});
+			this.paper.image(this.imgStaticDir + img, x + 6, y + 6, 18, 18);
+		},
+		drawStagingArea: function(pos) {
+			this.paper.rect(pos.x, pos.y, pos.w, pos.h, 10).attr({"fill":"white", "stroke-width":2});
+			this.drawRotationButton(pos.x + 3, pos.y + pos.h - 33, "rotateL.png");
+			this.drawRotationButton(pos.x + pos.w - 33, pos.y + pos.h - 33, "rotateR.png");
+		},
+		drawBoard: function (x, y, width, height) {
 			// Gameboard
-			//this.paper.rect(x, y, width+10, height+10, 5).attr("fill", "#GGGGGG");
-			//this.paper.rect(x+5, y+5, width, height).attr("fill", "#AAAAAA");
 			var numXCells = this.numXCells;
 			var numYCells = this.numYCells;
 
-			var cellXSize = pos.width/numXCells; //Size of cell on X axis
-			var cellYSize = pos.height/numYCells; //Size of cell on Y axis
+			var cellXSize = width/numXCells; //Size of cell on X axis
+			var cellYSize = height/numYCells; //Size of cell on Y axis
 
 			//Init the values of the board;
-			this.x = boardPos.x;
-			this.y = boardPos.y;
-			this.width = boardPos.width;
-			this.height = boardPos.height;
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
 			this.cellXSize = cellXSize;
 			this.cellYSize = cellYSize;
 			this.board = new Array(numXCells);
-			for (var i=boardPos.x, iBoard=0; i<boardPos.width+boardPos.x ; i+=cellXSize, iBoard++) {
+			for (var i=x, iBoard=0; i<width+x ; i+=cellXSize, iBoard++) {
 				this.board[iBoard] = new Array(numYCells);
-				for (var j = boardPos.y, jBoard=0; j<boardPos.height+boardPos.y ; j+=cellYSize, jBoard++) {
+				for (var j = y, jBoard=0; j<height+y ; j+=cellYSize, jBoard++) {
 					var cell = this.paper.rect(i, j, cellXSize - this.xBorder, cellYSize - this.yBorder);
 					cell.attr("fill", "#GGG");
 					this.board[iBoard][jBoard] = cell;
-					//cell.mouseover(function(){this.attr("fill", "#AAA");});
-					//cell.mouseout(function(){this.attr("fill", "#GGG")});
 				}
 			}
         },
@@ -289,21 +296,23 @@
                     loading.fadeOut(200, function () { loading.remove(); });
 
                     // Make the Raphael element 800 x 600 in this view
-                    this_.paper = Raphael(this_.el, 800, 600);
+                    this_.paper = Raphael(this_.el, this_.width, this_.height);
 
 					// Main board
-                    this_.drawBoard();
+                    this_.drawBoard(this_.boardPos.x, this_.boardPos.y, this_.boardPos.w, this_.boardPos.h);
 					
                     // Player list with pieces		
-					var i = 0;					
+					var i = 0;
                     this_.game.get("players").each(function (player) {
-						if (i < playerPositions.length) {
+						if (i < this_.playerPositions.length) {
 							//TODO: add piece list for each player, and add it into drawPlayer()
 							var user = blokus.users.get(player.get("userId"));
-							this_.drawPlayer(this.playerPositions[i], user.toJSON());
+							this_.drawPlayer(this_.playerPositions[i], user.toJSON());
 							++i;
 						}
                     });
+					
+					this_.drawStagingArea(this_.stagingPos);
 
                     //Temp just show that I can draw things
                     var data = window.data = blokus.pieceMasters.get(3).get("data");
