@@ -6,6 +6,7 @@ from tastypie.authorization import Authorization
 from tastypie.validation import CleanedDataFormValidation
 from django.forms import ModelForm, ValidationError
 from django.core import serializers
+from datetime import datetime
 
 class UserResource(ModelResource):
 	userprofile = fields.ToOneField('blokus.api.UserProfileResource', 'userprofile', full=True)
@@ -32,7 +33,17 @@ class UserProfileResource(ModelResource):
 		detail_allowed_methods = ['get','put']
 		authorization = Authorization()
 
+class GameAuthorization(Authorization):
 
+	#Limits return set so only games are shown that current user is playing in.
+	def apply_limits(self, request, object_list):
+		if request and request.user.id is not None:
+			result = []
+			for game in object_list:
+				if(game.player_set.filter(user=request.user).count() > 0):
+					result.append(game)
+			return result
+		return object_list.none()
 
 class GameResource(ModelResource):
 	players = fields.ToManyField('blokus.api.PlayerResource', 'player_set', full=True)
@@ -42,9 +53,18 @@ class GameResource(ModelResource):
 		default_format = 'application/json'
 		list_allowed_methods = []
 		detail_allowed_methods = ['get']
-		authorization = Authorization()
+		authorization = GameAuthorization()
 
-
+	#Every time a user gets a game object of theirs, their player timestamp is updated.
+	def get_object_list(self, request):
+		if request and request.user.id is not None:
+			games = super(GameResource, self).get_object_list(request)
+			for game in games:
+				player = Player.objects.get(game=game,user=request.user)
+				player.last_activity = datetime.now()
+				player.save()
+			return games
+		return Game.objects.none()
 
 class PlayerResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')

@@ -60,8 +60,9 @@ _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
 	game = models.ForeignKey(Game)
-	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	user = models.ForeignKey(User)
+	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
+	last_activity = models.DateTimeField(default=datetime.now())
 
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
@@ -138,10 +139,3 @@ class Piece(models.Model):
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	move_number = models.PositiveIntegerField()
-
-
-def create_user_profile(sender, instance, created, **kwargs):
-	if created:
-		UserProfile.objects.create(user=instance)
-
-post_save.connect(create_user_profile, sender=User)
