@@ -34,36 +34,6 @@
 			url: blokus.urls.player
 		});
 
-	// Define the collection of piece masters
-	var pieceMasters = new PieceMasterCollection();
-
-	// TODO: replace with pieceMasters.fetch();
-	pieceMasters.add([
-		{
-			id: 0,
-			data: [	[0, 1, 0],
-					[1, 1, 1],
-					[0, 0, 1]	]
-		},
-		{
-			id: 1,
-			data: [	[0, 1, 0],
-					[1, 1, 0]	]
-		},
-		{
-			id: 2,
-			data: [	[1, 1],
-					[1, 1],
-					[0, 1]	]
-		},
-		{
-			id: 3,
-			data: [	[1, 1],
-					[1, 1],
-					[0, 1],
-					[0, 1]	]
-		}
-	]);
 
 	// TEMP: Hard coded players
 	var users = new UserCollection([
@@ -119,7 +89,6 @@
 		PieceCollection: PieceCollection,
 		PlayerCollection: PlayerCollection,
 
-		pieceMasters: pieceMasters,
 		users: users,
 		games: games
 	});
