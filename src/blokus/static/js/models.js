@@ -37,7 +37,22 @@
 		}),
 
 		PieceMaster = Model.extend({
-			resourceUrl: blokus.urls.pieceMaster
+			resourceUrl: blokus.urls.pieceMaster,
+
+			parse: function (model) {
+				var rows = model.piece_data.split(","),
+					data = [];
+				// convert data string to multi-dimensional array of 1s and 0s
+				_(rows).each(function (row) {
+					var newRow = [];
+					_(row.split("")).each(function (char) {
+						newRow.push(Number(char));
+					})
+					data.push(newRow);
+				});
+				model.data = data;
+				return model;
+			}
 		}),
 
 		Piece = Model.extend({

@@ -32,7 +32,10 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 				keyUpMappings[keyCode] = [];
 			}
 			keyUpMappings[keyCode].push(callback);
-		};
+		},
+
+		// List of jQuery Deferred objects to be resolved before starting blokus
+		blokusDeferreds = [];
 
 	// Ensure HTML 5 elements are styled by IE
 	document.createElement('header');
@@ -86,8 +89,11 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			profile: 	function (id) 	{ switchToView(new blokus.ProfileView({ id: id })); }
 		}));
 
-		// Start backbone history to allow router to work
-		Backbone.history.start();
+		// To be run once everything is ready
+		function startBlokusApp() {
+			// Start backbone history to allow router to work
+			Backbone.history.start();
+		}
 
 
 		var $profileButton = $("#profileButton"),
@@ -212,6 +218,11 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 				_(keyDownMappings[e.keyCode]).each(function (f) { f.call() });
 			}
 		});
+
+		blokus.pieceMasters = new blokus.PieceMasterCollection();
+		blokusDeferreds.push(blokus.pieceMasters.fetch());
+
+		$.when.apply(undefined, blokusDeferreds).then(startBlokusApp);
 
 	});
 
