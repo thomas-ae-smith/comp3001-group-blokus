@@ -67,7 +67,7 @@
 						height: canvas.height(),
 					};
 
-					var futureX = undefined, 
+					var futureX = undefined,
 						futureY = undefined,
 						futureWidth = undefined,
 						futureHeigth = undefined;
@@ -187,7 +187,7 @@
                 }
             }
         );
-        blokus.mapKeyDown(37, 
+        blokus.mapKeyDown(37,
             function () {
                 var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
                 var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
@@ -195,7 +195,7 @@
                 shapeSet.rotation += 1;
             }
         );
-        blokus.mapKeyDown(39, 
+        blokus.mapKeyDown(39,
             function () {
                 var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
                 var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
@@ -300,8 +300,8 @@
 
 					// Main board
                     this_.drawBoard(this_.boardPos.x, this_.boardPos.y, this_.boardPos.w, this_.boardPos.h);
-					
-                    // Player list with pieces		
+
+                    // Player list with pieces
 					var i = 0;
                     this_.game.get("players").each(function (player) {
 						if (i < this_.playerPositions.length) {
@@ -311,12 +311,22 @@
 							++i;
 						}
                     });
-					
+
 					this_.drawStagingArea(this_.stagingPos);
 
-                    //Temp just show that I can draw things
+                    // FIXME: Temp just show that I can draw things
                     var data = window.data = blokus.pieceMasters.get(3).get("data");
                     window.shapeSet = drawPiece(50,23,data, this_);
+
+                    // FIXME: currently iterates through pieces and placed them. Should also scale and allow dragging and dropping more successfully
+                    var y = 100;
+                    blokus.pieceMasters.each(function (pieceMaster) {
+                    	// TODO: check piece master has not been placed (check for existence in pieceCollection)
+                    	var data = pieceMaster.get("data");
+                    	drawPiece(50, y, data, this_);
+                    	y += 100;
+                    })
+
     				window.gb = this_;
             	},
             	error: function (model, response) {
