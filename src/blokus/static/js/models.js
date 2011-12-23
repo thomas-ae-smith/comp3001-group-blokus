@@ -40,10 +40,8 @@
 			resourceUrl: blokus.urls.pieceMaster,
 
 			parse: function (model) {
-				console.log("hh")
 				var rows = model.piece_data.split(","),
 					data = [];
-				console.log(rows)
 				// convert data string to multi-dimensional array of 1s and 0s
 				_(rows).each(function (row) {
 					var newRow = [];
