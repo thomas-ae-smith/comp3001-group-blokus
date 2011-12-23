@@ -1,5 +1,12 @@
 (function ($, _, Backbone, blokus) {
 
+	var colours = {
+		red: '#ff0000',
+		green: '#00ff00',
+		blue: '#0000ff',
+		yellow: '#ffff00'
+	}
+
 	//Helper function to visually rotate a piece
 	function rotateMatrix(data, rotation){
 		rotation = Math.abs(rotation % 4);
@@ -104,7 +111,7 @@
 		},
 
 		//Draws a single piece
-		drawPiece: function (x, y, data) {
+		drawPiece: function (x, y, data, colour) {
 			console.log(x,y,data)
 			var gameBoard = this.gameBoard,
 				paper = this.paper;
@@ -119,7 +126,7 @@
 					if (data[rowI][colJ] == 1) {
 						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
 												cellSize, cellSize);
-						cell.attr({fill:'#323'});
+						cell.attr({fill: colours[colour]});
 						shapeSet.push(cell);
 					}
 				}
@@ -397,16 +404,21 @@
 		render: function () {
 			//TODO: add piece list for each player, and add it into drawPlayer()
 			var this_ = this,
-				user = new blokus.User({ id: this.options.player.get("userId") }),
-				pos = this.playerPositions[this.options.index];
+				gameView = this.options.gameView,
+				game = gameView.game,
+				pieces = game.get("pieces"),
+				player = this.options.player,
+				user = new blokus.User({ id: player.get("userId") }),
+				pos = this.playerPositions[this.options.index],
+				paper = this.options.paper;
 
 			//Draws the player box to contain the pieces
-			this.options.paper.rect(pos.x, pos.y, pos.w, pos.h, 10).attr({"fill":"gray", "stroke-width":2});
-			this.options.paper.rect(pos.x + 3, pos.y + 30, pos.w - 6, pos.h - 33, 10).attr({"fill":"white", "stroke-width":2});
+			paper.rect(pos.x, pos.y, pos.w, pos.h, 10).attr({"fill":"gray", "stroke-width":2});
+			paper.rect(pos.x + 3, pos.y + 30, pos.w - 6, pos.h - 33, 10).attr({"fill":"white", "stroke-width":2});
 
 			user.fetch({
 				success: function () {
-					this_.options.paper.text(pos.x + 10, pos.y + 20, user.get("name")).attr({
+					paper.text(pos.x + 10, pos.y + 20, user.get("name")).attr({
 						"text-anchor": "start",
 						"font-family": "Verdana",
 						"font-weight": "bold",
@@ -419,15 +431,27 @@
 			});
 
 			// FIXME: currently iterates through pieces and placed them. Should also scale and allow dragging and dropping more successfully
-			var x = pos.x + 30
-				y = pos.y + 40,
-				piecesPlaced = [];
-			// Iterated through pieces that have not yet been placed and render to the player's piece tray
-			_(blokus.pieceMasters.toJSON()).chain().reject(function (pieceMaster) {
-				return piecesPlaced.indexOf(pieceMaster.id) > -1;
-			}).each(function (pieceMaster) {
-				this_.options.gameView.drawPiece(x, y, pieceMaster.data);
-				y += 100;
+			var x = pos.x + 30;
+
+			_(player.get("colours")).each(function (colour) {
+				var y = pos.y + 40;
+				// Iterated through pieces that have not yet been placed and render to the player's piece tray
+				blokus.pieceMasters.each(function (pieceMaster) {
+					var piece = _(pieces[colour].models).find(function (piece) {
+							return pieceMaster.get("id") == piece.get("pieceMasterId");
+						});
+						nx = x,
+						ny = y;
+					if (piece) {
+						nx = gameView.gameBoard.x + piece.get("x") * gameView.gameBoard.cellXSize;
+						ny = gameView.gameBoard.y + piece.get("y") * gameView.gameBoard.cellYSize;
+						console.log(x, y)
+					}
+					gameView.drawPiece(nx, ny, pieceMaster.get("data"), colour);
+					y += 100;
+				});
+
+				x += 50;
 			});
 
 			return this;

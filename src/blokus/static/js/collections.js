@@ -48,17 +48,17 @@
 				],
 				pieces: {
 					red: [
-						{ master: 3, x: 0, y: 2, flip: 1 }
+						{ pieceMasterId: 3, x: 0, y: 2, flip: 1 }
 					],
 					green: [
-						{ master: 16, x: 5, y: 1, rotation: 2 }
+						{ pieceMasterId: 16, x: 5, y: 1, rotation: 2 }
 					],
 					blue: [
-						{ master: 8, x: 10, y: 2, rotation: 0 }
+						{ pieceMasterId: 8, x: 10, y: 2, rotation: 0 }
 					],
 					yellow: [
-						{ master: 0, x: 10, y: 13, rotation: 0 },
-						{ master: 12, x: 2, y: 15, rotation: 1, flip: 1 }
+						{ pieceMasterId: 0, x: 10, y: 13, rotation: 0 },
+						{ pieceMasterId: 12, x: 2, y: 15, rotation: 1, flip: 1 }
 					]
 				}
 			},

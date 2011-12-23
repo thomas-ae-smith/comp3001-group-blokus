@@ -63,8 +63,14 @@
 
 			parse: function (model) {
 				model.players = new blokus.PieceCollection(model.players);
-				model.pieces = new blokus.PieceCollection(model.pieces);
-				model.pieces.url = this.url() + "piece/";
+				model.pieces.red = new blokus.PieceCollection(model.pieces.red);
+				model.pieces.blue = new blokus.PieceCollection(model.pieces.blue);
+				model.pieces.green = new blokus.PieceCollection(model.pieces.green);
+				model.pieces.yellow = new blokus.PieceCollection(model.pieces.yellow);
+				model.pieces.red.url = this.url() + "piece/red/";
+				model.pieces.blue.url = this.url() + "piece/blue/";
+				model.pieces.green.url = this.url() + "piece/green/";
+				model.pieces.yellow.url = this.url() + "piece/yellow/";
 				model.players.url = this.url() + "player/";
 				return model;
 			}
