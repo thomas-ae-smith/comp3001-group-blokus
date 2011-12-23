@@ -13,10 +13,26 @@
 	});
 	var User = Model.extend({
 			resourceUrl: blokus.urls.user,
+
+			// FIXME: Hacked in bootstrap, baby
+			fetch: function (options) {
+				var this_ = this,
+					id = Number(this_.get("id")),
+					model = _(blokus._exampleUsers).find(function (user) {
+						return user.id === id;
+					});
+
+				if (!model) {
+					if (options.error) options.error.call(undefined, {}, {status: 404});
+				} else {
+					this.set(this.parse(model));
+					if (options.success) options.success.call();
+				}
+			},
+
 			parse: function (model) {
 		        // Set the user profile
-		        blokus.userProfile.set(model.userProfile);
-		        model.unset(userProfile, { silent: true });
+		        // FIXME: blokus.userProfile.set(model.userProfile);
 
 				return model;
 			}
@@ -29,10 +45,28 @@
 		Game = Model.extend({
 			resourceUrl: blokus.urls.game,
 
-			// Hacked in bootstrap, baby
+			// FIXME: Hacked in bootstrap, baby
 			fetch: function (options) {
-				this.set(blokus.games.at(0).toJSON());
-				options.success.call();
+				var this_ = this,
+					id = Number(this_.get("id")),
+					model = _(blokus._exampleGames).find(function (game) {
+						return game.id === id;
+					});
+
+				if (!model) {
+					if (options.error) options.error.call(undefined, {}, {status: 404});
+				} else {
+					this.set(this.parse(model));
+					if (options.success) options.success.call();
+				}
+			},
+
+			parse: function (model) {
+				model.players = new blokus.PieceCollection(model.players);
+				model.pieces = new blokus.PieceCollection(model.pieces);
+				model.pieces.url = this.url() + "piece/";
+				model.players.url = this.url() + "player/";
+				return model;
 			}
 		}),
 
@@ -56,6 +90,9 @@
 		}),
 
 		Piece = Model.extend({
+			validate: function () {
+				// TODO: check valid place for piece
+			}
 		}),
 
 		Player = Model.extend({
