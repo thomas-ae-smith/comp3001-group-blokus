@@ -38,7 +38,6 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 	document.createElement('article');
 	document.createElement('aside');
 
-
 	$(document).ready(function () {
 
 		var currentView;
