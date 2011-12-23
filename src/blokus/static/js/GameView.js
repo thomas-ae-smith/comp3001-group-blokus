@@ -20,8 +20,6 @@
 		return rotatedData;
 	}
 
-
-
 	//The GameView class handles rendering, block selection and placement.
 	blokus.GameView = Backbone.View.extend({
 		className: "gameboard",
@@ -68,7 +66,6 @@
 					this_.gameBoard = (new blokus.GameBoard({ paper: this_.paper })).render();
 					this_.playerPanels = [];
 
-
 					// Player list with pieces
 					this_.game.get("players").each(function (player, index) {
 						var playerPanel = (new blokus.PlayerPanel({
@@ -94,10 +91,10 @@
 				error: function (model, response) {
 					var msg = '';
 					if (response.status === 404) {
-							loading.fadeOut(200, function () { loading.remove(); });
-							msg = "This game does not exist";
+						loading.fadeOut(200, function () { loading.remove(); });
+						msg = "This game does not exist";
 					} else {
-							msg = response.responseText || "An error occured";
+						msg = response.responseText || "An error occured";
 					}
 					$(this_.el).html('<div class="error">' + msg + '</div>');
 				}
@@ -400,17 +397,25 @@
 		render: function () {
 			//TODO: add piece list for each player, and add it into drawPlayer()
 			var this_ = this,
-				user = blokus.users.get(this.options.player.get("userId")),
+				user = new blokus.User({ id: this.options.player.get("userId") }),
 				pos = this.playerPositions[this.options.index];
 
 			//Draws the player box to contain the pieces
 			this.options.paper.rect(pos.x, pos.y, pos.w, pos.h, 10).attr({"fill":"gray", "stroke-width":2});
 			this.options.paper.rect(pos.x + 3, pos.y + 30, pos.w - 6, pos.h - 33, 10).attr({"fill":"white", "stroke-width":2});
-			this.options.paper.text(pos.x + 10, pos.y + 20, user.get("name")).attr({
-				"text-anchor": "start",
-				"font-family": "Verdana",
-				"font-weight": "bold",
-				"font-size": 16
+
+			user.fetch({
+				success: function () {
+					this_.options.paper.text(pos.x + 10, pos.y + 20, user.get("name")).attr({
+						"text-anchor": "start",
+						"font-family": "Verdana",
+						"font-weight": "bold",
+						"font-size": 16
+					});
+				},
+				error: function () {
+					// TODO
+				}
 			});
 
 			// FIXME: currently iterates through pieces and placed them. Should also scale and allow dragging and dropping more successfully
