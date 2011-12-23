@@ -2,21 +2,23 @@
 window.blokus = (function ($, _, Backbone, Raphael) {
 	"use strict";
 
+	// DEBUG = true for logging to console
 	var DEBUG = true,
 
 		// URLs for REST
 		restRootUrl = "/api/rest/",
-
 		urls = {
 			user: restRootUrl + "user/",
 			userProfile: restRootUrl + "userProfile/",
 			game: restRootUrl + "game/",
-			pieceMaster: restRootUrl + "piece-master/"
+			pieceMaster: restRootUrl + "piecemaster/"
 		},
 
+		// Maps of key-codes to array of functions to call when key is pressed/released
 		keyDownMappings = {},
 		keyUpMappings = {},
 
+		// Bind a function to a key being pressed
 		mapKeyDown = function (keyCode, callback) {
 			if (!keyDownMappings.hasOwnProperty(keyCode)) {
 				keyDownMappings[keyCode] = [];
@@ -24,6 +26,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			keyDownMappings[keyCode].push(callback);
 		},
 
+		// Bind a function to a key being released
 		mapKeyUp = function (keyCode, callback) {
 			if (!keyUpMappings.hasOwnProperty(keyCode)) {
 				keyUpMappings[keyCode] = [];
@@ -38,14 +41,17 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 	document.createElement('article');
 	document.createElement('aside');
 
+	// When the document is ready
 	$(document).ready(function () {
+		// Note below, a "view" in the following context is what might be considered a "page" - lobby, game, help etc
 
+		// Reference to the current view
 		var currentView;
 
-		// Switch to a different view (lobby, game, help etc)
+		// Switch to a different view
 		function switchToView (view) {
 			var oldView = currentView,
-				// render new view
+				// Render new view
 				$newview = $(view.render().el);
 
 			if (oldView) {
@@ -61,11 +67,11 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			$("#container").append($newview);
 		}
 
-		// Make a new router
+		// Make a new router, which binds hash-urls to events. Each hash-url should load a view.
 		blokus.router = new (Backbone.Router.extend({
 			routes: {
-				"": "lobby",
-				"game/:id": "game",
+				"": "lobby",			// When there is no hash url
+				"game/:id": "game",		// Eg #game/12
 				"help": "help",
 				"register": "register",
 				"forgot": "forgot",
@@ -80,8 +86,9 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			profile: 	function (id) 	{ switchToView(new blokus.ProfileView({ id: id })); }
 		}));
 
-		// Start backbone history to allow routing
+		// Start backbone history to allow router to work
 		Backbone.history.start();
+
 
 		var $profileButton = $("#profileButton"),
 			$profileMenu = $("#profileMenu"),
@@ -129,7 +136,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 
 			var username = $("#loginUsername").html(),
 				password = $("#loginPassword").html();
-			
+
 			$.ajax({
 				url: "/login",
 				type: "POST",
@@ -191,7 +198,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
         	}
         });
 
-		// When window loads or is resized, Set profile/login panel position to below button 
+		// When window loads or is resized, Set profile/login panel position to below button
 		$(window).bind("resize load", positionProfileMenu);
 
 		$(window).keyup(function (e) {
