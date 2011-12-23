@@ -221,7 +221,6 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 
 		blokus.pieceMasters = new blokus.PieceMasterCollection();
 		blokusDeferreds.push(blokus.pieceMasters.fetch());
-		console.log(blokus.pieceMasters)
 
 		$.when.apply(undefined, blokusDeferreds).then(startBlokusApp);
 
