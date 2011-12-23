@@ -98,22 +98,48 @@
 						SBBox.y + SBBox.height + (e.pageY - shapeSet.mousePageY - shapeSet.prevDY), // bottom
 						SBBox.x + (e.pageX - shapeSet.mousePageX - shapeSet.prevDX), // left
 					];
+					var boardBBox = [
+						0, // top
+						GSBox.width, // right
+						GSBox.height, // bottom
+						0, // left 
+					];
 					var iT = tmpR%4;
 					var iR = (tmpR%4+1 >= 4 ? (tmpR%4+1)%4 : tmpR%4+1);
 					var iB = (tmpR%4+2 >= 4 ? (tmpR%4+2)%4 : tmpR%4+2);
 					var iL = (tmpR%4+3 >= 4 ? (tmpR%4+3)%4 : tmpR%4+3);
-					iT = 0;
-					iR = 1;
-					iB = 2;
-					iL = 3;
-					console.log(iT, iR, iB, iL, futureSBBox);
+					var iBT = 0;
+					var iBR = 1;
+					var iBB = 2;
+					var iBL = 3;
+					if (tmpR % 2 == 0){
+						iT = 0;
+						iR = 1;
+						iB = 2;
+						iL = 3;
+						iBT = 0;
+						iBR = 1;
+						iBB = 2;
+						iBL = 3;
+					}
+					else{
+						iT = 3;
+						iR = 2;
+						iB = 1;
+						iL = 0;
+						iBT = 0;
+						iBR = 2;
+						iBB = 1;
+						iBL = 3;
+					}
+
 					var xMove = 0,
 						yMove = 0;
 					var sthChanged = false;
-					if (futureSBBox[iL] > 0 && futureSBBox[iR] <= GSBox.width) {
+					if (futureSBBox[iL] > boardBBox[iBL] && futureSBBox[iR] <= boardBBox[iBR]) {
 						xMove = distX - shapeSet.prevDistX;
 					}
-					if ( futureSBBox[iT] > 0 && futureSBBox[iB] <= GSBox.height) {
+					if ( futureSBBox[iT] > boardBBox[iBT] && futureSBBox[iB] <= boardBBox[iBB]) {
 						yMove = distY - shapeSet.prevDistY;
 					}
 					if (GSBox.top < e.pageY && GSBox.bottom > e.pageY && GSBox.left < e.pageX && GSBox.right > e.pageX ){
