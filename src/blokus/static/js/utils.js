@@ -42,3 +42,11 @@ function makePositionArray(x, y, w, h){
 	pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 9))};
 	pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 19)),y: Math.floor(Number(y) + (blockHeight * 11))};
 }
+
+function is_corner(x, y){
+	if (((x == 0) && (y == 0)) || ((x == 0) && (y == 19)) || ((x == 19) && (y == 0)) || ((x == 19) && (y == 19))){
+		return true;
+	}else{
+		return false;
+	}
+}

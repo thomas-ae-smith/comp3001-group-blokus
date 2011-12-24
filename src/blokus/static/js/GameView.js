@@ -270,17 +270,32 @@
 							tmpData = rotateMatrix(data, shapeSet.rotation);
 							var numRows = tmpData.length;
 							var numCols = tmpData[0].length;
+							var corner = false;
 							for (var rowI = 0; rowI < numRows; rowI++){
 								for (var colJ = 0; colJ <= numCols; colJ++) {
 									if (tmpData[rowI][colJ] == 1) {
 										highlighted_set.push(gameBoard.arr[cellIndex.x+colJ][cellIndex.y+rowI]);
+
+										//Test to see if piece uses a corner square
+										if (is_corner(cellIndex.x+colJ,cellIndex.y+rowI)){
+											corner = true;
+										}
 									}
 								}
 							}
 							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 							var cell = gameBoard.arr[cellIndex.x][cellIndex.y];
-							highlighted_set.forEach(function (shape) {shape.attr({"fill": "#EEE"})});
+
+							//Highlight green if valid position else white
+							highlighted_set.forEach(function (shape) {
+								if (corner){
+									shape.attr({"fill": "#00CC33"});
+								}else{
+									shape.attr({"fill": "#EEE"});
+								}
+							});
+
 							shapeSet.dest_x = cell.attr("x");
 							shapeSet.dest_y = cell.attr("y");
 						}
