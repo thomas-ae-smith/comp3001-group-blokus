@@ -112,7 +112,6 @@
 
 		//Draws a single piece
 		drawPiece: function (x, y, data, colour) {
-			console.log(x,y,data)
 			var gameBoard = this.gameBoard,
 				paper = this.paper;
 
@@ -137,6 +136,7 @@
 				width: shapeSet.getBBox().width,
 				height: shapeSet.getBBox().height,
 			};
+			shapeSet.scale(0.3, 0.3, x, y);
 			shapeSet.isSelected = false;
 			shapeSet.rotation = 0;
 			var highlighted_set = paper.set();
@@ -208,17 +208,7 @@
 						var iBR = 1;
 						var iBB = 2;
 						var iBL = 3;
-						if (tmpR % 2 == 0){
-							iT = 0;
-							iR = 1;
-							iB = 2;
-							iL = 3;
-							iBT = 0;
-							iBR = 1;
-							iBB = 2;
-							iBL = 3;
-						}
-						else{
+						if (tmpR % 2 != 0){
 							iT = 3;
 							iR = 2;
 							iB = 1;
@@ -277,7 +267,7 @@
 										highlighted_set.push(gameBoard.arr[cellIndex.x+colJ][cellIndex.y+rowI]);
 
 										//Test to see if piece uses a corner square
-										if (is_corner(cellIndex.x+colJ,cellIndex.y+rowI)){
+										if (blokus.utils.is_corner(cellIndex.x+colJ,cellIndex.y+rowI)){
 											corner = true;
 										}
 									}
@@ -449,6 +439,23 @@
 			var x = pos.x + 30;
 
 			_(player.get("colours")).each(function (colour) {
+				var trayPieces = [];
+				/*
+				blokus.pieceMasters.each(function (pieceMaster){
+					// Iterated through pieces that have not yet been placed and render to the player's piece tray
+					trayPieces.push(_(pieces[colour].models).find(function (piece) {
+							return pieceMaster.get("id") == piece.get("pieceMasterId");
+					}));
+				});
+				*/
+				trayPieces = blokus.pieceMasters.toJSON();
+				var allPos = blokus.utils.get_points(trayPieces, pos.x, pos.y, pos.w, pos.h);
+				for (var i = 0; i < allPos.length; i++){
+					gameView.drawPiece(allPos[i].x, allPos[i].y, trayPieces[i].data, colour);
+				}
+			});
+			/*
+			_(player.get("colours")).each(function (colour) {
 				var y = pos.y + 40;
 				// Iterated through pieces that have not yet been placed and render to the player's piece tray
 				blokus.pieceMasters.each(function (pieceMaster) {
@@ -460,14 +467,13 @@
 					if (piece) {
 						nx = gameView.gameBoard.x + piece.get("x") * gameView.gameBoard.cellXSize;
 						ny = gameView.gameBoard.y + piece.get("y") * gameView.gameBoard.cellYSize;
-						console.log(x, y)
 					}
 					gameView.drawPiece(nx, ny, pieceMaster.get("data"), colour);
 					y += 100;
 				});
-
 				x += 50;
 			});
+			*/
 
 			return this;
 		}
