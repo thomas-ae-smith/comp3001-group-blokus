@@ -449,7 +449,7 @@
 				});
 				*/
 				trayPieces = blokus.pieceMasters.toJSON();
-				var allPos = blokus.utils.get_points(trayPieces, pos.x, pos.y, pos.w, pos.h);
+				var allPos = blokus.utils.get_points(trayPieces, pos.x + 10, pos.y + 35, pos.w - 27, pos.h - 20);
 				for (var i = 0; i < allPos.length; i++){
 					gameView.drawPiece(allPos[i].x, allPos[i].y, trayPieces[i].data, colour);
 				}

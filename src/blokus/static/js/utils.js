@@ -15,10 +15,10 @@ blokus.utils = (function ($, _, Backbone){
 		var blockHeight = h / 12;
 
 		//row 1
-		pieceLocations[0] = {x: Math.floor(Number(x) + (blockWidth * 3)),y: Math.floor(Number(y) + (blockHeight * 0))};
-		pieceLocations[1] = {x: Math.floor(Number(x) + (blockWidth * 7)),y: Math.floor(Number(y) + (blockHeight * 0))};
-		pieceLocations[2] = {x: Math.floor(Number(x) + (blockWidth * 12)),y: Math.floor(Number(y) + (blockHeight * 0))};
-		pieceLocations[3] = {x: Math.floor(Number(x) + (blockWidth * 17)),y: Math.floor(Number(y) + (blockHeight * 0))};
+		pieceLocations[0] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 0))};
+		pieceLocations[1] = {x: Math.floor(Number(x) + (blockWidth * 3)),y: Math.floor(Number(y) + (blockHeight * 0))};
+		pieceLocations[2] = {x: Math.floor(Number(x) + (blockWidth * 7)),y: Math.floor(Number(y) + (blockHeight * 0))};
+		pieceLocations[3] = {x: Math.floor(Number(x) + (blockWidth * 12)),y: Math.floor(Number(y) + (blockHeight * 0))};
 
 		//row 2
 		pieceLocations[4] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 2))};
@@ -36,12 +36,14 @@ blokus.utils = (function ($, _, Backbone){
 		pieceLocations[14] = {x: Math.floor(Number(x) + (blockWidth * 22)),y: Math.floor(Number(y) + (blockHeight * 5))};
 		
 		//row 4
-		pieceLocations[15] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 9))};
-		pieceLocations[16] = {x: Math.floor(Number(x) + (blockWidth * 3)),y: Math.floor(Number(y) + (blockHeight * 9))};
-		pieceLocations[17] = {x: Math.floor(Number(x) + (blockWidth * 7)),y: Math.floor(Number(y) + (blockHeight * 9))};
-		pieceLocations[18] = {x: Math.floor(Number(x) + (blockWidth * 11)),y: Math.floor(Number(y) + (blockHeight * 9))};
-		pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 9))};
-		pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 19)),y: Math.floor(Number(y) + (blockHeight * 11))};
+		pieceLocations[15] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 8.6))};
+		pieceLocations[16] = {x: Math.floor(Number(x) + (blockWidth * 5)),y: Math.floor(Number(y) + (blockHeight * 9))};
+		pieceLocations[17] = {x: Math.floor(Number(x) + (blockWidth * 11)),y: Math.floor(Number(y) + (blockHeight * 9))};
+		pieceLocations[18] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 9))};
+		pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 9))};
+
+		//Put the last shape on the first line
+		pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 17)),y: Math.floor(Number(y) + (blockHeight * 0))};
 	};
 
 	var is_corner = function (x, y){
