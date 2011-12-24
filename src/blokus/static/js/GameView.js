@@ -136,7 +136,7 @@
 				width: shapeSet.getBBox().width,
 				height: shapeSet.getBBox().height,
 			};
-			shapeSet.scaleVal = {x: scaleX, y:scaleY, originalScale: false};
+			shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
 			shapeSet.scale(scaleX, scaleY, x, y);
 			shapeSet.isSelected = false;
 			shapeSet.rotation = 0;
@@ -222,11 +222,11 @@
 						}
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
-							shapeSet.translate((1/shapeSet.scaleVal.x)*xMove, (1/shapeSet.scaleVal.y)*yMove);
+							shapeSet.translate((1/shapeSet.curScale.sx)*xMove, (1/shapeSet.curScale.sy)*yMove);
 							console.log(Math.abs(distX) + Math.abs(distY));
-							if(Math.abs(distX) + Math.abs(distY) > 100 && !shapeSet.scaleVal.originalScale){
+							if(Math.abs(distX) + Math.abs(distY) > 100 && !shapeSet.curScale.originalScale){
 								shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
-								shapeSet.scaleVal = {x: 1, y: 1, originalScale: true};
+								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
 							}
 							shapeSet.prevDistX = distX;
 							shapeSet.prevDistY = distY;
@@ -283,12 +283,14 @@
 								}
 							});
 
-							shapeSet.dest_x = cell.attr("x") - shapeSet.initBBox.x;
-							shapeSet.dest_y = cell.attr("y") - shapeSet.initBBox.y;
+							shapeSet.destCor = {
+								x: cell.attr("x") - shapeSet.initBBox.x,
+								y:cell.attr("y") - shapeSet.initBBox.y
+							 };
 						}
 						else {
-							shapeSet.dest_x = shapeSet.initBBox.x;
-							shapeSet.dest_y = shapeSet.initBBox.y;
+							shapeSet.destCor = { x: shapeSet.initBBox.x, y: shapeSet.initBBox.y };
+							shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
@@ -313,19 +315,22 @@
 						var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 						var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 						var rotation = shapeSet.rotation * 90;
-						var xadd = -50,
-							yadd = -25;
-						if (shapeSet.rotation % 2 != 0){
-							xadd = -25;
-							yadd = -50;
+						var tmp_x = shapeSet.destCor.x;
+						var tmp_y = shapeSet.destCor.y;
+						var sy = 1;
+						var sx = 1;
+						if (tmp_x == shapeSet.initBBox.x && tmp_y == shapeSet.initBBox.y){
+							sx = shapeSet.curScale.sx;
+							sy = shapeSet.curScale.sy;
+							ssx = tmp_x;
+							ssy = tmp_y;
+							tmp_x = 0;
+							tmp_y = 0;
 						}
-						xadd = 0;
-						yadd = 0;
-						var tmp_x = shapeSet.dest_x + xadd;
-						var tmp_y = shapeSet.dest_y + yadd;
 						window.cur = shapeSet;
-						console.log(shapeSet.dest_x, shapeSet.dest_y);
-						shapeSet.animate({transform: "t"+tmp_x+" "+tmp_y+"r"+rotation+" "+xrot+" "+yrot} , 500);
+						shapeSet.animate(
+							{transform: "t"+tmp_x+" "+tmp_y+"r"+rotation+" "+xrot+" "+yrot+"s"+sx+" "+sy+" "+ssx+" "+ssy},
+							500);
 						shapeSet.animate({"opacity": 1}, 500);
 						//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
 					}
