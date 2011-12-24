@@ -283,8 +283,8 @@
 								}
 							});
 
-							shapeSet.dest_x = cell.attr("x");
-							shapeSet.dest_y = cell.attr("y");
+							shapeSet.dest_x = cell.attr("x") - shapeSet.initBBox.x;
+							shapeSet.dest_y = cell.attr("y") - shapeSet.initBBox.y;
 						}
 						else {
 							shapeSet.dest_x = shapeSet.initBBox.x;
@@ -319,8 +319,12 @@
 							xadd = -25;
 							yadd = -50;
 						}
+						xadd = 0;
+						yadd = 0;
 						var tmp_x = shapeSet.dest_x + xadd;
 						var tmp_y = shapeSet.dest_y + yadd;
+						window.cur = shapeSet;
+						console.log(shapeSet.dest_x, shapeSet.dest_y);
 						shapeSet.animate({transform: "t"+tmp_x+" "+tmp_y+"r"+rotation+" "+xrot+" "+yrot} , 500);
 						shapeSet.animate({"opacity": 1}, 500);
 						//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
