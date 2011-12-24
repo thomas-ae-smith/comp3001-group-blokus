@@ -223,7 +223,6 @@
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
 							shapeSet.translate((1/shapeSet.curScale.sx)*xMove, (1/shapeSet.curScale.sy)*yMove);
-							console.log(Math.abs(distX) + Math.abs(distY));
 							if(Math.abs(distX) + Math.abs(distY) > 100 && !shapeSet.curScale.originalScale){
 								shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
 								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
@@ -319,6 +318,8 @@
 						var tmp_y = shapeSet.destCor.y;
 						var sy = 1;
 						var sx = 1;
+						var ssx = shapeSet.initBBox.x;
+						var ssy = shapeSet.initBBox.y;
 						if (tmp_x == shapeSet.initBBox.x && tmp_y == shapeSet.initBBox.y){
 							sx = shapeSet.curScale.sx;
 							sy = shapeSet.curScale.sy;
