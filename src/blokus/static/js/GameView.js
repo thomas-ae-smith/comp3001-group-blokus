@@ -111,7 +111,7 @@
 		},
 
 		//Draws a single piece
-		drawPiece: function (x, y, data, colour) {
+		drawPiece: function (x, y, data, colour, scaleX, scaleY) {
 			var gameBoard = this.gameBoard,
 				paper = this.paper;
 
@@ -136,7 +136,8 @@
 				width: shapeSet.getBBox().width,
 				height: shapeSet.getBBox().height,
 			};
-			shapeSet.scale(0.3, 0.3, x, y);
+			shapeSet.scaleVal = {x: scaleX, y:scaleY, originalScale: false};
+			shapeSet.scale(scaleX, scaleY, x, y);
 			shapeSet.isSelected = false;
 			shapeSet.rotation = 0;
 			var highlighted_set = paper.set();
@@ -161,17 +162,12 @@
 							height: canvas.height(),
 						};
 
-						var futureX = undefined,
-							futureY = undefined,
-							futureWidth = undefined,
-							futureHeigth = undefined;
-
 						var tmpR = Math.abs(shapeSet.rotation % 4);
 						if (tmpR == 0){
 							var distX = e.pageX - shapeSet.mousePageX;
 							var distY = e.pageY - shapeSet.mousePageY;
 						}
-						if (tmpR == 1){
+						else if (tmpR == 1){
 							//dist the coordinates have been rotated by 90 degrees
 							var distY = e.pageX - shapeSet.mousePageX;
 							var distX = -(e.pageY - shapeSet.mousePageY);
@@ -184,10 +180,6 @@
 							var distY = -(e.pageX - shapeSet.mousePageX);
 							var distX = (e.pageY - shapeSet.mousePageY);
 						}
-						// futureX = SBBox.x + (distX - shapeSet.prevDistX);
-						// futureY = SBBox.y + (distY - shapeSet.prevDistY);
-						// futureWidth = SBBox.x + SBBox.width + (distX - shapeSet.prevDistX);
-						// futureHeigth = SBBox.y + SBBox.height + (distY - shapeSet.prevDistY);
 						var futureSBBox = [
 							SBBox.y + (e.pageY - shapeSet.mousePageY - shapeSet.prevDY), // top
 							SBBox.x + SBBox.width + (e.pageX - shapeSet.mousePageX - shapeSet.prevDX), // right
@@ -230,7 +222,12 @@
 						}
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
-							shapeSet.translate(xMove, yMove);
+							shapeSet.translate((1/shapeSet.scaleVal.x)*xMove, (1/shapeSet.scaleVal.y)*yMove);
+							console.log(Math.abs(distX) + Math.abs(distY));
+							if(Math.abs(distX) + Math.abs(distY) > 100 && !shapeSet.scaleVal.originalScale){
+								shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
+								shapeSet.scaleVal = {x: 1, y: 1, originalScale: true};
+							}
 							shapeSet.prevDistX = distX;
 							shapeSet.prevDistY = distY;
 							shapeSet.prevDX = e.pageX - shapeSet.mousePageX;
@@ -451,7 +448,7 @@
 				trayPieces = blokus.pieceMasters.toJSON();
 				var allPos = blokus.utils.get_points(trayPieces, pos.x + 10, pos.y + 35, pos.w - 27, pos.h - 20);
 				for (var i = 0; i < allPos.length; i++){
-					gameView.drawPiece(allPos[i].x, allPos[i].y, trayPieces[i].data, colour);
+					gameView.drawPiece(allPos[i].x, allPos[i].y, trayPieces[i].data, colour, 0.3, 0.3);
 				}
 			});
 			/*
