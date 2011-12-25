@@ -177,6 +177,7 @@
 						var tmpR = Math.abs(shapeSet.rotation % 4);
 						var distX = e.pageX - shapeSet.mousePageX;
 						var distY = e.pageY - shapeSet.mousePageY;
+						shapeSet.toFront();
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
 							//shapeSet.translate((1/shapeSet.curScale.sx)*xMove, (1/shapeSet.curScale.sy)*yMove);
@@ -191,38 +192,43 @@
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 							var rotation = shapeSet.rotation * 90;
 							
-			shapeSet.rotatedBBox = {
-				x:shapeSet.getBBox().x,
-				y:shapeSet.getBBox().y,
-				width: shapeSet.getBBox().width,
-				height: shapeSet.getBBox().height,
-			};
-							if (distX + shapeSet.initBBox.x > 0 && distY + shapeSet.initBBox.y > 0 ){
-								if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
-									//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
-									shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
-									scaleFull = true;
-									//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-									shapeSet.animate(
-										{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-										75
-									);
-								}
-								else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
-									shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
-									scaleFull = false;
-									shapeSet.animate(
-										{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-										75
-									);
-								}
-								else{
-									shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-								}
+							shapeSet.rotatedBBox = {
+								x:shapeSet.getBBox().x,
+								y:shapeSet.getBBox().y,
+								width: shapeSet.getBBox().width,
+								height: shapeSet.getBBox().height,
+							};
+							if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
+								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
+								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
+								scaleFull = true;
+								//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+								shapeSet.animate(
+									{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+									75
+								);
+							}
+							else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
+								shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
+								scaleFull = false;
+								shapeSet.animate(
+									{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+									75
+								);
+							}
+							else{
+								shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+							}
+							if(shapeSet.getBBox().x > 0 && shapeSet.getBBox().y > 0 && 
+								shapeSet.getBBox().x + shapeSet.getBBox().width < GSBox.width &&
+								shapeSet.getBBox().y + shapeSet.getBBox().height < GSBox.height){
 								shapeSet.prevDistX = distX;
 								shapeSet.prevDistY = distY;
 								shapeSet.prevDX = e.pageX - shapeSet.mousePageX;
 								shapeSet.prevDY = e.pageY - shapeSet.mousePageY;
+							}
+							else{
+								shapeSet.transform("t"+shapeSet.prevDistX+" "+shapeSet.prevDistY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
 							}
 						}
 						// game board bounds
