@@ -137,6 +137,7 @@
 				height: shapeSet.getBBox().height,
 			};
 			shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
+			var scaleFull = false;
 			shapeSet.scale(scaleX, scaleY, x, y);
 			shapeSet.isSelected = false;
 			shapeSet.rotation = 0;
@@ -235,11 +236,27 @@
 							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 							var rotation = shapeSet.rotation * 90;
-							shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-							if(Math.abs(distX) + Math.abs(distY) > 100 && !shapeSet.curScale.originalScale){
+							
+							if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
 								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
 								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
-								shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+								scaleFull = true;
+								//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+								shapeSet.animate(
+									{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+									75
+								);
+							}
+							else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
+								shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
+								scaleFull = false;
+								shapeSet.animate(
+									{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+									75
+								);
+							}
+							else{
+								shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
 							}
 							shapeSet.prevDistX = distX;
 							shapeSet.prevDistY = distY;
@@ -303,7 +320,8 @@
 						}
 						else {
 							shapeSet.destCor = { x: shapeSet.initBBox.x, y: shapeSet.initBBox.y };
-							shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
+							//shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
+							shapeSet.initScale = {sx: scaleX, sy:scaleY, originalScale: false};
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
@@ -339,8 +357,8 @@
 						var ssx = shapeSet.initBBox.x;
 						var ssy = shapeSet.initBBox.y;
 						if (tmp_x == shapeSet.initBBox.x && tmp_y == shapeSet.initBBox.y){
-							sx = shapeSet.curScale.sx;
-							sy = shapeSet.curScale.sy;
+							sx = shapeSet.initScale.sx;
+							sy = shapeSet.initScale.sy;
 							ssx = tmp_x;
 							ssy = tmp_y;
 							tmp_x = 0;
