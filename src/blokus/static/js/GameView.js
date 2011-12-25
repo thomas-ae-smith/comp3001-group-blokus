@@ -220,6 +220,8 @@
 						if ( futureSBBox[iT] > boardBBox[iBT] && futureSBBox[iB] <= boardBBox[iBB]) {
 							yMove = distY - shapeSet.prevDistY;
 						}
+						distX = e.pageX - shapeSet.mousePageX;
+						distY = e.pageY - shapeSet.mousePageY;
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
 							//shapeSet.translate((1/shapeSet.curScale.sx)*xMove, (1/shapeSet.curScale.sy)*yMove);
@@ -230,11 +232,14 @@
 							var sy = shapeSet.curScale.sy;
 							var ssx = shapeSet.initBBox.x;
 							var ssy = shapeSet.initBBox.y;
-							shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy)
+							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+							var rotation = shapeSet.rotation * 90;
+							shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
 							if(Math.abs(distX) + Math.abs(distY) > 100 && !shapeSet.curScale.originalScale){
 								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
 								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
-								shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy)
+								shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
 							}
 							shapeSet.prevDistX = distX;
 							shapeSet.prevDistY = distY;
@@ -323,6 +328,10 @@
 						var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 						var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 						var rotation = shapeSet.rotation * 90;
+						//if(shapeSet.rotation % 2 != 0){
+							//xrot += 0;
+							//yrot -= 12.5;
+						//}
 						var tmp_x = shapeSet.destCor.x;
 						var tmp_y = shapeSet.destCor.y;
 						var sy = 1;
@@ -339,8 +348,8 @@
 						}
 						window.cur = shapeSet;
 						shapeSet.animate(
-							//{transform: "t"+tmp_x+" "+tmp_y+"r"+rotation+" "+xrot+" "+yrot+"s"+sx+" "+sy+" "+ssx+" "+ssy},
-							{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
+							{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+							//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
 							500);
 						shapeSet.animate({"opacity": 1}, 500);
 						//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
@@ -349,18 +358,22 @@
 			);
 			blokus.mapKeyDown(37,
 				function () {
-					var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-					var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-					shapeSet.rotate(90, xrot, yrot);
-					shapeSet.rotation += 1;
+					if(shapeSet.isSelected){
+						var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+						var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+						shapeSet.rotate(90, xrot, yrot);
+						shapeSet.rotation += 1;
+					}
 				}
 			);
 			blokus.mapKeyDown(39,
 				function () {
-					var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-					var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-					shapeSet.rotate(-90, xrot, yrot);
-					shapeSet.rotation -= 1;
+					if(shapeSet.isSelected){
+						var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+						var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+						shapeSet.rotate(-90, xrot, yrot);
+						shapeSet.rotation -= 1;
+					}
 				}
 			);
 			return shapeSet;
