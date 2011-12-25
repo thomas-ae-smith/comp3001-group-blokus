@@ -136,6 +136,17 @@
 				width: shapeSet.getBBox().width,
 				height: shapeSet.getBBox().height,
 			};
+			var tmpXRot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+			var tmpYRot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+			shapeSet.rotate(90, tmpXRot, tmpYRot);
+			// The initial coordinates of roteted ones
+			shapeSet.rotatedBBox = {
+				x:shapeSet.getBBox().x,
+				y:shapeSet.getBBox().y,
+				width: shapeSet.getBBox().width,
+				height: shapeSet.getBBox().height,
+			};
+			shapeSet.rotate(-90, tmpXRot, tmpYRot);
 			shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
 			var scaleFull = false;
 			shapeSet.scale(scaleX, scaleY, x, y);
@@ -164,65 +175,8 @@
 						};
 
 						var tmpR = Math.abs(shapeSet.rotation % 4);
-						if (tmpR == 0){
-							var distX = e.pageX - shapeSet.mousePageX;
-							var distY = e.pageY - shapeSet.mousePageY;
-						}
-						else if (tmpR == 1){
-							//dist the coordinates have been rotated by 90 degrees
-							var distY = e.pageX - shapeSet.mousePageX;
-							var distX = -(e.pageY - shapeSet.mousePageY);
-						}
-						else if (tmpR == 2){
-							var distX = -(e.pageX - shapeSet.mousePageX);
-							var distY = -(e.pageY - shapeSet.mousePageY);
-						}
-						else if (tmpR == 3){
-							var distY = -(e.pageX - shapeSet.mousePageX);
-							var distX = (e.pageY - shapeSet.mousePageY);
-						}
-						var futureSBBox = [
-							SBBox.y + (e.pageY - shapeSet.mousePageY - shapeSet.prevDY), // top
-							SBBox.x + SBBox.width + (e.pageX - shapeSet.mousePageX - shapeSet.prevDX), // right
-							SBBox.y + SBBox.height + (e.pageY - shapeSet.mousePageY - shapeSet.prevDY), // bottom
-							SBBox.x + (e.pageX - shapeSet.mousePageX - shapeSet.prevDX), // left
-						];
-						var boardBBox = [
-							0, // top
-							GSBox.width, // right
-							GSBox.height, // bottom
-							0, // left
-						];
-						var iT = 0; //tmpR%4;
-						var iR = 1; //(tmpR%4+1 >= 4 ? (tmpR%4+1)%4 : tmpR%4+1);
-						var iB = 2; //(tmpR%4+2 >= 4 ? (tmpR%4+2)%4 : tmpR%4+2);
-						var iL = 3; //(tmpR%4+3 >= 4 ? (tmpR%4+3)%4 : tmpR%4+3);
-						var iBT = 0;
-						var iBR = 1;
-						var iBB = 2;
-						var iBL = 3;
-						if (tmpR % 2 != 0){
-							iT = 3;
-							iR = 2;
-							iB = 1;
-							iL = 0;
-							iBT = 0;
-							iBR = 2;
-							iBB = 1;
-							iBL = 3;
-						}
-
-						var xMove = 0,
-							yMove = 0;
-						var sthChanged = false;
-						if (futureSBBox[iL] > boardBBox[iBL] && futureSBBox[iR] <= boardBBox[iBR]) {
-							xMove = distX - shapeSet.prevDistX;
-						}
-						if ( futureSBBox[iT] > boardBBox[iBT] && futureSBBox[iB] <= boardBBox[iBB]) {
-							yMove = distY - shapeSet.prevDistY;
-						}
-						distX = e.pageX - shapeSet.mousePageX;
-						distY = e.pageY - shapeSet.mousePageY;
+						var distX = e.pageX - shapeSet.mousePageX;
+						var distY = e.pageY - shapeSet.mousePageY;
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
 							//shapeSet.translate((1/shapeSet.curScale.sx)*xMove, (1/shapeSet.curScale.sy)*yMove);
@@ -237,31 +191,39 @@
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 							var rotation = shapeSet.rotation * 90;
 							
-							if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
-								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
-								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
-								scaleFull = true;
-								//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-								shapeSet.animate(
-									{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-									75
-								);
+			shapeSet.rotatedBBox = {
+				x:shapeSet.getBBox().x,
+				y:shapeSet.getBBox().y,
+				width: shapeSet.getBBox().width,
+				height: shapeSet.getBBox().height,
+			};
+							if (distX + shapeSet.initBBox.x > 0 && distY + shapeSet.initBBox.y > 0 ){
+								if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
+									//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
+									shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
+									scaleFull = true;
+									//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+									shapeSet.animate(
+										{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+										75
+									);
+								}
+								else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
+									shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
+									scaleFull = false;
+									shapeSet.animate(
+										{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+										75
+									);
+								}
+								else{
+									shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+								}
+								shapeSet.prevDistX = distX;
+								shapeSet.prevDistY = distY;
+								shapeSet.prevDX = e.pageX - shapeSet.mousePageX;
+								shapeSet.prevDY = e.pageY - shapeSet.mousePageY;
 							}
-							else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
-								shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
-								scaleFull = false;
-								shapeSet.animate(
-									{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-									75
-								);
-							}
-							else{
-								shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-							}
-							shapeSet.prevDistX = distX;
-							shapeSet.prevDistY = distY;
-							shapeSet.prevDX = e.pageX - shapeSet.mousePageX;
-							shapeSet.prevDY = e.pageY - shapeSet.mousePageY;
 						}
 						// game board bounds
 						var gbBounds = {
@@ -371,6 +333,7 @@
 							500);
 						shapeSet.animate({"opacity": 1}, 500);
 						//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
+						//console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
 					}
 				}
 			);
