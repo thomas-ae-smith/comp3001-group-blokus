@@ -74,11 +74,11 @@
 				success: function () {
 					// Fetch game model every second (for user turn, update on what pieces have been placed etc)
 			        var poller = setInterval(function () {
-			            if (this_.pollUser) { this_.game.fetch(); }
+			            this_.game.fetch();
 			        }, 1000);
 
 			        // Remove poller timeout when lobbyview is closed
-			        this.bind("close", function () { clearTimeout(poller); });
+			        this_.bind("close", function () { clearTimeout(poller); });
 
 					loading.fadeOut(200, function () { loading.remove(); });
 
@@ -208,7 +208,7 @@
 							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 							var rotation = shapeSet.rotation * 90;
-							
+
 							shapeSet.rotatedBBox = {
 								x:shapeSet.getBBox().x,
 								y:shapeSet.getBBox().y,
@@ -236,7 +236,7 @@
 							else{
 								shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
 							}
-							if(shapeSet.getBBox().x > 0 && shapeSet.getBBox().y > 0 && 
+							if(shapeSet.getBBox().x > 0 && shapeSet.getBBox().y > 0 &&
 								shapeSet.getBBox().x + shapeSet.getBBox().width < GSBox.width &&
 								shapeSet.getBBox().y + shapeSet.getBBox().height < GSBox.height){
 								shapeSet.prevDistX = distX;
