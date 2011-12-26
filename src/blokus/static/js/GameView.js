@@ -168,6 +168,8 @@
 			shapeSet.isSelected = false;
 			shapeSet.rotation = 0;
 			var highlighted_set = paper.set();
+			// TODO Check if the pieces dont overide each other
+			var board_piece_set = new Array();
 			$(window).mousemove(
 				function(e){
 					//on move
@@ -192,6 +194,7 @@
 						var tmpR = Math.abs(shapeSet.rotation % 4);
 						var distX = e.pageX - shapeSet.mousePageX;
 						var distY = e.pageY - shapeSet.mousePageY;
+						shapeSet.toFront();
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
 							//shapeSet.translate((1/shapeSet.curScale.sx)*xMove, (1/shapeSet.curScale.sy)*yMove);
@@ -205,39 +208,44 @@
 							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 							var rotation = shapeSet.rotation * 90;
-
-			shapeSet.rotatedBBox = {
-				x:shapeSet.getBBox().x,
-				y:shapeSet.getBBox().y,
-				width: shapeSet.getBBox().width,
-				height: shapeSet.getBBox().height,
-			};
-							if (distX + shapeSet.initBBox.x > 0 && distY + shapeSet.initBBox.y > 0 ){
-								if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
-									//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
-									shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
-									scaleFull = true;
-									//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-									shapeSet.animate(
-										{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-										75
-									);
-								}
-								else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
-									shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
-									scaleFull = false;
-									shapeSet.animate(
-										{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-										75
-									);
-								}
-								else{
-									shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-								}
+							
+							shapeSet.rotatedBBox = {
+								x:shapeSet.getBBox().x,
+								y:shapeSet.getBBox().y,
+								width: shapeSet.getBBox().width,
+								height: shapeSet.getBBox().height,
+							};
+							if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
+								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
+								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
+								scaleFull = true;
+								//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+								shapeSet.animate(
+									{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+									75
+								);
+							}
+							else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
+								shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
+								scaleFull = false;
+								shapeSet.animate(
+									{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+									75
+								);
+							}
+							else{
+								shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+							}
+							if(shapeSet.getBBox().x > 0 && shapeSet.getBBox().y > 0 && 
+								shapeSet.getBBox().x + shapeSet.getBBox().width < GSBox.width &&
+								shapeSet.getBBox().y + shapeSet.getBBox().height < GSBox.height){
 								shapeSet.prevDistX = distX;
 								shapeSet.prevDistY = distY;
 								shapeSet.prevDX = e.pageX - shapeSet.mousePageX;
 								shapeSet.prevDY = e.pageY - shapeSet.mousePageY;
+							}
+							else{
+								shapeSet.transform("t"+shapeSet.prevDistX+" "+shapeSet.prevDistY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
 							}
 						}
 						// game board bounds
@@ -260,6 +268,8 @@
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
+								board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = 0});
+								board_piece_set = new Array();
 							}
 							tmpData = rotateMatrix(data, shapeSet.rotation);
 							var numRows = tmpData.length;
@@ -269,7 +279,8 @@
 								for (var colJ = 0; colJ <= numCols; colJ++) {
 									if (tmpData[rowI][colJ] == 1) {
 										highlighted_set.push(gameBoard.arr[cellIndex.x+colJ][cellIndex.y+rowI]);
-
+										// TODO for validation, make the "r" something variable for different players
+										board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 										//Test to see if piece uses a corner square
 										if (blokus.utils.is_corner(cellIndex.x+colJ,cellIndex.y+rowI)){
 											corner = true;
@@ -289,6 +300,7 @@
 									shape.attr({"fill": "#EEE"});
 								}
 							});
+							board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = "r"});
 
 							shapeSet.destCor = {
 								x: cell.attr("x") - shapeSet.initBBox.x,
@@ -302,6 +314,8 @@
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
+								board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = 0});
+								board_piece_set = new Array();
 							}
 						}
 					}

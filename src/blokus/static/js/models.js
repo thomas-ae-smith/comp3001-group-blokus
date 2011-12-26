@@ -104,9 +104,30 @@
 		Player = Model.extend({
 		}),
 
+		Board = Model.extend({
+		initialize: function(){	
+						var numXCells = 20;
+						var numYCells = 20;
+						var grid = new Array(numXCells);
+						for (var iBoard=0; iBoard<numXCells ; iBoard++) {
+							grid[iBoard] = new Array(numYCells);
+							for (var jBoard=0; jBoard<numYCells; jBoard++) {
+								var cell = 0;
+								grid[iBoard][jBoard] = cell;
+							}
+						}
+						this.set({
+									numXCells: numXCells,
+									numYCells: numYCells,
+									grid: grid
+								});
+					}
+		}),
+
 		// Will be the logged in user
 		user = new User(),
-		userProfile = new UserProfile();
+		userProfile = new UserProfile(),
+		board = new Board();
 
 
 	_(window.blokus).extend({
@@ -118,6 +139,7 @@
 		Player: Player,
 
 		user: user,
-		userProfile: userProfile
+		userProfile: userProfile,
+		board: board
 	});
 }(jQuery, _, Backbone));
