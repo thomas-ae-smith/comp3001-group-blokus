@@ -153,6 +153,8 @@
 			shapeSet.isSelected = false;
 			shapeSet.rotation = 0;
 			var highlighted_set = paper.set();
+			// TODO Check if the pieces dont overide each other
+			var board_piece_set = new Array();
 			$(window).mousemove(
 				function(e){
 					//on move
@@ -251,6 +253,8 @@
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
+								board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = 0});
+								board_piece_set = new Array();
 							}
 							tmpData = rotateMatrix(data, shapeSet.rotation);
 							var numRows = tmpData.length;
@@ -260,7 +264,8 @@
 								for (var colJ = 0; colJ <= numCols; colJ++) {
 									if (tmpData[rowI][colJ] == 1) {
 										highlighted_set.push(gameBoard.arr[cellIndex.x+colJ][cellIndex.y+rowI]);
-
+										// TODO for validation, make the "r" something variable for different players
+										board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 										//Test to see if piece uses a corner square
 										if (blokus.utils.is_corner(cellIndex.x+colJ,cellIndex.y+rowI)){
 											corner = true;
@@ -280,6 +285,7 @@
 									shape.attr({"fill": "#EEE"});
 								}
 							});
+							board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = "r"});
 
 							shapeSet.destCor = {
 								x: cell.attr("x") - shapeSet.initBBox.x,
@@ -293,6 +299,8 @@
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
+								board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = 0});
+								board_piece_set = new Array();
 							}
 						}
 					}
