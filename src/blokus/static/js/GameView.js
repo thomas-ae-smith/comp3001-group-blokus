@@ -32,7 +32,7 @@
 		className: "gameboard",
 
 		paper: undefined,
-
+		game: undefined,
 		gameBoard: undefined,
 		playerPanels: undefined,
 
@@ -52,10 +52,17 @@
 			this.drawRotationButton(pos.x + pos.w - 33, pos.y + pos.h - 33, "rotateR.png");
 		},
 
-		render: function () {
+		// attributes = object containing pieceMasterId, x, y, flip, rotation
+		placePiece: function (colour, attributes) {
+			this.game.get("pieces")[colour].create(attributes);
+		},
 
+		render: function () {
 			var this_ = this,
 				loading = $('<div class="loading"></div>');
+
+			// FIXME
+			window.gameview = this;
 
 			// Reset element
 			$(this.el).html("").append(loading);
@@ -65,6 +72,14 @@
 			// Get information about the game
 			this.game.fetch({
 				success: function () {
+					// Fetch game model every second (for user turn, update on what pieces have been placed etc)
+			        var poller = setInterval(function () {
+			            if (this_.pollUser) { this_.game.fetch(); }
+			        }, 1000);
+
+			        // Remove poller timeout when lobbyview is closed
+			        this.bind("close", function () { clearTimeout(poller); });
+
 					loading.fadeOut(200, function () { loading.remove(); });
 
 					// Make the Raphael element 800 x 600 in this view
@@ -190,7 +205,7 @@
 							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 							var rotation = shapeSet.rotation * 90;
-							
+
 			shapeSet.rotatedBBox = {
 				x:shapeSet.getBBox().x,
 				y:shapeSet.getBBox().y,

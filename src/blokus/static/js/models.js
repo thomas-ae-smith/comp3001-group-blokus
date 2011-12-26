@@ -5,7 +5,7 @@
 			if (this.resourceUrl) {
 	            return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
             } else if (this.collection) {
-                return this.collection.url + this.id + "/";
+                return this.collection.url + (this.hasOwnProperty("id") ? this.id + "/" : "");
             } else {
                 throw "Does not have resource url or collection";
             }
@@ -23,10 +23,10 @@
 					});
 
 				if (!model) {
-					if (options.error) options.error.call(undefined, {}, {status: 404});
+					if (options && options.error) options.error.call(undefined, {}, {status: 404});
 				} else {
 					this.set(this.parse(model));
-					if (options.success) options.success.call();
+					if (options && options.success) options.success.call();
 				}
 			},
 
@@ -54,10 +54,10 @@
 					});
 
 				if (!model) {
-					if (options.error) options.error.call(undefined, {}, {status: 404});
+					if (options && options.error) options.error.call(undefined, {}, {status: 404});
 				} else {
 					this.set(this.parse(model));
-					if (options.success) options.success.call();
+					if (options && options.success) options.success.call();
 				}
 			},
 

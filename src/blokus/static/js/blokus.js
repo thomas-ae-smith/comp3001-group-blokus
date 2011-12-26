@@ -60,7 +60,12 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			if (oldView) {
 				// Fade out old view then remove
 				$(oldView.el).fadeOut(200, function () {
+					// Remove DOM element
 					oldView.remove();
+					// Run any view-specific cleanup operations
+					oldView.trigger("close");
+					// Unbind any event bindings (to avoid object not being garbage-collected)
+					oldView.unbind();
 				});
 			}
 

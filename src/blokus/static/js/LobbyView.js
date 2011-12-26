@@ -4,13 +4,13 @@ blokus.LobbyView = Backbone.View.extend({
     initialize: function () {
         var this_ = this;
 
-        function poll () {
-            if (this_.pollUser) {
-                blokus.user.fetch();
-            }
-            setTimeout(poll, 1000);
-        }
-        poll();
+        // Fetch user model every second (to determined if user is yet in a game)
+        var poller = setInterval(function () {
+            if (this_.pollUser) { blokus.user.fetch(); }
+        }, 1000);
+
+        // Remove poller timeout when lobbyview is closed
+        this.bind("close", function () { clearTimeout(poller); });
 
         blokus.userProfile.bind("change:gameId", function (user, gameId) {
             if (gameUri) {
@@ -26,21 +26,20 @@ blokus.LobbyView = Backbone.View.extend({
 	render: function () {
 		var this_ = this,
 			template = _.template($('#lobby-template').html());
-		
+
 		$(this.el).html(template());
 
 		this.$(".modelist li").click(function (e) {
 			// Which one has been selected?
 			var $button = $(e.currentTarget),
 				mode = $button.index();
-			
+
 			$button.addClass("sel")
 				.siblings().removeClass("sel");
-	        
+
 	        if (mode !== 3) {
 	            this_.$("#privatelobby").slideUp();
 	        }
-
             switch (mode) {
             case 0:
                 blokus.userProfile.save({ status: "looking_for_any" });
