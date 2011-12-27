@@ -274,17 +274,12 @@
 							tmpData = rotateMatrix(data, shapeSet.rotation);
 							var numRows = tmpData.length;
 							var numCols = tmpData[0].length;
-							var corner = false;
 							for (var rowI = 0; rowI < numRows; rowI++){
 								for (var colJ = 0; colJ <= numCols; colJ++) {
 									if (tmpData[rowI][colJ] == 1) {
 										highlighted_set.push(gameBoard.arr[cellIndex.x+colJ][cellIndex.y+rowI]);
 										// TODO for validation, make the "r" something variable for different players
 										board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
-										//Test to see if piece uses a corner square
-										if (blokus.utils.is_corner(cellIndex.x+colJ,cellIndex.y+rowI)){
-											corner = true;
-										}
 									}
 								}
 							}
@@ -292,19 +287,40 @@
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 							var cell = gameBoard.arr[cellIndex.x][cellIndex.y];
 
-							//Highlight green if valid position else white
+							
+							//Validation
+							var corner = false;
+							var conflict = false;
+							board_piece_set.forEach(function (shape) {
+								//Test to see if piece uses a corner square
+								if (blokus.utils.is_corner(shape.x, shape.y)){
+									corner = true;
+								}
+
+								//Check for conflicting piece
+								if (blokus.utils.in_conflict(shape.x, shape.y)){
+									conflict = true;
+								}
+							});
+
+							board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = "r"});
+							
+							//Highlight red if invalid position, green if corner else white
 							highlighted_set.forEach(function (shape) {
 								if (corner){
 									shape.attr({"fill": "#00CC33"});
 								}else{
 									shape.attr({"fill": "#EEE"});
 								}
+
+								if (conflict){
+									shape.attr({"fill": "#FF00AA"});
+								}
 							});
-							board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = "r"});
 
 							shapeSet.destCor = {
 								x: cell.attr("x") - shapeSet.initBBox.x,
-								y:cell.attr("y") - shapeSet.initBBox.y
+								y: cell.attr("y") - shapeSet.initBBox.y
 							 };
 						}
 						else {
@@ -333,36 +349,47 @@
 						shapeSet.animate({"opacity": 0.5}, 0);
 					}
 					else {
-						shapeSet.isSelected = false;
-						var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-						var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-						var rotation = shapeSet.rotation * 90;
-						//if(shapeSet.rotation % 2 != 0){
-							//xrot += 0;
-							//yrot -= 12.5;
-						//}
-						var tmp_x = shapeSet.destCor.x;
-						var tmp_y = shapeSet.destCor.y;
-						var sy = 1;
-						var sx = 1;
-						var ssx = shapeSet.initBBox.x;
-						var ssy = shapeSet.initBBox.y;
-						if (tmp_x == shapeSet.initBBox.x && tmp_y == shapeSet.initBBox.y){
-							sx = shapeSet.initScale.sx;
-							sy = shapeSet.initScale.sy;
-							ssx = tmp_x;
-							ssy = tmp_y;
-							tmp_x = 0;
-							tmp_y = 0;
+						var validPosition = true;
+						board_piece_set.forEach(function (cor) {
+							if(blokus.utils.in_conflict(cor.x, cor.y)){
+								validPosition = false;
+							}
+						});
+
+						if(validPosition){
+							shapeSet.isSelected = false;
+							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+							var rotation = shapeSet.rotation * 90;
+							//if(shapeSet.rotation % 2 != 0){
+								//xrot += 0;
+								//yrot -= 12.5;
+							//}
+							var tmp_x = shapeSet.destCor.x;
+							var tmp_y = shapeSet.destCor.y;
+							var sy = 1;
+							var sx = 1;
+							var ssx = shapeSet.initBBox.x;
+							var ssy = shapeSet.initBBox.y;
+							if (tmp_x == shapeSet.initBBox.x && tmp_y == shapeSet.initBBox.y){
+								sx = shapeSet.initScale.sx;
+								sy = shapeSet.initScale.sy;
+								ssx = tmp_x;
+								ssy = tmp_y;
+								tmp_x = 0;
+								tmp_y = 0;
+							}
+							window.cur = shapeSet;
+							shapeSet.animate(
+								{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+								//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
+								500);
+							shapeSet.animate({"opacity": 1}, 500);
+
+							board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
+							//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
+							//console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
 						}
-						window.cur = shapeSet;
-						shapeSet.animate(
-							{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-							//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
-							500);
-						shapeSet.animate({"opacity": 1}, 500);
-						//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
-						//console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
 					}
 				}
 			);

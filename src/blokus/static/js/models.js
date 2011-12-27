@@ -109,17 +109,22 @@
 						var numXCells = 20;
 						var numYCells = 20;
 						var grid = new Array(numXCells);
+						var gridPlaced = new Array(numXCells);
+
 						for (var iBoard=0; iBoard<numXCells ; iBoard++) {
 							grid[iBoard] = new Array(numYCells);
+							gridPlaced[iBoard] = new Array(numYCells);
 							for (var jBoard=0; jBoard<numYCells; jBoard++) {
 								var cell = 0;
 								grid[iBoard][jBoard] = cell;
+								gridPlaced[iBoard][jBoard] = cell;
 							}
 						}
 						this.set({
 									numXCells: numXCells,
 									numYCells: numYCells,
-									grid: grid
+									grid: grid,
+									gridPlaced: gridPlaced
 								});
 					}
 		}),

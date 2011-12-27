@@ -53,9 +53,24 @@ blokus.utils = (function ($, _, Backbone){
 			return false;
 		}
 	};
+
+	var in_conflict = function (x, y){
+		if(isNaN(x) || isNaN(y)){
+			return false;
+		}else{
+			console.log(x);
+			console.log(y);
+			if (blokus.board.get("gridPlaced")[x][y] != '0'){
+				return true;
+			}else{
+				return false;
+			}	
+		}
+	};
 	
 	return {
 		get_points: get_points,
-		is_corner: is_corner
+		is_corner: is_corner,
+		in_conflict: in_conflict
 	};
 }(jQuery, _, Backbone));
