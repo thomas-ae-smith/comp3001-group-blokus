@@ -48,7 +48,16 @@ blokus.utils = (function ($, _, Backbone){
 
 	var is_corner = function (x, y){
 		if (((x == 0) && (y == 0)) || ((x == 0) && (y == 19)) || ((x == 19) && (y == 0)) || ((x == 19) && (y == 19))){
-			return true;
+			var firstTurn = true;
+			for (var colI = 0; colI < 20; colI++){
+				for (var rowJ = 0; rowJ <= 20; rowJ++) {
+					if (blokus.board.get("gridPlaced")[colI][rowJ] == gameview.game.get("colourTurn")[0]) {
+						firstTurn = false;
+					}
+				}
+			}
+
+			return firstTurn;
 		}else{
 			return false;
 		}
