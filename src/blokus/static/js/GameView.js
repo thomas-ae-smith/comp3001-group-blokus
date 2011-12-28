@@ -349,12 +349,14 @@
 						shapeSet.animate({"opacity": 0.5}, 0);
 					}
 					else {
-						var validPosition = true;
-						board_piece_set.forEach(function (cor) {
-							if(blokus.utils.in_conflict(cor.x, cor.y)){
-								validPosition = false;
-							}
-						});
+						//var validPosition = true;
+						//board_piece_set.forEach(function (cor) {
+						//	if(blokus.utils.in_conflict(cor.x, cor.y)){
+						//		validPosition = false;
+						//	}
+						//});
+
+						var validPosition = blokus.utils.valid(board_piece_set);
 
 						if(validPosition){
 							shapeSet.isSelected = false;
