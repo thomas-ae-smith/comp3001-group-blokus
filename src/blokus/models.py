@@ -2,6 +2,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator, MaxLeng
 from django.db import models
 from datetime import datetime
 from blokus.common import *
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
@@ -139,3 +142,24 @@ class Piece(models.Model):
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	move_number = models.PositiveIntegerField()
+
+
+############
+# SIGNALS  #
+############
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+	from blokus.models import UserProfile
+	if created:
+		UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=Piece)
+def record_move(sender, instance, **kwargs):
+	move = Move()
+	move.piece = instance
+	move.move_number = instance.player.game.number_of_moves + 1
+	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
+	move.save()
+	print kwargs

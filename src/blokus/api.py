@@ -16,11 +16,9 @@ class UserResource(ModelResource):
 		resource_name = 'user'
 		default_format = 'application/json'
 		excludes = ['password', 'is_staff', 'is_superuser']
-		list_allowed_methods = ['get']
+		list_allowed_methods = []
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
-
-			
 
 class UserProfileResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')
