@@ -30,7 +30,7 @@ class UserResource(ModelResource):
 			}
 
 			if request.user.status == 'looking_for_any':
-				pass() #In progress.
+				pass #In progress.
 			elif request.user.status[0:12] -- 'looking_for_'
 				# Get a list of users to play in a game.
 				for user in super(GameResource, self).get_object_list(request):
