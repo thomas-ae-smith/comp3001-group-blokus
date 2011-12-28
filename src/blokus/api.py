@@ -20,7 +20,50 @@ class UserResource(ModelResource):
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
 
-			
+	def get_object_list(self, request):
+		if request and request.user.id is not None:
+			#request.user.last_activity = datetime.now() #User is active.
+			users_playing = set(request.user)
+			player_count = {
+				'looking_for_2':2,
+				'looking_for_4':4,
+			}
+
+			if request.user.status == 'looking_for_any':
+				pass() #In progress.
+			elif request.user.status[0:12] -- 'looking_for_'
+				# Get a list of users to play in a game.
+				for user in super(GameResource, self).get_object_list(request):
+					if user.status in [request.user.status, 'looking_for_any']:
+						users_playing.add(user)
+					if users_playing.size >= player_count[request.user.status]:
+						break
+			else:
+				# If the users status is not one that required joining a game,
+				# return the UserModels without setting up any games.
+				return super(GameResource, self).get_object_list(request)
+
+			colours = ['red', 'yellow', 'green', 'blue']
+			if users_playing.size >= player_count[request.user.status]:
+				game = Game()
+				game.start_time = datetime.now()
+				game.game_type = {
+					'looking_for_2':0,
+					'looking_for_4':1,
+				}[request.user.status]
+				for user_number in xrange(4):
+					user = users_playing.pop()
+					user.status = 'ingame'
+					player = Player(
+						game=game,
+						user=user,
+						colour=colours[user_number])
+					user.save()
+				game.save()
+
+			request.user.save()
+			return games
+		return Game.objects.none()
 
 class UserProfileResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')
@@ -70,7 +113,7 @@ class PlayerResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')
 	game = fields.ForeignKey(GameResource, 'game')
 	pieces = fields.ToManyField('blokus.api.PieceResource', 'piece_set', full=True)
-	
+
 	class Meta:
 		queryset = Player.objects.all()
 		resource_name = 'player'
@@ -111,7 +154,3 @@ class PieceResource(ModelResource):
 		detail_allowed_methods = ['get','post']
 		validation = CleanedDataFormValidation(form_class=PieceForm)
 		authorization = Authorization()
-
-
-
-

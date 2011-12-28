@@ -139,3 +139,6 @@ class Piece(models.Model):
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	move_number = models.PositiveIntegerField()
+
+class Game_Under_Construction(models.Model):
+	game_type = models.IntegerField()	#Use the same numbers as the field in Game.

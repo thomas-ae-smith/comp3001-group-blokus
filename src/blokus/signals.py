@@ -9,6 +9,8 @@ def create_user_profile(sender, instance, created, **kwargs):
 	if created:
 		UserProfile.objects.create(user=instance)
 
+@receiver(post_save, sender=User)
+
 @receiver(post_save, sender=Piece)
 def record_move(sender, instance, **kwargs):
 	# Construct and save the move.
