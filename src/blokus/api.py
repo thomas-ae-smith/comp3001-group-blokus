@@ -42,8 +42,16 @@ class UserProfileResource(ModelResource):
 			}
 
 			if request.user.status == 'looking_for_any':
-				pass #In progress.
-			elif request.user.status[0:12] == 'looking_for_':
+				for status in player_count.keys():
+					users_playing = set(request.user)
+					for user in userProfiles:
+						if user.status == status
+							users_playing.add(user)
+							if users_playing.size >= player_count[request.user.status]:
+								break
+					if users_playing.size >= player_count[request.user.status]:
+						break
+				elif request.user.status[0:12] == 'looking_for_':
 				# Get a list of users to play in a game.
 				for user in userProfiles:
 					if user.status in [request.user.status, 'looking_for_any']:
