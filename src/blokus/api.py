@@ -31,7 +31,7 @@ class UserResource(ModelResource):
 
 			if request.user.status == 'looking_for_any':
 				pass #In progress.
-			elif request.user.status[0:12] -- 'looking_for_'
+			elif request.user.status[0:12] == 'looking_for_':
 				# Get a list of users to play in a game.
 				for user in super(GameResource, self).get_object_list(request):
 					if user.status in [request.user.status, 'looking_for_any']:
@@ -47,9 +47,9 @@ class UserResource(ModelResource):
 			if users_playing.size >= player_count[request.user.status]:
 				game = Game()
 				game.start_time = datetime.now()
-				game.game_type = {
-					'looking_for_2':0,
-					'looking_for_4':1,
+				game.game_type = {		# Game codes; must be added
+					'looking_for_2':0,	# to if any new game types
+					'looking_for_4':1,	# are introduced.
 				}[request.user.status]
 				for user_number in xrange(4):
 					user = users_playing.pop()
@@ -60,8 +60,6 @@ class UserResource(ModelResource):
 						colour=colours[user_number])
 					user.save()
 				game.save()
-
-			request.user.save()
 			return games
 		return Game.objects.none()
 
