@@ -20,6 +20,17 @@ class UserResource(ModelResource):
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
 
+class UserProfileResource(ModelResource):
+	user = fields.ForeignKey(UserResource, 'user')
+
+	class Meta:
+		queryset = UserProfile.objects.all()
+		resource_name = 'userprofile'
+		default_format = 'application/json'
+		list_allowed_methods = []
+		detail_allowed_methods = ['get','put']
+		authorization = Authorization()
+
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			#request.user.last_activity = datetime.now() #User is active.
@@ -62,17 +73,6 @@ class UserResource(ModelResource):
 				game.save()
 			return games
 		return Game.objects.none()
-
-class UserProfileResource(ModelResource):
-	user = fields.ForeignKey(UserResource, 'user')
-
-	class Meta:
-		queryset = UserProfile.objects.all()
-		resource_name = 'userprofile'
-		default_format = 'application/json'
-		list_allowed_methods = []
-		detail_allowed_methods = ['get','put']
-		authorization = Authorization()
 
 class GameAuthorization(Authorization):
 
