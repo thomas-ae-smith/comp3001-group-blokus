@@ -50,7 +50,7 @@ class UserProfile(models.Model):
 
 
 	user = models.OneToOneField(User)
-	status = models.CharField(max_length=255,choices=status_choices)
+	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 
@@ -60,7 +60,7 @@ _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
 	game = models.ForeignKey(Game)
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(UserProfile)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	last_activity = models.DateTimeField(default=datetime.now())
 
