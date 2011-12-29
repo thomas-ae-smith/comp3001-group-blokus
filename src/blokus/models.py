@@ -23,17 +23,14 @@ class Game(models.Model):
 
 
 class PieceMaster(models.Model):
-	piece_data = models.CharField(max_length=12)	#Represented by 'T', 'F' and ','; 'T' represents a block, 'F' represents no block, ',' represents newline.
+	piece_data = models.CharField(max_length=12)	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
 
 	def get_bitmap(self):
 		tup = []
 		for row in self.piece_data.split(','):
 			rowlist = []
-			for letter in row:
-				if letter == '1':
-					rowlist.append(True)
-				elif letter == '0':
-					rowlist.append(False)
+			for number in row:
+				rowlist.append(bool(int(number)))
 			tup.append(tuple(rowlist))
 		return tuple(tup)
 
@@ -140,5 +137,23 @@ class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	move_number = models.PositiveIntegerField()
 
-class Game_Under_Construction(models.Model):
-	game_type = models.IntegerField()	#Use the same numbers as the field in Game.
+
+############
+# SIGNALS  #
+############
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+	from blokus.models import UserProfile
+	if created:
+		UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=Piece)
+def record_move(sender, instance, **kwargs):
+	move = Move()
+	move.piece = instance
+	move.move_number = instance.player.game.number_of_moves + 1
+	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
+	move.save()
+	print kwargs

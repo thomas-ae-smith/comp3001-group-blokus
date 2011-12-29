@@ -46,9 +46,29 @@ blokus.utils = (function ($, _, Backbone){
 		pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 17)),y: Math.floor(Number(y) + (blockHeight * 0))};
 	};
 
+	var get_claim = function(x, y){
+		if ((x >= 0) && (x < 20) && (y >= 0) && (y < 20)){
+			return blokus.board.get("gridPlaced")[x][y];
+		}else{
+			return '';
+		}
+	};
+
+	var is_first_turn = function (){
+		var firstTurn = true;
+		for (var colI = 0; colI < 20; colI++){
+			for (var rowJ = 0; rowJ <= 20; rowJ++) {
+				if (get_claim(colI, rowJ) == gameview.game.get("colourTurn")[0]) {
+					firstTurn = false;
+				}
+			}
+		}
+		return firstTurn;
+	};
+
 	var is_corner = function (x, y){
 		if (((x == 0) && (y == 0)) || ((x == 0) && (y == 19)) || ((x == 19) && (y == 0)) || ((x == 19) && (y == 19))){
-			return true;
+			return is_first_turn();
 		}else{
 			return false;
 		}
@@ -60,17 +80,79 @@ blokus.utils = (function ($, _, Backbone){
 		}else{
 			console.log(x);
 			console.log(y);
-			if (blokus.board.get("gridPlaced")[x][y] != '0'){
+			if (get_claim(x, y) != '0'){
 				return true;
 			}else{
 				return false;
 			}	
 		}
 	};
+
+	var shares_side = function (x, y){
+		var turn = gameview.game.get("colourTurn")[0];
+		return (
+			(get_claim(x, y - 1) == turn) ||
+			(get_claim(x, y + 1) == turn) ||
+			(get_claim(x - 1, y) == turn) ||
+			(get_claim(x + 1, y) == turn)
+		);
+	};
 	
+	var shares_vertex = function (x, y){
+		var turn = gameview.game.get("colourTurn")[0];
+		return (
+			(get_claim(x - 1, y - 1) == turn) ||
+			(get_claim(x + 1, y - 1) == turn) ||
+			(get_claim(x - 1, y + 1) == turn) ||
+			(get_claim(x + 1, y + 1) == turn)
+		);
+	};
+
+	var valid = function (arr){
+		var corner = false;
+		var conflicted = false;
+		var sharingSide = false;
+		var sharingVertex = false;
+		var firstTurn = is_first_turn();
+
+		//If not in board area do not validate
+		if(!arr.length > 0){
+			return true;
+		}
+
+		//If first turn ensure corner placement
+		arr.forEach(function (cor) {
+			if (firstTurn){
+				corner = corner || is_corner(cor.x, cor.y);
+			}else{
+				//If not first turn ignore this test
+				corner = true;
+			}
+		});
+			
+		if(corner){
+			//Run remaining validation
+			arr.forEach(function (cor) {
+				conflicted = conflicted || in_conflict(cor.x, cor.y);
+				sharingSide = sharingSide || shares_side(cor.x, cor.y);
+				sharingVertex = sharingVertex || shares_vertex(cor.x, cor.y);
+			});
+			
+			//Valid if not conflicting and in a corner (if first turn) or if not conflicting or sharing side but is sharing corner.
+			return ((!conflicted && firstTurn) || (!conflicted && !sharingSide && sharingVertex));
+		}else{
+			return false;
+		}
+	};
+
 	return {
 		get_points: get_points,
 		is_corner: is_corner,
-		in_conflict: in_conflict
+		in_conflict: in_conflict,
+		is_first_turn: is_first_turn,
+		shares_side: shares_side,
+		shares_vertex: shares_vertex,
+		valid: valid,
+		get_claim: get_claim
 	};
 }(jQuery, _, Backbone));
