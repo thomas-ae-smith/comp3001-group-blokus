@@ -34,6 +34,7 @@ class UserProfileResource(ModelResource):
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			#request.user.last_activity = datetime.now() #User is active.
+			userProfiles = super(GameResource, self).get_object_list(request)
 			users_playing = set(request.user)
 			player_count = {
 				'looking_for_2':2,
@@ -44,7 +45,7 @@ class UserProfileResource(ModelResource):
 				pass #In progress.
 			elif request.user.status[0:12] == 'looking_for_':
 				# Get a list of users to play in a game.
-				for user in super(GameResource, self).get_object_list(request):
+				for user in userProfiles:
 					if user.status in [request.user.status, 'looking_for_any']:
 						users_playing.add(user)
 					if users_playing.size >= player_count[request.user.status]:
@@ -52,7 +53,7 @@ class UserProfileResource(ModelResource):
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
-				return super(GameResource, self).get_object_list(request)
+				return userProfiles
 
 			colours = ['red', 'yellow', 'green', 'blue']
 			if users_playing.size >= player_count[request.user.status]:
@@ -71,8 +72,8 @@ class UserProfileResource(ModelResource):
 						colour=colours[user_number])
 					user.save()
 				game.save()
-			return games
-		return Game.objects.none()
+			return userProfiles
+		return UserProfile.objects.none()
 
 class GameAuthorization(Authorization):
 
