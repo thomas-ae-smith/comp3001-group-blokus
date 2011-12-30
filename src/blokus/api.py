@@ -41,6 +41,7 @@ class UserProfileResource(ModelResource):
 				'looking_for_4':4,
 			}
 
+			# Get a list of users to play in a game.
 			if request.user.status == 'looking_for_any':
 				for status in player_count.keys():
 					users_playing = set(request.user)
@@ -50,14 +51,14 @@ class UserProfileResource(ModelResource):
 							if users_playing.size >= player_count[request.user.status]:
 								break
 					if users_playing.size >= player_count[request.user.status]:
+						request.user.status = status
 						break
 				elif request.user.status[0:12] == 'looking_for_':
-				# Get a list of users to play in a game.
-				for user in userProfiles:
-					if user.status in [request.user.status, 'looking_for_any']:
-						users_playing.add(user)
-					if users_playing.size >= player_count[request.user.status]:
-						break
+					for user in userProfiles:
+						if user.status in [request.user.status, 'looking_for_any']:
+							users_playing.add(user)
+						if users_playing.size >= player_count[request.user.status]:
+							break
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
