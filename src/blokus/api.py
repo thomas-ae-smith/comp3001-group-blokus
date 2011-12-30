@@ -56,12 +56,12 @@ class UserProfileResource(ModelResource):
 					if users_playing.size >= player_count[request.user.status]:
 						request.user.status = status
 						break
-				elif request.user.status in statuses:
-					for user in userProfiles:
-						if user.status in [request.user.status, 'looking_for_any']:
-							users_playing.add(user)
-						if users_playing.size >= player_count[request.user.status]:
-							break
+			elif request.user.status in statuses:
+				for user in userProfiles:
+					if user.status in [request.user.status, 'looking_for_any']:
+						users_playing.add(user)
+					if users_playing.size >= player_count[request.user.status]:
+						break
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
