@@ -7,6 +7,7 @@ from tastypie.validation import CleanedDataFormValidation
 from django.forms import ModelForm, ValidationError
 from django.core import serializers
 from datetime import datetime
+import random
 
 class UserResource(ModelResource):
 	userprofile = fields.ToOneField('blokus.api.UserProfileResource', 'userprofile', full=True)
@@ -43,17 +44,19 @@ class UserProfileResource(ModelResource):
 
 			# Get a list of users to play in a game.
 			if request.user.status == 'looking_for_any':
-				for status in player_count.keys():
+				statuses = player_count.keys()
+				random.shuffle(statuses)
+				for status in statuses:
 					users_playing = set(request.user)
 					for user in userProfiles:
-						if user.status == status
+						if user.status in [status, 'looking_for_any']:
 							users_playing.add(user)
 							if users_playing.size >= player_count[request.user.status]:
 								break
 					if users_playing.size >= player_count[request.user.status]:
 						request.user.status = status
 						break
-				elif request.user.status[0:12] == 'looking_for_':
+				elif request.user.status in statuses:
 					for user in userProfiles:
 						if user.status in [request.user.status, 'looking_for_any']:
 							users_playing.add(user)
