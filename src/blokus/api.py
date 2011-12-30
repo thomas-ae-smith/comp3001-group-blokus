@@ -34,7 +34,7 @@ class UserProfileResource(ModelResource):
 
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
-			#request.user.last_activity = datetime.now() #User is active.
+			request.user.last_activity = datetime.now() #User is active.
 			userProfiles = super(GameResource, self).get_object_list(request)
 			users_playing = set(request.user)
 			player_count = {
@@ -82,6 +82,7 @@ class UserProfileResource(ModelResource):
 						game=game,
 						user=user,
 						colour=colours[user_number])
+					player.save()
 					user.save()
 				game.save()
 			return userProfiles
@@ -114,9 +115,9 @@ class GameResource(ModelResource):
 		if request and request.user.id is not None:
 			games = super(GameResource, self).get_object_list(request)
 			for game in games:
-				player = Player.objects.get(game=game,user=request.user)
-				player.last_activity = datetime.now()
-				player.save()
+				user = Player.objects.get(game=game,user=request.user).user
+				user.last_activity = datetime.now()
+				user.save()
 			return games
 		return Game.objects.none()
 
