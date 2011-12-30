@@ -26,7 +26,8 @@ class Game(models.Model):
 
 
 class PieceMaster(models.Model):
-	piece_data = models.CharField(max_length=12)	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
+	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
+	piece_data = models.CharField(max_length=12)
 
 	def get_bitmap(self):
 		tup = []
@@ -38,7 +39,6 @@ class PieceMaster(models.Model):
 		return tuple(tup)
 
 class UserProfile(models.Model):
-
 	status_choices = (
 		('offline','Offline'),
 		('ingame','In game'),
@@ -48,21 +48,18 @@ class UserProfile(models.Model):
 		('private','In private lobby'),
 	)
 
-
+	last_activity = models.DateTimeField(default=datetime.now())
 	user = models.OneToOneField(User)
 	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 
 
-
 _colour_regex = r"^(red|yellow|green|blue)$"
-
 class Player(models.Model):
 	game = models.ForeignKey(Game)
 	user = models.ForeignKey(UserProfile)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
-	last_activity = models.DateTimeField(default=datetime.now())
 
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
@@ -144,7 +141,6 @@ class Move(models.Model):
 ############
 # SIGNALS  #
 ############
-
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
