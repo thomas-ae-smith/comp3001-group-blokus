@@ -33,7 +33,11 @@ class UserProfileResource(ModelResource):
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):
-		bundle.data['game_id'] = 0
+		player_set = user.player_set.all()
+		if len(player_set) > 0:
+			bundle.data['game_id'] = player_set[0]
+		else:
+			bundle.data['game_id'] = None
 		return bundle
 
 	def get_object_list(self, request):
