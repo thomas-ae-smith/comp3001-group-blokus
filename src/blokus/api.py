@@ -32,6 +32,10 @@ class UserProfileResource(ModelResource):
 		detail_allowed_methods = ['get','put']
 		authorization = Authorization()
 
+	def dehydrate(self, bundle):
+		bundle.data['game_id'] = 0
+		return bundle
+
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			#request.user.last_activity = datetime.now() #User is active.
