@@ -12,17 +12,28 @@ def execute_garbage_collection(request):
 
 	# If any game contains a player who has not been seen online in TIMEOUT_IN_SECONDS,
 	# delete the game and all its players.
-	remove_set = set()
+	removed_game_ids = []
+	removed_player_ids = []
 	for game in Game.objects.all():
 		for player in game.player_set.all():
 			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
 				for player_dead in game.player_set.all():
+					removed_player_ids.append(player_dead.id)
 					player_dead.delete()
+				removed_game_ids.append(game.id)
 				game.delete()
 				break
 
+	html = "<p><b>Players deleted:</b></p>"
+	for player_id in removed_player_ids:
+		html = html + "<p>" + repr(player_id) + "</p>"
+
+	html = html + "<p><p><b>Games deleted:</b></p>"
+	for game_id in removed_game_ids:
+		html = html + "<p>" + repr(game_id) + "</p>"
+
 	# A view must return a "web response".
-	return HttpResponseNotFound('<h1>ZOMG, CRON JOB!</h1>')
+	return HttpResponse(html)
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):
