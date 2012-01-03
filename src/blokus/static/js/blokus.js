@@ -143,13 +143,13 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 		// Handle sign in
 		$("#profileMenu #signin-button").click(function () {
 			// HACK
-			location = "/login";
+			location = "/login/";
 
 			var username = $("#loginUsername").html(),
 				password = $("#loginPassword").html();
 
 			$.ajax({
-				url: "/login",
+				url: "/login/",
 				type: "POST",
 				data: {
 					username: username,
