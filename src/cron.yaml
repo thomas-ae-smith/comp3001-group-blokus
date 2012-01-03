@@ -2,3 +2,6 @@ cron:
 - description: Garbage-collect every minute.
   url: /gc/
   schedule: every 1 minutes
+- description: Garbage-collect old guest users.
+  url: /gc-g/
+  schedule: every 24 hours
