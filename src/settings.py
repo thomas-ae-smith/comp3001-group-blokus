@@ -22,6 +22,7 @@ INSTALLED_APPS = (
     'autoload',
     'dbindexer',
     'tastypie',
+    'social_auth',
     'guest',
     'django_cron',
     'blokus',
@@ -32,6 +33,33 @@ INSTALLED_APPS = (
 STATIC_URL = (
 	'/static/'
 )
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.google.GoogleOAuthBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.google.GoogleBackend',
+    'social_auth.backends.yahoo.YahooBackend',
+    'social_auth.backends.contrib.linkedin.LinkedinBackend',
+    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+    'social_auth.backends.contrib.orkut.OrkutBackend',
+    'social_auth.backends.contrib.foursquare.FoursquareBackend',
+    'social_auth.backends.contrib.github.GithubBackend',
+    'social_auth.backends.contrib.dropbox.DropboxBackend',
+    'social_auth.backends.contrib.flickr.FlickrBackend',
+    'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+FACEBOOK_APP_ID              = '3418123413'
+FACEBOOK_API_SECRET          = 'bf2d90de3f517b7981b5903508a991d3'
+GOOGLE_CONSUMER_KEY          = ''
+GOOGLE_CONSUMER_SECRET       = ''
+GOOGLE_OAUTH2_CLIENT_ID      = ''
+GOOGLE_OAUTH2_CLIENT_SECRET  = ''
+
+SOCIAL_AUTH_EXPIRATION = 'expires'
 
 MIDDLEWARE_CLASSES = (
     # This loads the index definitions, so it has to come first
