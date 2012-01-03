@@ -390,7 +390,8 @@
 
 							board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
 							//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
-							//console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
+							//console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "
+							// +ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
 						}
 					}
 				}
