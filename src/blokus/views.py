@@ -8,7 +8,7 @@ from blokus.models import *
 # Garbage collection function called by cronjob.
 def execute_garbage_collection(request):
 	# The amount of time which a single player may be disconnected for before the game is garbage-collected.
-	TIMEOUT_IN_SECONDS = 60 * 2 #The 10 minutes mentioned in the design doc seems like ages, but feel free to change this.
+	TIMEOUT_IN_SECONDS = 60 * 15
 
 	# If any game contains a player who has not been seen online in TIMEOUT_IN_SECONDS,
 	# delete the game and all its players.
