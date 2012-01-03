@@ -55,7 +55,11 @@ class UserProfile(models.Model):
 	losses = models.IntegerField(default=0)
 
 
-
+# Colours MUST correspond to positions:
+# Red - Top Left
+# Green - Top Right
+# Blue - Bottom Right
+# Yellow - Bottom Left
 _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
@@ -93,13 +97,13 @@ class Piece(models.Model):
 	def satisfies_first_move(self):
 		height = len(self.get_bitmap)
 		width = len(self.get_bitmap[0])
-		if self.player.colour == 'red':
+		if self.player.colour == 'red' and self.player.game.player_turn == 0:
 			return self.master.get_bitmap()[0][0]
-		elif self.player.colour == 'yellow':
+		elif self.player.colour == 'green' and self.player.game.player_turn == 1:
 			return self.master.get_bitmap()[0][width]
-		elif self.player.colour == 'green':
+		elif self.player.colour == 'yellow' and self.player.game.player_turn == 2:
 			return self.master.get_bitmap()[height][0]
-		elif self.player.colour == 'blue':
+		elif self.plaer.colour == 'blue' and self.player.game.player_turn == 3:
 			return self.master.get_bitmap()[height][width]
 
 	def is_inside_grid(self):
