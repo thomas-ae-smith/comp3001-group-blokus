@@ -75,7 +75,10 @@ class Piece(models.Model):
 	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def is_valid_position(self):
-		return (does_not_overlap() and is_only_adjacent())
+		return (does_not_overlap()
+			and is_only_adjacent()
+			and satisfies_first_move()
+			and is_inside_grid())
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
 	def does_not_overlap(self):
@@ -87,7 +90,18 @@ class Piece(models.Model):
 					return False
 		return True
 
-	#Returns TRUE if the piece is adjacent (touching the corner) of a piece of the same colour, but does not actually touch another piece of the same colour.
+	def satisfies_first_move(self):
+		pass
+
+	def is_inside_grid(self):
+		height = len(self.get_bitmap)
+		width = len(self.get_bitmap[0])
+		return (self.x >= 0 and self.y >= 0 and
+			self.x + width < 20 and self.y + height < 20)
+
+	# Returns TRUE if the piece is adjacent (touching the corner) of a
+	# piece of the same colour, but does not actually touch another
+	# piece of the same colour.
 	def is_only_adjacent(self):
 		this_bitmap = self.get_bitmap()
 
