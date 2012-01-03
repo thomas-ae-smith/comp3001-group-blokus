@@ -25,7 +25,6 @@ INSTALLED_APPS = (
     'tastypie',
     'social_auth',
     'guest',
-    'django_cron',
     'blokus',
     # djangoappengine should come last, so it can override a few manage.py commands
     'djangoappengine',
@@ -73,7 +72,8 @@ GUEST_EMAIL = ''
 GUEST_DELETE_TIME = datetime.timedelta(hours = 72)
 # Frequency with which to delete old guests in seconds if using the
 # django-cron application to do this.
-GUEST_DELETE_FREQUENCY = 86400
+#GUEST_DELETE_FREQUENCY = 86400
+# (This has been reworked to use cron.yaml, and is defined there instead)
 
 MIDDLEWARE_CLASSES = (
     # This loads the index definitions, so it has to come first
