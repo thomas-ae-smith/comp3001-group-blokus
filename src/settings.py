@@ -22,6 +22,8 @@ INSTALLED_APPS = (
     'autoload',
     'dbindexer',
     'tastypie',
+    'guest',
+    'django_cron',
     'blokus',
     # djangoappengine should come last, so it can override a few manage.py commands
     'djangoappengine',
@@ -38,6 +40,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'guest.middleware.LogGuests',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
