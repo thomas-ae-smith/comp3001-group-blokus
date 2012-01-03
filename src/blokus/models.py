@@ -75,10 +75,10 @@ class Piece(models.Model):
 	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def is_valid_position(self):
-		return (does_not_overlap()
-			and is_only_adjacent()
-			and satisfies_first_move()
-			and is_inside_grid())
+		return (does_not_overlap() and
+			(is_only_adjacent() or
+			satisfies_first_move()) and
+			is_inside_grid())
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
 	def does_not_overlap(self):
@@ -91,7 +91,16 @@ class Piece(models.Model):
 		return True
 
 	def satisfies_first_move(self):
-		pass
+		height = len(self.get_bitmap)
+		width = len(self.get_bitmap[0])
+		if self.player.colour == 'red':
+			return self.master.get_bitmap()[0][0]
+		elif self.player.colour == 'yellow':
+			return self.master.get_bitmap()[0][width]
+		elif self.player.colour == 'green':
+			return self.master.get_bitmap()[height][0]
+		elif self.player.colour == 'blue':
+			return self.master.get_bitmap()[height][width]
 
 	def is_inside_grid(self):
 		height = len(self.get_bitmap)
