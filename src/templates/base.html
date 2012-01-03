@@ -11,7 +11,6 @@
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
-		<link rel="stylesheet" href="{{ STATIC_URL }}css/lobby.css" type="text/css"/>
 		{% block extracss %}{% endblock %}
 		<script src="{{ STATIC_URL }}js/jquery.js"></script>
 		<script src="{{ STATIC_URL }}js/raphael.js"></script>
@@ -28,69 +27,52 @@
 		<script src="{{ STATIC_URL }}js/ProfileView.js"></script>
 		<script src="{{ STATIC_URL }}js/RegisterView.js"></script>
 		<script src="{{ STATIC_URL }}js/utils.js"></script>
-
-		{% block extrajs %}{% endblock %}
 	</head>
 	<body>
-		{% block header %}
-		<header>
-			<div>
-				<a href="#"><img id="logo" src="{{ STATIC_URL }}img/logo.png" alt="Blokus Logo"/></a>
-				<a href="javascript:;" id="profileButton"><span class="name">Sign in</span> &#9660;</a>
-				<nav>
-					<a href="#help" class="button">Help</a>
-					<a href="#" class="button">Quit</a>
-				</nav>
-			</div>
-		</header>
-		{% endblock %}
-
 		<div id="container"></div>
-
-		<div id="profileMenu">
-			<div id="signedOutMenu">
-				<form>
-					Username<br/>
-					<input type="text" id="loginUsername" /><br/>
-					Password<br/>
-					<input type="password" id="loginPassword" /><br/><br/>
-					<a href="#forgot">Forgot?</a>
-					<a href="#register">Register</a>
-					<input id="signin-button" type="submit" value="Sign in">
-				</form>
-			</div>
-			<div id="signedInMenu">
-				<div class="clearfix">
-					<ul>
-						<li>3 wins</li>
-						<li>2 losses</li>
-					</ul>
-					<img title="zanders3's Avatar"/>
-				</div>
-				<ul class="menu">
-					<li><a href="#">Settings</a></li>
-					<li><a href="javascript:;" id="signout-button">Sign Out</a></li>
-				</ul>
-			</div>
-		</div>
 
 		<div class="templates">
 			<script type="text/html" id="lobby-template">
-				<h2>Welcome!</h2>
-				<p>Please select a game mode:</p>
+				<div id="profileBox" class="box">
+					<img alt="Guest"/>
+					<h1>Hello Guest!</h1>
+					<p>wins: 0 losses: 0</p>
+					<a href="javascript:;" class="button">Profile</a>
+					<a href="javascript:;" class="button">Logout</a>
+				</div>
 				<p><a href="#game/1">[test game]</a></p>
 				<ul class="modelist">
-					<li><a href="javascript:;">Quick Play</a></li>
-					<li><a href="javascript:;">2 Players</a></li>
-					<li><a href="javascript:;">4 Players</a></li>
-					<li id="privatebutton"><a href="javascript:;">Private</a></li>
+					<li class="box">
+						<h2>quick play</h2>
+						<p>Start playing a 2 or 4 player game with anyone</p>
+						<a href="javascript:;" class="button">Play Now</a>
+					</li>
+					<li class="box">
+						<h1>2</h1>
+						<h3>players</h3>
+						<p>Start playing a 2 player game with anyone</p>
+						<a href="javascript:;" class="button">Play Now</a>
+					</li>
+					<li class="box">
+						<h1>4</h1>
+						<h3>players</h3>
+						<p>Start playing a 4 player game with anyone</p>
+						<a href="javascript:;" class="button">Play Now</a>
+					</li>
+					<li class="box">
+						<h2>private lobby</h2>
+						<p>Start playing a private game and invite your friends</p>
+						<a href="javascript:;" class="button">Play Now</a>
+					</li>
 				</ul>
-				<div id="privatelobby" class="clearfix">
+				<div id="privatelobby" class="box clearfix">
+					<h2>private lobby</h2>
+					<p>Waiting for players to join...</p>
+					<p><a href="#">Invite URL</a>: Send this to your friends!</p>
 					<ul class="lobbylist">
 						<li>zanders3</li>
 					</ul>
-					<a href="#">Join URL</a>: Send this to your friends!<br/></br/>
-					Waiting for players to join...<a href="#" class="button">Start Game</a>
+					<a href="#" class="button">Start Game</a>
 				</div>
 			</script>
 			<script type="text/html" id="game-template">
