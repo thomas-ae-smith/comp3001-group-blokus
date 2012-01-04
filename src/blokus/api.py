@@ -53,11 +53,13 @@ class UserProfileResource(ModelResource):
 			game_attributes = {
 				'looking_for_2':(1,2),
 				'looking_for_4':(2,4),
+				'private_2':(1,2),
+				'private_4':(2,4),
 			}
 
 			# Get a list of users to play in a game.
 			if request.user.status == 'looking_for_any':
-				statuses = game_attributes.keys()
+				statuses = set(['looking_for_2','looking_for_4'])
 				random.shuffle(statuses)
 				for status in statuses:
 					users_playing = [request.user]
@@ -77,7 +79,12 @@ class UserProfileResource(ModelResource):
 						break
 			elif request.user.status[0:7] == "private":
 				for user in UserProfiles:
-
+					if (user.status == request.user.status and
+						user.private_queue == request.user.private_queue):
+						users_playing.append(user)
+					if len(users_playing) >= player_count[request.user.status][1]:
+						break
+				request.user.status = {'private_2':'looking_for_2', 'private_4':'looking_for_4'}[request.user.status]
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
