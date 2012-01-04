@@ -33,8 +33,12 @@
 
 		paper: undefined,
 		game: undefined,
+		player: undefined,
 		gameBoard: undefined,
 		playerPanels: undefined,
+
+		// Collection of all unplaced pieces (of all players)
+		unplacedPieces: undefined,
 
 		width: 860,
 		height: 620,
@@ -88,8 +92,34 @@
 					this_.gameBoard = (new blokus.GameBoard({ paper: this_.paper })).render();
 					this_.playerPanels = [];
 
+					this_.unplacedPieces = {};
+
+					// FIXME
+					var coloursInPlay = ["red", "blue", "green", "yellow"];
+
+					_(coloursInPlay).each(function (colour) {
+						var placedPieceMasters = this_.get("pieces")[colour].pluck("pieceMasterID");
+						var unplacedPieces = (blokus.pieceMasters.models).chain().reject(function (pieceMaster) {
+								return _(placedPieceMasters).indexOf(pieceMaster.get("id")) > -1;
+							}).map(function (pieceMaster) {
+								return new blokus.Piece({ pieceMaster: pieceMaster });
+							}).value();
+
+						this_.unplacedPieces[colour] = unplacedPieces;
+					});
+
+
+					blokus.pieceMasters.each(function (pieceMaster){
+						// Iterated through pieces that have not yet been placed and render to the player's piece tray
+						trayPieces.push(_(pieces[colour].models).find(function (piece) {
+								return pieceMaster.get("id") == piece.get("pieceMasterId");
+						}));
+					});
+
 					// Player list with pieces
 					this_.game.get("players").each(function (player, index) {
+
+
 						var playerPanel = (new blokus.PlayerPanel({
 							paper: this_.paper,
 							player: player,
@@ -99,6 +129,14 @@
 
 						this_.playerPanels.push(playerPanel);
 					});
+
+					// FIXME
+					this_.player = this_.game.get("players").at(0);
+					
+
+
+					this_.unplacedPieces = new blokus.PieceCollection();
+
 
 					//this_.drawStagingArea(this_.stagingPos);
 
@@ -321,7 +359,12 @@
 							shapeSet.destCor = {
 								x: cell.attr("x") - shapeSet.initBBox.x,
 								y: cell.attr("y") - shapeSet.initBBox.y
-							 };
+							};
+
+							/*placePiece(colour, {
+								x: cellIndex.x,
+								y: cellIndex.y
+							})*/
 						}
 						else {
 							shapeSet.destCor = { x: shapeSet.initBBox.x, y: shapeSet.initBBox.y };

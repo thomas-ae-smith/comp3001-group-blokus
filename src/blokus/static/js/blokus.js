@@ -114,10 +114,10 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			positionProfileMenu = function () {
 				var buttonOffset = $profileButton.offset();
 
-		        $profileMenu.css({
+		        /*$profileMenu.css({
 	                'left': buttonOffset.left - $profileMenu.outerWidth() + $profileButton.outerWidth(),
 	                'top': buttonOffset.top + $profileButton.outerHeight()
-		        });
+		        });*/
 			};
 
 		// Make profile/login panel visible when moving mouse onto profile button or menu
@@ -198,7 +198,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
         });
 
         // Get currently logged in user (or anonymous user if not logged in)
-        $.ajax({
+        /*$.ajax({
         	url: "/get_logged_in_user",
         	success: function (model) {
 		        blokus.user.set(model);
@@ -207,7 +207,11 @@ window.blokus = (function ($, _, Backbone, Raphael) {
         		// TODO
         		blokus.user.clear()
         	}
-        });
+        });*/
+        // HACK
+        var u = new blokus.User({id : 10});
+        u.fetch();
+        blokus.user.set(u);
 
 		// When window loads or is resized, Set profile/login panel position to below button
 		$(window).bind("resize load", positionProfileMenu);
