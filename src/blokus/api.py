@@ -84,9 +84,9 @@ class UserProfileResource(ModelResource):
 				game.game_type = game_attributes[request.user.status][0]
 				for user_number in xrange(4):
 					user = None
-					if request.user.status == 'looking_for_2':
-						user = users_playing[user_number % 2]
-					else:
+					if request.user.status == 'looking_for_2':	# Will need to add to this IF
+						user = users_playing[user_number % 2]	# block if any new game types
+					else:										# are added.
 						user = users_playing[user_number]
 					user.status = 'ingame'
 					player = Player(
@@ -99,7 +99,6 @@ class UserProfileResource(ModelResource):
 		return UserProfile.objects.none()
 
 class GameAuthorization(Authorization):
-
 	#Limits return set so only games are shown that current user is playing in.
 	def apply_limits(self, request, object_list):
 		if request and request.user.id is not None:
