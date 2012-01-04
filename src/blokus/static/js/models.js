@@ -62,16 +62,18 @@
 			},
 
 			parse: function (model) {
-				model.players = new blokus.PieceCollection(model.players);
-				model.pieces.red = new blokus.PieceCollection(model.pieces.red);
-				model.pieces.blue = new blokus.PieceCollection(model.pieces.blue);
-				model.pieces.green = new blokus.PieceCollection(model.pieces.green);
-				model.pieces.yellow = new blokus.PieceCollection(model.pieces.yellow);
-				model.pieces.red.url = this.url() + "piece/red/";
-				model.pieces.blue.url = this.url() + "piece/blue/";
-				model.pieces.green.url = this.url() + "piece/green/";
-				model.pieces.yellow.url = this.url() + "piece/yellow/";
-				model.players.url = this.url() + "player/";
+
+				this.players = new blokus.PieceCollection(model.players);
+				this.players.url = this.url() + "player/";
+				this.piece = {};
+				this.pieces.red = new blokus.PieceCollection(model.pieces.red);
+				this.pieces.blue = new blokus.PieceCollection(model.pieces.blue);
+				this.pieces.green = new blokus.PieceCollection(model.pieces.green);
+				this.pieces.yellow = new blokus.PieceCollection(model.pieces.yellow);
+				this.pieces.red.url = this.url() + "piece/red/";
+				this.pieces.blue.url = this.url() + "piece/blue/";
+				this.pieces.green.url = this.url() + "piece/green/";
+				this.pieces.yellow.url = this.url() + "piece/yellow/";
 				return model;
 			}
 		}),
