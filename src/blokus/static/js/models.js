@@ -62,10 +62,13 @@
 			},
 
 			parse: function (model) {
-
 				this.players = new blokus.PieceCollection(model.players);
 				this.players.url = this.url() + "player/";
-				this.piece = {};
+				_(this.players.models).each(function (player) {
+					player.user = new blokus.User({ id: player.get("userId") });
+					player.user.fetch(); // FIXME: Requires deferred
+				});
+				this.pieces = {};
 				this.pieces.red = new blokus.PieceCollection(model.pieces.red);
 				this.pieces.blue = new blokus.PieceCollection(model.pieces.blue);
 				this.pieces.green = new blokus.PieceCollection(model.pieces.green);

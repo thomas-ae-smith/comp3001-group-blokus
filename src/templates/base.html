@@ -26,6 +26,8 @@
 		<script src="{{ STATIC_URL }}js/LobbyView.js"></script>
 		<script src="{{ STATIC_URL }}js/ProfileView.js"></script>
 		<script src="{{ STATIC_URL }}js/RegisterView.js"></script>
+		<script src="{{ STATIC_URL }}js/GameBoard.js"></script>
+		<script src="{{ STATIC_URL }}js/PlayerPanel.js"></script>
 		<script src="{{ STATIC_URL }}js/utils.js"></script>
 		<script src="{{ STATIC_URL }}js/labels.js"></script>
 	</head>
@@ -106,6 +108,8 @@
 				</div>
 			</script>
 			<script type="text/html" id="game-template">
+				<div class="playerpanelcontainer left"></div>
+				<div class="playerpanelcontainer right"></div>
 			</script>
 			<script type="text/html" id="help-template">
 				<h2>How to play blokus</h2>

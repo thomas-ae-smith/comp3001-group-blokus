@@ -233,3 +233,31 @@ h1 {
 	/* TODO: replace with something nicer */
 	background: white url(../img/loading.gif) no-repeat center;
 }
+
+
+
+/*********** Peter's stuff *****************/
+.gameboard {
+	position: absolute;
+	left: 200px; right: 200px; top: 0;
+}
+.playerpanelcontainer.left {
+	position: absolute;
+	top: 0; left: 0;
+	width: 132px;
+}
+.playerpanelcontainer.left .playerpanel {
+	height: 600px;
+}
+.playerpanelcontainer.right {
+	position: absolute;
+	top: 0; right: 0;
+	width: 132px;
+}
+.playerpanelcontainer.right .playerpanel {
+	height: 200px;
+}
+
+.playerpanel {
+	background: rgba(0, 0, 0, 0.5);
+}
