@@ -157,8 +157,72 @@
 		"model": "auth.user",
 		"pk": "100",
 		"fields" : {
-			"username": "test",
-			"password": "sdasadsad"
+			"username": "test1",
+			"password": "test"
+		}
+	},
+	{
+		"model": "auth.user",
+		"pk": "101",
+		"fields" : {
+			"username": "test2",
+			"password": "test"
+		}
+	},
+	{
+		"model": "auth.user",
+		"pk": "102",
+		"fields" : {
+			"username": "test3",
+			"password": "test"
+		}
+	},
+	{
+		"model": "auth.user",
+		"pk": "103",
+		"fields" : {
+			"username": "test4",
+			"password": "test"
+		}
+	},
+	{
+		"model":	"blokus.userprofile",
+		"pk":		"1",
+		"fields":	{
+			"user":		100,
+			"status":	"looking_for_4",
+			"wins":		0,
+			"losses":	0
+		}
+	},
+	{
+		"model":	"blokus.userprofile",
+		"pk":		"2",
+		"fields":	{
+			"user":		101,
+			"status":	"looking_for_4",
+			"wins":		0,
+			"losses":	0
+		}
+	},
+	{
+		"model":	"blokus.userprofile",
+		"pk":		"3",
+		"fields":	{
+			"user":		102,
+			"status":	"looking_for_4",
+			"wins":		0,
+			"losses":	0
+		}
+	},
+	{
+		"model":	"blokus.userprofile",
+		"pk":		"4",
+		"fields":	{
+			"user":		103,
+			"status":	"looking_for_4",
+			"wins":		0,
+			"losses":	0
 		}
 	},
 	{

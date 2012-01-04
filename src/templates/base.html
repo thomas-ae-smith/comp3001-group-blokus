@@ -27,6 +27,7 @@
 		<script src="{{ STATIC_URL }}js/ProfileView.js"></script>
 		<script src="{{ STATIC_URL }}js/RegisterView.js"></script>
 		<script src="{{ STATIC_URL }}js/utils.js"></script>
+		<script src="{{ STATIC_URL }}js/labels.js"></script>
 	</head>
 	<body>
 		<div id="container"></div>
@@ -35,38 +36,67 @@
 			<script type="text/html" id="lobby-template">
 				<div id="profileBox" class="box">
 					<img alt="Guest"/>
-					<h1>Hello Guest!</h1>
-					<p>wins: 0 losses: 0</p>
-					<a href="javascript:;" class="button">Profile</a>
-					<a href="javascript:;" class="button">Logout</a>
+					<div id="profileInfo">
+						<h1>Hello Guest!</h1>
+						<p>Please login to save your scores</p>
+					</div>
+					<div id="profileMenu" style="display:none;">
+						<a href="javascript:;" class="button">Profile</a>
+						<a href="javascript:;" class="button">Logout</a>
+					</div>
+					<div id="signedOut">
+						<form action="/login/" method="post" name="signInForm">
+							{% csrf_token %}
+							<a href="javascript:document.signInForm.submit();" class="button">Login</a>
+							<div>
+								<label class="input">
+									<span>Username</span>
+									<input type="text" />
+								</label>
+								<label class="input">
+									<span>Password</span>
+									<input type="password" />
+								</label>
+								<a href="#register">Register</a>
+								<a href="#forgot">Forgot?</a>
+							</div>
+						</form>
+					</div>					
 				</div>
-				<p><a href="#game/1">[test game]</a></p>
 				<ul class="modelist">
 					<li class="box">
-						<h2>quick play</h2>
+						<div>
+							<h2>quick<br/>play</h2>
+						</div>
 						<p>Start playing a 2 or 4 player game with anyone</p>
-						<a href="javascript:;" class="button">Play Now</a>
+						<a href="#game/1" class="button">Play Now</a>
 					</li>
 					<li class="box">
-						<h1>2</h1>
-						<h3>players</h3>
+						<div>
+							<h1>2</h1>
+							<h3>players</h3>
+						</div>
 						<p>Start playing a 2 player game with anyone</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 					<li class="box">
-						<h1>4</h1>
-						<h3>players</h3>
+						<div>
+							<h1>4</h1>
+							<h3>players</h3>
+						</div>
 						<p>Start playing a 4 player game with anyone</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 					<li class="box">
-						<h2>private lobby</h2>
+						<div>
+							<h2>private<br/>lobby</h2>
+						</div>
 						<p>Start playing a private game and invite your friends</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 				</ul>
 				<div id="privatelobby" class="box clearfix">
-					<h2>private lobby</h2>
+					<h1>private lobby</h1>
 					<p>Waiting for players to join...</p>
 					<p><a href="#">Invite URL</a>: Send this to your friends!</p>
 					<ul class="lobbylist">
@@ -82,19 +112,30 @@
 				<p>Blokus is a 2 or 4 player game which.... yada yada</p>
 			</script>
 			<script type="text/html" id="register-template">
-				<h2>Register</h2>
-				<p>We just need a few details and you'll be on your way!</p>
-				<form>
-					<label for="username">Username:</label>
-						<input type="text" name="username" placeholder="username">
-					<label for="email">Email address:</label>
-						<input type="email" name="email" placeholder="email address">
-					<label for="password1">Password:</label>
-						<input type="password" name="password1" placeholder="password">
-					<label for="password2">Confirm password:</label>
-						<input type="password" name="password2" placeholder="confirm password">
-					<input type="submit">
-				</form>
+				<div id="register" class="box">
+					<h1>Register</h1>
+					<p>Registration can't be this quick and easy... can it?</p>
+					<form action="/register/" name="registerForm" method="post">
+						{% csrf_token %}
+						<label class="input">
+							<span>Username</span>
+							<input name="username" type="text" />
+						</label>
+						<label class="input">
+							<span>Email Address</span>
+							<input name="email" type="text" />
+						</label>
+						<label class="input">
+							<span>Password</span>
+							<input name="password" type="password" />
+						</label>
+						<label class="input">
+							<span>Confirm Password</span>
+							<input name="password2" type="password" />
+						</label>
+							<a href="javascript:document.forms.registerForm.submit();" class="button" style="clear:left;">Register</a> <a href="#" class="button">Cancel</a>
+					</form>
+				</div>
 			</script>
 			<script type="text/html" id="forgot-template">
 				<h2>Forgot your password</h2>
