@@ -35,6 +35,9 @@ def execute_garbage_collection(request):
 	# A view must return a "web response".
 	return HttpResponse(html)
 
+def debug(request):
+	return HttpResponse("<p>hello</p>")
+
 @require_http_methods(["GET"])
 def get_logged_in_user(request):
 	if not request.is_ajax():

@@ -15,11 +15,10 @@ import time
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.utils.hashcompat import md5_constructor
-from django.conf import settings as django_settings
+from django.conf import settings
 
 from .models import Guest
 from .exceptions import NotAGuest
-from . import settings as guest_settings
 
 # Use the system (hardware-based) random number generator if it exists.
 if hasattr(random, 'SystemRandom'):
@@ -41,7 +40,7 @@ def _get_new_username():
     while 1:
         username = md5_constructor(
             "%s%s%s%s" % (randrange(0, MAX_SESSION_KEY), pid, time.time(),
-                          django_settings.SECRET_KEY)).hexdigest()
+                          settings.SECRET_KEY)).hexdigest()
         try:
             User.objects.get(username=username)
         except User.DoesNotExist:
@@ -51,7 +50,7 @@ def _get_new_username():
 def create_guest():
     """Creates a guest user."""
     user = User.objects.create_user(_get_new_username(),
-        guest_settings.GUEST_EMAIL, guest_settings.GUEST_PASSWORD)
+        settings.GUEST_EMAIL, settings.GUEST_PASSWORD)
     user.save()
     guest = Guest.create_guest(user)
     guest.save()
@@ -61,7 +60,7 @@ def assign_guest(request):
     """Creates a guest user, authenticates it and logs it in."""
     user = create_guest()
     user = authenticate(username=user.username,
-                             password=guest_settings.GUEST_PASSWORD)
+                             password=settings.GUEST_PASSWORD)
     login(request, user)
 
 def get_guest(user):
@@ -80,7 +79,7 @@ def is_a_guest(user):
 def display_username(user):
     """Returns a username suitable for display (the guest usernames are not)."""
     if is_a_guest(user):
-        return guest_settings.GUEST_USER_NAME
+        return settings.GUEST_USER_NAME #Todo: make identifiable maybe?
     else:
         return user.username
 
@@ -99,7 +98,7 @@ def delete_guest(user, deletable_classes):
 def cleanup_guests():
     """Delete guest users who have not interacted with the site for at least
     GUEST_DELETE_TIME"""
-    cut_off_time = datetime.datetime.now() - guest_settings.GUEST_DELETE_TIME
+    cut_off_time = datetime.datetime.now() - settings.GUEST_DELETE_TIME
     old_guests = Guest.objects.filter(last_used__lt = cut_off_time)
     for guest in old_guests:
         guest.user.delete()
