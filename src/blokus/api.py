@@ -4,9 +4,12 @@ from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.validation import CleanedDataFormValidation
+from tastypie.serializers import Serializer
 from django.forms import ModelForm, ValidationError
-from django.core import serializers
+from django.core.serializers import json
+from django.utils import simplejson
 from datetime import datetime
+import logging
 import random
 
 class UserResource(ModelResource):
@@ -17,7 +20,7 @@ class UserResource(ModelResource):
 		resource_name = 'user'
 		default_format = 'application/json'
 		excludes = ['password', 'is_staff', 'is_superuser']
-		list_allowed_methods = ['get']
+		list_allowed_methods = []
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
 
@@ -143,6 +146,33 @@ class PlayerResource(ModelResource):
 		detail_allowed_methods = ['get','put']
 		authorization = Authorization()
 
+#This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
+#Coversion is done here.
+class PieceJSONSerializer(Serializer):
+	def to_json(self, data, options=None):
+		options = options or {}
+		data = self.to_simple(data, options)
+
+		piece_data = []
+		for row in data['piece_data'].split(','):
+			piece_data.append(list(row))
+		piece_data  = [map(int, x) for x in piece_data]
+
+		data['piece_data'] = piece_data
+
+		return simplejson.dumps(data, cls=json.DjangoJSONEncoder, sort_keys=True)
+
+	def from_json(self, content):
+		data = simplejson.loads(content)
+
+		piece_data = [map(str, x) for x in data['piece_data']]
+		piece_data_string = ''
+		for row in piece_data:
+			piece_data_string += ''.join(row) + ','
+
+		data['piece_data'] = piece_data_string[:-1]
+
+		return data
 
 class PieceMasterResource(ModelResource):
 	class Meta:
@@ -151,6 +181,7 @@ class PieceMasterResource(ModelResource):
 		default_format = 'application/json'
 		allowed_methods = ['get']
 		authorization = Authorization()
+		serializer = PieceJSONSerializer()
 
 class PieceForm(ModelForm):
 	class Meta:
