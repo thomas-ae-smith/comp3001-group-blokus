@@ -57,7 +57,7 @@
 					if (options && options.error) options.error.call(undefined, {}, {status: 404});
 				} else {
 					this.set(this.parse(model));
-					if (options && options.success) options.success.call();
+					if (options && options.success) setTimeout(function(){options.success.call();},1000);
 				}
 			},
 

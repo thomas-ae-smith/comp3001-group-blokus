@@ -11,12 +11,14 @@
 
 		render: function () {
 			var $el = $(this.el),
-				player = this.options.player;
-			
-			if (this.options.active) {
-			}
+				player = this.options.player,
+				template = _.template($('#player-panel-template').html());
 
-			$el.html("Name: " + player.user.get("name") + ", Colour: " + this.options.colour);
+			$el.html(template({
+				name: player.user.get("name"),
+				wins: 10,
+				losses: 4
+			}));
 
 			return this;
 		},

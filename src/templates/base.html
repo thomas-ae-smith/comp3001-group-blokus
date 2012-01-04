@@ -108,8 +108,36 @@
 				</div>
 			</script>
 			<script type="text/html" id="game-template">
+				<div class="loading"></div>
 				<div class="playerpanelcontainer left"></div>
 				<div class="playerpanelcontainer right"></div>
+				<!-- everything below is placeholder -->
+				<div class="top-panel">
+					<div class="left">
+						<b>Table ID:</b><br>
+						<%= gameId %><br><br>
+						<b>Table URL:</b><br>
+						http://blahblah.com#<%= gameId %>
+					</div>
+					<input type="button" value="How to play">
+					<input type="button" value="Exit game">
+					<div class="right">
+						<b>Duration:</b><br>
+						<span class="duration"></div><br><br>
+						<b>Player turn:</b><br>
+						<span class="playerduration"></div>
+						<div class="clock"></div>
+					</div>
+				</div>
+				<div class="board-bg">
+					<div class="board"></div>
+				</div>
+			</script>
+			<script type="text/html" id="player-panel-template">
+				<img class="pic">
+				<div class="name"><%= name %></div>
+				<div class="wins">wins: <span class="val"><%= wins %></val></div>
+				<div class="losses">losses: <span class="val"><%= losses %></val></div>
 			</script>
 			<script type="text/html" id="help-template">
 				<h2>How to play blokus</h2>
