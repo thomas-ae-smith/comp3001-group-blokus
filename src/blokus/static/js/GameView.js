@@ -8,6 +8,25 @@
 		yellow: '#ffff00'
 	}
 
+	function rotateMatrix(data, rotation){
+		rotation = Math.abs(rotation % 4);
+		var rotatedData = _(data).clone();
+		for (var numRotation  = 0; numRotation < rotation; numRotation++){
+			var rotatedDataTmp = new Array();
+			var numRows = rotatedData.length;
+			var numCols = rotatedData[0].length;
+			for (var colJ = numCols-1; colJ >= 0 ; colJ--) {
+				var reverseCol = Array();
+				for (var rowI = 0; rowI < numRows; rowI++){
+					reverseCol.push(rotatedData[rowI][colJ]);
+				}
+				rotatedDataTmp.push(reverseCol);
+			}
+			rotatedData = _(rotatedDataTmp).clone();
+		}
+		return rotatedData;
+	}
+
 	blokus.GameView = Backbone.View.extend({
 		className: "gameview",
 		game: undefined,
@@ -30,7 +49,7 @@
 				var gamej = game.toJSON(),
 					playerPanels = [],
 					positionId = 0,
-					gameboard = new blokus.GameBoard({
+					gameboard = this_.gameboard = new blokus.GameBoard({
 						paper: paper,
 						cellSize: cellSize,
 						game: game,
@@ -92,7 +111,7 @@
 
 		//Draws a single piece
 		drawPiece: function (x, y, data, colour, scaleX, scaleY) {
-			var gameBoard = this.gameBoard,
+			var gameboard = this.gameboard,
 				paper = this.paper;
 
 			var numRows = data.length;
@@ -222,19 +241,19 @@
 						}
 						// game board bounds
 						var gbBounds = {
-							sx: gameBoard.x,
-							sy: gameBoard.y,
-							ex: gameBoard.x + gameBoard.width,
-							ey:gameBoard.y + gameBoard.height
+							sx: gameboard.offset.x,
+							sy: gameboard.offset.y,
+							ex: gameboard.offset.x + gameboard.width,
+							ey:gameboard.offset.y + gameboard.height
 						};
 						// Check shapes to be in the gameScreen
 						if (SBBox.x >= gbBounds.sx &&
 							SBBox.y >= gbBounds.sy &&
-							SBBox.x + SBBox.width - gameBoard.cellXSize < gbBounds.ex &&
-							SBBox.y + SBBox.height - gameBoard.cellYSize < gbBounds.ey) {
+							SBBox.x + SBBox.width - gameboard.cellSize < gbBounds.ex &&
+							SBBox.y + SBBox.height - gameboard.cellSize < gbBounds.ey) {
 							var cellIndex = {
-								x: Math.floor((SBBox.x - gbBounds.sx)/ gameBoard.cellXSize),
-								y: Math.floor((SBBox.y - gbBounds.sy)/ gameBoard.cellYSize),
+								x: Math.floor((SBBox.x - gbBounds.sx)/ gameboard.cellSize),
+								y: Math.floor((SBBox.y - gbBounds.sy)/ gameboard.cellSize),
 							}
 
 							if (highlighted_set.length != 0){
@@ -249,7 +268,7 @@
 							for (var rowI = 0; rowI < numRows; rowI++){
 								for (var colJ = 0; colJ <= numCols; colJ++) {
 									if (tmpData[rowI][colJ] == 1) {
-										highlighted_set.push(gameBoard.arr[cellIndex.x+colJ][cellIndex.y+rowI]);
+										highlighted_set.push(gameboard.grid[cellIndex.x+colJ][cellIndex.y+rowI]);
 										// TODO for validation, make the "r" something variable for different players
 										board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 									}
@@ -257,7 +276,7 @@
 							}
 							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-							var cell = gameBoard.arr[cellIndex.x][cellIndex.y];
+							var cell = gameboard.grid[cellIndex.x][cellIndex.y];
 
 							
 							//Validation

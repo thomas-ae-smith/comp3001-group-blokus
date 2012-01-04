@@ -4,12 +4,15 @@
 		offset: { x: 172, y: 75 },
 		width: undefined,
 		height: undefined,
+		cellSize: undefined,
 		border: 1,
 		className: "gameboard",
+		grid: undefined,
 
 		initialize: function(){
-			this.width = 22 * 20;
-			this.height = 22 * 20;
+			this.cellSize = this.options.cellSize;
+			this.width = this.cellSize * 20;
+			this.height = this.cellSize * 20;
 		},
 
 		render: function () {
@@ -17,6 +20,7 @@
 				cellSize = this.options.cellSize,
 				cols = [];
 
+			this.grid = new Array(20);
 			// Render 20x20 grid
 			for (var x = 0; x < 20; x++) {
 				var row = [];
@@ -30,6 +34,7 @@
 					cell.attr("fill", "#GGG");
 					row.push(cell);
 				}
+				this.grid[x] = row;
 			}
 			return this;
 		},
