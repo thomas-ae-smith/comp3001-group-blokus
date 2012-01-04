@@ -35,7 +35,7 @@ def execute_garbage_collection(request):
 	# A view must return a "web response".
 	return HttpResponse(html)
 
-def debug(request):
+def debug_view(request):
 	return HttpResponse("<p>hello</p>")
 
 @require_http_methods(["GET"])

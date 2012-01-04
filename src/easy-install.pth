@@ -1,6 +1,5 @@
 import sys; sys.__plen = len(sys.path)
-./django_social_auth-0.6.0-py2.7.egg
-./python_openid-2.2.5-py2.7.egg
 ./oauth2-1.5.170-py2.7.egg
 ./httplib2-0.7.2-py2.7.egg
+./python_openid-2.2.5-py2.7.egg
 import sys; new=sys.path[sys.__plen:]; del sys.path[sys.__plen:]; p=getattr(sys,'__egginsert',0); sys.path[p:p]=new; sys.__egginsert = p+len(new)
