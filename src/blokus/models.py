@@ -112,13 +112,13 @@ class Piece(models.Model):
 		piece_bitmap = self.get_bitmap()
 		for row_number, row_data in enumerate(piece_bitmap):
 			for column_number, cell in enumerate(row_data):
-				if grid[piece.x+column_number][piece.y+row_number] and cell:
+				if grid[self.x+column_number][self.y+row_number] and cell:
 					return False
 		return True
 
 	def satisfies_first_move(self):
-		height = len(self.get_bitmap)
-		width = len(self.get_bitmap[0])
+		height = len(self.get_bitmap())
+		width = len(self.get_bitmap()[0])
 		if self.player.colour == 'red' and self.player.game.player_turn == 0:
 			return self.master.get_bitmap()[0][0]
 		elif self.player.colour == 'green' and self.player.game.player_turn == 1:
@@ -129,8 +129,8 @@ class Piece(models.Model):
 			return self.master.get_bitmap()[height][width]
 
 	def is_inside_grid(self):
-		height = len(self.get_bitmap)
-		width = len(self.get_bitmap[0])
+		height = len(self.get_bitmap())
+		width = len(self.get_bitmap()[0])
 		return (self.x >= 0 and self.y >= 0 and
 			self.x + width < 20 and self.y + height < 20)
 
@@ -142,16 +142,16 @@ class Piece(models.Model):
 
 		#Construct grid of pieces of the same colour.
 		grid = [[False]*20 for x in xrange(20)]
-		for that_piece in player.piece_set.all():
+		for that_piece in self.player.piece_set.all():
 			that_bitmap = that_piece.get_bitmap()
-			for that_row in that_bitmap:
-				for that_col in that_bitmap[that_row]:
+			for that_row in xrange(len(that_bitmap)):
+				for that_col in xrange(len(that_bitmap[that_row])):
 					grid[that_row+that_piece.y][that_col+that_piece.x] = that_bitmap[that_row][that_col]
 
 		#Compare piece being placed to pieces near it on the grid.
 		adjacent = False
-		for this_row in this_bitmap:
-			for this_col in this_bitmap[this_row]:
+		for this_row in xrange(len(this_bitmap)):
+			for this_col in xrange(len(this_bitmap[this_row])):
 				if bool(this_bitmap[this_row][this_col]):
 					#If cell touches another cell of the same colour, invalid placement.
 					if (bool(grid[this_row + self.y - 1][this_col + self.x]) or
@@ -169,10 +169,10 @@ class Piece(models.Model):
 		return adjacent
 
 	def is_valid_position(self):
-		return (does_not_overlap() and
-			(is_only_adjacent() or
-			satisfies_first_move()) and
-			is_inside_grid())
+		return (self.does_not_overlap() and
+			(self.is_only_adjacent() or
+			self.satisfies_first_move()) and
+			self.is_inside_grid())
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
