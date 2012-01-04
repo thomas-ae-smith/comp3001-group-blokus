@@ -1,6 +1,10 @@
 // Define the collections used by blokus
 (function ($, _, Backbone) {
 	var Collection = Backbone.Collection.extend({
+		url: function () {
+			console.log("Jko")
+			return this.resourceUrl + "?limit=0";
+		},
 		parse: function(response) {
 			return response.objects;
 		}
@@ -8,20 +12,20 @@
 
 	var UserCollection = Collection.extend({
 			model: blokus.User,
-			url: blokus.urls.user
+			resourceUrl: blokus.urls.user
 		}),
 		UserProfileCollection = Collection.extend({
 			model: blokus.UserProfile,
-			url: blokus.urls.user
+			resourceUrl: blokus.urls.user
 		}),
 		GameCollection = Collection.extend({
 			model: blokus.Game,
-			url: blokus.urls.game
+			resourceUrl: blokus.urls.game
 		}),
 
 		PieceMasterCollection = Collection.extend({
 			model: blokus.PieceMaster,
-			url: blokus.urls.pieceMaster
+			resourceUrl: blokus.urls.pieceMaster
 		}),
 
 		PieceCollection = Collection.extend({
@@ -57,7 +61,7 @@
 						{ pieceMasterId: 8, x: 10, y: 2, rotation: 0 }
 					],
 					yellow: [
-						{ pieceMasterId: 0, x: 10, y: 13, rotation: 0 },
+						{ pieceMasterId: 1, x: 10, y: 13, rotation: 0 },
 						{ pieceMasterId: 12, x: 2, y: 15, rotation: 1, flip: 1 }
 					]
 				}

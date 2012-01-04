@@ -5,7 +5,7 @@ blokus.utils = (function ($, _, Backbone){
 		var retVal = [];
 		makePositionArray(x, y, w, h);
 		for(var i=0;i<arr.length;i++){
-			retVal[i] = pieceLocations[Number(arr[i].id)];
+			retVal[i+1] = pieceLocations[Number(arr[i].pieceMasterId)];
 		}
 		return retVal;
 	};
@@ -15,7 +15,7 @@ blokus.utils = (function ($, _, Backbone){
 		var blockHeight = h / 12;
 
 		//row 1
-		pieceLocations[0] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 0))};
+		pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 17)),y: Math.floor(Number(y) + (blockHeight * 0))};
 		pieceLocations[1] = {x: Math.floor(Number(x) + (blockWidth * 3)),y: Math.floor(Number(y) + (blockHeight * 0))};
 		pieceLocations[2] = {x: Math.floor(Number(x) + (blockWidth * 7)),y: Math.floor(Number(y) + (blockHeight * 0))};
 		pieceLocations[3] = {x: Math.floor(Number(x) + (blockWidth * 12)),y: Math.floor(Number(y) + (blockHeight * 0))};
@@ -43,7 +43,7 @@ blokus.utils = (function ($, _, Backbone){
 		pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 9))};
 
 		//Put the last shape on the first line
-		pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 17)),y: Math.floor(Number(y) + (blockHeight * 0))};
+		pieceLocations[21] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 6.8))};
 	};
 
 	var get_claim = function(x, y){

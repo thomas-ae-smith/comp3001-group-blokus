@@ -237,6 +237,11 @@ h1 {
 
 
 /*********** Peter's stuff *****************/
+.gameview svg {
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	z-index: 100;
+}
 .gameboard {
 	position: absolute;
 	left: 200px; right: 200px; top: 0;
