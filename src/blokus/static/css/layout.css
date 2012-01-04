@@ -89,22 +89,28 @@ html {
 	border-radius: 3px;
 	opacity: 0.9;
 }
-
+#error {
+	width:100%;
+	background:white;
+	border-bottom:2px solid red;
+	color:red;
+	font-weight:bold;
+	padding:10px;
+	text-align:center;
+	opacity:0.9;
+}
 .button:hover {
 	background: gray;
 }
-
 #logo {
 	margin:0 auto;
 	display:block;
 }
-
 #container {
 	margin: 0px auto;
 	width: 800px;
 	position: relative;
 }
-
 #container > div {
 	position: absolute;
 	top: 0; left: 0; right: 0;

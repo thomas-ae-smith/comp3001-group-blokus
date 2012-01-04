@@ -30,38 +30,35 @@
 		<script src="{{ STATIC_URL }}js/labels.js"></script>
 	</head>
 	<body>
+		<div id="error" style="display:none;"></div>
 		<img src="{{ STATIC_URL }}img/logo.png" id="logo"/>
 		<div id="container"></div>
-
 		<div class="templates">
 			<script type="text/html" id="lobby-template">
 				<div id="profileBox" class="box">
 					<img alt="Guest"/>
 					<div id="profileInfo">
-						<h1>Hello Guest!</h1>
+						<h1>Hello <span id="username">Guest</span>!</h1>
 						<p>Please login to save your scores</p>
 					</div>
 					<div id="profileMenu" style="display:none;">
 						<a href="#profile" class="button">Profile</a>
-						<a href="/logout/" class="button">Logout</a>
+						<a href="#" id="signout-button" class="button">Logout</a>
 					</div>
 					<div id="signedOut">
-						<form action="/login/" method="post" name="signInForm">
-							{% csrf_token %}
-							<a href="javascript:document.signInForm.submit();" class="button">Login</a>
-							<div>
-								<label class="input">
-									<span>Username</span>
-									<input type="text" />
-								</label>
-								<label class="input">
-									<span>Password</span>
-									<input type="password" />
-								</label>
-								<a href="#register">Register</a>
-								<a href="#forgot">Forgot?</a>
-							</div>
-						</form>
+						<a href="#" id="signin-button" class="button">Login</a>
+						<div>
+							<label class="input">
+								<span>Username</span>
+								<input id="loginUsername" type="text" />
+							</label>
+							<label class="input">
+								<span>Password</span>
+								<input id="loginPassword" type="password" />
+							</label>
+							<a href="#register">Register</a>
+							<a href="#forgot">Forgot?</a>
+						</div>
 					</div>					
 				</div>
 				<ul class="modelist">
