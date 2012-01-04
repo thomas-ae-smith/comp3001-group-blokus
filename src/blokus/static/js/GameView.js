@@ -19,7 +19,7 @@
 				$el = $(el),
 				template = _.template($('#game-template').html());
 
-			$el.html(template());
+			$el.html(template({ gameId: "HJKLO35" }));
 
 			var paper = this.paper = Raphael(el, 800, 600),
 				game = this.game = new blokus.Game({ id: this.options.id });
