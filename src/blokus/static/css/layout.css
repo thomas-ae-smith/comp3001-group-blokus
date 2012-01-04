@@ -129,6 +129,21 @@ html {
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .input input, .input textarea, .input select { padding: 4px; }
 }
+/* Register Form */
+#register {
+	margin-top:100px;
+	padding:10px;
+	width:400px;
+	margin-left:200px;
+	height:260px;
+}
+#register p {
+	margin-top:10px;
+}
+#register a {
+	float:left;
+	margin-right:5px;
+}
 /* Lobby Layout */
 .box {
 	background: black;

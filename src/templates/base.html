@@ -46,7 +46,7 @@
 					</div>
 					<div id="signedOut">
 						<form action="/login/" method="post" name="signInForm">
-							<input type='hidden' name='csrfmiddlewaretoken' value='da36641272431d194c4e7795042a6fea' />
+							{% csrf_token %}
 							<a href="javascript:document.signInForm.submit();" class="button">Login</a>
 							<div>
 								<label class="input">
@@ -59,7 +59,7 @@
 								</label>
 								<a href="#register">Register</a>
 								<a href="#forgot">Forgot?</a>
-							</div>							
+							</div>
 						</form>
 					</div>					
 				</div>
@@ -69,7 +69,7 @@
 							<h2>quick<br/>play</h2>
 						</div>
 						<p>Start playing a 2 or 4 player game with anyone</p>
-						<a href="javascript:;" class="button">Play Now</a>
+						<a href="#game/1" class="button">Play Now</a>
 					</li>
 					<li class="box">
 						<div>
@@ -112,19 +112,30 @@
 				<p>Blokus is a 2 or 4 player game which.... yada yada</p>
 			</script>
 			<script type="text/html" id="register-template">
-				<h2>Register</h2>
-				<p>We just need a few details and you'll be on your way!</p>
-				<form>
-					<label for="username">Username:</label>
-						<input type="text" name="username" placeholder="username">
-					<label for="email">Email address:</label>
-						<input type="email" name="email" placeholder="email address">
-					<label for="password1">Password:</label>
-						<input type="password" name="password1" placeholder="password">
-					<label for="password2">Confirm password:</label>
-						<input type="password" name="password2" placeholder="confirm password">
-					<input type="submit">
-				</form>
+				<div id="register" class="box">
+					<h1>Register</h1>
+					<p>Registration can't be this quick and easy... can it?</p>
+					<form action="/register/" name="registerForm" method="post">
+						{% csrf_token %}
+						<label class="input">
+							<span>Username</span>
+							<input name="username" type="text" />
+						</label>
+						<label class="input">
+							<span>Email Address</span>
+							<input name="email" type="text" />
+						</label>
+						<label class="input">
+							<span>Password</span>
+							<input name="password" type="password" />
+						</label>
+						<label class="input">
+							<span>Confirm Password</span>
+							<input name="password2" type="password" />
+						</label>
+							<a href="javascript:document.forms.registerForm.submit();" class="button" style="clear:left;">Register</a> <a href="#" class="button">Cancel</a>
+					</form>
+				</div>
 			</script>
 			<script type="text/html" id="forgot-template">
 				<h2>Forgot your password</h2>
