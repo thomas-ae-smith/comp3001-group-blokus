@@ -155,9 +155,17 @@
 							height: canvas.height(),
 						};
 
-						var tmpR = Math.abs(shapeSet.rotation % 4);
-						var distX = e.pageX - shapeSet.mousePageX;
-						var distY = e.pageY - shapeSet.mousePageY;
+						var tmpR = Math.abs(shapeSet.rotation % 2);
+						var distX = e.pageX - shapeSet.mousePageX,
+							distY = e.pageY - shapeSet.mousePageY;
+						if (tmpR == 0){
+							distX -= shapeSet.getBBox().width/2;
+							distY -= shapeSet.getBBox().height/2;
+						}
+						else{
+							distX -= shapeSet.getBBox().height/2;
+							distY -= shapeSet.getBBox().width/2;
+						}
 						shapeSet.toFront();
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
@@ -313,8 +321,8 @@
 						shapeSet.isSelected = true;
 						shapeSet.prevDistX = 0;
 						shapeSet.prevDistY = 0;
-						shapeSet.mousePageX = e.pageX;
-						shapeSet.mousePageY = e.pageY;
+						shapeSet.mousePageX = e.pageX - e.offsetX + shapeSet.initBBox.x;
+						shapeSet.mousePageY = e.pageY - e.offsetY + shapeSet.initBBox.y;
 						shapeSet.animate({"opacity": 0.5}, 0);
 					}
 					else {
