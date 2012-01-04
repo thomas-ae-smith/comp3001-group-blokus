@@ -157,8 +157,8 @@
 		"model": "auth.user",
 		"pk": "100",
 		"fields" : {
-			"username": "test",
-			"password": "sdasadsad"
+			"username": "test1",
+			"password": "test"
 		}
 	},
 	{
@@ -166,8 +166,8 @@
 		"pk": "1",
 		"fields" : {
 			"game": 1,
-			"colour": "red",
-			"user": 100
+			"user": 100,
+			"colour": "red"
 		}
 	},
 	{

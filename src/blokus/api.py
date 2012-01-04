@@ -4,9 +4,12 @@ from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.validation import CleanedDataFormValidation
+from tastypie.serializers import Serializer
 from django.forms import ModelForm, ValidationError
-from django.core import serializers
+from django.core.serializers import json
+from django.utils import simplejson
 from datetime import datetime
+import logging
 import random
 
 class UserResource(ModelResource):
@@ -17,7 +20,7 @@ class UserResource(ModelResource):
 		resource_name = 'user'
 		default_format = 'application/json'
 		excludes = ['password', 'is_staff', 'is_superuser']
-		list_allowed_methods = ['get']
+		list_allowed_methods = []
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
 
@@ -45,46 +48,49 @@ class UserProfileResource(ModelResource):
 			#request.user.last_activity = datetime.now() #User is active.
 			userProfiles = super(GameResource, self).get_object_list(request)
 			users_playing = set(request.user)
-			player_count = {
-				'looking_for_2':2,
-				'looking_for_4':4,
+			# Game Attributes: <status>:(<typeID>,<playerNum>)
+			# Must be added to if a new game type is introduced.
+			game_attributes = {
+				'looking_for_2':(1,2),
+				'looking_for_4':(2,4),
 			}
 
 			# Get a list of users to play in a game.
 			if request.user.status == 'looking_for_any':
-				statuses = player_count.keys()
+				statuses = game_attributes.keys()
 				random.shuffle(statuses)
 				for status in statuses:
-					users_playing = set(request.user)
+					users_playing = [request.user]
 					for user in userProfiles:
 						if user.status in [status, 'looking_for_any']:
-							users_playing.add(user)
-							if users_playing.size >= player_count[request.user.status]:
+							users_playing.append(user)
+							if len(users_playing) >= game_attributes[request.user.status][1]:
 								break
-					if users_playing.size >= player_count[request.user.status]:
+					if len(users_playing) >= game_attributes[request.user.status][1]:
 						request.user.status = status
 						break
 			elif request.user.status in statuses:
 				for user in userProfiles:
 					if user.status in [request.user.status, 'looking_for_any']:
-						users_playing.add(user)
-					if users_playing.size >= player_count[request.user.status]:
+						users_playing.append(user)
+					if len(users_playing) >= player_count[request.user.status][1]:
 						break
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
 				return userProfiles
 
-			colours = ['red', 'yellow', 'green', 'blue']
-			if users_playing.size >= player_count[request.user.status]:
+			if len(users_playing) >= game_attributes[request.user.status][0]:
+				colours = ['red', 'yellow', 'green', 'blue']
 				game = Game()
 				game.start_time = datetime.now()
-				game.game_type = {		# Game codes; must be added
-					'looking_for_2':0,	# to if any new game types
-					'looking_for_4':1,	# are introduced.
-				}[request.user.status]
+				game.game_type = game_attributes[request.user.status][0]
 				for user_number in xrange(4):
-					user = users_playing.pop()
+					user = None
+					if request.user.status == 'looking_for_2':	# Will need to add to this IF
+						user = users_playing[user_number % 2]	# block if any new game types
+					else:										# are added.
+						user = users_playing[user_number]
 					user.status = 'ingame'
 					player = Player(
 						game=game,
@@ -96,7 +102,6 @@ class UserProfileResource(ModelResource):
 		return UserProfile.objects.none()
 
 class GameAuthorization(Authorization):
-
 	#Limits return set so only games are shown that current user is playing in.
 	def apply_limits(self, request, object_list):
 		if request and request.user.id is not None:
@@ -141,6 +146,45 @@ class PlayerResource(ModelResource):
 		detail_allowed_methods = ['get','put']
 		authorization = Authorization()
 
+#This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
+#Coversion is done here.
+class PieceJSONSerializer(Serializer):
+
+	def piece_str_to_json(self, piece_str):
+		piece_data = []
+		for row in piece_str.split(','):
+			piece_data.append(list(row))
+		return [map(int, x) for x in piece_data]	
+
+	def piece_json_to_str(self, piece_json):
+		piece_data = [map(str, x) for x in piece_json]
+		piece_data_string = ''
+		for row in piece_data:
+			piece_data_string += ''.join(row) + ','
+		return piece_data_string[:-1]
+
+	def to_json(self, data, options=None):
+		options = options or {}
+		data = self.to_simple(data, options)
+
+		if data.get('objects') is not None:
+			for i, piece in enumerate(data.get('objects')):
+				data['objects'][i]['piece_data'] = self.piece_str_to_json(piece['piece_data'])
+		else:
+			data['piece_data'] = self.piece_str_to_json(data['piece_data'])
+
+		return simplejson.dumps(data, cls=json.DjangoJSONEncoder, sort_keys=True)
+
+	def from_json(self, content):
+		data = simplejson.loads(content)
+
+		if data.get('objects') is not None:
+			for i, piece in enumerate(data.get('objects')):
+				data['objects'][i]['piece_data'] = self.piece_json_to_str(piece['piece_data'])
+		else:	
+			data['piece_data'] = self.piece_json_to_str(data['piece_data'])
+
+		return data
 
 class PieceMasterResource(ModelResource):
 	class Meta:
@@ -149,6 +193,7 @@ class PieceMasterResource(ModelResource):
 		default_format = 'application/json'
 		allowed_methods = ['get']
 		authorization = Authorization()
+		serializer = PieceJSONSerializer()
 
 class PieceForm(ModelForm):
 	class Meta:

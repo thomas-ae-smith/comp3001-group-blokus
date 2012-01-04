@@ -71,7 +71,7 @@ html[xmlns] .clearfix {
 /*************************************/
 
 html {
-	background: url("../img/background.jpg");
+	background: url("../img/background.jpg") center top;
 	font-family: Tahoma, Helvetica, Georgia, sans-serif;
 	height: 100%;
 }
@@ -89,11 +89,77 @@ html {
 	border-radius: 3px;
 	opacity: 0.9;
 }
-
+#error {
+	width:100%;
+	background:white;
+	border-bottom:2px solid red;
+	color:red;
+	font-weight:bold;
+	padding:10px;
+	text-align:center;
+	opacity:0.9;
+}
 .button:hover {
 	background: gray;
 }
-
+#logo {
+	margin:0 auto;
+	display:block;
+}
+#container {
+	margin: 0px auto;
+	width: 800px;
+	position: relative;
+}
+#container > div {
+	position: absolute;
+	top: 0; left: 0; right: 0;
+	min-height: 400px;
+}
+/* Form field labels */
+.input {
+  margin: 5px 0;
+  background: white;
+  float: left;
+  clear: both;
+}
+.input span {
+  position: absolute;
+  padding: 5px;
+  margin-left: 3px;
+  color: #999;
+}
+.input input, .input textarea, .input select {
+  position: relative;
+  margin: 0;
+  border-width: 1px;
+  padding: 6px;
+  background: transparent;
+  font: inherit;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .input input, .input textarea, .input select { padding: 4px; }
+}
+/* Register Form */
+.form {
+	margin-top:80px;
+	padding:10px;
+	width:400px;
+	margin-left:200px;
+	height:260px;
+}
+.form p {
+	margin-top:10px;
+}
+.form a {
+	float:left;
+	margin-right:5px;
+}
+/* Forgotten password form */
+#forgot {
+	height:160px;
+}
+/* Lobby Layout */
 .box {
 	background: black;
 	color:white;
@@ -101,38 +167,104 @@ html {
 }
 
 #profileBox {
-	width:800px;
+	width:700px;
+	height:100px;
 	display:block;
-	margin:50px 0px;
+	margin:20px 0px 20px 50px;
+}
+#profileBox img {
+	width:80px;
+	height:80px;
+	margin:10px;
+	float:left;
+}
+#profileInfo {
+	margin-top:20px;
+	margin-left:10px;
+	width:260px;
+	display:block;
+	float:left;
+}
+#profileBox .button {
+	float:right;
+	margin-top:30px;
+	margin-right:10px;
+}
+#signedOut {
+	float:right;
+	height:100px;
+}
+#signedOut div {
+	width: 200px;
+	display:block;
+	float:right;
+}
+h1 {
+	font-family:Palatino Linotype;
+	font-weight:bold;
+	font-size:24pt;
 }
 
+.modelist {
+	font-family:Palatino Linotype;
+	font-weight:bold;
+	text-align:center;
+	margin-left:30px;
+}
 .modelist li {
 	margin-left:20px;
+	padding-bottom:5px;
 	width:160px;
-	height:300px;
 	float:left;
+}
+.modelist li div {
+	height:100px;
+}
+.modelist h1 {
+	font-size:48pt;
+}
+.modelist h2 {
+	font-size:22pt;
+	padding-top:15px;
+}
+.modelist h3 {
+	font-size:18pt;
+}
+.modelist p {
+	height: 50px;
+	padding: 10px;
+	font-family:Arial;
+	font-weight:normal;
 }
 
 #privatelobby {
-	width:800px;
+	width:700px;
+	margin:20px 0px 0px 50px;
+	padding:5px;
 }
-
-#container {
-	margin: 0px auto;
-	width: 800px;
-	position: relative;
+#privatelobby p {
+	margin-top:20px;
+	margin-left:10px;
 }
-
-#container > div {
-	position: absolute;
-	top: 0; left: 0; right: 0;
-	min-height: 400px;
+#privatelobby div {
+	float:left;
+	width:300px;
 }
-
-nav {
-	float: right;
-	margin-top:34px;
-	margin-right: 5px;
+#privatelobby .button {
+	margin-top:30px;
+}
+.lobbylist {
+	float:right;
+	width:350px;
+	height:150px;
+	background:white;
+	opacity:0.8;
+	color:black;
+}
+.lobbylist li {
+	background:#CCCCCC;
+	padding:5px;
+	margin-top:5px;
 }
 
 .loading {
