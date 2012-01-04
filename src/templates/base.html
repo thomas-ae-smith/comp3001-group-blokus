@@ -42,8 +42,8 @@
 						<p>Please login to save your scores</p>
 					</div>
 					<div id="profileMenu" style="display:none;">
-						<a href="javascript:;" class="button">Profile</a>
-						<a href="javascript:;" class="button">Logout</a>
+						<a href="#profile" class="button">Profile</a>
+						<a href="/logout/" class="button">Logout</a>
 					</div>
 					<div id="signedOut">
 						<form action="/login/" method="post" name="signInForm">
@@ -77,7 +77,7 @@
 							<h1>2</h1>
 							<h3>players</h3>
 						</div>
-						<p>Start playing a 2 player game with anyone</p>
+						<p>Play a 2 player Blokus game</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 					<li class="box">
@@ -85,25 +85,29 @@
 							<h1>4</h1>
 							<h3>players</h3>
 						</div>
-						<p>Start playing a 4 player game with anyone</p>
+						<p>Play a 4 player Blokus game</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 					<li class="box">
 						<div>
 							<h2>private<br/>lobby</h2>
 						</div>
-						<p>Start playing a private game and invite your friends</p>
+						<p>Start a private game by inviting your friends</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 				</ul>
-				<div id="privatelobby" class="box clearfix">
-					<h1>private lobby</h1>
-					<p>Waiting for players to join...</p>
-					<p><a href="#">Invite URL</a>: Send this to your friends!</p>
+				<div id="privatelobby" class="box clearfix" style="display:none;">
+					<div>
+						<h1>private lobby</h1>
+						<p>
+							Waiting for players to join...<br/>
+							<a href="#">Invite URL</a>: Send this to your friends!
+						</p>
+						<a href="#" class="button">Start Game</a>
+					</div>
 					<ul class="lobbylist">
 						<li>zanders3</li>
 					</ul>
-					<a href="#" class="button">Start Game</a>
 				</div>
 			</script>
 			<script type="text/html" id="game-template">
