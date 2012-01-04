@@ -45,8 +45,9 @@
 						<a href="javascript:;" class="button">Logout</a>
 					</div>
 					<div id="signedOut">
-						<form>
-							<a href="javascript:;" class="button">Login</a>
+						<form action="/login/" method="post" name="signInForm">
+							<input type='hidden' name='csrfmiddlewaretoken' value='da36641272431d194c4e7795042a6fea' />
+							<a href="javascript:document.signInForm.submit();" class="button">Login</a>
 							<div>
 								<label class="input">
 									<span>Username</span>
