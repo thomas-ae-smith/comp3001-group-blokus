@@ -13,9 +13,6 @@
 			var $el = $(this.el),
 				player = this.options.player,
 				template = _.template($('#player-panel-template').html());
-			
-			if (this.options.active) {
-			}
 
 			$el.html(template({
 				name: player.user.get("name"),
