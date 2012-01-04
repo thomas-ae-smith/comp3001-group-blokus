@@ -53,6 +53,7 @@ class UserProfile(models.Model):
 	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
+	private_game = models.IntegerField(default=0)
 
 
 # Colours MUST correspond to positions:
