@@ -162,36 +162,12 @@
 		}
 	},
 	{
-		"model": "auth.user",
-		"pk": "101",
-		"fields" : {
-			"username": "test2",
-			"password": "test"
-		}
-	},
-	{
-		"model": "auth.user",
-		"pk": "102",
-		"fields" : {
-			"username": "test3",
-			"password": "test"
-		}
-	},
-	{
-		"model": "auth.user",
-		"pk": "103",
-		"fields" : {
-			"username": "test4",
-			"password": "test"
-		}
-	},
-	{
 		"model": "blokus.player",
 		"pk": "1",
 		"fields" : {
 			"game": 1,
-			"colour": "red",
-			"user": 100
+			"user": 100,
+			"colour": "red"
 		}
 	},
 	{

@@ -64,7 +64,7 @@ _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
 	game = models.ForeignKey(Game)
-	user = models.ForeignKey(UserProfile)
+	user = models.ForeignKey(User)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	last_activity = models.DateTimeField(default=datetime.now())
 
