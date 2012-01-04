@@ -33,6 +33,7 @@
 		paper: undefined,
 
 		render: function () {
+			window.gameview = this;
 			var this_ = this,
 				el = this.el,
 				$el = $(el),
