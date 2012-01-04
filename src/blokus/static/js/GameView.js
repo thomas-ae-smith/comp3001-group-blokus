@@ -71,7 +71,7 @@
 
 						// Determine what pieces have not been placed
 						_(blokus.pieceMasters.models).each(function (pieceMaster) {
-							var id = pieceMaster.get("id");
+							var id = Number(pieceMaster.get("id"));
 
 							if (placedPieceIds.indexOf(id) === -1) {
 								unplacedPieces.add({ pieceMasterId: id });

@@ -2,10 +2,10 @@ blokus.utils = (function ($, _, Backbone){
 	var pieceLocations = {};
 
 	var get_points = function (arr, x, y, w, h) {
-		var retVal = [];
+		var retVal = {};
 		makePositionArray(x, y, w, h);
 		for(var i=0;i<arr.length;i++){
-			retVal[i+1] = pieceLocations[Number(arr[i].pieceMasterId)];
+			retVal[i+1] = pieceLocations[Number(arr[i].id)];
 		}
 		return retVal;
 	};
