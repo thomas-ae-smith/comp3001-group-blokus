@@ -51,10 +51,11 @@ class UserProfile(models.Model):
 		('looking_for_any','Looking for any game'),
 		('looking_for_2','Looking for 2 player game'),
 		('looking_for_4','Looking for 4 player game'),
-		('private','In private lobby'),
+		('private_2','In private lobby'),
+		('private_4','In private lobby'),
 	)
 
-
+	private_queue = models.IntegerField(default=0)
 	user = models.OneToOneField(User)
 	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)

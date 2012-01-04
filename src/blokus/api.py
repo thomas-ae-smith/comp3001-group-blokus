@@ -75,6 +75,9 @@ class UserProfileResource(ModelResource):
 						users_playing.append(user)
 					if len(users_playing) >= player_count[request.user.status][1]:
 						break
+			elif request.user.status[0:7] == "private":
+				for user in UserProfiles:
+
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
