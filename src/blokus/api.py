@@ -45,46 +45,49 @@ class UserProfileResource(ModelResource):
 			#request.user.last_activity = datetime.now() #User is active.
 			userProfiles = super(GameResource, self).get_object_list(request)
 			users_playing = set(request.user)
-			player_count = {
-				'looking_for_2':2,
-				'looking_for_4':4,
+			# Game Attributes: <status>:(<typeID>,<playerNum>)
+			# Must be added to if a new game type is introduced.
+			game_attributes = {
+				'looking_for_2':(1,2),
+				'looking_for_4':(2,4),
 			}
 
 			# Get a list of users to play in a game.
 			if request.user.status == 'looking_for_any':
-				statuses = player_count.keys()
+				statuses = game_attributes.keys()
 				random.shuffle(statuses)
 				for status in statuses:
-					users_playing = set(request.user)
+					users_playing = [request.user]
 					for user in userProfiles:
 						if user.status in [status, 'looking_for_any']:
-							users_playing.add(user)
-							if users_playing.size >= player_count[request.user.status]:
+							users_playing.append(user)
+							if len(users_playing) >= game_attributes[request.user.status][1]:
 								break
-					if users_playing.size >= player_count[request.user.status]:
+					if len(users_playing) >= game_attributes[request.user.status][1]:
 						request.user.status = status
 						break
 			elif request.user.status in statuses:
 				for user in userProfiles:
 					if user.status in [request.user.status, 'looking_for_any']:
-						users_playing.add(user)
-					if users_playing.size >= player_count[request.user.status]:
+						users_playing.append(user)
+					if len(users_playing) >= player_count[request.user.status][1]:
 						break
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
 				return userProfiles
 
-			colours = ['red', 'yellow', 'green', 'blue']
-			if users_playing.size >= player_count[request.user.status]:
+			if len(users_playing) >= game_attributes[request.user.status][0]:
+				colours = ['red', 'yellow', 'green', 'blue']
 				game = Game()
 				game.start_time = datetime.now()
-				game.game_type = {		# Game codes; must be added
-					'looking_for_2':0,	# to if any new game types
-					'looking_for_4':1,	# are introduced.
-				}[request.user.status]
+				game.game_type = game_attributes[request.user.status][0]
 				for user_number in xrange(4):
-					user = users_playing.pop()
+					user = None
+					if request.user.status == 'looking_for_2':
+						user = users_playing[user_number % 2]
+					else:
+						user = users_playing[user_number]
 					user.status = 'ingame'
 					player = Player(
 						game=game,
