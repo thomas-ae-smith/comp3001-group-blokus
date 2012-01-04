@@ -149,28 +149,40 @@ class PlayerResource(ModelResource):
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
 #Coversion is done here.
 class PieceJSONSerializer(Serializer):
+
+	def piece_str_to_json(self, piece_str):
+		piece_data = []
+		for row in piece_str.split(','):
+			piece_data.append(list(row))
+		return [map(int, x) for x in piece_data]	
+
+	def piece_json_to_str(self, piece_json):
+		piece_data = [map(str, x) for x in piece_json]
+		piece_data_string = ''
+		for row in piece_data:
+			piece_data_string += ''.join(row) + ','
+		return piece_data_string[:-1]
+
 	def to_json(self, data, options=None):
 		options = options or {}
 		data = self.to_simple(data, options)
 
-		piece_data = []
-		for row in data['piece_data'].split(','):
-			piece_data.append(list(row))
-		piece_data  = [map(int, x) for x in piece_data]
-
-		data['piece_data'] = piece_data
+		if data.get('objects') is not None:
+			for i, piece in enumerate(data.get('objects')):
+				data['objects'][i]['piece_data'] = self.piece_str_to_json(piece['piece_data'])
+		else:
+			data['piece_data'] = self.piece_str_to_json(data['piece_data'])
 
 		return simplejson.dumps(data, cls=json.DjangoJSONEncoder, sort_keys=True)
 
 	def from_json(self, content):
 		data = simplejson.loads(content)
 
-		piece_data = [map(str, x) for x in data['piece_data']]
-		piece_data_string = ''
-		for row in piece_data:
-			piece_data_string += ''.join(row) + ','
-
-		data['piece_data'] = piece_data_string[:-1]
+		if data.get('objects') is not None:
+			for i, piece in enumerate(data.get('objects')):
+				data['objects'][i]['piece_data'] = self.piece_json_to_str(piece['piece_data'])
+		else:	
+			data['piece_data'] = self.piece_json_to_str(data['piece_data'])
 
 		return data
 
