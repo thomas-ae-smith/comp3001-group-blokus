@@ -94,29 +94,6 @@ html {
 	background: gray;
 }
 
-.box {
-	background: black;
-	color:white;
-	opacity:0.8;
-}
-
-#profileBox {
-	width:800px;
-	display:block;
-	margin:50px 0px;
-}
-
-.modelist li {
-	margin-left:20px;
-	width:160px;
-	height:300px;
-	float:left;
-}
-
-#privatelobby {
-	width:800px;
-}
-
 #container {
 	margin: 0px auto;
 	width: 800px;
@@ -128,11 +105,111 @@ html {
 	top: 0; left: 0; right: 0;
 	min-height: 400px;
 }
+/* Form field labels */
+.input {
+  margin: 5px 0;
+  background: white;
+  float: left;
+  clear: both;
+}
+.input span {
+  position: absolute;
+  padding: 5px;
+  margin-left: 3px;
+  color: #999;
+}
+.input input, .input textarea, .input select {
+  position: relative;
+  margin: 0;
+  border-width: 1px;
+  padding: 6px;
+  background: transparent;
+  font: inherit;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .input input, .input textarea, .input select { padding: 4px; }
+}
+/* Lobby Layout */
+.box {
+	background: black;
+	color:white;
+	opacity:0.8;
+}
 
-nav {
-	float: right;
-	margin-top:34px;
-	margin-right: 5px;
+#profileBox {
+	width:700px;
+	height:100px;
+	display:block;
+	margin:80px 0px 20px 50px;
+}
+#profileBox img {
+	width:80px;
+	height:80px;
+	margin:10px;
+	float:left;
+}
+#profileInfo {
+	margin-top:20px;
+	margin-left:10px;
+	width:260px;
+	display:block;
+	float:left;
+}
+#profileBox .button {
+	float:right;
+	margin-top:30px;
+	margin-right:10px;
+}
+#signedOut {
+	float:right;
+	height:100px;
+}
+#signedOut div {
+	width: 200px;
+	display:block;
+	float:right;
+}
+h1 {
+	font-family:Palatino Linotype;
+	font-weight:bold;
+	font-size:24pt;
+}
+
+.modelist {
+	font-family:Palatino Linotype;
+	font-weight:bold;
+	text-align:center;
+	margin-left:30px;
+}
+.modelist li {
+	margin-left:20px;
+	padding-bottom:5px;
+	width:160px;
+	float:left;
+}
+.modelist li div {
+	height:100px;
+}
+.modelist h1 {
+	font-size:48pt;
+}
+.modelist h2 {
+	font-size:22pt;
+	padding-top:15px;
+}
+.modelist h3 {
+	font-size:18pt;
+}
+.modelist p {
+	height: 50px;
+	padding: 10px;
+	font-family:Arial;
+	font-weight:normal;
+}
+
+#privatelobby {
+	width:700px;
+	margin:20px 0px 0px 50px;
 }
 
 .loading {
