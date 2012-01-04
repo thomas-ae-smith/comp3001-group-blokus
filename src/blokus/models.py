@@ -55,7 +55,11 @@ class UserProfile(models.Model):
 	losses = models.IntegerField(default=0)
 
 
-
+# Colours MUST correspond to positions:
+# Red - Top Left
+# Green - Top Right
+# Blue - Bottom Right
+# Yellow - Bottom Left
 _colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
@@ -75,7 +79,10 @@ class Piece(models.Model):
 	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	def is_valid_position(self):
-		return (does_not_overlap() and is_only_adjacent())
+		return (does_not_overlap() and
+			(is_only_adjacent() or
+			satisfies_first_move()) and
+			is_inside_grid())
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
 	def does_not_overlap(self):
@@ -87,7 +94,27 @@ class Piece(models.Model):
 					return False
 		return True
 
-	#Returns TRUE if the piece is adjacent (touching the corner) of a piece of the same colour, but does not actually touch another piece of the same colour.
+	def satisfies_first_move(self):
+		height = len(self.get_bitmap)
+		width = len(self.get_bitmap[0])
+		if self.player.colour == 'red' and self.player.game.player_turn == 0:
+			return self.master.get_bitmap()[0][0]
+		elif self.player.colour == 'green' and self.player.game.player_turn == 1:
+			return self.master.get_bitmap()[0][width]
+		elif self.player.colour == 'yellow' and self.player.game.player_turn == 2:
+			return self.master.get_bitmap()[height][0]
+		elif self.plaer.colour == 'blue' and self.player.game.player_turn == 3:
+			return self.master.get_bitmap()[height][width]
+
+	def is_inside_grid(self):
+		height = len(self.get_bitmap)
+		width = len(self.get_bitmap[0])
+		return (self.x >= 0 and self.y >= 0 and
+			self.x + width < 20 and self.y + height < 20)
+
+	# Returns TRUE if the piece is adjacent (touching the corner) of a
+	# piece of the same colour, but does not actually touch another
+	# piece of the same colour.
 	def is_only_adjacent(self):
 		this_bitmap = self.get_bitmap()
 
