@@ -27,6 +27,13 @@
 		return rotatedData;
 	}
 
+	function centerOfRotation (data, rot, cellSize, x, y){
+		var rdata = rotateMatrix(data, rot);
+		var w = rdata.length * cellSize,
+			h = rdata[0].length * cellSize;
+		return {x: x+w/2, y: y+h/2};
+	}
+
 	blokus.GameView = Backbone.View.extend({
 		className: "gameview",
 		game: undefined,
@@ -137,6 +144,10 @@
 				width: shapeSet.getBBox().width,
 				height: shapeSet.getBBox().height,
 			};
+			shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
+			var scaleFull = false;
+			shapeSet.scale(scaleX, scaleY, x, y);
+
 			var tmpXRot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
 			var tmpYRot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
 			shapeSet.rotate(90, tmpXRot, tmpYRot);
@@ -148,9 +159,7 @@
 				height: shapeSet.getBBox().height,
 			};
 			shapeSet.rotate(-90, tmpXRot, tmpYRot);
-			shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
-			var scaleFull = false;
-			shapeSet.scale(scaleX, scaleY, x, y);
+
 			shapeSet.isSelected = false;
 			shapeSet.rotation = 0;
 			var highlighted_set = paper.set();
@@ -199,8 +208,9 @@
 							var sy = shapeSet.curScale.sy;
 							var ssx = shapeSet.initBBox.x;
 							var ssy = shapeSet.initBBox.y;
-							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
+							var xrot = rotPoint.x;
+							var yrot = rotPoint.y;
 							var rotation = shapeSet.rotation * 90;
 
 							shapeSet.rotatedBBox = {
@@ -276,8 +286,9 @@
 									}
 								}
 							}
-							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
+							var xrot = rotPoint.x;
+							var	yrot = rotPoint.y;
 							var cell = gameboard.grid[cellIndex.x][cellIndex.y];
 
 							
@@ -349,8 +360,9 @@
 					else {
 						if(shapeSet.retToPanel){
 							shapeSet.isSelected = false;
-							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2,
-								yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2,
+							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
+							var xrot = rotPoint.x,
+								yrot = rotPoint.y,
 								rotation = shapeSet.rotation * 90,
 								sx = shapeSet.initScale.sx,
 								sy = shapeSet.initScale.sy,
@@ -368,15 +380,16 @@
 							var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
 							if(validPosition){
 								shapeSet.isSelected = false;
-								var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-								var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-								var rotation = shapeSet.rotation * 90;
-								var tmp_x = shapeSet.destCor.x;
-								var tmp_y = shapeSet.destCor.y;
-								var sy = 1;
-								var sx = 1;
-								var ssx = shapeSet.initBBox.x;
-								var ssy = shapeSet.initBBox.y;
+								var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
+								var xrot = rotPoint.x,
+									yrot = rotPoint.y,
+									rotation = shapeSet.rotation * 90,
+									tmp_x = shapeSet.destCor.x,
+									tmp_y = shapeSet.destCor.y,
+									sy = 1,
+									sx = 1,
+									ssx = shapeSet.initBBox.x,
+									ssy = shapeSet.initBBox.y;
 								shapeSet.animate(
 									{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
 									//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
@@ -385,6 +398,8 @@
 
 								shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
 								//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
+								window.cur = shapeSet;
+								console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
 							}
 						}
 					}
@@ -393,20 +408,22 @@
 			blokus.mapKeyDown(37,
 				function () {
 					if(shapeSet.isSelected){
-						var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-						var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-						shapeSet.rotate(90, xrot, yrot);
 						shapeSet.rotation += 1;
+						var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
+						var xrot = rotPoint.x;
+						var yrot = rotPoint.y;
+						shapeSet.rotate(90, xrot, yrot);
 					}
 				}
 			);
 			blokus.mapKeyDown(39,
 				function () {
 					if(shapeSet.isSelected){
-						var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-						var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-						shapeSet.rotate(-90, xrot, yrot);
 						shapeSet.rotation -= 1;
+						var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
+						var xrot = rotPoint.x;
+						var yrot = rotPoint.y;
+						shapeSet.rotate(-90, xrot, yrot);
 					}
 				}
 			);
