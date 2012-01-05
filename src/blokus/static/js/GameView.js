@@ -381,8 +381,8 @@
 							if(validPosition){
 								shapeSet.isSelected = false;
 								var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-								var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2,
-									yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2,
+								var xrot = rotPoint.x,
+									yrot = rotPoint.y,
 									rotation = shapeSet.rotation * 90,
 									tmp_x = shapeSet.destCor.x,
 									tmp_y = shapeSet.destCor.y,
