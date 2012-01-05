@@ -134,6 +134,14 @@
 						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
 												cellSize, cellSize);
 						cell.attr({fill: colours[colour]});
+						cell.opacity = 1;
+						shapeSet.push(cell);
+					}
+					else{
+						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+												cellSize, cellSize);
+						cell.attr({fill: colours[colour], opacity: 0});
+						cell.opacity = 0;
 						shapeSet.push(cell);
 					}
 				}
@@ -355,7 +363,14 @@
 						shapeSet.prevDistY = 0;
 						shapeSet.mousePageX = e.pageX - e.offsetX + shapeSet.initBBox.x;
 						shapeSet.mousePageY = e.pageY - e.offsetY + shapeSet.initBBox.y;
-						shapeSet.animate({"opacity": 0.5}, 0);
+						//shapeSet.animate({"opacity": 0.5}, 0);
+						shapeSet.forEach(
+							function (c) {
+								if (c.opacity > 0){
+									c.animate({"opacity": 0.5}, 0);
+								}
+							}
+						);
 					}
 					else {
 						if(shapeSet.retToPanel){
@@ -374,7 +389,14 @@
 								{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
 								//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
 								500);
-							shapeSet.animate({"opacity": 1}, 500);
+							//shapeSet.animate({"opacity": 1}, 500);
+							shapeSet.forEach(
+								function (c) {
+									if (c.opacity > 0){
+										c.animate({"opacity": 1}, 500);
+									}
+								}
+							);
 						}
 						else{
 							var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
@@ -394,7 +416,14 @@
 									{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
 									//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
 									500);
-								shapeSet.animate({"opacity": 1}, 500);
+								//shapeSet.animate({"opacity": 1}, 500);
+								shapeSet.forEach(
+									function (c) {
+										if (c.opacity > 0){
+											c.animate({"opacity": 1}, 500);
+										}
+									}
+								);
 
 								shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
 								//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
