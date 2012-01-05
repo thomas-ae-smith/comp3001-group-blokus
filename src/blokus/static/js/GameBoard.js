@@ -65,7 +65,6 @@
 						}
 					}
 				}
-				console.log(blokus.board.get("gridPlaced"));
 			});
 		}
 	});

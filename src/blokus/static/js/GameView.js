@@ -319,9 +319,11 @@
 								x: cellIndex.x,
 								y: cellIndex.y
 							})*/
+							shapeSet.retToPanel = false;
 						}
 						else {
 							shapeSet.destCor = { x: shapeSet.initBBox.x, y: shapeSet.initBBox.y };
+							shapeSet.retToPanel = true;
 							//shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
 							shapeSet.initScale = {sx: scaleX, sy:scaleY, originalScale: false};
 							if (highlighted_set.length != 0){
@@ -345,41 +347,45 @@
 						shapeSet.animate({"opacity": 0.5}, 0);
 					}
 					else {
-						var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
-						if(validPosition){
+						if(shapeSet.retToPanel){
 							shapeSet.isSelected = false;
-							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-							var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-							var rotation = shapeSet.rotation * 90;
-							//if(shapeSet.rotation % 2 != 0){
-								//xrot += 0;
-								//yrot -= 12.5;
-							//}
-							var tmp_x = shapeSet.destCor.x;
-							var tmp_y = shapeSet.destCor.y;
-							var sy = 1;
-							var sx = 1;
-							var ssx = shapeSet.initBBox.x;
-							var ssy = shapeSet.initBBox.y;
-							if (tmp_x == shapeSet.initBBox.x && tmp_y == shapeSet.initBBox.y){
-								sx = shapeSet.initScale.sx;
-								sy = shapeSet.initScale.sy;
-								ssx = tmp_x;
-								ssy = tmp_y;
-								tmp_x = 0;
+							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2,
+								yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2,
+								rotation = shapeSet.rotation * 90,
+								sx = shapeSet.initScale.sx,
+								sy = shapeSet.initScale.sy,
+								tmp_x = 0,
 								tmp_y = 0;
-							}
-							window.cur = shapeSet;
+								ssx = shapeSet.initBBox.x,
+								ssy = shapeSet.initBBox.y,
 							shapeSet.animate(
 								{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
 								//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
 								500);
 							shapeSet.animate({"opacity": 1}, 500);
+						}
+						else{
+							var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
+							if(validPosition){
+								shapeSet.isSelected = false;
+								var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
+								var yrot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
+								var rotation = shapeSet.rotation * 90;
+								var tmp_x = shapeSet.destCor.x;
+								var tmp_y = shapeSet.destCor.y;
+								var sy = 1;
+								var sx = 1;
+								var ssx = shapeSet.initBBox.x;
+								var ssy = shapeSet.initBBox.y;
+								shapeSet.animate(
+									{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
+									//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
+									500);
+								shapeSet.animate({"opacity": 1}, 500);
 
-							shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
-							//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
-							//console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "
-							// +ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
+								shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
+								//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
+							}
 						}
 					}
 				}

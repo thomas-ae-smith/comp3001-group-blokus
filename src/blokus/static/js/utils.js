@@ -78,8 +78,8 @@ blokus.utils = (function ($, _, Backbone){
 		if(isNaN(x) || isNaN(y)){
 			return false;
 		}else{
-			console.log(x);
-			console.log(y);
+			//console.log(x);
+			//console.log(y);
 			if (get_claim(x, y) != '0'){
 				return true;
 			}else{
