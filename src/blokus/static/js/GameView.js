@@ -262,7 +262,6 @@
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
-								shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = 0});
 								shapeSet.board_piece_set = new Array();
 							}
 							tmpData = rotateMatrix(data, shapeSet.rotation);
