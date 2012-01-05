@@ -71,14 +71,17 @@ html[xmlns] .clearfix {
 /*************************************/
 
 html {
-	background:
-		-webkit-radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)),
-		url("../img/feltbg.jpg");/*, url("../img/shadowmask.png") no-repeat top center;*/
+	background: url("../img/feltbg.jpg") center top;
 	font-family: Tahoma, Helvetica, Georgia, sans-serif;
 	height: 100%;
 }
-
-
+.vignette {
+	background:transparent -webkit-radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+	width:100%;
+	height:100%;
+	position:absolute;
+	top:0;
+}
 .button {
 	background:white;
 	padding:8px 20px;
@@ -92,17 +95,30 @@ html {
 	border-radius: 3px;
 	opacity: 0.9;
 }
-
+#error {
+	top:0;
+	width:100%;
+	background:white;
+	border-bottom:2px solid red;
+	color:red;
+	font-weight:bold;
+	padding:10px;
+	text-align:center;
+	opacity:0.9;
+	position:absolute;
+}
 .button:hover {
 	background: gray;
 }
-
+#logo {
+	margin:0 auto;
+	display:block;
+}
 #container {
 	margin: 0px auto;
 	width: 800px;
 	position: relative;
 }
-
 #container > div {
 	position: absolute;
 	top: 0; left: 0; right: 0;
@@ -133,19 +149,23 @@ html {
     .input input, .input textarea, .input select { padding: 4px; }
 }
 /* Register Form */
-#register {
-	margin-top:100px;
+.form {
+	margin-top:80px;
 	padding:10px;
 	width:400px;
 	margin-left:200px;
 	height:260px;
 }
-#register p {
+.form p {
 	margin-top:10px;
 }
-#register a {
+.form a {
 	float:left;
 	margin-right:5px;
+}
+/* Forgotten password form */
+#forgot {
+	height:160px;
 }
 /* Lobby Layout */
 .box {
@@ -158,7 +178,7 @@ html {
 	width:700px;
 	height:100px;
 	display:block;
-	margin:80px 0px 20px 50px;
+	margin:20px 0px 20px 50px;
 }
 #profileBox img {
 	width:80px;
@@ -228,6 +248,31 @@ h1 {
 #privatelobby {
 	width:700px;
 	margin:20px 0px 0px 50px;
+	padding:5px;
+}
+#privatelobby p {
+	margin-top:20px;
+	margin-left:10px;
+}
+#privatelobby div {
+	float:left;
+	width:300px;
+}
+#privatelobby .button {
+	margin-top:30px;
+}
+.lobbylist {
+	float:right;
+	width:350px;
+	height:150px;
+	background:white;
+	opacity:0.8;
+	color:black;
+}
+.lobbylist li {
+	background:#CCCCCC;
+	padding:5px;
+	margin-top:5px;
 }
 
 .loading {
@@ -239,7 +284,7 @@ h1 {
 
 
 
-/*********** Peter's stuff *****************/
+/*********** Game View CSS *****************/
 .gameview svg {
 	position: absolute;
 	top: 0; left: 0; right: 0; bottom: 0;

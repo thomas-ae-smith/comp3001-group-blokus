@@ -100,48 +100,8 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 			Backbone.history.start();
 		}
 
-
-		var $profileButton = $("#profileButton"),
-			$profileMenu = $("#profileMenu"),
-			mouseInProfilePanel = false,
-			panelMouseOutTimeouts = [],
-
-			hideProfileMenu = function () {
-		        $profileMenu.slideUp();
-		        $profileButton.removeClass("sel");
-			},
-
-			positionProfileMenu = function () {
-				var buttonOffset = $profileButton.offset();
-
-		        /*$profileMenu.css({
-	                'left': buttonOffset.left - $profileMenu.outerWidth() + $profileButton.outerWidth(),
-	                'top': buttonOffset.top + $profileButton.outerHeight()
-		        });*/
-			};
-
-		// Make profile/login panel visible when moving mouse onto profile button or menu
-		$("#profileButton, #profileMenu").mouseover(function() {
-			mouseInProfilePanel = true;
-	        $profileMenu.slideDown();
-	        $profileButton.addClass("sel");
-	        // clear all timeouts
-	        _(panelMouseOutTimeouts).each(clearTimeout);
-	        panelMouseOutTimeouts = [];
-		}).mouseout(function () {
-			mouseInProfilePanel = false;
-			// Close panel 200ms after mouse leaves
-			panelMouseOutTimeouts.push(setTimeout(function () {
-				if (!mouseInProfilePanel) {
-					hideProfileMenu();
-			    }
-			}, 300));
-		});
-
-		$("#profileMenu a").click(hideProfileMenu);
-
 		// Handle sign in
-		$("#profileMenu #signin-button").click(function () {
+		$("#signin-button").click(function () {
 			// HACK
 			location = "/login/";
 
@@ -160,7 +120,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 					blokus.user.fetch();
 				},
 				error: function () {
-					// TODO
+					$("#error").html("Invalid username or password!").show();
 				}
 			})
 
@@ -168,7 +128,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 		});
 
 		// Handle sign out
-		$("#profileMenu #signout-button").click(function () {
+		$("#signout-button").click(function () {
 			// Log out
 			$.ajax({
 				url: "/logout",
@@ -183,17 +143,17 @@ window.blokus = (function ($, _, Backbone, Raphael) {
 
 		// One the logged in user is known, show user information (or login is user is anonymous)
         blokus.user.bind("change", function () {
-        	var name = blokus.user.get("username");
+        	var name = blokus.user.get("name");
         	if (!name || name === "anon") {
-	        	$("#signedInMenu").hide();
-		        $("#signedOutMenu").show();
-		        $("#profileButton .name").html("Sign in");
-	        	positionProfileMenu();
+	        	$("#username").text("Guest");
+				$("#profileInfo p").text("Please login to save your scores");
+				$("#profileMenu").hide();
+				$("#signedOut").show();
             } else {
-	        	$("#signedInMenu").show();
-		        $("#signedOutMenu").hide();
-		        $("#profileButton .name").html(name);
-	        	positionProfileMenu();
+	        	$("#username").text(name);
+				$("#profileInfo p").text("wins: 0 losses: 0");
+				$("#profileMenu").show();
+				$("#signedOut").hide();
 	        }
         });
 
@@ -212,9 +172,6 @@ window.blokus = (function ($, _, Backbone, Raphael) {
         var u = new blokus.User({id : 10});
         u.fetch();
         blokus.user.set(u);
-
-		// When window loads or is resized, Set profile/login panel position to below button
-		$(window).bind("resize load", positionProfileMenu);
 
 		$(window).keyup(function (e) {
 			blokus.log("Key up. Key code: " + e.keyCode);

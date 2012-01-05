@@ -32,37 +32,36 @@
 		<script src="{{ STATIC_URL }}js/labels.js"></script>
 	</head>
 	<body>
+		<img src="{{ STATIC_URL }}img/logo.png" id="logo"/>
+		<div class="vignette"></div>
+		<div id="error" style="display:none;"></div>
 		<div id="container"></div>
-
 		<div class="templates">
 			<script type="text/html" id="lobby-template">
 				<div id="profileBox" class="box">
 					<img alt="Guest"/>
 					<div id="profileInfo">
-						<h1>Hello Guest!</h1>
+						<h1>Hello <span id="username">Guest</span>!</h1>
 						<p>Please login to save your scores</p>
 					</div>
 					<div id="profileMenu" style="display:none;">
-						<a href="javascript:;" class="button">Profile</a>
-						<a href="javascript:;" class="button">Logout</a>
+						<a href="#profile" class="button">Profile</a>
+						<a href="#" id="signout-button" class="button">Logout</a>
 					</div>
 					<div id="signedOut">
-						<form action="/login/" method="post" name="signInForm">
-							{% csrf_token %}
-							<a href="javascript:document.signInForm.submit();" class="button">Login</a>
-							<div>
-								<label class="input">
-									<span>Username</span>
-									<input type="text" />
-								</label>
-								<label class="input">
-									<span>Password</span>
-									<input type="password" />
-								</label>
-								<a href="#register">Register</a>
-								<a href="#forgot">Forgot?</a>
-							</div>
-						</form>
+						<a href="#" id="signin-button" class="button">Login</a>
+						<div>
+							<label class="input">
+								<span>Username</span>
+								<input id="loginUsername" type="text" />
+							</label>
+							<label class="input">
+								<span>Password</span>
+								<input id="loginPassword" type="password" />
+							</label>
+							<a href="#register">Register</a>
+							<a href="#forgot">Forgot?</a>
+						</div>
 					</div>					
 				</div>
 				<ul class="modelist">
@@ -78,7 +77,7 @@
 							<h1>2</h1>
 							<h3>players</h3>
 						</div>
-						<p>Start playing a 2 player game with anyone</p>
+						<p>Play a 2 player Blokus game</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 					<li class="box">
@@ -86,25 +85,29 @@
 							<h1>4</h1>
 							<h3>players</h3>
 						</div>
-						<p>Start playing a 4 player game with anyone</p>
+						<p>Play a 4 player Blokus game</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 					<li class="box">
 						<div>
 							<h2>private<br/>lobby</h2>
 						</div>
-						<p>Start playing a private game and invite your friends</p>
+						<p>Start a private game by inviting your friends</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 				</ul>
-				<div id="privatelobby" class="box clearfix">
-					<h1>private lobby</h1>
-					<p>Waiting for players to join...</p>
-					<p><a href="#">Invite URL</a>: Send this to your friends!</p>
+				<div id="privatelobby" class="box clearfix" style="display:none;">
+					<div>
+						<h1>private lobby</h1>
+						<p>
+							Waiting for players to join...<br/>
+							<a href="#">Invite URL</a>: Send this to your friends!
+						</p>
+						<a href="#" class="button">Start Game</a>
+					</div>
 					<ul class="lobbylist">
 						<li>zanders3</li>
 					</ul>
-					<a href="#" class="button">Start Game</a>
 				</div>
 			</script>
 			<script type="text/html" id="game-template">
@@ -144,7 +147,7 @@
 				<p>Blokus is a 2 or 4 player game which.... yada yada</p>
 			</script>
 			<script type="text/html" id="register-template">
-				<div id="register" class="box">
+				<div class="form box">
 					<h1>Register</h1>
 					<p>Registration can't be this quick and easy... can it?</p>
 					<form action="/register/" name="registerForm" method="post">
@@ -165,17 +168,23 @@
 							<span>Confirm Password</span>
 							<input name="password2" type="password" />
 						</label>
-							<a href="javascript:document.forms.registerForm.submit();" class="button" style="clear:left;">Register</a> <a href="#" class="button">Cancel</a>
+						<a href="javascript:document.forms.registerForm.submit();" class="button" style="clear:left;">Register</a> <a href="#" class="button">Cancel</a>
 					</form>
 				</div>
 			</script>
 			<script type="text/html" id="forgot-template">
-				<h2>Forgot your password</h2>
-				<p>Enter your email address below to recieve a new password [or whatever mechanism we'll use]</p>
-				<form>
-					<input type="email" placeholder="email address">
-					<input type="submit">
-				</form>
+				<div id="forgot" class="form box">
+					<h1>Forgot your password</h1>
+					<p>Enter your email address below to recieve a new password</p>
+					<form name="forgotForm" action="/forgot/" method="post">
+						{% csrf_token %}
+						<label class="input">
+							<span>Email Address</span>
+							<input name="email" type="text" />
+						</label>
+						<a href="javascript:document.forms.forgotForm.submit();" class="button" style="clear:left;">Send</a> <a href="#" class="button">Cancel</a>
+					</form>
+				</div>
 			</script>
 			<script type="text/html" id="profile-template">
 				<h2><%= username %>'s profile</h2>
