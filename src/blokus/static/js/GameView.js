@@ -155,7 +155,7 @@
 			shapeSet.rotation = 0;
 			var highlighted_set = paper.set();
 			// TODO Check if the pieces dont overide each other
-			var board_piece_set = new Array();
+			shapeSet.board_piece_set = new Array();
 			$(window).mousemove(
 				function(e){
 					//on move
@@ -262,8 +262,8 @@
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
-								board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = 0});
-								board_piece_set = new Array();
+								shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = 0});
+								shapeSet.board_piece_set = new Array();
 							}
 							tmpData = rotateMatrix(data, shapeSet.rotation);
 							var numRows = tmpData.length;
@@ -273,7 +273,7 @@
 									if (tmpData[rowI][colJ] == 1) {
 										highlighted_set.push(gameboard.grid[cellIndex.x+colJ][cellIndex.y+rowI]);
 										// TODO for validation, make the "r" something variable for different players
-										board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
+										shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 									}
 								}
 							}
@@ -285,7 +285,7 @@
 							//Validation
 							var corner = false;
 							var conflict = false;
-							board_piece_set.forEach(function (shape) {
+							shapeSet.board_piece_set.forEach(function (shape) {
 								//Test to see if piece uses a corner square
 								if (blokus.utils.is_corner(shape.x, shape.y)){
 									corner = true;
@@ -297,7 +297,6 @@
 								}
 							});
 
-							board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = "r"});
 							
 							//Highlight red if invalid position, green if corner else white
 							highlighted_set.forEach(function (shape) {
@@ -329,7 +328,6 @@
 							if (highlighted_set.length != 0){
 								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 								highlighted_set = paper.set();
-								board_piece_set.forEach(function (cor) {blokus.board.get("grid")[cor.x][cor.y] = 0});
 								board_piece_set = new Array();
 							}
 						}
@@ -348,15 +346,7 @@
 						shapeSet.animate({"opacity": 0.5}, 0);
 					}
 					else {
-						//var validPosition = true;
-						//board_piece_set.forEach(function (cor) {
-						//	if(blokus.utils.in_conflict(cor.x, cor.y)){
-						//		validPosition = false;
-						//	}
-						//});
-
-						var validPosition = blokus.utils.valid(board_piece_set);
-
+						var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
 						if(validPosition){
 							shapeSet.isSelected = false;
 							var xrot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
@@ -387,7 +377,7 @@
 								500);
 							shapeSet.animate({"opacity": 1}, 500);
 
-							board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
+							shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
 							//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
 							//console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "
 							// +ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
