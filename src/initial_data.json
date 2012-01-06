@@ -10,14 +10,14 @@
 		"model": "blokus.piecemaster",
 		"pk": "2",
 		"fields" : {
-			"piece_data": "1,1"
+			"piece_data": "10,10"
 		}
 	},
 	{
 		"model": "blokus.piecemaster",
 		"pk": "3",
 		"fields" : {
-			"piece_data": "1,1,1"
+			"piece_data": "010,010,010"
 		}
 	},
 	{
@@ -31,7 +31,7 @@
 		"model": "blokus.piecemaster",
 		"pk": "5",
 		"fields" : {
-			"piece_data": "1,1,1,1"
+			"piece_data": "0010,0010,0010,0010"
 		}
 	},
 	{
@@ -66,14 +66,14 @@
 		"model": "blokus.piecemaster",
 		"pk": "10",
 		"fields" : {
-			"piece_data": "1,1,1,1,1"
+			"piece_data": "00100,00100,00100,00100,00100"
 		}
 	},
 	{
 		"model": "blokus.piecemaster",
 		"pk": "11",
 		"fields" : {
-			"piece_data": "01,01,01,11"
+			"piece_data": "0100,0100,0100,1100"
 		}
 	},
 	{
