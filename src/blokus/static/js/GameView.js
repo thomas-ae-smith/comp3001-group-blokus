@@ -151,7 +151,8 @@
 					dataArr: _(data).clone(), 
 					cells: cells,
 					pos: {x:x, y:y},
-					curScale: {sx: scaleX, sy:scaleY, originalScale: false}
+					curScale: {sx: scaleX, sy:scaleY, originalScale: false},
+					cellSize: cellSize
 				}
 			);
 
@@ -160,18 +161,11 @@
 			var highlighted_set = paper.set();
 			// TODO Check if the pieces dont overide each other
 			//shapeSet.board_piece_set = new Array();
-			/*
 			$(window).mousemove(
 				function(e){
 					//on move
-					if ( shape.isSelected ){
-						var SBBox = {
-							x : shapeSet.getBBox().x,
-							y : shapeSet.getBBox().y,
-							width : shapeSet.getBBox().width,
-							height : shapeSet.getBBox().height,
-						};
-
+					if (shape.isSelected){
+						shape.calCurBBox();
 						var canvas = $(paper.canvas);
 						var GSBox = {
 							top: canvas.offset().top,
@@ -182,66 +176,56 @@
 							height: canvas.height(),
 						};
 
-						var tmpR = Math.abs(shapeSet.rotation % 2);
-						var distX = e.pageX - shapeSet.mousePageX,
-							distY = e.pageY - shapeSet.mousePageY;
-						if (tmpR == 0){
-							distX -= shapeSet.getBBox().width/2;
-							distY -= shapeSet.getBBox().height/2;
-						}
-						else{
-							distX -= shapeSet.getBBox().height/2;
-							distY -= shapeSet.getBBox().width/2;
-						}
-						shapeSet.toFront();
+						shape.calDistTravel(e);
+						var distX = shape.distMoved.x;
+						var distY = shape.distMoved.y;
+
+						shape.cells.toFront();
 						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
 								GSBox.left < e.pageX && GSBox.right > e.pageX ){
-							//shapeSet.translate((1/shapeSet.curScale.sx)*xMove, (1/shapeSet.curScale.sy)*yMove);
-							var tmp_x = (1/shapeSet.curScale.sx)*distX;
-							var tmp_y = (1/shapeSet.curScale.sy)*distY;
-							//shapeSet.transform("t"+(1/shapeSet.curScale.sx)*distX+","+(1/shapeSet.curScale.sy)*distY);
-							var sx = shapeSet.curScale.sx;
-							var sy = shapeSet.curScale.sy;
-							var ssx = shapeSet.initBBox.x;
-							var ssy = shapeSet.initBBox.y;
-							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
+							var tmp_x = (1/shape.curScale.sx)*distX;
+							var tmp_y = (1/shape.curScale.sy)*distY;
+							var sx = shape.curScale.sx;
+							var sy = shape.curScale.sy;
+							var ssx = shape.initBBox.x;
+							var ssy = shape.initBBox.y;
+							var rotPoint = shape.centerOfRotation();
 							var xrot = rotPoint.x;
 							var yrot = rotPoint.y;
-							var rotation = shapeSet.rotation * 90;
+							var rotation = shape.rotation * 90;
 
 							if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
 								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
-								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
+								shape.curScale = {sx: 1, sy: 1, originalScale: true};
 								scaleFull = true;
 								//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-								shapeSet.animate(
+								shape.cells.animate(
 									{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
 									75
 								);
 							}
 							else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
-								shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
+								shape.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
 								scaleFull = false;
-								shapeSet.animate(
+								shape.cells.animate(
 									{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
 									75
 								);
 							}
 							else{
-								shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+								shape.cells.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
 							}
-							if(shapeSet.getBBox().x > 0 && shapeSet.getBBox().y > 0 &&
-								shapeSet.getBBox().x + shapeSet.getBBox().width < GSBox.width &&
-								shapeSet.getBBox().y + shapeSet.getBBox().height < GSBox.height){
-								shapeSet.prevDistX = distX;
-								shapeSet.prevDistY = distY;
-								shapeSet.prevDX = e.pageX - shapeSet.mousePageX;
-								shapeSet.prevDY = e.pageY - shapeSet.mousePageY;
+							if(shape.cells.getBBox().x > 0 && shape.cells.getBBox().y > 0 &&
+								shape.cells.getBBox().x + shape.cells.getBBox().width < GSBox.width &&
+								shape.cells.getBBox().y + shape.cells.getBBox().height < GSBox.height){
+								shape.prevDistX = distX;
+								shape.prevDistY = distY;
 							}
 							else{
-								shapeSet.transform("t"+shapeSet.prevDistX+" "+shapeSet.prevDistY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
+								shape.cells.transform("t"+shape.prevDistX+" "+shape.prevDistY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
 							}
 						}
+						/*
 						// game board bounds
 						var gbBounds = {
 							sx: gameboard.offset.x,
@@ -316,10 +300,10 @@
 								y: cell.attr("y") - shapeSet.initBBox.y
 							};
 
-							/*placePiece(colour, {
-								x: cellIndex.x,
-								y: cellIndex.y
-							})
+							//placePiece(colour, {
+								//x: cellIndex.x,
+								//y: cellIndex.y
+							//})
 							shapeSet.retToPanel = false;
 						}
 						else {
@@ -333,10 +317,10 @@
 								board_piece_set = new Array();
 							}
 						}
+						*/
 					}
 				}
 			);
-			*/
 			shape.cells.click(
 				function (e, x, y){
 					// on Start
@@ -345,29 +329,7 @@
 					}
 					else {
 						if(shape.returnToPanel){
-							shape.isSelected = false;
-							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-							var xrot = rotPoint.x,
-								yrot = rotPoint.y,
-								rotation = shapeSet.rotation * 90,
-								sx = shapeSet.initScale.sx,
-								sy = shapeSet.initScale.sy,
-								tmp_x = 0,
-								tmp_y = 0;
-								ssx = shapeSet.initBBox.x,
-								ssy = shapeSet.initBBox.y,
-							shape.cells.animate(
-								{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-								//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
-								500);
-							//shapeSet.animate({"opacity": 1}, 500);
-							shapeSet.forEach(
-								function (c) {
-									if (c.opacity > 0){
-										c.animate({"opacity": 1}, 500);
-									}
-								}
-							);
+							shape.returnToPanel();
 						}
 						else{
 							var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
@@ -407,24 +369,12 @@
 			);
 			blokus.mapKeyDown(37,
 				function () {
-					if(shape.isSelected){
-						shapeSet.rotation += 1;
-						var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-						var xrot = rotPoint.x;
-						var yrot = rotPoint.y;
-						shapeSet.rotate(90, xrot, yrot);
-					}
+					shape.rotate(1);
 				}
 			);
 			blokus.mapKeyDown(39,
 				function () {
-					if(shape.isSelected){
-						shapeSet.rotation -= 1;
-						var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-						var xrot = rotPoint.x;
-						var yrot = rotPoint.y;
-						shapeSet.rotate(-90, xrot, yrot);
-					}
+					shape.rotate(-1);
 				}
 			);
 			return shape.cells;
