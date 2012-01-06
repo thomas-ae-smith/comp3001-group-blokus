@@ -146,6 +146,43 @@
 			return {dx: dx, dy:dy}
 		},
 
+		//Should be called after calDistTravel
+		moveShape: function (){
+			var time = 0;
+			var rotPoint = this.centerOfRotation();
+			var rotation = this.rotation * 90;
+			if(this.cells.getBBox().x > 132 && !this.fullScale){
+				this.curScale = {sx: 1, sy: 1};
+				this.fullScale = true;
+				time = 75;
+			}
+			else if(this.cells.getBBox().x < 132 && this.fullScale){
+				this.curScale = {sx: this.initScale.sx, sy: this.initScale.sy};
+				this.fullScale = false;
+				time = 75;
+			}
+			if (time == 0){
+			this.transform( this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
+							this.initBBox.x, this.initBBox.y, rotation,
+							rotPoint.x, rotPoint.y);
+			}
+			else{
+			this.animate(this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
+						 this.initBBox.x, this.initBBox.y, rotation,
+						 rotPoint.x, rotPoint.y, time);
+			}
+			if(this.isShapeInGame()){
+				this.prevDistX = this.distMoved.x;
+				this.prevDistY = this.distMoved.y;
+			}
+			else{
+				this.transform( this.prevDistX, this.prevDistY, this.curScale.sx, this.curScale.sy,
+							  this.initBBox.x, this.initBBox.y, rotation,
+							  rotPoint.x, rotPoint.y);
+			}
+			this.cells.toFront();
+		},
+
 		/** END MOVEMENT **/
 
 
@@ -196,41 +233,6 @@
 				ex: this.cells.getBBox().x + this.cells.getBBox().width, //- this.gameboardCellSize,
 				ey: this.cells.getBBox().y + this.cells.getBBox().height //- this.gameboardCellSize,
 			};
-		},
-
-		moveShape: function (){
-			var time = 0;
-			var rotPoint = this.centerOfRotation();
-			var rotation = this.rotation * 90;
-			if(this.cells.getBBox().x > 132 && !this.fullScale){
-				this.curScale = {sx: 1, sy: 1};
-				this.fullScale = true;
-				time = 75;
-			}
-			else if(this.cells.getBBox().x < 132 && this.fullScale){
-				this.curScale = {sx: this.initScale.sx, sy: this.initScale.sy};
-				this.fullScale = false;
-				time = 75;
-			}
-			if (time == 0){
-			this.transform( this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
-							this.initBBox.x, this.initBBox.y, rotation,
-							rotPoint.x, rotPoint.y);
-			}
-			else{
-			this.animate(this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
-						 this.initBBox.x, this.initBBox.y, rotation,
-						 rotPoint.x, rotPoint.y, time);
-			}
-			if(this.isShapeInGame()){
-				this.prevDistX = this.distMoved.x;
-				this.prevDistY = this.distMoved.y;
-			}
-			else{
-				this.transform( this.prevDistX, this.prevDistY, this.curScale.sx, this.curScale.sy,
-							  this.initBBox.x, this.initBBox.y, rotation,
-							  rotPoint.x, rotPoint.y);
-			}
 		},
 
 		/** END VALIDATION AND BOUNDARY BOXS **/

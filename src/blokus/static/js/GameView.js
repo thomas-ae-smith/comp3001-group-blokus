@@ -166,8 +166,6 @@
 				}
 			);
 
-			var scaleFull = false;
-
 			var highlighted_set = paper.set();
 			// TODO Check if the pieces dont overide each other
 			//shapeSet.board_piece_set = new Array();
@@ -179,10 +177,6 @@
 
 						shape.calDistTravel(e);
 						shape.moveShape();
-						var distX = shape.distMoved.x;
-						var distY = shape.distMoved.y;
-
-						shape.cells.toFront();
 						/*
 						// game board bounds
 						var gbBounds = {
