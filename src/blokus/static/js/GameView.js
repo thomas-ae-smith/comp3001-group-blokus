@@ -146,13 +146,23 @@
 					}
 				}
 			}
+			var canvas = $(paper.canvas);
 			var shape = new blokus.shape(
 				{
 					dataArr: _(data).clone(), 
 					cells: cells,
 					pos: {x:x, y:y},
 					curScale: {sx: scaleX, sy:scaleY, originalScale: false},
-					cellSize: cellSize
+					cellSize: cellSize,
+					gameboardCellSize: 23,
+					gameBBox: {
+								sx: canvas.offset().top,
+								sy: canvas.offset().left,
+								width: canvas.width(),
+								height: canvas.height(),
+								ex: canvas.offset().left + canvas.width(),
+								ey: canvas.offset().top + canvas.height()
+							  }
 				}
 			);
 
@@ -166,65 +176,13 @@
 					//on move
 					if (shape.isSelected){
 						shape.calCurBBox();
-						var canvas = $(paper.canvas);
-						var GSBox = {
-							top: canvas.offset().top,
-							left: canvas.offset().left,
-							right: canvas.offset().left + canvas.width(),
-							bottom: canvas.offset().top + canvas.height(),
-							width: canvas.width(),
-							height: canvas.height(),
-						};
 
 						shape.calDistTravel(e);
+						shape.moveShape();
 						var distX = shape.distMoved.x;
 						var distY = shape.distMoved.y;
 
 						shape.cells.toFront();
-						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
-								GSBox.left < e.pageX && GSBox.right > e.pageX ){
-							var tmp_x = (1/shape.curScale.sx)*distX;
-							var tmp_y = (1/shape.curScale.sy)*distY;
-							var sx = shape.curScale.sx;
-							var sy = shape.curScale.sy;
-							var ssx = shape.initBBox.x;
-							var ssy = shape.initBBox.y;
-							var rotPoint = shape.centerOfRotation();
-							var xrot = rotPoint.x;
-							var yrot = rotPoint.y;
-							var rotation = shape.rotation * 90;
-
-							if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
-								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
-								shape.curScale = {sx: 1, sy: 1, originalScale: true};
-								scaleFull = true;
-								//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-								shape.cells.animate(
-									{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-									75
-								);
-							}
-							else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
-								shape.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
-								scaleFull = false;
-								shape.cells.animate(
-									{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-									75
-								);
-							}
-							else{
-								shape.cells.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-							}
-							if(shape.cells.getBBox().x > 0 && shape.cells.getBBox().y > 0 &&
-								shape.cells.getBBox().x + shape.cells.getBBox().width < GSBox.width &&
-								shape.cells.getBBox().y + shape.cells.getBBox().height < GSBox.height){
-								shape.prevDistX = distX;
-								shape.prevDistY = distY;
-							}
-							else{
-								shape.cells.transform("t"+shape.prevDistX+" "+shape.prevDistY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-							}
-						}
 						/*
 						// game board bounds
 						var gbBounds = {
