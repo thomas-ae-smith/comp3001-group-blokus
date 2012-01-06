@@ -126,8 +126,8 @@
 
 			var numRows = data.length;
 			var numCols = data[0].length;
-			var shapeSet = paper.set();
-			shapeSet.dataArr = _(data).clone();
+			var cells = paper.set();
+			cells.dataArr = _(data).clone();
 			for (var rowI = 0; rowI < numRows; rowI++){
 				for (var colJ = 0; colJ < numCols; colJ++) {
 					if (data[rowI][colJ] == 1) {
@@ -135,48 +135,36 @@
 												cellSize, cellSize);
 						cell.attr({fill: colours[colour]});
 						cell.opacity = 1;
-						shapeSet.push(cell);
+						cells.push(cell);
 					}
 					else{
 						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
 												cellSize, cellSize);
 						cell.attr({fill: colours[colour], opacity: 0});
 						cell.opacity = 0;
-						shapeSet.push(cell);
+						cells.push(cell);
 					}
 				}
 			}
-			shapeSet.initBBox = {
-				x:x,
-				y:y,
-				width: shapeSet.getBBox().width,
-				height: shapeSet.getBBox().height,
-			};
-			shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
+			var shape = new blokus.shape(
+				{
+					dataArr: _(data).clone(), 
+					cells: cells,
+					pos: {x:x, y:y},
+					curScale: {sx: scaleX, sy:scaleY, originalScale: false}
+				}
+			);
+
 			var scaleFull = false;
-			shapeSet.scale(scaleX, scaleY, x, y);
 
-			var tmpXRot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-			var tmpYRot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-			shapeSet.rotate(90, tmpXRot, tmpYRot);
-			// The initial coordinates of roteted ones
-			shapeSet.rotatedBBox = {
-				x:shapeSet.getBBox().x,
-				y:shapeSet.getBBox().y,
-				width: shapeSet.getBBox().width,
-				height: shapeSet.getBBox().height,
-			};
-			shapeSet.rotate(-90, tmpXRot, tmpYRot);
-
-			shapeSet.isSelected = false;
-			shapeSet.rotation = 0;
 			var highlighted_set = paper.set();
 			// TODO Check if the pieces dont overide each other
-			shapeSet.board_piece_set = new Array();
+			//shapeSet.board_piece_set = new Array();
+			/*
 			$(window).mousemove(
 				function(e){
 					//on move
-					if ( shapeSet.isSelected ){
+					if ( shape.isSelected ){
 						var SBBox = {
 							x : shapeSet.getBBox().x,
 							y : shapeSet.getBBox().y,
@@ -221,12 +209,6 @@
 							var yrot = rotPoint.y;
 							var rotation = shapeSet.rotation * 90;
 
-							shapeSet.rotatedBBox = {
-								x:shapeSet.getBBox().x,
-								y:shapeSet.getBBox().y,
-								width: shapeSet.getBBox().width,
-								height: shapeSet.getBBox().height,
-							};
 							if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
 								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
 								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
@@ -337,7 +319,7 @@
 							/*placePiece(colour, {
 								x: cellIndex.x,
 								y: cellIndex.y
-							})*/
+							})
 							shapeSet.retToPanel = false;
 						}
 						else {
@@ -354,27 +336,16 @@
 					}
 				}
 			);
-			shapeSet.click(
+			*/
+			shape.cells.click(
 				function (e, x, y){
 					// on Start
-					if(!shapeSet.isSelected){
-						shapeSet.isSelected = true;
-						shapeSet.prevDistX = 0;
-						shapeSet.prevDistY = 0;
-						shapeSet.mousePageX = e.pageX - e.offsetX + shapeSet.initBBox.x;
-						shapeSet.mousePageY = e.pageY - e.offsetY + shapeSet.initBBox.y;
-						//shapeSet.animate({"opacity": 0.5}, 0);
-						shapeSet.forEach(
-							function (c) {
-								if (c.opacity > 0){
-									c.animate({"opacity": 0.5}, 0);
-								}
-							}
-						);
+					if(!shape.isSelected){
+						shape.selectShape(e);
 					}
 					else {
-						if(shapeSet.retToPanel){
-							shapeSet.isSelected = false;
+						if(shape.returnToPanel){
+							shape.isSelected = false;
 							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
 							var xrot = rotPoint.x,
 								yrot = rotPoint.y,
@@ -385,7 +356,7 @@
 								tmp_y = 0;
 								ssx = shapeSet.initBBox.x,
 								ssy = shapeSet.initBBox.y,
-							shapeSet.animate(
+							shape.cells.animate(
 								{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
 								//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
 								500);
@@ -401,7 +372,7 @@
 						else{
 							var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
 							if(validPosition){
-								shapeSet.isSelected = false;
+								shape.isSelected = false;
 								var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
 								var xrot = rotPoint.x,
 									yrot = rotPoint.y,
@@ -436,7 +407,7 @@
 			);
 			blokus.mapKeyDown(37,
 				function () {
-					if(shapeSet.isSelected){
+					if(shape.isSelected){
 						shapeSet.rotation += 1;
 						var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
 						var xrot = rotPoint.x;
@@ -447,7 +418,7 @@
 			);
 			blokus.mapKeyDown(39,
 				function () {
-					if(shapeSet.isSelected){
+					if(shape.isSelected){
 						shapeSet.rotation -= 1;
 						var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
 						var xrot = rotPoint.x;
@@ -456,7 +427,7 @@
 					}
 				}
 			);
-			return shapeSet;
+			return shape.cells;
 		}
 
 	});
