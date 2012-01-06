@@ -59,7 +59,7 @@
 		"model": "blokus.piecemaster",
 		"pk": "9",
 		"fields" : {
-			"piece_data": "110,011"
+			"piece_data": "110,011,000"
 		}
 	},
 	{
@@ -80,7 +80,7 @@
 		"model": "blokus.piecemaster",
 		"pk": "12",
 		"fields" : {
-			"piece_data": "01,01,11,10"
+			"piece_data": "0100,0100,1100,1000"
 		}
 	},
 	{
@@ -101,7 +101,7 @@
 		"model": "blokus.piecemaster",
 		"pk": "15",
 		"fields" : {
-			"piece_data": "10,11,10,10"
+			"piece_data": "0100,0110,0100,0100"
 		}
 	},
 	{
