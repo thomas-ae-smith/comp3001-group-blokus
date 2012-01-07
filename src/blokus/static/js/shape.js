@@ -219,7 +219,7 @@
 				var numRows = rdata.length;
 				var numCols = rdata[0].length;
 				for (var rowI = 0; rowI < numRows; rowI++){
-					for (var colJ = 0; colJ <= numCols; colJ++) {
+					for (var colJ = 0; colJ < numCols; colJ++) {
 						if (rdata[rowI][colJ] == 1) {
 							newSet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
 							gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
