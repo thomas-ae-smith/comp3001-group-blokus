@@ -103,7 +103,7 @@
 			this.invisibleCells = this.options.invisibleCells;
 			this.pos = this.options.pos;
 			this.dataArr = this.options.dataArr;
-			this.destCor = this.options.destCor;
+			//this.destCor = this.options.destCor;
 			this.prevDist = this.options.prevDist;
 			this.mousePage = this.options.mousePage;
 			this.gameboardBBox = this.options.gameboardBBox;
@@ -220,10 +220,17 @@
 						}
 					}
 				}
+				var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
+				this.destCor = {
+					x: cell.attr("x"),
+					y: cell.attr("y")
+				};
 				this.cellsOnGameboard = emptySet;
+				this.returnToPanel = false;
 				return this.cellsOnGameboard;
 			}
 			else{
+				this.returnToPanel = true;
 				this.posInGameboard = {x:undefined, y:undefined};
 				return undefined;
 			}
@@ -316,6 +323,17 @@
 							this.initBBox.x, this.initBBox.y, rotation,
 							rotPoint.x, rotPoint.y, 500)
 			this.setOpacity(1, 500);
+		},
+
+		goToPos: function (){
+			this.isSelected = false;
+			var rotPoint = this.centerOfRotation();
+			var rotation = this.rotation * 90;
+			this.animate(this.destCor.x, this.destCor.y, this.initScale.sx, this.initScale.sy,
+							this.initBBox.x, this.initBBox.y, rotation,
+							rotPoint.x, rotPoint.y, 500)
+			this.setOpacity(1, 500);
+			console.log("rww");
 		},
 
 		/** END SELECT SHAPE AND RETURN TO PANEL **/

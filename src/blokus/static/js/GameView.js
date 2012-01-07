@@ -305,36 +305,11 @@
 							shape.returnToPanel();
 						}
 						else{
-							var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
+							var validPosition = blokus.utils.valid(shape.cellsOnGameboard);
 							if(validPosition){
 								shape.isSelected = false;
-								var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-								var xrot = rotPoint.x,
-									yrot = rotPoint.y,
-									rotation = shapeSet.rotation * 90,
-									tmp_x = shapeSet.destCor.x,
-									tmp_y = shapeSet.destCor.y,
-									sy = 1,
-									sx = 1,
-									ssx = shapeSet.initBBox.x,
-									ssy = shapeSet.initBBox.y;
-								shapeSet.animate(
-									{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-									//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
-									500);
-								//shapeSet.animate({"opacity": 1}, 500);
-								shapeSet.forEach(
-									function (c) {
-										if (c.opacity > 0){
-											c.animate({"opacity": 1}, 500);
-										}
-									}
-								);
-
-								shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
-								//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
-								window.cur = shapeSet;
-								console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
+								shape.goToPos();
+								//shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
 							}
 						}
 					}
