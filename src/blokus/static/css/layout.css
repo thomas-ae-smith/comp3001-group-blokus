@@ -114,9 +114,11 @@ h1, h2, h3, h4, h5, .serif, .title {
 	padding:3px 20px;
 	text-decoration:none;
 }
+
 .button:hover {
 	background: white;
 }
+
 .button.disabled {
 	border-color: #999999;
 	color: #333333;
@@ -142,6 +144,7 @@ b{ font-weight: bold;}
 	background: #ffffaa;
 	margin: 20px;
 }
+
 #logo {
 	margin:0 auto;
 	display:block;
