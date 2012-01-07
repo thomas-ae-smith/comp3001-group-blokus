@@ -1,4 +1,6 @@
-/* http://meyerweb.com/eric/tools/css/reset/ 
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Serif:400,700);
+
+/* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
 */
@@ -12,8 +14,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
 	margin: 0;
@@ -24,7 +26,7 @@ time, mark, audio, video {
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
+article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
@@ -55,11 +57,11 @@ table {
 	line-height: 0;
 	height: 0;
 }
- 
+
 .clearfix {
 	display: inline-block;
 }
- 
+
 html[xmlns] .clearfix {
 	display: block;
 }
@@ -72,8 +74,13 @@ html[xmlns] .clearfix {
 
 html {
 	background: url("../img/feltbg.jpg") center top;
-	font-family: Tahoma, Helvetica, Georgia, sans-serif;
+	/*font-family: Tahoma, Helvetica, Georgia, sans-serif;*/
+	font-family: 'Droid Sans', sans-serif;
 	height: 100%;
+	font-size: 12px;
+}
+h1, h2, h3, h4, h5, .serif {
+	font-family: 'Droid Serif', sans-serif;
 }
 .vignette {
 	background:transparent -webkit-radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
@@ -82,7 +89,7 @@ html {
 	position:absolute;
 	top:0;
 }
-.button {
+/*.button {
 	background:white;
 	padding:8px 20px;
 	display:inline-block;
@@ -94,6 +101,26 @@ html {
 	font-weight: bold;
 	border-radius: 3px;
 	opacity: 0.9;
+}*/
+
+.button {
+	border: 1px solid #7386C0;
+	background: #CCCCCC;
+	color: black;
+	font-size: 12px;
+	font-weight: bold;
+	box-shadow: 0px 0px 6px rgba(0,0,0,0.8);
+	text-shadow: 0px 0 5px white, 0px 0 5px white, 0px 0 10px white, 0px 0 10px white, 0px 0 12px white, 0px 0 15px white; /* Glow */
+	padding:3px 20px;
+	text-decoration:none;
+}
+.button:hover {
+	background: white;
+}
+.button.disabled {
+	border-color: #999999;
+	color: #333333;
+	text-shadow: none;
 }
 #error {
 	top:0;
@@ -106,9 +133,6 @@ html {
 	text-align:center;
 	opacity:0.9;
 	position:absolute;
-}
-.button:hover {
-	background: gray;
 }
 #logo {
 	margin:0 auto;
@@ -169,52 +193,43 @@ html {
 }
 /* Lobby Layout */
 .box {
-	background: black;
+	background: rgba(0, 0, 0, 0.53);
 	color:white;
-	opacity:0.8;
 }
 
 #profileBox {
 	width:700px;
-	height:100px;
+	height:64px;
 	display:block;
 	margin:20px 0px 20px 50px;
+	position: relative;
 }
-#profileBox img {
-	width:80px;
-	height:80px;
-	margin:10px;
-	float:left;
-}
-#profileInfo {
-	margin-top:20px;
-	margin-left:10px;
-	width:260px;
-	display:block;
-	float:left;
-}
-#profileBox .button {
-	float:right;
-	margin-top:30px;
-	margin-right:10px;
-}
-#signedOut {
-	float:right;
-	height:100px;
-}
-#signedOut div {
-	width: 200px;
-	display:block;
-	float:right;
-}
+	#profileBox img {
+		position: absolute;
+		top: 12px; left: 12px;
+		width:40px;
+		height:40px;
+	}
+	#profileBox #profileInfo {
+		position: absolute;
+		top: 12px; left: 64px;
+	}
+		#profileBox #profileInfo .welcome {
+			font-size: 20px;
+		}
+	#profileBox #signedOut {
+		position: absolute;
+		top: 12px; right: 12px;
+		height:100px;
+	}
 h1 {
-	font-family:Palatino Linotype;
+	/*font-family:Palatino Linotype;*/
 	font-weight:bold;
 	font-size:24pt;
 }
 
 .modelist {
-	font-family:Palatino Linotype;
+	/*font-family:Palatino Linotype;*/
 	font-weight:bold;
 	text-align:center;
 	margin-left:30px;
@@ -241,7 +256,7 @@ h1 {
 .modelist p {
 	height: 50px;
 	padding: 10px;
-	font-family:Arial;
+	/*font-family:Arial;*/
 	font-weight:normal;
 }
 
@@ -274,6 +289,7 @@ h1 {
 	padding:5px;
 	margin-top:5px;
 }
+
 
 .loading {
 	position: absolute;

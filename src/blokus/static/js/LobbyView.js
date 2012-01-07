@@ -54,13 +54,58 @@ blokus.LobbyView = Backbone.View.extend({
                 this_.pollUser = true;
                 break;
             case 3:
-                blokus.userProfile.save({ status: "private" });
+                blokus.userProfile.save({ status: "offline" });
                 this_.pollUser = false;
-                this_.$("#privatelobby").slideDown();
+                this_.$(".modelist").slideUp(200, function () {
+                    this_.$("#privatelobby").slideDown();
+                });
                 break;
             }
-
 		});
+
+        var game = undefined;
+        var $startButton = this.$("#privatelobby #start");
+
+        function selectGameType (type) {
+            var dfd;
+            if (type == 2) {
+                dfd = blokus.userProfile.save({ status: "private2" });
+            } else {
+                dfd = blokus.userProfile.save({ status: "private4" });
+            }
+            dfd.then(function () {
+                game = new blokus.Game({ id: blokus.userProfile.get("gameid") });
+                pollGame();
+            });
+        }
+
+        function pollGame() {
+            game.fetch({ success: function () {
+                if (game.players.length === 4) {
+                    $startButton.removeClass("disabled");
+                } else {
+                    $startButton.addClass("disabled");
+                }
+            }})
+        }
+
+        this.$("#privatelobby .2p").click(function () { selectGameType(2); });
+        this.$("#privatelobby .4p").click(function () { selectGameType(4); });
+
+        this.$("#privatelobby #cancel").click(function () {
+            blokus.userProfile.save({ status: "offline" });
+            this_.pollUser = false;
+            this_.$("#privatelobby").slideUp(200, function () {
+                this_.$(".modelist").slideDown();
+            });
+        });
+
+
+        $startButton.click(function () {
+            if (!$startButton.hasClass("disabled")) {
+                console.log("YYYY")
+            }
+        });
 
 		return this;
 	}

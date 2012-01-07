@@ -42,16 +42,15 @@
 				<div id="profileBox" class="box">
 					<img alt="Guest"/>
 					<div id="profileInfo">
-						<h1>Hello <span id="username">Guest</span>!</h1>
-						<p>Please login to save your scores</p>
+						<div class="welcome serif">Hello <span class="username">Guest</span>!</div>
+						<div class="stats">wins: <span class="wins">10</span> losses: <span class="losses">4</span></div>
 					</div>
 					<div id="profileMenu" style="display:none;">
 						<a href="#profile" class="button">Profile</a>
-						<a href="#" id="signout-button" class="button">Logout</a>
+						<a href="javascript:;" id="signout-button" class="button">Logout</a>
 					</div>
 					<div id="signedOut">
-						<a href="#" id="signin-button" class="button">Login</a>
-						<div>
+						<form class="login">
 							<label class="input">
 								<span>Username</span>
 								<input id="loginUsername" type="text" />
@@ -60,10 +59,10 @@
 								<span>Password</span>
 								<input id="loginPassword" type="password" />
 							</label>
-							<a href="#register">Register</a>
-							<a href="#forgot">Forgot?</a>
-						</div>
-					</div>					
+							<input type="submit" value="Log in" class="button">
+						</form>
+						<div class=""
+					</div>
 				</div>
 				<ul class="modelist">
 					<li class="box">
@@ -91,24 +90,51 @@
 					</li>
 					<li class="box">
 						<div>
-							<h2>private<br/>lobby</h2>
+							<h2>private<br/>game</h2>
 						</div>
 						<p>Start a private game by inviting your friends</p>
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 				</ul>
 				<div id="privatelobby" class="box clearfix" style="display:none;">
-					<div>
-						<h1>private lobby</h1>
-						<p>
-							Waiting for players to join...<br/>
-							<a href="#">Invite URL</a>: Send this to your friends!
-						</p>
-						<a href="#" class="button">Start Game</a>
+					<h1>private game</h1>
+					<p>How many players?</p>
+					<div class="playerchoices">
+						<div class="2p">
+							<b class="big">2</b> <b>players</b>
+							<p>Each player will have two colours</p>
+						</div>
+						<div class="4p">
+							<b class="big">4</b> <b>players</b>
+							<p>Each player will have one colour</p>
+						</div>
 					</div>
-					<ul class="lobbylist">
-						<li>zanders3</li>
-					</ul>
+					<p>Tell your friends to go to the following URL to join the game</p>
+					<input type="text" id="gameurl">
+					<div class="players">
+						<div class="p1">
+							<span class="name"></span><div class="colour"></div>
+							<div class="online"><img class="pic"><b class="name"></b></div>
+							<div class="offline">Waiting for player...</div>
+						</div>
+						<div class="p2">
+							<span class="name"></span><div class="colour"></div>
+							<div class="online"><img class="pic"><b class="name"></b></div>
+							<div class="offline">Waiting for player...</div>
+						</div>
+						<div class="p3">
+							<span class="name"></span><div class="colour"></div>
+							<div class="online"><img class="pic"><b class="name"></b></div>
+							<div class="offline">Waiting for player...</div>
+						</div>
+						<div class="p4">
+							<span class="name"></span><div class="colour"></div>
+							<div class="online"><img class="pic"><b class="name"></b></div>
+							<div class="offline">Waiting for player...</div>
+						</div>
+					</div>
+					<a href="javascript:;" class="button" id="cancel">Cancel</a>
+					<a href="javascript:;" class="button disabled" id="start">Waiting for players...</a>
 				</div>
 			</script>
 			<script type="text/html" id="game-template">
