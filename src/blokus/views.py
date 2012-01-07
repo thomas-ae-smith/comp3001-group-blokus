@@ -45,7 +45,7 @@ def debug_view(request):
 	user = str(request.user.id)
 	if request.user.id is None:
 		user = 'None'
-	return render_to_response('debug.html', {'user': user})
+	return render_to_response('debug.html', {'user': user, 'users': User.objects.all(), 'profiles':UserProfile.objects.all()})
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):

@@ -4,6 +4,18 @@
 </head>
 <body>
 <p>hello {{user}}.</p>
+<p>All users:
+<ul>
+{% for username in users %}
+<li>{{username.id}}</li>
+{%endfor%}
+</ul></p>
+<p>All profiles:
+<ul>
+{% for profile in profiles %}
+<li>{{profile.id}} -&gt; {{profile.user.id}}</li>
+{%endfor%}
+</ul></p>
 <p><a href="{% url socialauth_begin 'facebook' %}">Enter using Facebook</a></p>
 </body>
 </html>
