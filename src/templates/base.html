@@ -40,10 +40,10 @@
 		<div class="templates">
 			<script type="text/html" id="lobby-template">
 				<div id="profileBox" class="box">
-					<img alt="Guest"/>
+					<img alt="avatar" src="<%= picsrc %>" />
 					<div id="profileInfo">
-						<div class="welcome serif">Hello <span class="username">Guest</span>!</div>
-						<div class="stats">wins: <span class="wins">10</span> losses: <span class="losses">4</span></div>
+						<div class="welcome serif">Hello <span class="username"><%= name %></span>!</div>
+						<div class="stats">wins: <span class="wins"><%= wins %></span> losses: <span class="losses"><%= losses %></span></div>
 					</div>
 					<div id="profileMenu" style="display:none;">
 						<a href="#profile" class="button">Profile</a>

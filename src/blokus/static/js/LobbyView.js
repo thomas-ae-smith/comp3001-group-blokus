@@ -28,7 +28,12 @@ blokus.LobbyView = Backbone.View.extend({
 			template = _.template($('#lobby-template').html()),
             options = { error: function () { blokus.showError("Failed to save user profile"); } };
 
-		$(this.el).html(template());
+		$(this.el).html(template({
+            picsrc: "/static/img/noavatar.jpg",
+            name: blokus.user.get("name"),
+            wins: 10,
+            losses: 8   
+        }));
 
 		this.$(".modelist li").click(function (e) {
 			// Which one has been selected?
