@@ -60,7 +60,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 					blokus.user.fetch();
 				},
 				error: function () {
-					$("#error").html("Invalid username or password!").show();
+					blokus.showError("Invalid username or password!");
 				}
 			});
 			return false;
@@ -93,16 +93,17 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			}
 		});
 
-		/*$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
-			url: "/get_logged_in_user",
+		$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
+			url: "/get_logged_in_user/",
 			success: function (model) {
-				blokus.user.set(model);
+				console.log(model)
+				//blokus.user.set(model);
 			},
 			error: function () {
 				// TODO
-				blokus.user.clear()
+				//blokus.user.clear()
 			}
-		});*/
+		});
 
 		var u = new blokus.User({id : 10}); // HACK
 		u.fetch();
@@ -123,13 +124,19 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		});
 
 		$.when.apply(undefined, blokusDeferreds).then(function () { Backbone.history.start(); }) // Start blokus when everything is loaded
-				.fail(function () { $("#container").html("Error initializing. Failed to get pieceMasters? (Have you run syncdb?)"); });
+				.fail(function () { blokus.showError("Error initializing. Failed to get pieceMasters? (Have you run syncdb?)"); });
 	});
 
 	return {
 		DEBUG: DEBUG,
 		log: function () { if (DEBUG) console.log.apply(console, arguments); },
 		error: function () { if (DEBUG) console.error.apply(console, arguments); },
+		showError: function (msg) {
+			var $error = $('<div class="error">' + msg + '</div>').hide();
+			$("#errorstack").append($error);
+			$error.slideDown();
+			setTimeout(function () { $error.slideUp(); }, 3000);
+		},
 		urls: {
 			user: restRootUrl + "user/",
 			userProfile: restRootUrl + "userProfile/",
