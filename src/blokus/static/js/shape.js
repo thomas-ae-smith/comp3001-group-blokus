@@ -1,4 +1,5 @@
 (function ($, _, Backbone, blokus) {
+
 	
 	blokus.shape = Backbone.View.extend({
 
