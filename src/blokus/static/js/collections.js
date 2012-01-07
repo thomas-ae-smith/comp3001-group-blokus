@@ -2,6 +2,7 @@
 (function ($, _, Backbone) {
 	var Collection = Backbone.Collection.extend({
 		url: function () {
+			console.log("Jko")
 			return this.resourceUrl + "?limit=0";
 		},
 		parse: function(response) {
@@ -44,10 +45,10 @@
 				selected: true,
 				colourTurn: "red",
 				players: [
-					{ id: 0, userId: 10, colour: "red" },
-					{ id: 1, userId: 13, colour: "green" },
-					{ id: 2, userId: 12, colour: "blue" },
-					{ id: 3, userId: 11, colour: "yellow" },
+					{ id: 0, userId: 10, colours: [ "red" ] },
+					{ id: 1, userId: 13, colours: [ "green" ] },
+					{ id: 2, userId: 12, colours: [ "blue" ] },
+					{ id: 3, userId: 11, colours: [ "yellow" ] },
 				],
 				pieces: {
 					red: [
