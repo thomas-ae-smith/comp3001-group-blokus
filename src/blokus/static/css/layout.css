@@ -152,8 +152,6 @@ h1, h2, h3, h4, h5, .serif {
 .input {
   margin: 5px 0;
   background: white;
-  float: left;
-  clear: both;
 }
 .input span {
   position: absolute;
@@ -217,11 +215,28 @@ h1, h2, h3, h4, h5, .serif {
 		#profileBox #profileInfo .welcome {
 			font-size: 20px;
 		}
+
+		#profileBox #profileInfo .stats{
+			margin: 5px 2px;
+		}
+
 	#profileBox #signedOut {
 		position: absolute;
-		top: 12px; right: 12px;
-		height:100px;
+		top: 8px; right: 12px;
 	}
+
+	#profileBox #signedOut label, #profileBox #signedOut input {
+		display: inline-block;
+	}
+
+	#profileBox #signedOut .links {
+		text-align: right;
+	}
+	#profileBox #signedOut .links a {
+		margin: 3px 6px;
+		color: white;
+	}
+
 h1 {
 	/*font-family:Palatino Linotype;*/
 	font-weight:bold;
@@ -236,7 +251,7 @@ h1 {
 }
 .modelist li {
 	margin-left:20px;
-	padding-bottom:5px;
+	padding-bottom:20px;
 	width:160px;
 	float:left;
 }
@@ -262,33 +277,33 @@ h1 {
 
 #privatelobby {
 	width:700px;
-	margin:20px 0px 0px 50px;
-	padding:5px;
+	margin:0px 0px 0px 50px;
+	position: relative;
 }
-#privatelobby p {
-	margin-top:20px;
-	margin-left:10px;
-}
-#privatelobby div {
-	float:left;
-	width:300px;
-}
-#privatelobby .button {
-	margin-top:30px;
-}
-.lobbylist {
-	float:right;
-	width:350px;
-	height:150px;
-	background:white;
-	opacity:0.8;
-	color:black;
-}
-.lobbylist li {
-	background:#CCCCCC;
-	padding:5px;
-	margin-top:5px;
-}
+	#privatelobby p {
+		margin-top:20px;
+		margin-left:10px;
+	}
+	#privatelobby div {
+		float:left;
+		width:300px;
+	}
+	#privatelobby .button {
+		margin-top:30px;
+	}
+	.lobbylist {
+		float:right;
+		width:350px;
+		height:150px;
+		background:white;
+		opacity:0.8;
+		color:black;
+	}
+	.lobbylist li {
+		background:#CCCCCC;
+		padding:5px;
+		margin-top:5px;
+	}
 
 
 .loading {
