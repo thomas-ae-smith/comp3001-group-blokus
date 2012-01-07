@@ -123,8 +123,10 @@
 
 			var numRows = data.length;
 			var numCols = data[0].length;
-			var shapeSet = paper.set();
-			shapeSet.dataArr = _(data).clone();
+			var cells = paper.set();
+			var visibleCells = paper.set();
+			var invisibleCells = paper.set();
+			cells.dataArr = _(data).clone();
 			for (var rowI = 0; rowI < numRows; rowI++){
 				for (var colJ = 0; colJ < numCols; colJ++) {
 					if (data[rowI][colJ] == 1) {
@@ -132,131 +134,68 @@
 												cellSize, cellSize);
 						cell.attr({fill: colours[colour]});
 						cell.opacity = 1;
-						shapeSet.push(cell);
+						cells.push(cell);
+						visibleCells.push(cell);
 					}
 					else{
 						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
 												cellSize, cellSize);
 						cell.attr({fill: colours[colour], opacity: 0});
 						cell.opacity = 0;
-						shapeSet.push(cell);
+						cells.push(cell);
+						invisibleCells.push(cell);
 					}
 				}
 			}
-			shapeSet.initBBox = {
-				x:x,
-				y:y,
-				width: shapeSet.getBBox().width,
-				height: shapeSet.getBBox().height,
-			};
-			shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
-			var scaleFull = false;
-			shapeSet.scale(scaleX, scaleY, x, y);
+			var canvas = $(paper.canvas);
+			var shape = new blokus.shape(
+				{
+					dataArr: _(data).clone(), 
+					cells: cells,
+					visibleCells: visibleCells,
+					invisibleCells: invisibleCells,
+					pos: {x:x, y:y},
+					curScale: {sx: scaleX, sy:scaleY, originalScale: false},
+					cellSize: cellSize,
+					gameboardCellSize: 23,
+					gameBBox: {
+								sx: canvas.offset().top,
+								sy: canvas.offset().left,
+								width: canvas.width(),
+								height: canvas.height(),
+								ex: canvas.offset().left + canvas.width(),
+								ey: canvas.offset().top + canvas.height()
+							  },
+					gameboardBBox: {
+								sx: gameboard.offset.x, // start x
+								sy: gameboard.offset.y, // start y
+								width: gameboard.width, 
+								height: gameboard.height,
+								ex: gameboard.offset.x + gameboard.width, // end x
+								ey: gameboard.offset.y + gameboard.height  // end y
+							  }
+				}
+			);
 
-			var tmpXRot = shapeSet.initBBox.x + shapeSet.initBBox.width/2;
-			var tmpYRot = shapeSet.initBBox.y + shapeSet.initBBox.height/2;
-			shapeSet.rotate(90, tmpXRot, tmpYRot);
-			// The initial coordinates of roteted ones
-			shapeSet.rotatedBBox = {
-				x:shapeSet.getBBox().x,
-				y:shapeSet.getBBox().y,
-				width: shapeSet.getBBox().width,
-				height: shapeSet.getBBox().height,
-			};
-			shapeSet.rotate(-90, tmpXRot, tmpYRot);
-
-			shapeSet.isSelected = false;
-			shapeSet.rotation = 0;
 			var highlighted_set = paper.set();
 			// TODO Check if the pieces dont overide each other
-			shapeSet.board_piece_set = new Array();
+			//shapeSet.board_piece_set = new Array();
 			$(window).mousemove(
 				function(e){
 					//on move
-					if ( shapeSet.isSelected ){
-						var SBBox = {
-							x : shapeSet.getBBox().x,
-							y : shapeSet.getBBox().y,
-							width : shapeSet.getBBox().width,
-							height : shapeSet.getBBox().height,
-						};
+					if (shape.isSelected){
+						shape.calVisibleBBox();
 
-						var canvas = $(paper.canvas);
-						var GSBox = {
-							top: canvas.offset().top,
-							left: canvas.offset().left,
-							right: canvas.offset().left + canvas.width(),
-							bottom: canvas.offset().top + canvas.height(),
-							width: canvas.width(),
-							height: canvas.height(),
-						};
-
-						var tmpR = Math.abs(shapeSet.rotation % 2);
-						var distX = e.pageX - shapeSet.mousePageX,
-							distY = e.pageY - shapeSet.mousePageY;
-						if (tmpR == 0){
-							distX -= shapeSet.getBBox().width/2;
-							distY -= shapeSet.getBBox().height/2;
+						shape.calDistTravel(e);
+						shape.moveShape();
+						if(shape.isShapeInGameboard()){
+							console.log(shape.posInGameboard.x, shape.posInGameboard.y);
+							if (shape.cellsOnGameboard != undefined){
+								shape.cellsOnGameboard.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
+							}
+							shape.getCellsOnGameboard(gameboard, new paper.set()).forEach(function (shape) {shape.attr({"fill": "#FFF"})});
 						}
-						else{
-							distX -= shapeSet.getBBox().height/2;
-							distY -= shapeSet.getBBox().width/2;
-						}
-						shapeSet.toFront();
-						if (GSBox.top < e.pageY && GSBox.bottom > e.pageY &&
-								GSBox.left < e.pageX && GSBox.right > e.pageX ){
-							//shapeSet.translate((1/shapeSet.curScale.sx)*xMove, (1/shapeSet.curScale.sy)*yMove);
-							var tmp_x = (1/shapeSet.curScale.sx)*distX;
-							var tmp_y = (1/shapeSet.curScale.sy)*distY;
-							//shapeSet.transform("t"+(1/shapeSet.curScale.sx)*distX+","+(1/shapeSet.curScale.sy)*distY);
-							var sx = shapeSet.curScale.sx;
-							var sy = shapeSet.curScale.sy;
-							var ssx = shapeSet.initBBox.x;
-							var ssy = shapeSet.initBBox.y;
-							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-							var xrot = rotPoint.x;
-							var yrot = rotPoint.y;
-							var rotation = shapeSet.rotation * 90;
-
-							shapeSet.rotatedBBox = {
-								x:shapeSet.getBBox().x,
-								y:shapeSet.getBBox().y,
-								width: shapeSet.getBBox().width,
-								height: shapeSet.getBBox().height,
-							};
-							if(Math.abs(distX) + Math.abs(distY) > 100 && !scaleFull){
-								//shapeSet.animate({transform: "s"+"1"+" "+"1"+"t"+distX+" "+distY} , 0);
-								shapeSet.curScale = {sx: 1, sy: 1, originalScale: true};
-								scaleFull = true;
-								//shapeSet.transform("t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-								shapeSet.animate(
-									{transform:"t"+distX+" "+distY+"s"+1+" "+1+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-									75
-								);
-							}
-							else if(Math.abs(distX) + Math.abs(distY) < 100 && scaleFull){
-								shapeSet.curScale = {sx: scaleX, sy: scaleY, originalScale: false};
-								scaleFull = false;
-								shapeSet.animate(
-									{transform:"t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-									75
-								);
-							}
-							else{
-								shapeSet.transform("t"+distX+" "+distY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-							}
-							if(shapeSet.getBBox().x > 0 && shapeSet.getBBox().y > 0 &&
-								shapeSet.getBBox().x + shapeSet.getBBox().width < GSBox.width &&
-								shapeSet.getBBox().y + shapeSet.getBBox().height < GSBox.height){
-								shapeSet.prevDistX = distX;
-								shapeSet.prevDistY = distY;
-								shapeSet.prevDX = e.pageX - shapeSet.mousePageX;
-								shapeSet.prevDY = e.pageY - shapeSet.mousePageY;
-							}
-							else{
-								shapeSet.transform("t"+shapeSet.prevDistX+" "+shapeSet.prevDistY+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot)
-							}
-						}
+						/*
 						// game board bounds
 						var gbBounds = {
 							sx: gameboard.offset.x,
@@ -331,10 +270,10 @@
 								y: cell.attr("y") - shapeSet.initBBox.y
 							};
 
-							/*placePiece(colour, {
-								x: cellIndex.x,
-								y: cellIndex.y
-							})*/
+							//placePiece(colour, {
+								//x: cellIndex.x,
+								//y: cellIndex.y
+							//})
 							shapeSet.retToPanel = false;
 						}
 						else {
@@ -348,84 +287,26 @@
 								board_piece_set = new Array();
 							}
 						}
+						*/
 					}
 				}
 			);
-			shapeSet.click(
+			shape.cells.click(
 				function (e, x, y){
 					// on Start
-					if(!shapeSet.isSelected){
-						shapeSet.isSelected = true;
-						shapeSet.prevDistX = 0;
-						shapeSet.prevDistY = 0;
-						shapeSet.mousePageX = e.pageX - e.offsetX + shapeSet.initBBox.x;
-						shapeSet.mousePageY = e.pageY - e.offsetY + shapeSet.initBBox.y;
-						//shapeSet.animate({"opacity": 0.5}, 0);
-						shapeSet.forEach(
-							function (c) {
-								if (c.opacity > 0){
-									c.animate({"opacity": 0.5}, 0);
-								}
-							}
-						);
+					if(!shape.isSelected){
+						shape.selectShape(e);
 					}
 					else {
-						if(shapeSet.retToPanel){
-							shapeSet.isSelected = false;
-							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-							var xrot = rotPoint.x,
-								yrot = rotPoint.y,
-								rotation = shapeSet.rotation * 90,
-								sx = shapeSet.initScale.sx,
-								sy = shapeSet.initScale.sy,
-								tmp_x = 0,
-								tmp_y = 0;
-								ssx = shapeSet.initBBox.x,
-								ssy = shapeSet.initBBox.y,
-							shapeSet.animate(
-								{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-								//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
-								500);
-							//shapeSet.animate({"opacity": 1}, 500);
-							shapeSet.forEach(
-								function (c) {
-									if (c.opacity > 0){
-										c.animate({"opacity": 1}, 500);
-									}
-								}
-							);
+						if(shape.returnToPanel){
+							shape.returnToPanel();
 						}
 						else{
-							var validPosition = blokus.utils.valid(shapeSet.board_piece_set);
+							var validPosition = blokus.utils.valid(shape.cellsOnGameboard);
 							if(validPosition){
-								shapeSet.isSelected = false;
-								var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-								var xrot = rotPoint.x,
-									yrot = rotPoint.y,
-									rotation = shapeSet.rotation * 90,
-									tmp_x = shapeSet.destCor.x,
-									tmp_y = shapeSet.destCor.y,
-									sy = 1,
-									sx = 1,
-									ssx = shapeSet.initBBox.x,
-									ssy = shapeSet.initBBox.y;
-								shapeSet.animate(
-									{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot},
-									//{transform: "t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy},
-									500);
-								//shapeSet.animate({"opacity": 1}, 500);
-								shapeSet.forEach(
-									function (c) {
-										if (c.opacity > 0){
-											c.animate({"opacity": 1}, 500);
-										}
-									}
-								);
-
-								shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
-								//shapeSet.animate({transform:"r180,75,73"}, 500) //around the center of the shape set
-								window.cur = shapeSet;
-								console.log("t"+tmp_x+" "+tmp_y+"s"+sx+" "+sy+" "+ssx+" "+ssy+"r"+rotation+" "+xrot+" "+yrot);
+								shape.isSelected = false;
+								shape.goToPos();
+								//shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
 							}
 						}
 					}
@@ -433,27 +314,15 @@
 			);
 			blokus.mapKeyDown(37,
 				function () {
-					if(shapeSet.isSelected){
-						shapeSet.rotation += 1;
-						var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-						var xrot = rotPoint.x;
-						var yrot = rotPoint.y;
-						shapeSet.rotate(90, xrot, yrot);
-					}
+					shape.rotate(1);
 				}
 			);
 			blokus.mapKeyDown(39,
 				function () {
-					if(shapeSet.isSelected){
-						shapeSet.rotation -= 1;
-						var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-						var xrot = rotPoint.x;
-						var yrot = rotPoint.y;
-						shapeSet.rotate(-90, xrot, yrot);
-					}
+					shape.rotate(-1);
 				}
 			);
-			return shapeSet;
+			return shape.cells;
 		}
 
 	});
