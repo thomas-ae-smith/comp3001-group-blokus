@@ -179,7 +179,6 @@
 							  }
 				}
 			);
-			console.log(canvas.width());
 
 			var highlighted_set = paper.set();
 			// TODO Check if the pieces dont overide each other
@@ -193,7 +192,6 @@
 						shape.calDistTravel(e);
 						shape.moveShape();
 						if(shape.isShapeInGameboard()){
-							console.log(shape.posInGameboard.x, shape.posInGameboard.y);
 							if (shape.cellsOnGameboard != undefined){
 								shape.cellsOnGameboard.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 							}
@@ -307,6 +305,7 @@
 						}
 						else{
 							var validPosition = blokus.utils.valid(shape.cellsOnGameboard);
+							shape.goToPos();
 							if(validPosition){
 								shape.isSelected = false;
 								shape.goToPos();

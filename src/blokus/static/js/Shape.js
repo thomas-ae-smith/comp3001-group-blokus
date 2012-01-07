@@ -222,8 +222,8 @@
 				}
 				var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
 				this.destCor = {
-					x: cell.attr("x"),
-					y: cell.attr("y")
+					x: cell.attr("x") - this.initBBox.x,
+					y: cell.attr("y") - this.initBBox.y
 				};
 				this.cellsOnGameboard = emptySet;
 				this.returnToPanel = false;
@@ -329,11 +329,10 @@
 			this.isSelected = false;
 			var rotPoint = this.centerOfRotation();
 			var rotation = this.rotation * 90;
-			this.animate(this.destCor.x, this.destCor.y, this.initScale.sx, this.initScale.sy,
-							this.initBBox.x, this.initBBox.y, rotation,
-							rotPoint.x, rotPoint.y, 500)
+			this.animate(this.destCor.x, this.destCor.y, this.curScale.sx, this.curScale.sy,
+						 this.initBBox.x, this.initBBox.y, rotation,
+						 rotPoint.x, rotPoint.y, 500);
 			this.setOpacity(1, 500);
-			console.log("rww");
 		},
 
 		/** END SELECT SHAPE AND RETURN TO PANEL **/
