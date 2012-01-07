@@ -179,7 +179,6 @@
 							  }
 				}
 			);
-			console.log(canvas.width());
 
 			var highlighted_set = paper.set();
 			// TODO Check if the pieces dont overide each other
@@ -193,105 +192,28 @@
 						shape.calDistTravel(e);
 						shape.moveShape();
 						if(shape.isShapeInGameboard()){
-							console.log(shape.posInGameboard.x, shape.posInGameboard.y);
 							if (shape.cellsOnGameboard != undefined){
 								shape.cellsOnGameboard.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 							}
-							shape.getCellsOnGameboard(gameboard, new paper.set()).forEach(function (shape) {shape.attr({"fill": "#FFF"})});
-						}
-						/*
-						// game board bounds
-						var gbBounds = {
-							sx: gameboard.offset.x,
-							sy: gameboard.offset.y,
-							ex: gameboard.offset.x + gameboard.width,
-							ey:gameboard.offset.y + gameboard.height
-						};
-						// Check shapes to be in the gameScreen
-						if (SBBox.x >= gbBounds.sx &&
-							SBBox.y >= gbBounds.sy &&
-							SBBox.x + SBBox.width - gameboard.cellSize < gbBounds.ex &&
-							SBBox.y + SBBox.height - gameboard.cellSize < gbBounds.ey) {
-							var cellIndex = {
-								x: Math.floor((SBBox.x - gbBounds.sx)/ gameboard.cellSize),
-								y: Math.floor((SBBox.y - gbBounds.sy)/ gameboard.cellSize),
-							}
+							shape.getCellsOnGameboard(gameboard, new paper.set()).forEach(function (shape) {shape.attr({"fill": "#FF00AA"})});
 
-							if (highlighted_set.length != 0){
-								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
-								highlighted_set = paper.set();
-								shapeSet.board_piece_set = new Array();
-							}
-							tmpData = rotateMatrix(data, shapeSet.rotation);
-							var numRows = tmpData.length;
-							var numCols = tmpData[0].length;
-							for (var rowI = 0; rowI < numRows; rowI++){
-								for (var colJ = 0; colJ <= numCols; colJ++) {
-									if (tmpData[rowI][colJ] == 1) {
-										highlighted_set.push(gameboard.grid[cellIndex.x+colJ][cellIndex.y+rowI]);
-										// TODO for validation, make the "r" something variable for different players
-										shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
-									}
-								}
-							}
-							var rotPoint = centerOfRotation(shapeSet.dataArr, shapeSet.rotation, cellSize, shapeSet.initBBox.x, shapeSet.initBBox.y);
-							var xrot = rotPoint.x;
-							var	yrot = rotPoint.y;
-							var cell = gameboard.grid[cellIndex.x][cellIndex.y];
-
-							
 							//Validation
 							var corner = false;
 							var conflict = false;
-							shapeSet.board_piece_set.forEach(function (shape) {
-								//Test to see if piece uses a corner square
-								if (blokus.utils.is_corner(shape.x, shape.y)){
-									corner = true;
+							shape.cellsOnGameboard.forEach(function (shape) {
+								if (blokus.utils.is_corner(shape.posOnBoard.x, shape.posOnBoard.y)){
+									corner = true; //Test to see if piece uses a corner square
 								}
-
-								//Check for conflicting piece
-								if (blokus.utils.in_conflict(shape.x, shape.y)){
-									conflict = true;
+								if (blokus.utils.in_conflict(shape.posOnBoard.x, shape.posOnBoard.y)){
+									conflict = true; //Check for conflicting piece
 								}
 							});
-
 							
-							//Highlight red if invalid position, green if corner else white
-							highlighted_set.forEach(function (shape) {
-								if (corner){
-									shape.attr({"fill": "#00CC33"});
-								}else{
-									shape.attr({"fill": "#EEE"});
-								}
-
-								if (conflict){
-									shape.attr({"fill": "#FF00AA"});
-								}
-							});
-
-							shapeSet.destCor = {
-								x: cell.attr("x") - shapeSet.initBBox.x,
-								y: cell.attr("y") - shapeSet.initBBox.y
-							};
-
-							//placePiece(colour, {
-								//x: cellIndex.x,
-								//y: cellIndex.y
-							//})
-							shapeSet.retToPanel = false;
+							var corOnBoard = shape.getCorOnBoard();
+							var validPosition = blokus.utils.valid(corOnBoard);
+							var colour = validPosition ? "#0C3" : "#F0A";
+							shape.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
 						}
-						else {
-							shapeSet.destCor = { x: shapeSet.initBBox.x, y: shapeSet.initBBox.y };
-							shapeSet.retToPanel = true;
-							//shapeSet.curScale = {sx: scaleX, sy:scaleY, originalScale: false};
-							shapeSet.initScale = {sx: scaleX, sy:scaleY, originalScale: false};
-							if (highlighted_set.length != 0){
-								highlighted_set.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
-								highlighted_set = paper.set();
-								board_piece_set = new Array();
-							}
-						}
-						*/
 					}
 				}
 			);
@@ -306,11 +228,12 @@
 							shape.returnToPanel();
 						}
 						else{
-							var validPosition = blokus.utils.valid(shape.cellsOnGameboard);
+							var corOnBoard = shape.getCorOnBoard();
+							var validPosition = blokus.utils.valid(corOnBoard);
 							if(validPosition){
 								shape.isSelected = false;
 								shape.goToPos();
-								//shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
+								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
 							}
 						}
 					}

@@ -145,6 +145,13 @@
 			this.cells.transform(tStr);
 		},
 
+		// Returns an array which has the coordinats of the visible cells on board
+		getCorOnBoard: function (){
+			var corOnBoard = [];
+			this.cellsOnGameboard.forEach(function (cell) { corOnBoard.push(cell.posOnBoard)});
+			return corOnBoard;
+		},
+
 		/** MOVEMENT **/
 
 		calDistTravel:  function(e){
@@ -215,6 +222,10 @@
 					for (var colJ = 0; colJ <= numCols; colJ++) {
 						if (rdata[rowI][colJ] == 1) {
 							emptySet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
+							gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
+								x:this.posInGameboard.x+colJ,
+								y:this.posInGameboard.y+rowI
+							};
 							// TODO for validation, make the "r" something variable for different players
 							//shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 						}
@@ -222,8 +233,8 @@
 				}
 				var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
 				this.destCor = {
-					x: cell.attr("x"),
-					y: cell.attr("y")
+					x: cell.attr("x") - this.initBBox.x,
+					y: cell.attr("y") - this.initBBox.y
 				};
 				this.cellsOnGameboard = emptySet;
 				this.returnToPanel = false;
@@ -329,11 +340,10 @@
 			this.isSelected = false;
 			var rotPoint = this.centerOfRotation();
 			var rotation = this.rotation * 90;
-			this.animate(this.destCor.x, this.destCor.y, this.initScale.sx, this.initScale.sy,
-							this.initBBox.x, this.initBBox.y, rotation,
-							rotPoint.x, rotPoint.y, 500)
+			this.animate(this.destCor.x, this.destCor.y, this.curScale.sx, this.curScale.sy,
+						 this.initBBox.x, this.initBBox.y, rotation,
+						 rotPoint.x, rotPoint.y, 500);
 			this.setOpacity(1, 500);
-			console.log("rww");
 		},
 
 		/** END SELECT SHAPE AND RETURN TO PANEL **/
