@@ -99,45 +99,48 @@
 						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 				</ul>
-				<div id="privatelobby" class="box clearfix" style="display:none;">
-					<h1>private game</h1>
-					<p>How many players?</p>
-					<div class="playerchoices">
-						<div class="2p">
-							<b class="big">2</b> <b>players</b>
-							<p>Each player will have two colours</p>
+				<div id="privatelobby" class="box clearfix serif" style="display:none;">
+					<div>
+						<div class="title">private game</div>
+						<p>How many players?</p>
+						<div class="playerchoices">
+							<div class="p2">
+								<b class="big">2</b> <b class="players">players</b>
+								<p>Each player will have two colours</p>
+							</div>
+							<div class="p4">
+								<b class="big">4</b> <b class="players">players</b>
+								<p>Each player will have one colour</p>
+							</div>
 						</div>
-						<div class="4p">
-							<b class="big">4</b> <b>players</b>
-							<p>Each player will have one colour</p>
+						<div class="details" style="display: none">
+							<p>Tell your friends to go to the following URL to join the game</p>
+							<input type="text" id="gameurl" class="serif" value="http://blokus.fdsfsd">
+							<div class="players">
+								<div class="p1">
+									<span class="name">Player 1</span><div class="colour"></div>
+									<div class="online"><img class="pic"><b class="name"></b></div>
+									<div class="offline">Waiting for player...</div>
+								</div><div class="p2">
+									<span class="name">Player 2</span><div class="colour"></div>
+									<div class="online"><img class="pic"><b class="name"></b></div>
+									<div class="offline">Waiting for player...</div>
+								</div><div class="p3">
+									<span class="name">Player 3</span><div class="colour"></div>
+									<div class="online"><img class="pic"><b class="name"></b></div>
+									<div class="offline">Waiting for player...</div>
+								</div><div class="p4">
+									<span class="name">Player 4</span><div class="colour"></div>
+									<div class="online"><img class="pic"><b class="name"></b></div>
+									<div class="offline">Waiting for player...</div>
+								</div>
+							</div>
+							<div class="buttons">
+								<a href="javascript:;" class="button" id="cancel">Cancel</a>
+								<a href="javascript:;" class="button disabled" id="start">Waiting for players...</a>
+							</div>
 						</div>
 					</div>
-					<p>Tell your friends to go to the following URL to join the game</p>
-					<input type="text" id="gameurl">
-					<div class="players">
-						<div class="p1">
-							<span class="name"></span><div class="colour"></div>
-							<div class="online"><img class="pic"><b class="name"></b></div>
-							<div class="offline">Waiting for player...</div>
-						</div>
-						<div class="p2">
-							<span class="name"></span><div class="colour"></div>
-							<div class="online"><img class="pic"><b class="name"></b></div>
-							<div class="offline">Waiting for player...</div>
-						</div>
-						<div class="p3">
-							<span class="name"></span><div class="colour"></div>
-							<div class="online"><img class="pic"><b class="name"></b></div>
-							<div class="offline">Waiting for player...</div>
-						</div>
-						<div class="p4">
-							<span class="name"></span><div class="colour"></div>
-							<div class="online"><img class="pic"><b class="name"></b></div>
-							<div class="offline">Waiting for player...</div>
-						</div>
-					</div>
-					<a href="javascript:;" class="button" id="cancel">Cancel</a>
-					<a href="javascript:;" class="button disabled" id="start">Waiting for players...</a>
 				</div>
 			</script>
 			<script type="text/html" id="game-template">

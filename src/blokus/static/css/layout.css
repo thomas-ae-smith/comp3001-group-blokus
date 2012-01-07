@@ -31,7 +31,7 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 body {
-	line-height: 1;
+	line-height: 1.1;
 }
 ol, ul {
 	list-style: none;
@@ -79,7 +79,7 @@ html {
 	height: 100%;
 	font-size: 12px;
 }
-h1, h2, h3, h4, h5, .serif {
+h1, h2, h3, h4, h5, .serif, .title {
 	font-family: 'Droid Serif', sans-serif;
 }
 .vignette {
@@ -121,7 +121,9 @@ h1, h2, h3, h4, h5, .serif {
 	border-color: #999999;
 	color: #333333;
 	text-shadow: none;
+	box-shadow: none;
 }
+b{ font-weight: bold;}
 #error {
 	top:0;
 	width:100%;
@@ -254,6 +256,10 @@ h1 {
 	padding-bottom:20px;
 	width:160px;
 	float:left;
+	cursor: pointer;
+}
+.modelist li:hover {
+	background: rgba(0, 0, 0, 0.72);
 }
 .modelist li div {
 	height:100px;
@@ -278,33 +284,111 @@ h1 {
 #privatelobby {
 	width:700px;
 	margin:0px 0px 0px 50px;
-	position: relative;
 }
-	#privatelobby p {
-		margin-top:20px;
-		margin-left:10px;
+	#privatelobby > div {
+		padding: 16px;
 	}
-	#privatelobby div {
-		float:left;
-		width:300px;
+	#privatelobby .title {
+		font-size: 22px;
+		font-weight: bold;
 	}
-	#privatelobby .button {
-		margin-top:30px;
+	#privatelobby > div > p {
+		margin: 30px 0 10px 0;
 	}
-	.lobbylist {
-		float:right;
-		width:350px;
-		height:150px;
-		background:white;
-		opacity:0.8;
-		color:black;
+	#privatelobby .playerchoices {
+		position: relative;
+		height: 46px;
 	}
-	.lobbylist li {
-		background:#CCCCCC;
-		padding:5px;
-		margin-top:5px;
+	#privatelobby .playerchoices > div {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 325px;
+		background: rgba(0, 0, 0, 0.42);
+		cursor: pointer;
+	}
+	#privatelobby .playerchoices > div:hover {
+		background: rgba(0, 0, 0, 0.62);
+	}
+	#privatelobby .playerchoices .p2 {
+		left: 0;
+	}
+	#privatelobby .playerchoices .p4 {
+		right: 0;
 	}
 
+		#privatelobby .playerchoices .big {
+			position: absolute;
+			top: 12px; left: 10px;
+			font-size: 20px;
+		}
+
+		#privatelobby .playerchoices .players {
+			position: absolute;
+			left: 28px; top: 16px;
+		}
+
+		#privatelobby .playerchoices p {
+			position: absolute;
+			left: 90px; top: 16px; right: 8px; 
+		}
+
+	#privatelobby input {
+		width: 100%;
+		border: 0;
+		border-radius: 3px;
+		font-size: 17px;
+		padding: 4px 0;
+		text-indent: 4px;
+	}
+
+	#privatelobby > div > .players {
+		padding: 30px 0;
+	}
+
+		#privatelobby .players > div {
+			position: relative;
+			display: inline-block;
+			border-left: 1px solid rgba(255, 255, 255, 0.08);
+			border-right: 1px solid rgba(0, 0, 0, 0.28);
+			padding: 0 4px;
+			width: 23%;
+			cursor: pointer;
+		}
+		#privatelobby div .players > div:first-child { border-left: 0; }
+		#privatelobby div .players > div:last-child { border-right: 0; }
+	
+			#privatelobby .players > div > .name {
+				font-size: 14px;
+			}
+
+			#privatelobby .players > div > .colour {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+				width: 4px;
+				height: 4px;
+				border-radius: 2px;
+				background-color: #ccc;
+				font-size: 14px;
+			}
+
+			#privatelobby .players > div > .offline {
+				font-size: 10px;
+				color: #ccc;
+			}
+
+	#privatelobby .buttons {
+		height: 20px;
+		position: relative;
+	}
+
+	#privatelobby .buttons .button {
+		position: absolute;
+		top: 0;
+	}
+
+	#privatelobby #start { right: 0; }
 
 .loading {
 	position: absolute;
