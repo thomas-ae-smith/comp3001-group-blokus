@@ -180,7 +180,7 @@
 				}
 			);
 
-			var highlighted_set = paper.set();
+			var highlighted_set = new paper.set();
 			// TODO Check if the pieces dont overide each other
 			//shapeSet.board_piece_set = new Array();
 			$(window).mousemove(
@@ -191,29 +191,7 @@
 
 						shape.calDistTravel(e);
 						shape.moveShape();
-						if(shape.isShapeInGameboard()){
-							if (shape.cellsOnGameboard != undefined){
-								shape.cellsOnGameboard.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
-							}
-							shape.getCellsOnGameboard(gameboard, new paper.set()).forEach(function (shape) {shape.attr({"fill": "#FF00AA"})});
-
-							//Validation
-							var corner = false;
-							var conflict = false;
-							shape.cellsOnGameboard.forEach(function (shape) {
-								if (blokus.utils.is_corner(shape.posOnBoard.x, shape.posOnBoard.y)){
-									corner = true; //Test to see if piece uses a corner square
-								}
-								if (blokus.utils.in_conflict(shape.posOnBoard.x, shape.posOnBoard.y)){
-									conflict = true; //Check for conflicting piece
-								}
-							});
-							
-							var corOnBoard = shape.getCorOnBoard();
-							var validPosition = blokus.utils.valid(corOnBoard);
-							var colour = validPosition ? "#0C3" : "#F0A";
-							shape.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
-						}
+						shape.inBoardValidation(gameboard, new paper.set());
 					}
 				}
 			);
@@ -224,7 +202,7 @@
 						shape.selectShape(e);
 					}
 					else {
-						if(shape.returnToPanel){
+						if(shape.notInPanel){
 							shape.returnToPanel();
 						}
 						else{
@@ -241,12 +219,12 @@
 			);
 			blokus.mapKeyDown(37,
 				function () {
-					shape.rotate(1);
+					shape.rotate(1, gameboard, new paper.set());
 				}
 			);
 			blokus.mapKeyDown(39,
 				function () {
-					shape.rotate(-1);
+					shape.rotate(-1, gameboard, new paper.set());
 				}
 			);
 			return shape.cells;

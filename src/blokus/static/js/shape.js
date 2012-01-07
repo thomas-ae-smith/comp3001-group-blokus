@@ -34,7 +34,7 @@
 			x: undefined,
 			y: undefined
 		},
-		returnToPanel: true,
+		notInPanel: true,
 
 		prevDist: {
 			x: undefined,
@@ -191,7 +191,7 @@
 							rotPoint.x, rotPoint.y);
 			}
 			else{
-			this.animate(this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
+				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
 						 this.initBBox.x, this.initBBox.y, rotation,
 						 rotPoint.x, rotPoint.y, time);
 			}
@@ -209,7 +209,7 @@
 
 		/** END MOVEMENT **/
 
-		getCellsOnGameboard: function (gameboard, emptySet) {
+		getCellsOnGameboard: function (gameboard, newSet) {
 			if(this.isShapeInGameboard()){
 				this.posInGameboard = {
 					x: Math.floor((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize),
@@ -221,7 +221,7 @@
 				for (var rowI = 0; rowI < numRows; rowI++){
 					for (var colJ = 0; colJ <= numCols; colJ++) {
 						if (rdata[rowI][colJ] == 1) {
-							emptySet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
+							newSet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
 							gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
 								x:this.posInGameboard.x+colJ,
 								y:this.posInGameboard.y+rowI
@@ -236,13 +236,14 @@
 					x: cell.attr("x") - this.initBBox.x,
 					y: cell.attr("y") - this.initBBox.y
 				};
-				this.cellsOnGameboard = emptySet;
-				this.returnToPanel = false;
+				this.cellsOnGameboard = newSet;
+				this.notInPanel = false;
 				return this.cellsOnGameboard;
 			}
 			else{
-				this.returnToPanel = true;
+				this.notInPanel = true;
 				this.posInGameboard = {x:undefined, y:undefined};
+				this.cellsOnGameboard = undefined;
 				return undefined;
 			}
 		},
@@ -313,6 +314,37 @@
 
 		},
 
+		inBoardValidation: function(gameboard, newSet){
+			if(this.isShapeInGameboard()){
+				if (this.cellsOnGameboard != undefined){
+					this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
+				}
+				this.getCellsOnGameboard(gameboard, newSet);
+
+				//Validation
+				var corner = false;
+				var conflict = false;
+				this.cellsOnGameboard.forEach(function (c) {
+					if (blokus.utils.is_corner(c.posOnBoard.x, c.posOnBoard.y)){
+						corner = true; //Test to see if piece uses a corner square
+					}
+					if (blokus.utils.in_conflict(c.posOnBoard.x, c.posOnBoard.y)){
+						conflict = true; //Check for conflicting piece
+					}
+				});
+				
+				var corOnBoard = this.getCorOnBoard();
+				var validPosition = blokus.utils.valid(corOnBoard);
+				var colour = validPosition ? "#0C3" : "#F0A";
+				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
+			}
+			else{
+				this.notInPanel = true;
+				if (this.cellsOnGameboard != undefined)
+					this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
+			}
+		},
+
 		/** END VALIDATION AND BOUNDARY BOXS **/
 
 		/** SELECT SHAPE AND RETURN TO PANEL **/
@@ -376,11 +408,12 @@
 			return rotatedData;
 		},
 
-		rotate: function (rotation){
+		rotate: function (rotation, gameboard, emptySet){
 			if(this.isSelected){
 				this.rotation += rotation;
 				var rotPoint = this.centerOfRotation();
 				this.cells.rotate(rotation*90, rotPoint.x, rotPoint.y);
+				this.inBoardValidation(gameboard, emptySet);
 			}
 		}
 
