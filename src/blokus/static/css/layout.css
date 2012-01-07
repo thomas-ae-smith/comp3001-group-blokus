@@ -124,7 +124,7 @@ h1, h2, h3, h4, h5, .serif, .title {
 	box-shadow: none;
 }
 b{ font-weight: bold;}
-#error {
+/*#error {
 	top:0;
 	width:100%;
 	background:white;
@@ -135,12 +135,20 @@ b{ font-weight: bold;}
 	text-align:center;
 	opacity:0.9;
 	position:absolute;
+}*/
+#errorstack {
+	margin: 0 auto;
+	width: 500px;
 }
 .error {
-	border: 1px dashed red;;
+	padding: 5px;
+	border: 1px dashed red;
+	outline: 1px solid #ffffaa;
 	color: red;
 	background: #ffffaa;
-	margin: 20px;
+	margin: 10px;
+	font-weight: bold;
+	text-align: center;
 }
 #logo {
 	margin:0 auto;
@@ -224,7 +232,7 @@ b{ font-weight: bold;}
 			font-size: 20px;
 		}
 
-		#profileBox #profileInfo .stats{
+		#profileBox #profileInfo .stats {
 			margin: 5px 2px;
 		}
 
@@ -283,7 +291,7 @@ h1 {
 .modelist p {
 	height: 50px;
 	padding: 10px;
-	/*font-family:Arial;*/
+	line-height: 1.5;
 	font-weight:normal;
 }
 

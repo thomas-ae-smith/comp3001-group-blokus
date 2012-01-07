@@ -25,7 +25,8 @@ blokus.LobbyView = Backbone.View.extend({
 
 	render: function () {
 		var this_ = this,
-			template = _.template($('#lobby-template').html());
+			template = _.template($('#lobby-template').html()),
+            options = { error: function () { blokus.showError("Failed to save user profile"); } };
 
 		$(this.el).html(template());
 
@@ -42,19 +43,19 @@ blokus.LobbyView = Backbone.View.extend({
 	        }
             switch (mode) {
             case 0:
-                blokus.userProfile.save({ status: "looking_for_any" });
+                blokus.userProfile.save({ status: "looking_for_any" }, options);
                 this_.pollUser = true;
                 break;
             case 1:
-                blokus.userProfile.save({ status: "looking_for_2" });
+                blokus.userProfile.save({ status: "looking_for_2" }, options);
                 this_.pollUser = true;
                 break;
             case 2:
-                blokus.userProfile.save({ status: "looking_for_4" });
+                blokus.userProfile.save({ status: "looking_for_4" }, options);
                 this_.pollUser = true;
                 break;
             case 3:
-                blokus.userProfile.save({ status: "offline" });
+                blokus.userProfile.save({ status: "offline" }, options);
                 this_.pollUser = false;
                 this_.$(".modelist").slideUp(200, function () {
                     this_.$("#privatelobby").slideDown();
@@ -69,26 +70,23 @@ blokus.LobbyView = Backbone.View.extend({
         function selectGameType (type) {
             var dfd;
             if (type == 2) {
-                dfd = blokus.userProfile.save({ status: "private2" });
+                dfd = blokus.userProfile.save({ status: "private2" }, options);
             } else {
-                dfd = blokus.userProfile.save({ status: "private4" });
+                dfd = blokus.userProfile.save({ status: "private4" }, options);
             }
             dfd.then(function () {
                 this_.$("#privatelobby .error").remove();
                 game = new blokus.Game({ id: blokus.userProfile.get("gameid") });
                 game.fetch({ success: function () {
                     this_.$("#privatelobby .p" + type).addClass("sel").siblings().removeClass("sel");
-                    this_.$("#privatelobby .error").remove();
                     this_.$("#privatelobby .details").slideDown();
                     this_.$("#privatelobby #start").show();
                     pollGame();
                 }, error: function () {
-                    this_.$("#privatelobby .error").remove();
-                    this_.$("#privatelobby").append('<div class="error">Unable to fetch game</div>');
+                    blokus.showError("Unable to fetch game");
                 }});
             }).fail(function () {
-                this_.$("#privatelobby .error").remove();
-                this_.$("#privatelobby").append('<div class="error">Unable to fetch user profile</div>');
+                blokus.showError("Unable to fetch user profile");
             });
         }
 

@@ -60,7 +60,7 @@
 					blokus.user.fetch();
 				},
 				error: function () {
-					$("#error").html("Invalid username or password!").show();
+					blokus.showError("Invalid username or password!");
 				}
 			});
 			return false;
@@ -123,13 +123,19 @@
 		});
 
 		$.when.apply(undefined, blokusDeferreds).then(function () { Backbone.history.start(); }) // Start blokus when everything is loaded
-				.fail(function () { $("#container").html("Error initializing. Failed to get pieceMasters? (Have you run syncdb?)"); });
+				.fail(function () { blokus.showError("Error initializing. Failed to get pieceMasters? (Have you run syncdb?)"); });
 	});
 
 	return {
 		DEBUG: DEBUG,
 		log: function () { if (DEBUG) console.log.apply(console, arguments); },
 		error: function () { if (DEBUG) console.error.apply(console, arguments); },
+		showError: function (msg) {
+			var $error = $('<div class="error">' + msg + '</div>').hide();
+			$("#errorstack").append($error);
+			$error.slideDown();
+			setTimeout(function () { $error.slideUp(); }, 3000);
+		},
 		urls: {
 			user: restRootUrl + "user/",
 			userProfile: restRootUrl + "userProfile/",
