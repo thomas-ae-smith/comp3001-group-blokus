@@ -82,6 +82,9 @@ html {
 h1, h2, h3, h4, h5, .serif, .title {
 	font-family: 'Droid Serif', sans-serif;
 }
+.sans, .sans-serif, .button {
+	font-family: 'Droid Sans', sans-serif;
+}
 .vignette {
 	background:transparent -webkit-radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
 	width:100%;
@@ -295,19 +298,32 @@ h1 {
 	font-weight:normal;
 }
 
-#privatelobby {
+#privatelobby, #waiting {
 	width:700px;
 	margin:0px 0px 0px 50px;
 }
-	#privatelobby > div {
+	#waiting {
+		text-align: center;
+	}
+	#privatelobby > div, #waiting > div {
+		position: relative;
 		padding: 16px;
 	}
-	#privatelobby .title {
+	#privatelobby .title, #waiting .title {
 		font-size: 22px;
 		font-weight: bold;
 	}
 	#privatelobby > div > p {
 		margin: 30px 0 10px 0;
+	}
+	#waiting > div > p {
+		margin: 20px 0 5px 0;
+	}
+	#waiting > div > .loading {
+		position: relative;
+		width: 100%;
+		height: 30px;
+		margin-bottom: 10px;
 	}
 	#privatelobby .playerchoices {
 		position: relative;
@@ -410,11 +426,15 @@ h1 {
 
 	#privatelobby #start { right: 0; display: none; }
 
+	#waiting > div > .button {
+	}
+
+
 .loading {
 	position: absolute;
 	left: 0; top: 0; right: 0; bottom: 0;
 	/* TODO: replace with something nicer */
-	background: white url(../img/loading.gif) no-repeat center;
+	background: transparent url(../img/loading.gif) no-repeat center;
 }
 
 

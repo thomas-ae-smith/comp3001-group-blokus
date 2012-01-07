@@ -93,16 +93,17 @@
 			}
 		});
 
-		/*$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
-			url: "/get_logged_in_user",
+		$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
+			url: "/get_logged_in_user/",
 			success: function (model) {
-				blokus.user.set(model);
+				console.log(model)
+				//blokus.user.set(model);
 			},
 			error: function () {
 				// TODO
-				blokus.user.clear()
+				//blokus.user.clear()
 			}
-		});*/
+		});
 
 		var u = new blokus.User({id : 10}); // HACK
 		u.fetch();

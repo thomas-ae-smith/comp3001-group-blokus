@@ -35,6 +35,23 @@ blokus.LobbyView = Backbone.View.extend({
             losses: 8   
         }));
 
+        function selectGameType (type, title) {
+            if (type == "private") {
+                blokus.userProfile.save({ status: "offline" }, options);
+                this_.pollUser = false;
+                this_.$(".modelist").slideUp(200, function () {
+                    this_.$("#privatelobby").slideDown();
+                });
+            } else {
+                blokus.userProfile.save({ status: type }, options);
+                this_.pollUser = true;
+                this_.$(".modelist").slideUp(200, function () {
+                    this_.$("#waiting .title").html(title)
+                    this_.$("#waiting").slideDown();
+                });
+            }
+        }
+
 		this.$(".modelist li").click(function (e) {
 			// Which one has been selected?
 			var $button = $(e.currentTarget),
@@ -47,37 +64,22 @@ blokus.LobbyView = Backbone.View.extend({
 	            this_.$("#privatelobby").slideUp();
 	        }
             switch (mode) {
-            case 0:
-                blokus.userProfile.save({ status: "looking_for_any" }, options);
-                this_.pollUser = true;
-                break;
-            case 1:
-                blokus.userProfile.save({ status: "looking_for_2" }, options);
-                this_.pollUser = true;
-                break;
-            case 2:
-                blokus.userProfile.save({ status: "looking_for_4" }, options);
-                this_.pollUser = true;
-                break;
-            case 3:
-                blokus.userProfile.save({ status: "offline" }, options);
-                this_.pollUser = false;
-                this_.$(".modelist").slideUp(200, function () {
-                    this_.$("#privatelobby").slideDown();
-                });
-                break;
+            case 0: selectGameType("looking_for_any", "quick play"); break;
+            case 1: selectGameType("looking_for_2", "2 player game"); break;
+            case 2: selectGameType("looking_for_4", "4 player game"); break;
+            case 3: selectGameType("private"); break;
             }
 		});
 
         var game = undefined;
         var $startButton = this.$("#privatelobby #start");
 
-        function selectGameType (type) {
+        function selectPrivateGameType (type) {
             var dfd;
             if (type == 2) {
-                dfd = blokus.userProfile.save({ status: "private2" }, options);
+                dfd = blokus.userProfile.save({ status: "private_2" }, options);
             } else {
-                dfd = blokus.userProfile.save({ status: "private4" }, options);
+                dfd = blokus.userProfile.save({ status: "private_4" }, options);
             }
             dfd.then(function () {
                 this_.$("#privatelobby .error").remove();
@@ -105,13 +107,13 @@ blokus.LobbyView = Backbone.View.extend({
             }})
         }
 
-        this.$("#privatelobby .p2").click(function () { selectGameType(2); });
-        this.$("#privatelobby .p4").click(function () { selectGameType(4); });
+        this.$("#privatelobby .p2").click(function () { selectPrivateGameType(2); });
+        this.$("#privatelobby .p4").click(function () { selectPrivateGameType(4); });
 
-        this.$("#privatelobby #cancel").click(function () {
+        this.$("#privatelobby #cancel, #waiting #cancel").click(function () {
             blokus.userProfile.save({ status: "offline" });
             this_.pollUser = false;
-            this_.$("#privatelobby").slideUp(200, function () {
+            this_.$("#privatelobby, #waiting").slideUp(200).promise().done(function () {
                 this_.$(".modelist").slideDown();
             });
         });
