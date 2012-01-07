@@ -164,7 +164,7 @@ class PieceJSONSerializer(Serializer):
 		piece_data = []
 		for row in piece_str.split(','):
 			piece_data.append(list(row))
-		return [map(int, x) for x in piece_data]	
+		return [map(int, x) for x in piece_data]
 
 	def piece_json_to_str(self, piece_json):
 		piece_data = [map(str, x) for x in piece_json]
@@ -191,7 +191,7 @@ class PieceJSONSerializer(Serializer):
 		if data.get('objects') is not None:
 			for i, piece in enumerate(data.get('objects')):
 				data['objects'][i]['piece_data'] = self.piece_json_to_str(piece['piece_data'])
-		else:	
+		else:
 			data['piece_data'] = self.piece_json_to_str(data['piece_data'])
 
 		return data
