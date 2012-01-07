@@ -115,9 +115,15 @@
 		});
 
 		blokus.pieceMasters = new blokus.PieceMasterCollection();
-		blokusDeferreds.push(blokus.pieceMasters.fetch());
+		var pieceMastersFetched = new $.Deferred()
+		blokusDeferreds.push(pieceMastersFetched);
+		blokus.pieceMasters.fetch({
+			success: function (collection) { if (collection.length > 0) pieceMastersFetched.resolve(); else pieceMastersFetched.reject(); },
+			error: function () { pieceMastersFetched.reject(); }
+		});
 
-		$.when.apply(undefined, blokusDeferreds).then(function () { Backbone.history.start(); }); // Start blokus when everything is loaded
+		$.when.apply(undefined, blokusDeferreds).then(function () { Backbone.history.start(); }) // Start blokus when everything is loaded
+				.fail(function () { $("#container").html("Error initializing. Failed to get pieceMasters? (Have you run syncdb?)"); });
 	});
 
 	return {

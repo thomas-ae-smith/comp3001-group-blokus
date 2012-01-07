@@ -26,7 +26,7 @@
 		renderPieces: function (pieces) {
 			var gameview = this.options.gameview,
 				cellSize = this.options.cellSize,
-				colour = this.options.colour,
+				colour = this.options.player.get("colour"),
 				scale = this.active ? 0.4 : 0.3,
 				$el = $(this.el),
 				offset = offsets[this.options.positionId],
