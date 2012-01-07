@@ -145,6 +145,13 @@
 			this.cells.transform(tStr);
 		},
 
+		// Returns an array which has the coordinats of the visible cells on board
+		getCorOnBoard: function (){
+			var corOnBoard = [];
+			this.cellsOnGameboard.forEach(function (cell) { corOnBoard.push(cell.posOnBoard)});
+			return corOnBoard;
+		},
+
 		/** MOVEMENT **/
 
 		calDistTravel:  function(e){

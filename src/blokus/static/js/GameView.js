@@ -209,8 +209,7 @@
 								}
 							});
 							
-							var corOnBoard = [];
-							shape.cellsOnGameboard.forEach(function (cell) {corOnBoard.push(cell.posOnBoard)});
+							var corOnBoard = shape.getCorOnBoard();
 							var validPosition = blokus.utils.valid(corOnBoard);
 							var colour = validPosition ? "#0C3" : "#F0A";
 							shape.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
@@ -229,8 +228,7 @@
 							shape.returnToPanel();
 						}
 						else{
-							var corOnBoard = [];
-							shape.cellsOnGameboard.forEach(function (cell) { corOnBoard.push(cell.posOnBoard)});
+							var corOnBoard = shape.getCorOnBoard();
 							var validPosition = blokus.utils.valid(corOnBoard);
 							if(validPosition){
 								shape.isSelected = false;
