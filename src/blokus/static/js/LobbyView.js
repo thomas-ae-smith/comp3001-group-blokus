@@ -74,8 +74,21 @@ blokus.LobbyView = Backbone.View.extend({
                 dfd = blokus.userProfile.save({ status: "private4" });
             }
             dfd.then(function () {
+                this_.$("#privatelobby .error").remove();
                 game = new blokus.Game({ id: blokus.userProfile.get("gameid") });
-                pollGame();
+                game.fetch({ success: function () {
+                    this_.$("#privatelobby .p" + type).addClass("sel").siblings().removeClass("sel");
+                    this_.$("#privatelobby .error").remove();
+                    this_.$("#privatelobby .details").slideDown();
+                    this_.$("#privatelobby #start").show();
+                    pollGame();
+                }, error: function () {
+                    this_.$("#privatelobby .error").remove();
+                    this_.$("#privatelobby").append('<div class="error">Unable to fetch game</div>');
+                }});
+            }).fail(function () {
+                this_.$("#privatelobby .error").remove();
+                this_.$("#privatelobby").append('<div class="error">Unable to fetch user profile</div>');
             });
         }
 
@@ -89,8 +102,8 @@ blokus.LobbyView = Backbone.View.extend({
             }})
         }
 
-        this.$("#privatelobby .2p").click(function () { selectGameType(2); });
-        this.$("#privatelobby .4p").click(function () { selectGameType(4); });
+        this.$("#privatelobby .p2").click(function () { selectGameType(2); });
+        this.$("#privatelobby .p4").click(function () { selectGameType(4); });
 
         this.$("#privatelobby #cancel").click(function () {
             blokus.userProfile.save({ status: "offline" });

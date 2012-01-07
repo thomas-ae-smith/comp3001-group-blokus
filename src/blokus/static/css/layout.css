@@ -136,6 +136,12 @@ b{ font-weight: bold;}
 	opacity:0.9;
 	position:absolute;
 }
+.error {
+	border: 1px dashed red;;
+	color: red;
+	background: #ffffaa;
+	margin: 20px;
+}
 #logo {
 	margin:0 auto;
 	display:block;
@@ -307,9 +313,14 @@ h1 {
 		background: rgba(0, 0, 0, 0.42);
 		cursor: pointer;
 	}
-	#privatelobby .playerchoices > div:hover {
-		background: rgba(0, 0, 0, 0.62);
-	}
+		#privatelobby .playerchoices > div:hover {
+			background: rgba(0, 0, 0, 0.62);
+		}
+		#privatelobby .playerchoices > div.sel {
+			outline: 3px solid #CCA;
+			background: rgba(0, 0, 0, 0.79);
+			box-shadow: 0px 0px 9px #FFE;
+		}
 	#privatelobby .playerchoices .p2 {
 		left: 0;
 	}
@@ -343,7 +354,7 @@ h1 {
 	}
 
 	#privatelobby > div > .players {
-		padding: 30px 0;
+		padding-top: 30px;
 	}
 
 		#privatelobby .players > div {
@@ -379,6 +390,7 @@ h1 {
 			}
 
 	#privatelobby .buttons {
+		margin-top: 15px;
 		height: 20px;
 		position: relative;
 	}
@@ -388,7 +400,7 @@ h1 {
 		top: 0;
 	}
 
-	#privatelobby #start { right: 0; }
+	#privatelobby #start { right: 0; display: none; }
 
 .loading {
 	position: absolute;
