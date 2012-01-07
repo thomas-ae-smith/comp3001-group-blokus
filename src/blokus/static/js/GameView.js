@@ -127,6 +127,8 @@
 			var numRows = data.length;
 			var numCols = data[0].length;
 			var cells = paper.set();
+			var visibleCells = paper.set();
+			var invisibleCells = paper.set();
 			cells.dataArr = _(data).clone();
 			for (var rowI = 0; rowI < numRows; rowI++){
 				for (var colJ = 0; colJ < numCols; colJ++) {
@@ -136,6 +138,7 @@
 						cell.attr({fill: colours[colour]});
 						cell.opacity = 1;
 						cells.push(cell);
+						visibleCells.push(cell);
 					}
 					else{
 						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
@@ -143,6 +146,7 @@
 						cell.attr({fill: colours[colour], opacity: 0});
 						cell.opacity = 0;
 						cells.push(cell);
+						invisibleCells.push(cell);
 					}
 				}
 			}
@@ -151,6 +155,8 @@
 				{
 					dataArr: _(data).clone(), 
 					cells: cells,
+					visibleCells: visibleCells,
+					invisibleCells: invisibleCells,
 					pos: {x:x, y:y},
 					curScale: {sx: scaleX, sy:scaleY, originalScale: false},
 					cellSize: cellSize,
@@ -162,6 +168,14 @@
 								height: canvas.height(),
 								ex: canvas.offset().left + canvas.width(),
 								ey: canvas.offset().top + canvas.height()
+							  },
+					gameboardBBox: {
+								sx: gameboard.offset.x, // start x
+								sy: gameboard.offset.y, // start y
+								width: gameboard.width, 
+								height: gameboard.height,
+								ex: gameboard.offset.x + gameboard.width, // end x
+								ey: gameboard.offset.y + gameboard.height  // end y
 							  }
 				}
 			);
@@ -173,10 +187,17 @@
 				function(e){
 					//on move
 					if (shape.isSelected){
-						shape.calCurBBox();
+						shape.calVisibleBBox();
 
 						shape.calDistTravel(e);
 						shape.moveShape();
+						if(shape.isShapeInGameboard()){
+							console.log(shape.posInGameboard.x, shape.posInGameboard.y);
+							if (shape.cellsOnGameboard != undefined){
+								shape.cellsOnGameboard.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
+							}
+							shape.getCellsOnGameboard(gameboard, new paper.set()).forEach(function (shape) {shape.attr({"fill": "#FFF"})});
+						}
 						/*
 						// game board bounds
 						var gbBounds = {

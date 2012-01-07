@@ -23,8 +23,13 @@
 		isSelected: false,
 		rotation: 0,
 		cells: undefined, //The set of cells or squares
+		visibleCells: undefined, //The set of visible cells or squares
+		invisibleCells: undefined, //The set of invisible cells or squares
 		pos: {x:undefined, y:undefined}, // initial position of the shape
+		cellsOnGameboard: undefined, // the cells which are on the gameboard
 		dataArr: undefined, // The array of 0 or 1s which define the shape
+		//Position of the shape in the gameboard
+		posInGameboard: {x:undefined, y:undefined}, 
 		destCor: {
 			x: undefined,
 			y: undefined
@@ -64,8 +69,18 @@
 		gameboardCellSize: undefined,
 		cellSize: undefined,
 
-		// current Boundary box
-		curBBox: {
+		// current visible Boundary box
+		visibleBBox: {
+			sx: undefined,
+			sy: undefined,
+			width: undefined,
+			height: undefined,
+			ex: undefined,
+			ey: undefined
+		},
+
+		// all of cells boundary box (not used)
+		allBBox: {
 			sx: undefined,
 			sy: undefined,
 			width: undefined,
@@ -84,6 +99,8 @@
 			this.curScale = this.options.curScale;
 			this.initScale = _(this.curScale).clone();
 			this.cells = this.options.cells;
+			this.visibleCells = this.options.visibleCells;
+			this.invisibleCells = this.options.invisibleCells;
 			this.pos = this.options.pos;
 			this.dataArr = this.options.dataArr;
 			this.destCor = this.options.destCor;
@@ -151,12 +168,12 @@
 			var time = 0;
 			var rotPoint = this.centerOfRotation();
 			var rotation = this.rotation * 90;
-			if(this.cells.getBBox().x > 132 && !this.fullScale){
+			if(this.cells.getBBox(true).x > 132 && !this.fullScale){
 				this.curScale = {sx: 1, sy: 1};
 				this.fullScale = true;
 				time = 75;
 			}
-			else if(this.cells.getBBox().x < 132 && this.fullScale){
+			else if(this.cells.getBBox(true).x < 132 && this.fullScale){
 				this.curScale = {sx: this.initScale.sx, sy: this.initScale.sy};
 				this.fullScale = false;
 				time = 75;
@@ -185,14 +202,41 @@
 
 		/** END MOVEMENT **/
 
+		getCellsOnGameboard: function (gameboard, emptySet) {
+			if(this.isShapeInGameboard()){
+				this.posInGameboard = {
+					x: Math.floor((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize),
+					y: Math.floor((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize),
+				};
+				var rdata = this.rotateMatrix(this.dataArr, this.rotation);
+				var numRows = rdata.length;
+				var numCols = rdata[0].length;
+				for (var rowI = 0; rowI < numRows; rowI++){
+					for (var colJ = 0; colJ <= numCols; colJ++) {
+						if (rdata[rowI][colJ] == 1) {
+							emptySet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
+							// TODO for validation, make the "r" something variable for different players
+							//shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
+						}
+					}
+				}
+				this.cellsOnGameboard = emptySet;
+				return this.cellsOnGameboard;
+			}
+			else{
+				this.posInGameboard = {x:undefined, y:undefined};
+				return undefined;
+			}
+		},
 
 		/** VALIDATION AND BOUNDARY BOXS **/
 
 		isShapeInGameboard: function () {
-			if (this.curBBox.sx >= this.gameboardBBox.sx &&
-				this.curBBox.sy >= this.gameboardBBox.sy &&
-				this.curBBox.ex - this.gameboardCellSize < this.gameboardBBox.ex &&
-				this.curBBox.ey - this.gameboardCellSize < this.gameboardBBox.ey) {
+			this.calVisibleBBox();
+			if (this.visibleBBox.sx >= this.gameboardBBox.sx &&
+				this.visibleBBox.sy >= this.gameboardBBox.sy &&
+				this.visibleBBox.ex - this.gameboardCellSize < this.gameboardBBox.ex &&
+				this.visibleBBox.ey - this.gameboardCellSize < this.gameboardBBox.ey) {
 				return true;
 			}
 			else{
@@ -201,10 +245,10 @@
 		},
 
 		isShapeInGame: function () {
-			this.calCurBBox();
-			if (this.curBBox.sx > 0 && this.curBBox.sy > 0 &&
-				this.curBBox.ex < this.gameBBox.width &&
-				this.curBBox.ey < this.gameBBox.height){
+			this.calVisibleBBox();
+			if (this.visibleBBox.sx > 0 && this.visibleBBox.sy > 0 &&
+				this.visibleBBox.ex < this.gameBBox.width &&
+				this.visibleBBox.ey < this.gameBBox.height){
 				return true;
 			}
 			else{
@@ -224,8 +268,8 @@
 			}
 		},
 
-		calCurBBox: function (){
-			this.curBBox = {
+		calAllBBox: function (){
+			this.allBBox = {
 				sx: this.cells.getBBox().x,
 				sy: this.cells.getBBox().y,
 				width: this.cells.getBBox().width,
@@ -233,6 +277,22 @@
 				ex: this.cells.getBBox().x + this.cells.getBBox().width, //- this.gameboardCellSize,
 				ey: this.cells.getBBox().y + this.cells.getBBox().height //- this.gameboardCellSize,
 			};
+		},
+
+		calVisibleBBox: function() {
+			this.visibleBBox = this.calBBox(this.visibleCells);
+		},
+
+		calBBox: function(cells) {
+			return {
+				sx: cells.getBBox().x,
+				sy: cells.getBBox().y,
+				width: cells.getBBox().width,
+				height: cells.getBBox().height,
+				ex: cells.getBBox().x + cells.getBBox().width, //- this.gameboardCellSize,
+				ey: cells.getBBox().y + cells.getBBox().height //- this.gameboardCellSize,
+			};
+
 		},
 
 		/** END VALIDATION AND BOUNDARY BOXS **/
