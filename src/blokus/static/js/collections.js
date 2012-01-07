@@ -2,6 +2,7 @@
 (function ($, _, Backbone) {
 	var Collection = Backbone.Collection.extend({
 		url: function () {
+			console.log("Jko")
 			return this.resourceUrl + "?limit=0";
 		},
 		parse: function(response) {

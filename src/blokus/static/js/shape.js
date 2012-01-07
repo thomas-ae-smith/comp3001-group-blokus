@@ -179,7 +179,7 @@
 				time = 75;
 			}
 			if (time == 0){
-			this.transform( this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
+				this.transform( this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
 							this.initBBox.x, this.initBBox.y, rotation,
 							rotPoint.x, rotPoint.y);
 			}

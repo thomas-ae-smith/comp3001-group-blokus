@@ -179,6 +179,7 @@
 							  }
 				}
 			);
+			console.log(canvas.width());
 
 			var highlighted_set = paper.set();
 			// TODO Check if the pieces dont overide each other
