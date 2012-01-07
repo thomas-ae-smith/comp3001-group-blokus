@@ -59,6 +59,13 @@ GOOGLE_CONSUMER_SECRET       = ''
 GOOGLE_OAUTH2_CLIENT_ID      = ''
 GOOGLE_OAUTH2_CLIENT_SECRET  = ''
 
+#These redirects are all currently set to root, as when they arrive there they will 
+# automatically become a Guest. We may later want to do something more interesting 
+# with the error one though
+LOGIN_URL          = '/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_ERROR_URL    = '/'
+
 SOCIAL_AUTH_EXPIRATION = 'expires'
 
 # The username of a guest user for display purposes.
