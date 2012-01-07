@@ -5,6 +5,8 @@ from django.views.decorators.http import require_http_methods
 from datetime import timedelta, datetime
 from blokus.models import *
 
+from guest.decorators import guest_allowed
+
 # Garbage collection function called by cronjob.
 def execute_garbage_collection(request):
 	# The amount of time which a single player may be disconnected for before the game is garbage-collected.
@@ -37,6 +39,13 @@ def execute_garbage_collection(request):
 
 def register(request):
 	pass
+
+@guest_allowed
+def debug_view(request):
+	user = str(request.user.id)
+	if request.user.id is None:
+		user = 'None'
+	return render_to_response('debug.html', {'user': user})
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):

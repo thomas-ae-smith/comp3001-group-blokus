@@ -1,4 +1,4 @@
-﻿window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core module
+window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core module
 	"use strict";
 	var DEBUG = true,										// DEBUG = true for logging to console
 		restRootUrl = "/api/rest/",

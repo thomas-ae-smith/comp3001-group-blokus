@@ -4,9 +4,12 @@ from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.validation import CleanedDataFormValidation
+from tastypie.serializers import Serializer
 from django.forms import ModelForm, ValidationError
-from django.core import serializers
+from django.core.serializers import json
+from django.utils import simplejson
 from datetime import datetime
+import logging
 import random
 
 class UserResource(ModelResource):
@@ -17,7 +20,7 @@ class UserResource(ModelResource):
 		resource_name = 'user'
 		default_format = 'application/json'
 		excludes = ['password', 'is_staff', 'is_superuser']
-		list_allowed_methods = ['get']
+		list_allowed_methods = []
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
 
@@ -50,11 +53,13 @@ class UserProfileResource(ModelResource):
 			game_attributes = {
 				'looking_for_2':(1,2),
 				'looking_for_4':(2,4),
+				'private_2':(1,2),
+				'private_4':(2,4),
 			}
 
 			# Get a list of users to play in a game.
 			if request.user.status == 'looking_for_any':
-				statuses = game_attributes.keys()
+				statuses = set(['looking_for_2','looking_for_4'])
 				random.shuffle(statuses)
 				for status in statuses:
 					users_playing = [request.user]
@@ -72,6 +77,14 @@ class UserProfileResource(ModelResource):
 						users_playing.append(user)
 					if len(users_playing) >= player_count[request.user.status][1]:
 						break
+			elif request.user.status[0:7] == "private":
+				for user in UserProfiles:
+					if (user.status == request.user.status and
+						user.private_queue == request.user.private_queue):
+						users_playing.append(user)
+					if len(users_playing) >= player_count[request.user.status][1]:
+						break
+				request.user.status = {'private_2':'looking_for_2', 'private_4':'looking_for_4'}[request.user.status]
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
@@ -143,6 +156,45 @@ class PlayerResource(ModelResource):
 		detail_allowed_methods = ['get','put']
 		authorization = Authorization()
 
+#This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
+#Coversion is done here.
+class PieceJSONSerializer(Serializer):
+
+	def piece_str_to_json(self, piece_str):
+		piece_data = []
+		for row in piece_str.split(','):
+			piece_data.append(list(row))
+		return [map(int, x) for x in piece_data]	
+
+	def piece_json_to_str(self, piece_json):
+		piece_data = [map(str, x) for x in piece_json]
+		piece_data_string = ''
+		for row in piece_data:
+			piece_data_string += ''.join(row) + ','
+		return piece_data_string[:-1]
+
+	def to_json(self, data, options=None):
+		options = options or {}
+		data = self.to_simple(data, options)
+
+		if data.get('objects') is not None:
+			for i, piece in enumerate(data.get('objects')):
+				data['objects'][i]['piece_data'] = self.piece_str_to_json(piece['piece_data'])
+		else:
+			data['piece_data'] = self.piece_str_to_json(data['piece_data'])
+
+		return simplejson.dumps(data, cls=json.DjangoJSONEncoder, sort_keys=True)
+
+	def from_json(self, content):
+		data = simplejson.loads(content)
+
+		if data.get('objects') is not None:
+			for i, piece in enumerate(data.get('objects')):
+				data['objects'][i]['piece_data'] = self.piece_json_to_str(piece['piece_data'])
+		else:	
+			data['piece_data'] = self.piece_json_to_str(data['piece_data'])
+
+		return data
 
 class PieceMasterResource(ModelResource):
 	class Meta:
@@ -151,6 +203,7 @@ class PieceMasterResource(ModelResource):
 		default_format = 'application/json'
 		allowed_methods = ['get']
 		authorization = Authorization()
+		serializer = PieceJSONSerializer()
 
 class PieceForm(ModelForm):
 	class Meta:
