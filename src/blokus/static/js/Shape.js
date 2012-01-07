@@ -215,6 +215,10 @@
 					for (var colJ = 0; colJ <= numCols; colJ++) {
 						if (rdata[rowI][colJ] == 1) {
 							emptySet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
+							gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
+								x:this.posInGameboard.x+colJ,
+								y:this.posInGameboard.y+rowI
+							};
 							// TODO for validation, make the "r" something variable for different players
 							//shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 						}

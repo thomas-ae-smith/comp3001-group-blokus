@@ -196,6 +196,35 @@
 								shape.cellsOnGameboard.forEach(function (shape) {shape.attr({"fill": "#GGG"})});
 							}
 							shape.getCellsOnGameboard(gameboard, new paper.set()).forEach(function (shape) {shape.attr({"fill": "#FFF"})});
+
+							//Validation
+							var corner = false;
+							var conflict = false;
+							shape.cellsOnGameboard.forEach(function (shape) {
+								if (blokus.utils.is_corner(shape.posOnBoard.x, shape.posOnBoard.y)){
+									corner = true; //Test to see if piece uses a corner square
+								}
+								if (blokus.utils.in_conflict(shape.posOnBoard.x, shape.posOnBoard.y)){
+									conflict = true; //Check for conflicting piece
+								}
+							});
+							
+							//Highlight red if invalid position, green if corner else white
+							shape.cellsOnGameboard.forEach(function (shape) {
+								if (corner){
+									shape.attr({"fill": "#00CC33"});
+								}else{
+									shape.attr({"fill": "#EEE"});
+								}
+								if (conflict){
+									shape.attr({"fill": "#FF00AA"});
+								}
+							});
+
+							//placePiece(colour, {
+								//x: cellIndex.x,
+								//y: cellIndex.y
+							//})
 						}
 						/*
 						// game board bounds
@@ -304,12 +333,13 @@
 							shape.returnToPanel();
 						}
 						else{
-							var validPosition = blokus.utils.valid(shape.cellsOnGameboard);
-							shape.goToPos();
+							var corOnBoard = [];
+							shape.cellsOnGameboard.forEach(function (cell) { corOnBoard.push(cell.posOnBoard)});
+							var validPosition = blokus.utils.valid(corOnBoard);
 							if(validPosition){
 								shape.isSelected = false;
 								shape.goToPos();
-								//shapeSet.board_piece_set.forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
+								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
 							}
 						}
 					}
