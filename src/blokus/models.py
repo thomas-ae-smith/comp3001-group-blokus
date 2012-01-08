@@ -13,6 +13,7 @@ class Game(models.Model):
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 	number_of_moves = models.PositiveIntegerField(default=0)
 	uri = models.CharField(max_length=56)
+	winner = models.IntegerField(default=-1)
 
 	def get_grid(self):
 		grid = [[False]*20 for x in xrange(20)]
