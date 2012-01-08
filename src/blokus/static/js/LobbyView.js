@@ -28,13 +28,19 @@ blokus.LobbyView = Backbone.View.extend({
 			template = _.template($('#lobby-template').html()),
             options = { error: function () { blokus.showError("Failed to save user profile"); } };
 
+		var name = blokus.user.get("username");
+		var isGuest = !name || name === "anon";
 		$(this.el).html(template({
             picsrc: "/static/img/noavatar.jpg",
-            name: blokus.user.get("username"),
-            wins: 10,
-            losses: 8   
+            name: isGuest ? "Guest" : name,
+			stats: isGuest ? "Please login to save your scores" : "wins: 10 losses: 8",
+			hideSignOut: isGuest ? "" : "style=\"display:none;\"",
+			hideProfile: isGuest ? "style=\"display:none;\"" : ""
         }));
-
+		if (!isGuest) {
+			$("#profileMenu").show();
+			$("#signedOut").hide();
+		}
         function selectGameType (type, title) {
             if (type == "private") {
                 blokus.userProfile.save({ status: "offline" }, options);
