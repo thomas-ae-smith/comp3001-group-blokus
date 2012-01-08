@@ -247,5 +247,9 @@ def record_move(sender, instance, **kwargs):
 	move.move_number = instance.player.game.number_of_moves + 1
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
 	instance.player.game.player_turn = instance.player.game.number_of_moves % 4
+	instance.player.points += instance.master.get_point_value()
+
+	instance.player.game.save()
+	instance.player.save()
 	move.save()
 	print kwargs
