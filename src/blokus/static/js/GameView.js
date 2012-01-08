@@ -34,7 +34,7 @@
 				$el = $(el),
 				template = _.template($('#game-template').html());
 
-			$el.html(template({ gameId: "HJKLO35" }));
+			$el.html(template());
 
 
 			var paper = this.paper = Raphael(el, 800, 600),			// Make the Raphael element 800 x 600 in this view
@@ -70,6 +70,8 @@
 		        this_.startTime = new Date(gamej.start_time); // FIXME Date time check compatbility
 		        this_.timeNow = new Date(gamej.time_now); // FIXME Date time check compatbility
 					
+				this_.$(".uri").html(game.get("uri"));
+
 				// Append to view
 				$el.append(gameboard.el);
 
