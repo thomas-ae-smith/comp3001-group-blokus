@@ -8,10 +8,24 @@
 		yellow: '#ffff00'
 	}
 
+	function prepend0 (i) {
+		return i < 10 ? "0" + i : i;
+	}
+
+	function niceTime (d) {
+		return prepend0(d.getHours()) + ":" + prepend0(d.getMinutes()) + ":" + prepend0(d.getSeconds());
+	}
+
+	function dateDifference (d1, d2) {
+		return new Date(Math.abs(d2.getTime() - d1.getTime()));
+	}
+
 	blokus.GameView = Backbone.View.extend({
 		className: "gameview",
 		game: undefined,
 		paper: undefined,
+		startTime: 0,
+		timeNow: 0,
 
 		render: function () {
 			window.gameview = this;
@@ -22,11 +36,12 @@
 
 			$el.html(template({ gameId: "HJKLO35" }));
 
-			var paper = this.paper = Raphael(el, 800, 600),
-				game = this.game = new blokus.Game({ id: this.options.id });			
+
+			var paper = this.paper = Raphael(el, 800, 600),			// Make the Raphael element 800 x 600 in this view
+				game = this.game = new blokus.Game({ id: this.options.id });
+			
 
 			game.fetch({ success: function () {
-				// Make the Raphael element 800 x 600 in this view
 				var gamej = game.toJSON(),
 					playerPanels = [],
 					positionId = 0,
@@ -35,7 +50,25 @@
 						cellSize: cellSize,
 						game: game,
 						gameview: this_
-					}).render();
+					}).render(),
+
+					poller = setInterval(function () { game.fetch(); }, 1000),	// Fetch game model every second (to determined player turn, duration, winner etc)
+		        	ticker = setInterval(function () { this_.updateDuration(); }, 1000); // Keep game duration up-to-date
+
+		        this_.bind("close", function () { clearTimeout(poller); clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
+
+		        game.bind("change:player_turn", function (game, turn) {
+		        	console.log("TODO New player turn", turn);
+		        });
+
+		        game.bind("change:winner", function (game, winner) {
+		        	console.log("TODO Player wins: ", winner);
+		        });
+
+		        game.bind("change:time_now", function (game, timeNow) { updateDuration(timeNow); });
+
+		        this_.startTime = new Date(gamej.start_time); // FIXME Date time check compatbility
+		        this_.timeNow = new Date(gamej.time_now); // FIXME Date time check compatbility
 					
 				// Append to view
 				$el.append(gameboard.el);
@@ -77,12 +110,7 @@
 							if (active) { // If logged in user
 								piece.bind("piece_placed", function (x, y, flip, rotation) {
 									piece.set({ x: x, y: y, flip: flip, rotation: rotation });
-
-									game.pieces[colour].create(piece.toJSON(), {
-										error: function () {
-											blokus.showError("Piece failed to be placed.")
-										}
-									});
+									game.pieces[colour].create(piece.toJSON(), { error: function () { blokus.showError("Piece failed to be placed.") } });
 								});
 							}
 						}
@@ -93,10 +121,17 @@
 				});
 
 				this_.$(".loading").remove();
+
 			}, error: function () {
 				blokus.showError("Failed to fetch game");
 			}});
 			return this;
+		},
+
+		updateDuration: function (timeNow) {
+			if (timeNow) this.timeNow = new Date(timeNow);
+			else this.timeNow.setSeconds(this.timeNow.getSeconds() + 1);
+			this.$(".duration").html(niceTime(dateDifference(this.startTime, this.timeNow)));
 		},
 
 		//Draws a single piece
@@ -194,7 +229,7 @@
 								shape.isSelected = false;
 								shape.goToPos();
 								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
-								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, 0 /* TODO */, shape.posInGameboard.rotation);
+								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, 0 /* TODO */, shape.posInGameboard.getRotation());
 							}
 						}
 					}
