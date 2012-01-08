@@ -35,7 +35,7 @@
 	<body>
 		<img src="{{ STATIC_URL }}img/logo.png" id="logo"/>
 		<div class="vignette"></div>
-		<div id="errorstack"></div>
+		<div id="errorstackcontainer"><div id="errorstack"></div></div>
 		<div id="container"></div>
 		<div class="templates">
 			<script type="text/html" id="lobby-template">
@@ -163,8 +163,8 @@
 						<b>Table URL:</b><br>
 						http://blahblah.com#<span class="uri"></span>
 					</div>
-					<input type="button" value="How to play">
-					<input type="button" value="Exit game">
+					<input type="button" class="button help" value="How to play">
+					<input type="button" class="button exit" value="Exit game">
 					<div class="right">
 						<b>Duration:</b><br>
 						<span class="duration"></div><br><br>

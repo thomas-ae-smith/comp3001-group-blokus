@@ -103,6 +103,10 @@ h1, h2, h3, h4, h5, .serif, .title {
 	box-shadow: none;
 }
 b{ font-weight: bold;}
+#errorstackcontainer {
+	position: fixed;
+	top: 10px; left: 0; right: 0;
+}
 #errorstack {
 	margin: 0 auto;
 	width: 500px;
