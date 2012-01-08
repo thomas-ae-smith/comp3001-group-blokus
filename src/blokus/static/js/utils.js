@@ -1,5 +1,12 @@
 blokus.utils = (function ($, _, Backbone){
 	var pieceLocations = {};
+	var use_validation = true; //Added for debugging the server. FIXME
+	var blockWidth = 0;
+	var blockHeight = 0;
+
+	var set_use_validation = function (value) {
+		use_validation = value;
+	};
 
 	var get_points = function (arr, x, y, w, h) {
 		var retVal = {};
@@ -11,41 +18,78 @@ blokus.utils = (function ($, _, Backbone){
 	};
 
 	function makePositionArray(x, y, w, h){
-		var blockWidth = w / 23;
-		var blockHeight = h / 12;
+		if (Number(h) < Number(w)*2){
+			blockWidth = w / 23;
+			blockHeight = h / 12;
 
-		//row 1
-		pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 17)),y: Math.floor(Number(y) + (blockHeight * 0))};
-		pieceLocations[1] = {x: Math.floor(Number(x) + (blockWidth * 3)),y: Math.floor(Number(y) + (blockHeight * 0))};
-		pieceLocations[2] = {x: Math.floor(Number(x) + (blockWidth * 7)),y: Math.floor(Number(y) + (blockHeight * 0))};
-		pieceLocations[3] = {x: Math.floor(Number(x) + (blockWidth * 12)),y: Math.floor(Number(y) + (blockHeight * 0))};
+			//row 1
+			pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 17)),y: Math.floor(Number(y) + (blockHeight * 0))};
+			pieceLocations[1] = {x: Math.floor(Number(x) + (blockWidth * 3)),y: Math.floor(Number(y) + (blockHeight * 0))};
+			pieceLocations[2] = {x: Math.floor(Number(x) + (blockWidth * 7)),y: Math.floor(Number(y) + (blockHeight * 0))};
+			pieceLocations[3] = {x: Math.floor(Number(x) + (blockWidth * 12)),y: Math.floor(Number(y) + (blockHeight * 0))};
 
-		//row 2
-		pieceLocations[4] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 2))};
-		pieceLocations[5] = {x: Math.floor(Number(x) + (blockWidth * 4)),y: Math.floor(Number(y) + (blockHeight * 2))};
-		pieceLocations[6] = {x: Math.floor(Number(x) + (blockWidth * 9)),y: Math.floor(Number(y) + (blockHeight * 3))};
-		pieceLocations[7] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 2))};
-		pieceLocations[8] = {x: Math.floor(Number(x) + (blockWidth * 20)),y: Math.floor(Number(y) + (blockHeight * 2))};
-		
-		//row 3
-		pieceLocations[9] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 6))};
-		pieceLocations[10] = {x: Math.floor(Number(x) + (blockWidth * 5)),y: Math.floor(Number(y) + (blockHeight * 5))};
-		pieceLocations[11] = {x: Math.floor(Number(x) + (blockWidth * 9)),y: Math.floor(Number(y) + (blockHeight * 5))};
-		pieceLocations[12] = {x: Math.floor(Number(x) + (blockWidth * 13)),y: Math.floor(Number(y) + (blockHeight * 6))};
-		pieceLocations[13] = {x: Math.floor(Number(x) + (blockWidth * 18)),y: Math.floor(Number(y) + (blockHeight * 5))};
-		pieceLocations[14] = {x: Math.floor(Number(x) + (blockWidth * 22)),y: Math.floor(Number(y) + (blockHeight * 5))};
-		
-		//row 4
-		pieceLocations[15] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 8.6))};
-		pieceLocations[16] = {x: Math.floor(Number(x) + (blockWidth * 5)),y: Math.floor(Number(y) + (blockHeight * 9))};
-		pieceLocations[17] = {x: Math.floor(Number(x) + (blockWidth * 11)),y: Math.floor(Number(y) + (blockHeight * 9))};
-		pieceLocations[18] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 9))};
-		pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 9))};
+			//row 2
+			pieceLocations[4] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[5] = {x: Math.floor(Number(x) + (blockWidth * 5)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[6] = {x: Math.floor(Number(x) + (blockWidth * 9)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[7] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[8] = {x: Math.floor(Number(x) + (blockWidth * 20)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			
+			//row 3
+			pieceLocations[9] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 5.5))};
+			pieceLocations[10] = {x: Math.floor(Number(x) + (blockWidth * 5.5)),y: Math.floor(Number(y) + (blockHeight * 5.5))};
+			pieceLocations[11] = {x: Math.floor(Number(x) + (blockWidth * 9)),y: Math.floor(Number(y) + (blockHeight * 5))};
+			pieceLocations[12] = {x: Math.floor(Number(x) + (blockWidth * 13)),y: Math.floor(Number(y) + (blockHeight * 6))};
+			pieceLocations[13] = {x: Math.floor(Number(x) + (blockWidth * 18)),y: Math.floor(Number(y) + (blockHeight * 5))};
+			pieceLocations[14] = {x: Math.floor(Number(x) + (blockWidth * 22)),y: Math.floor(Number(y) + (blockHeight * 5))};
+			
+			//row 4
+			pieceLocations[15] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 8.6))};
+			pieceLocations[16] = {x: Math.floor(Number(x) + (blockWidth * 5)),y: Math.floor(Number(y) + (blockHeight * 9))};
+			pieceLocations[17] = {x: Math.floor(Number(x) + (blockWidth * 11)),y: Math.floor(Number(y) + (blockHeight * 9))};
+			pieceLocations[18] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 9))};
+			pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 9))};
 
-		//Put the last shape on the first line
-		pieceLocations[21] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 6.8))};
+			//Put the last shape on the first line.
+			pieceLocations[21] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 6.8))};
+		}else{
+			blockWidth = w / 7;
+			blockHeight = h / 21;
+
+			//row 1
+			pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 17)),y: Math.floor(Number(y) + (blockHeight * 0))};
+			pieceLocations[1] = {x: Math.floor(Number(x) + (blockWidth * 3)),y: Math.floor(Number(y) + (blockHeight * 0))};
+			pieceLocations[2] = {x: Math.floor(Number(x) + (blockWidth * 7)),y: Math.floor(Number(y) + (blockHeight * 0))};
+			pieceLocations[3] = {x: Math.floor(Number(x) + (blockWidth * 12)),y: Math.floor(Number(y) + (blockHeight * 0))};
+
+			//row 2
+			pieceLocations[4] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[5] = {x: Math.floor(Number(x) + (blockWidth * 5)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[6] = {x: Math.floor(Number(x) + (blockWidth * 9)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[7] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[8] = {x: Math.floor(Number(x) + (blockWidth * 20)),y: Math.floor(Number(y) + (blockHeight * 2))};
+			
+			//row 3
+			pieceLocations[9] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 5))};
+			pieceLocations[10] = {x: Math.floor(Number(x) + (blockWidth * 5.5)),y: Math.floor(Number(y) + (blockHeight * 6))};
+			pieceLocations[11] = {x: Math.floor(Number(x) + (blockWidth * 9)),y: Math.floor(Number(y) + (blockHeight * 5))};
+			pieceLocations[12] = {x: Math.floor(Number(x) + (blockWidth * 13)),y: Math.floor(Number(y) + (blockHeight * 6))};
+			pieceLocations[13] = {x: Math.floor(Number(x) + (blockWidth * 18)),y: Math.floor(Number(y) + (blockHeight * 5))};
+			pieceLocations[14] = {x: Math.floor(Number(x) + (blockWidth * 22)),y: Math.floor(Number(y) + (blockHeight * 5))};
+			
+			//row 4
+			pieceLocations[15] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 8.6))};
+			pieceLocations[16] = {x: Math.floor(Number(x) + (blockWidth * 5)),y: Math.floor(Number(y) + (blockHeight * 9))};
+			pieceLocations[17] = {x: Math.floor(Number(x) + (blockWidth * 11)),y: Math.floor(Number(y) + (blockHeight * 9))};
+			pieceLocations[18] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 9))};
+			pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 9))};
+
+			//Put the last shape on the first line.
+			pieceLocations[21] = {x: Math.floor(Number(x) + (blockWidth * 20.5)),y: Math.floor(Number(y) + (blockHeight * 6.8))};
+		}
 	};
 
+	//Get the owner of the square or '' if out of bounds.
 	var get_claim = function(x, y){
 		if ((x >= 0) && (x < 20) && (y >= 0) && (y < 20)){
 			return blokus.board.get("gridPlaced")[x][y];
@@ -54,6 +98,7 @@ blokus.utils = (function ($, _, Backbone){
 		}
 	};
 
+	//True if no pieces on the board are of the current player's colour.
 	var is_first_turn = function (){
 		var firstTurn = true;
 		for (var colI = 0; colI < 20; colI++){
@@ -66,6 +111,7 @@ blokus.utils = (function ($, _, Backbone){
 		return firstTurn;
 	};
 
+	//True if the current piece is touching a corner.
 	var is_corner = function (x, y){
 		if (((x == 0) && (y == 0)) || ((x == 0) && (y == 19)) || ((x == 19) && (y == 0)) || ((x == 19) && (y == 19))){
 			return is_first_turn();
@@ -74,12 +120,11 @@ blokus.utils = (function ($, _, Backbone){
 		}
 	};
 
+	//True if the grid-square denoted by x,y already has an owner.
 	var in_conflict = function (x, y){
 		if(isNaN(x) || isNaN(y)){
 			return false;
 		}else{
-			//console.log(x);
-			//console.log(y);
 			if (get_claim(x, y) != '0'){
 				return true;
 			}else{
@@ -88,6 +133,7 @@ blokus.utils = (function ($, _, Backbone){
 		}
 	};
 
+	//True if the grid-square denoted by x,y shares a flat side with another square owned by the same colour.
 	var shares_side = function (x, y){
 		var turn = gameview.game.get("colourTurn")[0];
 		return (
@@ -98,6 +144,7 @@ blokus.utils = (function ($, _, Backbone){
 		);
 	};
 	
+	//True if the grid-square denoted by x,y shares a corner with another square owned by the same colour.
 	var shares_vertex = function (x, y){
 		var turn = gameview.game.get("colourTurn")[0];
 		return (
@@ -108,6 +155,7 @@ blokus.utils = (function ($, _, Backbone){
 		);
 	};
 
+	//Checks if the piece given in arr will breach any of the rules of placement.
 	var valid = function (arr){
 		var corner = false;
 		var conflicted = false;
@@ -115,8 +163,9 @@ blokus.utils = (function ($, _, Backbone){
 		var sharingVertex = false;
 		var firstTurn = is_first_turn();
 
-		//If not in board area do not validate
-		if(!arr.length > 0){
+		//If not in board area or validation is turned off then do not validate
+		//FIXME: Should not really allow users to turn validation off.
+		if(!arr.length > 0 || !use_validation){
 			return true;
 		}
 
@@ -153,6 +202,7 @@ blokus.utils = (function ($, _, Backbone){
 		shares_side: shares_side,
 		shares_vertex: shares_vertex,
 		valid: valid,
-		get_claim: get_claim
+		get_claim: get_claim,
+		set_use_validation: set_use_validation
 	};
 }(jQuery, _, Backbone));
