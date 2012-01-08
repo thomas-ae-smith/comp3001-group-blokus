@@ -15,7 +15,7 @@
 			resourceUrl: blokus.urls.user,
 
 			// FIXME: Hacked in bootstrap, baby
-			fetch: function (options) {
+/*			fetch: function (options) {
 				var this_ = this,
 					id = Number(this_.get("id")),
 					model = _(blokus._exampleUsers).find(function (user) {
@@ -28,7 +28,7 @@
 					this.set(this.parse(model));
 					if (options && options.success) options.success.call();
 				}
-			},
+			},*/
 
 			parse: function (model) {
 		        // Set the user profile

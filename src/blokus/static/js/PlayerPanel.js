@@ -7,7 +7,6 @@
 	];
 	blokus.PlayerPanel = Backbone.View.extend({
 		className: "playerpanel",
-		active: false,
 
 		render: function () {
 			var $el = $(this.el),
@@ -15,7 +14,7 @@
 				template = _.template($('#player-panel-template').html());
 
 			$el.html(template({
-				name: player.user.get("name"),
+				name: player.user.get("username"),
 				wins: 10,
 				losses: 4
 			}));
@@ -27,11 +26,11 @@
 			var gameview = this.options.gameview,
 				cellSize = this.options.cellSize,
 				colour = this.options.player.get("colour"),
-				scale = this.active ? 0.4 : 0.3,
+				scale = this.options.active ? 0.4 : 0.3,
 				$el = $(this.el),
 				offset = offsets[this.options.positionId],
 				width = 130,
-				height = this.active ? 600 : 200,
+				height = this.options.active ? 600 : 200,
 				positions = blokus.utils.get_points(blokus.pieceMasters.toJSON(), offset.x + 10, offset.y + 35, width - 27, height - 20);
 
 			pieces.each(function (piece) {

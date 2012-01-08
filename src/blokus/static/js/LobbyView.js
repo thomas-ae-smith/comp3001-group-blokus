@@ -30,7 +30,7 @@ blokus.LobbyView = Backbone.View.extend({
 
 		$(this.el).html(template({
             picsrc: "/static/img/noavatar.jpg",
-            name: blokus.user.get("name"),
+            name: blokus.user.get("username"),
             wins: 10,
             losses: 8   
         }));

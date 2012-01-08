@@ -94,8 +94,7 @@
 				_(game.players.models).each(function (player) {
 					var colour = player.get("colour"),
 						options = { paper: paper, game: game, player: player, gameview: this_ },
-						active = false,
-						playerPanel = new blokus.PlayerPanel(options);
+						active = false;
 					
 					 // Identify if this is the logged in user
 					if (blokus.user.get("id") === player.get("userId")) {
@@ -106,6 +105,8 @@
 						positionId++;
 						options.positionId = positionId;
 					}
+
+					var playerPanel = new blokus.PlayerPanel(options);
 
 					playerPanels.push(playerPanel);
 

@@ -79,7 +79,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		});
 
 		blokus.user.bind("change", function () {			// One the logged in user is known, show user information (or login is user is anonymous)
-			var name = blokus.user.get("name");
+			var name = blokus.user.get("username");
 			if (!name || name === "anon") {
 				$("#username").text("Guest");
 				$("#profileInfo p").text("Please login to save your scores");
@@ -93,21 +93,26 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			}
 		});
 
+		var authDfd = new $.Deferred();
+		blokusDeferreds.push(authDfd);
+
 		$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
 			url: "/get_logged_in_user/",
+  			dataType: 'json',
 			success: function (model) {
-				console.log(model)
-				//blokus.user.set(model);
+				blokus.user.set(model);
+				blokus.userProfile.set(model.userprofile);
+				blokus._exampleGames[1].players[0].userId = blokus.user.get("id"); // FIXME TEMP
+				authDfd.resolve();
 			},
 			error: function () {
-				// TODO
+				$("#container").html('<b>Not logged in. Please register/login.</b><div style="color:white"><a href="/debug">Temp register</a> <a href="/login">Temp login</a></div>');
+				// TODO guest accountds
 				//blokus.user.clear()
+				authDfd.reject();
 			}
 		});
 
-		var u = new blokus.User({id : 10}); // HACK
-		u.fetch();
-		blokus.user.set(u);
 
 		$(window).keyup(function (e) {
 			_(keyUpMappings[e.keyCode]).each(function (f) { f.call(); });
