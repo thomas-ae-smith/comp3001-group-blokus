@@ -1,10 +1,8 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Droid+Serif:400,700);
-
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
 */
-
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -48,7 +46,6 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-
 .clearfix:after {
 	content: ".";
 	display: block;
@@ -57,24 +54,17 @@ table {
 	line-height: 0;
 	height: 0;
 }
-
 .clearfix {
 	display: inline-block;
 }
-
 html[xmlns] .clearfix {
 	display: block;
 }
-
 * html .clearfix {
 	height: 1%;
 }
-
-/*************************************/
-
 html {
 	background: url("../img/feltbg.jpg") center top;
-	/*font-family: Tahoma, Helvetica, Georgia, sans-serif;*/
 	font-family: 'Droid Sans', sans-serif;
 	height: 100%;
 	font-size: 12px;
@@ -92,20 +82,6 @@ h1, h2, h3, h4, h5, .serif, .title {
 	position:absolute;
 	top:0;
 }
-/*.button {
-	background:white;
-	padding:8px 20px;
-	display:inline-block;
-	font-family:Berlin Sans FB, Tahoma, Helvetica, Georgia, sans-serif;
-	text-decoration:none;
-	color:black;
-	font-size:20px;
-	border: 1px solid black;
-	font-weight: bold;
-	border-radius: 3px;
-	opacity: 0.9;
-}*/
-
 .button {
 	border: 1px solid #7386C0;
 	background: #CCCCCC;
@@ -117,11 +93,9 @@ h1, h2, h3, h4, h5, .serif, .title {
 	padding:3px 20px;
 	text-decoration:none;
 }
-
 .button:hover {
 	background: white;
 }
-
 .button.disabled {
 	border-color: #999999;
 	color: #333333;
@@ -129,18 +103,6 @@ h1, h2, h3, h4, h5, .serif, .title {
 	box-shadow: none;
 }
 b{ font-weight: bold;}
-/*#error {
-	top:0;
-	width:100%;
-	background:white;
-	border-bottom:2px solid red;
-	color:red;
-	font-weight:bold;
-	padding:10px;
-	text-align:center;
-	opacity:0.9;
-	position:absolute;
-}*/
 #errorstack {
 	margin: 0 auto;
 	width: 500px;
@@ -155,7 +117,6 @@ b{ font-weight: bold;}
 	font-weight: bold;
 	text-align: center;
 }
-
 #logo {
 	margin:0 auto;
 	display:block;
@@ -171,17 +132,21 @@ b{ font-weight: bold;}
 	min-height: 400px;
 }
 /* Form field labels */
-.input {
+label {
   margin: 5px 0;
   background: white;
+  display: inline-block;
 }
-.input span {
+label span {
   position: absolute;
   padding: 5px;
   margin-left: 3px;
   color: #999;
 }
-.input input, .input textarea, .input select {
+label input {
+	display: inline-block;
+}
+label input, label textarea, label select {
   position: relative;
   margin: 0;
   border-width: 1px;
@@ -190,7 +155,7 @@ b{ font-weight: bold;}
   font: inherit;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-    .input input, .input textarea, .input select { padding: 4px; }
+    label input, label textarea, label select { padding: 4px; }
 }
 /* Register Form */
 .form {
@@ -216,7 +181,6 @@ b{ font-weight: bold;}
 	background: rgba(0, 0, 0, 0.53);
 	color:white;
 }
-
 #profileBox {
 	width:700px;
 	height:64px;
@@ -237,20 +201,13 @@ b{ font-weight: bold;}
 		#profileBox #profileInfo .welcome {
 			font-size: 20px;
 		}
-
 		#profileBox #profileInfo .stats {
 			margin: 5px 2px;
 		}
-
 	#profileBox #signedOut {
 		position: absolute;
 		top: 8px; right: 12px;
 	}
-
-	#profileBox #signedOut label, #profileBox #signedOut input {
-		display: inline-block;
-	}
-
 	#profileBox #signedOut .links {
 		text-align: right;
 	}
@@ -258,15 +215,11 @@ b{ font-weight: bold;}
 		margin: 3px 6px;
 		color: white;
 	}
-
 h1 {
-	/*font-family:Palatino Linotype;*/
 	font-weight:bold;
 	font-size:24pt;
 }
-
 .modelist {
-	/*font-family:Palatino Linotype;*/
 	font-weight:bold;
 	text-align:center;
 	margin-left:30px;
@@ -300,7 +253,6 @@ h1 {
 	line-height: 1.5;
 	font-weight:normal;
 }
-
 #privatelobby, #waiting {
 	width:700px;
 	margin:0px 0px 0px 50px;
@@ -354,23 +306,19 @@ h1 {
 	#privatelobby .playerchoices .p4 {
 		right: 0;
 	}
-
 		#privatelobby .playerchoices .big {
 			position: absolute;
 			top: 12px; left: 10px;
 			font-size: 20px;
 		}
-
 		#privatelobby .playerchoices .players {
 			position: absolute;
 			left: 28px; top: 16px;
 		}
-
 		#privatelobby .playerchoices p {
 			position: absolute;
 			left: 90px; top: 16px; right: 8px; 
 		}
-
 	#privatelobby input {
 		width: 100%;
 		border: 0;
@@ -379,11 +327,9 @@ h1 {
 		padding: 4px 0;
 		text-indent: 4px;
 	}
-
 	#privatelobby > div > .players {
 		padding-top: 30px;
 	}
-
 		#privatelobby .players > div {
 			position: relative;
 			display: inline-block;
@@ -395,11 +341,9 @@ h1 {
 		}
 		#privatelobby div .players > div:first-child { border-left: 0; }
 		#privatelobby div .players > div:last-child { border-right: 0; }
-	
 			#privatelobby .players > div > .name {
 				font-size: 14px;
 			}
-
 			#privatelobby .players > div > .colour {
 				position: absolute;
 				top: 5px;
@@ -410,38 +354,28 @@ h1 {
 				background-color: #ccc;
 				font-size: 14px;
 			}
-
 			#privatelobby .players > div > .offline {
 				font-size: 10px;
 				color: #ccc;
 			}
-
 	#privatelobby .buttons {
 		margin-top: 15px;
 		height: 20px;
 		position: relative;
 	}
-
 	#privatelobby .buttons .button {
 		position: absolute;
 		top: 0;
 	}
-
 	#privatelobby #start { right: 0; display: none; }
-
 	#waiting > div > .button {
 	}
-
-
 .loading {
 	position: absolute;
 	left: 0; top: 0; right: 0; bottom: 0;
 	/* TODO: replace with something nicer */
 	background: transparent url(../img/loading.gif) no-repeat center;
 }
-
-
-
 /*********** Game View CSS *****************/
 .gameview svg {
 	position: absolute;
@@ -468,7 +402,6 @@ h1 {
 .playerpanelcontainer.right .playerpanel {
 	height: 200px;
 }
-
 .playerpanel {
 	background: rgba(0, 0, 0, 0.5);
 }
