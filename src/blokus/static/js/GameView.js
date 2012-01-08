@@ -247,6 +247,16 @@
 					shape.rotate(1, gameboard, new paper.set());
 				}
 			);
+			blokus.mapKeyDown(86, // v
+				function (){
+					shape.flip(2, gameboard, new paper.set());
+				}
+			);
+			blokus.mapKeyDown(72, // h
+				function (){
+					shape.flip(1, gameboard, new paper.set());
+				}
+			);
 			return shape.cells;
 		}
 

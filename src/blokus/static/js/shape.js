@@ -24,6 +24,7 @@
 		isSelected: false,
 		canMove: false,
 		rotation: 0,
+		flipNum: 0,
 		cells: undefined, //The set of cells or squares
 		visibleCells: undefined, //The set of visible cells or squares
 		invisibleCells: undefined, //The set of invisible cells or squares
@@ -222,7 +223,8 @@
 					this.posInGameboard.x = Math.ceil((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize);
 				if(this.posInGameboard.y > 5)
 					this.posInGameboard.y = Math.ceil((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize);
-				var rdata = this.rotateMatrix(this.dataArr, this.rotation);
+				var rotation = this.getRotation();
+				var rdata = this.rotateMatrix(this.dataArr, rotation);
 				var numRows = rdata.length;
 				var numCols = rdata[0].length;
 				for (var rowI = 0; rowI < numRows; rowI++){
@@ -375,6 +377,7 @@
 
 		selectShape: function (e){
 			if (this.canMove){
+				window.s = this;
 				this.isSelected = true;
 				this.prevDistX = 0;
 				this.prevDistY = 0;
@@ -413,6 +416,14 @@
 
 		/** ROTATION **/
 
+		getRotation: function (){
+			var rotation = this.rotation;
+			if (this.rotation > 0)
+				if((this.rotation+2) %2 != 0)
+					rotation = this.rotation + 2;
+			return Math.abs(rotation % 4);
+		},
+
 		getCenterRotation: function (){
 			var data =this.dataArr;
 			var h = data.length * this.cellSize,
@@ -420,12 +431,8 @@
 			return {x: this.initBBox.x+w/2, y: this.initBBox.y+h/2};
 		},
 
-		rotateMatrix: function(data, rotation){
+		rotateMatrix: function(data, rotation){ // Rotation is between 0 and 3
 			// This if fixes a very weird bug
-			if (rotation > 0)
-				if((rotation+2) %2 != 0)
-					rotation = rotation + 2;
-			rotation = Math.abs(rotation % 4);
 			var rotatedData = _(data).clone();
 			for (var numRotation = 0; numRotation < rotation; numRotation++){
 				var rotatedDataTmp = new Array(),
@@ -452,9 +459,64 @@
 				this.cells.animate({transform: "...r"+rotation*90+" "+rotPoint.x+" "+rotPoint.y}, 150);
 				setTimeout(function(){this_.inBoardValidation(gameboard, emptySet);}, 151);
 			}
-		}
+		},
 
 		/** END ROTATION **/
+
+		/** FLIP **/
+
+		flipMatrix: function(data, flip){
+			var rotation = this.getRotation(),
+				rdata = this.rotateMatrix(data, rotation),
+				retData = new Array(),
+				numRows = rdata.length,
+				numCols = rdata[0].length;
+			if (flip == 0) // Not fliped
+				return rdata;
+			else if(flip == 1){ //Flipped horizantal
+					for (var rowI = 0; rowI < numRows; rowI++){
+						var revArr = _(rdata[rowI]).clone();
+						retData.push(revArr.reverse());
+					}
+				return retData;
+			}
+			else if(flip == 2){ //Flipped vertical
+				retData = rdata.reverse()
+				return retData;
+			}
+			else{ //Both flipped
+				for (var rowI = 0; rowI < numRows; rowI++){
+					var revArr = _(rdata[rowI]).clone();
+					retData.push(revArr.reverse());
+				}
+				return retData.reverse();
+			}
+		},
+
+		flip: function (flipNum, gameboard, emptySet){
+			if(this.isSelected){
+				var this_ = this;
+				this.flipNum = flipNum;
+				var data = this.flipMatrix(this.dataArr, flipNum);
+				var numRows = data.length,
+					numCols = data[0].length;
+				var cellsInd = 0;
+				for (var rowI = 0; rowI < numRows; rowI++){
+					for (var colJ = 0; colJ < numCols; colJ++) {
+						if(data[rowI][colJ] == 1){
+							this.cells[cellsInd].animate({opacity: 1}, 300);
+						}
+						else{
+							this.cells[cellsInd].animate({opacity: 0}, 300);
+						}
+						cellsInd += 1;
+					}
+				}
+				setTimeout(function(){this_.inBoardValidation(gameboard, emptySet);}, 301);
+			}
+		}
+
+		/** END FLIP **/
 
 
 	});
