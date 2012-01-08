@@ -200,6 +200,7 @@
 					// on Start
 					if(!shape.isSelected){
 						shape.selectShape(e);
+						window.s = shape;
 					}
 					else {
 						if(shape.notInPanel){
