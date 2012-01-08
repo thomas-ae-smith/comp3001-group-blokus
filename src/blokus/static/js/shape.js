@@ -434,7 +434,8 @@
 			if(this.isSelected){
 				this.rotation += rotation;
 				var rotPoint = this.getCenterRotation();
-				this.cells.rotate(rotation*90, rotPoint.x, rotPoint.y);
+				//this.cells.rotate(rotation*90, rotPoint.x, rotPoint.y);
+				this.cells.animate({transform: "...r"+rotation*90+" "+rotPoint.x+" "+rotPoint.y}, 150);
 				this.inBoardValidation(gameboard, emptySet);
 			}
 		}

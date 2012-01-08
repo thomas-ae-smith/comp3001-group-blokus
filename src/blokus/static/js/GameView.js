@@ -220,12 +220,12 @@
 			);
 			blokus.mapKeyDown(37,
 				function () {
-					shape.rotate(1, gameboard, new paper.set());
+					shape.rotate(-1, gameboard, new paper.set());
 				}
 			);
 			blokus.mapKeyDown(39,
 				function () {
-					shape.rotate(-1, gameboard, new paper.set());
+					shape.rotate(1, gameboard, new paper.set());
 				}
 			);
 			return shape.cells;
