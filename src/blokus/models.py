@@ -202,6 +202,12 @@ class Piece(models.Model):
 		else:
 			self.rotation = (self.rotation - 1) % 4
 
+	def get_flipped(self):
+		return True
+
+	def get_rotated(self):
+		return True
+
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	move_number = models.PositiveIntegerField()
