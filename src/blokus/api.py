@@ -47,7 +47,7 @@ class UserProfileResource(ModelResource):
 		if request and request.user.id is not None:
 			userProfiles = super(UserProfileResource, self).get_object_list(request)
 			userProfiles.exclude(id=request.user.id)
-			users_playing = {request.user}
+			users_playing = [request.user]
 			# Game Attributes: <status>:(<typeID>,<playerCount>)
 			# Must be added to if a new game type is introduced.
 			game_attributes = {
@@ -62,42 +62,40 @@ class UserProfileResource(ModelResource):
 			if request.user.get_profile().status == 'looking_for_any':
 				random.shuffle(statuses)
 				for status in statuses:
-					users_playing = [request.user]
-					for user in userProfiles:
-						if user.status in [status, 'looking_for_any']:
-							users_playing.append(user)
-							if len(users_playing) >= game_attributes[request.user.status][1]:
+					for userProfile in userProfiles:
+						if userProfile.status in [status, 'looking_for_any']:
+							users_playing.append(userProfile.user)
+							if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
 								break
-					if len(users_playing) >= game_attributes[request.user.status][1]:
-						request.user.status = status
+					if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
+						request.user.get_profile().status = status
 						break
 			elif request.user.get_profile().status in statuses:
-				for user in userProfiles:
-					if user.status in [request.user.status, 'looking_for_any']:
-						users_playing.append(user)
-					if len(users_playing) >= player_count[request.user.status][1]:
+				for userProfile in userProfiles:
+					if userProfile.status in [request.user.get_profile().status, 'looking_for_any']:
+						users_playing.append(userProfile.user)
+					if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
 						break
 			elif request.user.get_profile().status[0:7] == "private":
-				for user in UserProfiles:
-					if (user.status == request.user.status and
-						user.private_queue == request.user.private_queue):
-						users_playing.append(user)
-					if len(users_playing) >= player_count[request.user.status][1]:
+				for userProfile in UserProfiles:
+					if (userProfile.status == request.user.get_profile().status and
+						userProfile.private_queue == request.user.private_queue):
+						users_playing.append(userProfile.user)
+					if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
 						break
-				request.user.status = {'private_2':'looking_for_2', 'private_4':'looking_for_4'}[request.user.status]
+				request.user.get_profile().status = {'private_2':'looking_for_2', 'private_4':'looking_for_4'}[request.user.get_profile().status]
 			else:
 				# If the users status is not one that required joining a game,
 				# return the UserModels without setting up any games.
 				return userProfiles
 
-			if len(users_playing) >= game_attributes[request.user.status][0]:
+			if len(users_playing) >= game_attributes[request.user.get_profile().status][0]:
 				colours = ['blue', 'yellow', 'red', 'green']
-				game = Game()
-				game.start_time = datetime.now()
-				game.game_type = game_attributes[request.user.status][0]
+				game = Game(game_type=game_attributes[request.user.get_profile().status][0])
+				game.save()
 				for user_number in xrange(4):
 					user = None
-					if request.user.status == 'looking_for_2':	# Will need to add to this IF
+					if request.user.get_profile().status == 'looking_for_2':	# Will need to add to this IF
 						user = users_playing[user_number % 2]	# block if any new game types
 					else:										# are added.
 						user = users_playing[user_number]
@@ -107,7 +105,7 @@ class UserProfileResource(ModelResource):
 						user=user,
 						colour=colours[user_number])
 					user.save()
-				game.save()
+					player.save()
 			return userProfiles
 		return UserProfile.objects.none()
 

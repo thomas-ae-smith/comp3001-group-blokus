@@ -106,7 +106,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				authDfd.resolve();
 			},
 			error: function () {
-				$("#container").html('<b>Not logged in. Please register/login.</b><div style="color:white"><a href="/debug">Temp register</a> <a href="/login">Temp login</a></div>');
+				$("#container").html('<div style="color:white"><b>Not logged in. Please register/login.</b> <a href="/debug" class="button">Temp register</a> <a href="/login" class="button">Temp login</a></div>');
 				// TODO guest accountds
 				//blokus.user.clear()
 				authDfd.reject();
