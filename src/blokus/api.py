@@ -45,9 +45,9 @@ class UserProfileResource(ModelResource):
 
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
-			userProfiles = super(GameResource, self).get_object_list(request)
-			userProfiles.remove(request.user)
-			users_playing = set(request.user)
+			userProfiles = super(UserProfileResource, self).get_object_list(request)
+			userProfiles.exclude(id=request.user.id)
+			users_playing = {request.user}
 			# Game Attributes: <status>:(<typeID>,<playerNum>)
 			# Must be added to if a new game type is introduced.
 			game_attributes = {
@@ -58,8 +58,8 @@ class UserProfileResource(ModelResource):
 			}
 
 			# Get a list of users to play in a game.
-			if request.user.status == 'looking_for_any':
-				statuses = set(['looking_for_2','looking_for_4'])
+			statuses = set(['looking_for_2','looking_for_4'])
+			if request.user.get_profile().status == 'looking_for_any':
 				random.shuffle(statuses)
 				for status in statuses:
 					users_playing = [request.user]
@@ -71,13 +71,13 @@ class UserProfileResource(ModelResource):
 					if len(users_playing) >= game_attributes[request.user.status][1]:
 						request.user.status = status
 						break
-			elif request.user.status in statuses:
+			elif request.user.get_profile().status in statuses:
 				for user in userProfiles:
 					if user.status in [request.user.status, 'looking_for_any']:
 						users_playing.append(user)
 					if len(users_playing) >= player_count[request.user.status][1]:
 						break
-			elif request.user.status[0:7] == "private":
+			elif request.user.get_profile().status[0:7] == "private":
 				for user in UserProfiles:
 					if (user.status == request.user.status and
 						user.private_queue == request.user.private_queue):

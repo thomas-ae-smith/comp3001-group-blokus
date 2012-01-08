@@ -1,5 +1,5 @@
-from django.shortcuts import render_to_response
-from blokus.api import UserResource
+from django.shortcuts import render_to_response, get_object_or_404, redirect
+from blokus.api import UserResource, UserProfileResource
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import authenticate, login, logout
@@ -88,6 +88,11 @@ def debug_view(request):
     	else:
 		form = UserCreationForm()
         return render_to_response("debug.html", {'form' : form, 'user': user, 'users': User.objects.all(), 'profiles':UserProfile.objects.all()}, context_instance=RequestContext(request))
+
+def spoof_poll(request, id):
+	request.user = get_object_or_404(User, pk=id)
+	UserProfileResource().get_object_list(request)
+	return redirect('blokus.views.debug_view')
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):

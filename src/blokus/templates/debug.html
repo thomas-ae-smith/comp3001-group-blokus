@@ -14,9 +14,10 @@
 </p>
 <p>All profiles:
 <table>
-<tr><th>Profile ID</th><th>User ID</th><th>Status</th></tr>
+<tr><th>Profile ID</th><th>User ID</th><th>Status</th><th>Spoof Poll</th></tr>
 {% for profile in profiles %}
-<tr><td>{{profile.id}}</td><td>-&gt; {{profile.user.id}}</td><td>({{profile.status}})</td></tr>
+<tr><td>{{profile.id}}</td><td>-&gt; {{profile.user.id}}</td>
+<td>({{profile.status}})</td><td><a href="{% url blokus.views.spoof_poll profile.user.id%}">spoof</a></td></tr>
 {%endfor%}
 </table>
 </p>
