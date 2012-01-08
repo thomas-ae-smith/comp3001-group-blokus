@@ -91,7 +91,7 @@ class UserProfileResource(ModelResource):
 				return userProfiles
 
 			if len(users_playing) >= game_attributes[request.user.status][0]:
-				colours = ['red', 'yellow', 'green', 'blue']
+				colours = ['blue', 'yellow', 'red', 'green']
 				game = Game()
 				game.start_time = datetime.now()
 				game.game_type = game_attributes[request.user.status][0]
