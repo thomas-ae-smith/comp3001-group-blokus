@@ -35,11 +35,9 @@
 				positions = blokus.utils.get_points(blokus.pieceMasters.toJSON(), offset.x + 10, offset.y + 35, width - 27, height - 20);
 
 			pieces.each(function (piece) {
-				var x = offset.x + piece.get("x") * cellSize,
-					y = offset.y + piece.get("y") * cellSize,
-					pieceMaster = blokus.pieceMasters.get(piece.get("pieceMasterId")),
+				var pieceMaster = blokus.pieceMasters.get(piece.get("pieceMasterId")),
 					i = pieceMaster.get("id");
-				gameview.drawPiece(positions[i].x, positions[i].y, pieceMaster.get("data"), colour, 0.3, 0.3, canMove);
+				gameview.drawPiece(positions[i].x, positions[i].y, piece, colour, 0.3, 0.3, canMove);
 			});
 		}
 	});
