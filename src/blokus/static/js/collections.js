@@ -44,6 +44,9 @@
 				name: "game 1",
 				selected: true,
 				colourTurn: "red",
+				start_time: "Sun Jan 08 2012 17:26:59 GMT+0000 (GMT)",
+				time_now: "Sun Jan 08 2012 17:26:59 GMT+0000 (GMT)",
+				uri: "KE90D1",
 				players: [
 					{ id: 0, userId: 10, colour: "red" },
 					{ id: 1, userId: 13, colour: "green" },

@@ -73,7 +73,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 					blokus.user.set(model);
 				},
 				error: function () {
-					// TODO
+					blokus.showError("Failed to logout user!");
 				}
 			});
 		});
