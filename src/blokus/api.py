@@ -45,8 +45,8 @@ class UserProfileResource(ModelResource):
 
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
-			#request.user.last_activity = datetime.now() #User is active.
 			userProfiles = super(GameResource, self).get_object_list(request)
+			userProfiles.remove(request.user)
 			users_playing = set(request.user)
 			# Game Attributes: <status>:(<typeID>,<playerNum>)
 			# Must be added to if a new game type is introduced.
