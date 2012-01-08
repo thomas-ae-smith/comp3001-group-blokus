@@ -188,7 +188,7 @@
 				<p>Blokus is a 2 or 4 player game which.... yada yada</p>
 			</script>
 			<script type="text/html" id="register-template">
-				<form action="/register/" method="post" class="box">
+				<form action="/register/" method="post" class="box form">
 					{% csrf_token %}
 					<h1>Register</h1>
 					<p>Registration can't be this quick and easy... can it?</p>
@@ -199,30 +199,29 @@
 					<label>
 						<span>Email Address</span>
 						<input name="email" type="text" />
-					</label>
+					</label><br/>
 					<label>
 						<span>Password</span>
 						<input name="password" type="password" />
-					</label>
+					</label><br/>
 					<label>
 						<span>Confirm Password</span>
 						<input name="password2" type="password" />
-					</label>
-					<input type="submit" value="Register" class="button" /> <a href="#" class="button">Cancel</a>
+					</label><br/>
+					<input type="submit" value="Register" class="button" /> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
 				</form>
 			</script>
 			<script type="text/html" id="forgot-template">
-				<div id="forgot" class="form box">
+				<form name="forgotForm" action="/forgot/" method="post" class="form box">
+					{% csrf_token %}
 					<h1>Forgot your password</h1>
 					<p>Enter your email address below to recieve a new password</p>
-					<form name="forgotForm" action="/forgot/" method="post">
-						{% csrf_token %}
-						<label>
-							<span>Email Address</span>
-							<input name="email" type="text" />
-						</label>
-						<input type="submit" value="Send Email" class="button"/> <a href="#" class="button">Cancel</a>
-					</form>
+					<label>
+						<span>Email Address</span>
+						<input name="email" type="text" />
+					</label><br/>
+					<input type="submit" value="Send Email" class="button"/> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
+				</form>
 				</div>
 			</script>
 			<script type="text/html" id="profile-template">
