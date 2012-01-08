@@ -23,8 +23,7 @@
 			$el.html(template({ gameId: "HJKLO35" }));
 
 			var paper = this.paper = Raphael(el, 800, 600),
-				game = this.game = new blokus.Game({ id: this.options.id });
-			
+				game = this.game = new blokus.Game({ id: this.options.id });			
 
 			game.fetch({ success: function () {
 				// Make the Raphael element 800 x 600 in this view
@@ -40,8 +39,6 @@
 					
 				// Append to view
 				$el.append(gameboard.el);
-
-
 
 				// Create all the player panels
 				_(game.players.models).each(function (player) {
@@ -83,9 +80,8 @@
 				});
 
 				this_.$(".loading").remove();
-
 			}, error: function () {
-				// TODO
+				blokus.showError("Failed to fetch game");
 			}});
 			return this;
 		},
