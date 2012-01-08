@@ -33,6 +33,15 @@ class Game(models.Model):
 				return False
 		return True
 
+	# Returns the player with the highest score.
+	def get_winning_player(self):
+		players = self.player_set.all()
+		winner = players.pop()
+		for player in players:
+			if player.score > winner.score:
+				winner = player
+		return player
+
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
 
