@@ -194,19 +194,19 @@
 					<p>Registration can't be this quick and easy... can it?</p>
 					<label>
 						<span>Username</span>
-						<input name="username" type="text" />
+						{{ form.username }}
 					</label><br/>
 					<label>
 						<span>Email Address</span>
-						<input name="email" type="text" />
+						{{ form.email }}
 					</label><br/>
 					<label>
 						<span>Password</span>
-						<input name="password" type="password" />
+						{{ form.password1 }}
 					</label><br/>
 					<label>
 						<span>Confirm Password</span>
-						<input name="password2" type="password" />
+						{{ form.password2 }}
 					</label><br/>
 					<input type="submit" value="Register" class="button" /> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
 				</form>

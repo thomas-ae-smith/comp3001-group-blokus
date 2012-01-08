@@ -45,7 +45,8 @@ class UserCreationForm(forms.ModelForm):
         help_text = "Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only.",
         error_messages = {'invalid': "This value may contain only letters, numbers and @/./+/-/_ characters."})
 	password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
-	email = forms.EmailField(help_text = "Required")
+	password2 = forms.CharField(label="Password confirmation", widget=forms.PasswordInput, help_text="Enter the same password as above, for verification.")
+	email = forms.EmailField(label="Email Address" help_text = "Required")
 
 	class Meta:
         	model = User
@@ -61,7 +62,10 @@ class UserCreationForm(forms.ModelForm):
 
 	def clean_password2(self):
         	password1 = self.cleaned_data.get("password1", "")
-        	return password1
+		password2 = self.cleaned_data["password2"]
+		if password1 != password2:
+			raise forms.ValidationError("The two password fields didn't match.")
+		return password2
 
 	def save(self, commit=True):
         	user = super(UserCreationForm, self).save(commit=False)
