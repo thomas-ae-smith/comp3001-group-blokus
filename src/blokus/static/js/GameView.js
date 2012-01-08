@@ -71,7 +71,20 @@
 						var id = Number(pieceMaster.get("id"));
 
 						if (placedPieceIds.indexOf(id) === -1) {
-							unplacedPieces.add({ pieceMasterId: id });
+							var piece = new blokus.Piece({ pieceMasterId: id });
+							unplacedPieces.add(piece);
+
+							if (active) { // If logged in user
+								piece.bind("piece_placed", function (x, y, flip, rotation) {
+									piece.set({ x: x, y: y, flip: flip, rotation: rotation });
+
+									game.pieces[colour].create(piece.toJSON(), {
+										error: function () {
+											blokus.showError("Piece failed to be placed.")
+										}
+									});
+								});
+							}
 						}
 					});
 
@@ -87,9 +100,11 @@
 		},
 
 		//Draws a single piece
-		drawPiece: function (x, y, data, colour, scaleX, scaleY, canMove) {
+		drawPiece: function (x, y, piece, colour, scaleX, scaleY, canMove) {
 			var gameboard = this.gameboard,
 				paper = this.paper;
+			
+			var data = blokus.pieceMasters.get(piece.get("pieceMasterId")).get("data");
 
 			var numRows = data.length;
 			var numCols = data[0].length;
@@ -179,6 +194,7 @@
 								shape.isSelected = false;
 								shape.goToPos();
 								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
+								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, 0 /* TODO */, shape.posInGameboard.rotation);
 							}
 						}
 					}

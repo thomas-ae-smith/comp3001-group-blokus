@@ -55,7 +55,7 @@
 					y = offset.y + piece.get("y") * cellSize,
 					pieceMaster = blokus.pieceMasters.get(piece.get("pieceMasterId"));
 				
-				gameview.drawPiece(x, y, pieceMaster.get("data"), colour, 1, 1, false);
+				gameview.drawPiece(x, y, piece, colour, 1, 1, false);
 				if (piece.get("rotation") == undefined){
 					piece.set("rotation", 0);
 				}
