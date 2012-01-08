@@ -72,16 +72,6 @@
 					
 				this_.$(".uri").html(game.get("uri"));
 
-				this_.$(".help").click(function () {
-					$(".helpscreen").slideDown();
-				});
-
-				this.$(".exit").click(function () {
-					if (confirm("Are you sure you want to quit the game?")) {
-						location.hash = "";
-					}
-				})
-
 				// Append to view
 				$el.append(gameboard.el);
 
@@ -257,12 +247,12 @@
 					shape.rotate(1, gameboard, new paper.set());
 				}
 			);
-			blokus.mapKeyDown(86, // v
+			blokus.mapKeyUp(86, // v
 				function (){
 					shape.flip(2, gameboard, paper);
 				}
 			);
-			blokus.mapKeyDown(72, // h
+			blokus.mapKeyUp(72, // h
 				function (){
 					shape.flip(1, gameboard, paper);
 				}

@@ -131,6 +131,7 @@
 				function (c) {
 					if (c.opacity > 0){
 						c.animate({"opacity": opacity}, time);
+						c.opacity = opacity;
 					}
 				}
 			);
@@ -225,11 +226,12 @@
 					this.posInGameboard.y = Math.ceil((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize);
 				var rotation = this.getRotation();
 				var rdata = this.rotateMatrix(this.dataArr, rotation);
-				var numRows = rdata.length;
-				var numCols = rdata[0].length;
+				var transData = this.flipMatrix(rdata, this.flipNum);
+				var numRows = transData.length;
+				var numCols = transData[0].length;
 				for (var rowI = 0; rowI < numRows; rowI++){
 					for (var colJ = 0; colJ < numCols; colJ++) {
-						if (rdata[rowI][colJ] == 1) {
+						if (transData[rowI][colJ] == 1) {
 							newSet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
 							gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
 								x:this.posInGameboard.x+colJ,
@@ -466,27 +468,25 @@
 		/** FLIP **/
 
 		flipMatrix: function(data, flip){
-			var rotation = this.getRotation(),
-				rdata = this.rotateMatrix(data, rotation),
-				retData = new Array(),
-				numRows = rdata.length,
-				numCols = rdata[0].length;
+			var retData = new Array(),
+				numRows = data.length,
+				numCols = data[0].length;
 			if (flip == 0) // Not fliped
-				return rdata;
+				return _(data).clone();
 			else if(flip == 1){ //Flipped horizantal
 					for (var rowI = 0; rowI < numRows; rowI++){
-						var revArr = _(rdata[rowI]).clone();
+						var revArr = _(data[rowI]).clone();
 						retData.push(revArr.reverse());
 					}
 				return retData;
 			}
 			else if(flip == 2){ //Flipped vertical
-				retData = rdata.reverse()
+				retData = data.reverse()
 				return retData;
 			}
 			else{ //Both flipped
 				for (var rowI = 0; rowI < numRows; rowI++){
-					var revArr = _(rdata[rowI]).clone();
+					var revArr = _(data[rowI]).clone();
 					retData.push(revArr.reverse());
 				}
 				return retData.reverse();
@@ -496,21 +496,30 @@
 		flip: function (flipNum, gameboard, paper){
 			if(this.isSelected){
 				var this_ = this;
-				this.flipNum += flipNum;
+				if (this.flipNum == 3)
+					this.flipNum -= flipNum;
+				else if(this.flipNum == flipNum)
+					this.flipNum = 0;
+				else if(this.flipNum != 0)
+					this.flipNum = 3;
+				else
+					this.flipNum = flipNum;
 				this.visibleCells = new paper.set();
 				this.invisibleCells = new paper.set();
-				var data = this.flipMatrix(this.dataArr, flipNum);
+				var data = this.flipMatrix(this.dataArr, this.flipNum);
 				var numRows = data.length,
 					numCols = data[0].length;
 				var cellsInd = 0;
 				for (var rowI = 0; rowI < numRows; rowI++){
 					for (var colJ = 0; colJ < numCols; colJ++) {
 						if(data[rowI][colJ] == 1){
-							this.cells[cellsInd].animate({opacity: 1}, 00);
+							this.cells[cellsInd].animate({opacity: 0.5}, 00);
+							this.cells[cellsInd].opacity = 0.5;
 							this.visibleCells.push(this.cells[cellsInd]);
 						}
 						else{
 							this.cells[cellsInd].animate({opacity: 0}, 00);
+							this.cells[cellsInd].opacity = 0;
 							this.invisibleCells.push(this.cells[cellsInd]);
 						}
 						cellsInd += 1;
