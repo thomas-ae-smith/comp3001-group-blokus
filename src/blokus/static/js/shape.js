@@ -233,10 +233,18 @@
 					}
 				}
 				var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
-				this.destCor = {
-					x: cell.attr("x") - this.initBBox.x,
-					y: cell.attr("y") - this.initBBox.y
-				};
+				if(this.rotation%2 == 0){
+					this.destCor = {
+						x: cell.attr("x") - this.initBBox.x,
+						y: cell.attr("y") - this.initBBox.y
+					};
+				}
+				else{
+					this.destCor = {
+						x: cell.attr("x") - this.initRBBox.x,
+						y: cell.attr("y") - this.initRBBox.y
+					};
+				}
 				this.cellsOnGameboard = newSet;
 				this.notInPanel = false;
 				return this.cellsOnGameboard;
@@ -284,6 +292,15 @@
 					width: this.cells.getBBox().width,
 					height: this.cells.getBBox().height,
 				};
+				var rotPoint = this.centerOfRotation();
+				this.cells.transform("r90 "+rotPoint.x+" "+rotPoint.y);
+				this.initRBBox = {
+					x:this.cells.getBBox().x,
+					y:this.cells.getBBox().y,
+					width: this.cells.getBBox().width,
+					height: this.cells.getBBox().height,
+				};
+				this.cells.transform("");
 				this.options.initBBox = this.initBBox; // prevent from rerun
 			}
 		},
@@ -373,6 +390,9 @@
 			this.isSelected = false;
 			var rotPoint = this.centerOfRotation();
 			var rotation = this.rotation * 90;
+			window.s = this;
+			console.log("r"+rotation+" "+rotPoint.x+" "+rotPoint.y);
+			console.log(this.cells.getBBox());
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.sx, this.curScale.sy,
 						 this.initBBox.x, this.initBBox.y, rotation,
 						 rotPoint.x, rotPoint.y, 500);
@@ -385,8 +405,9 @@
 
 		centerOfRotation: function (){
 			var rdata = this.rotateMatrix(this.dataArr, this.rotation);
-			var w = rdata.length * this.cellSize,
-				h = rdata[0].length * this.cellSize;
+			rdata =this.dataArr;
+			var h = rdata.length * this.cellSize,
+				w = rdata[0].length * this.cellSize;
 			return {x: this.initBBox.x+w/2, y: this.initBBox.y+h/2};
 		},
 
