@@ -493,10 +493,12 @@
 			}
 		},
 
-		flip: function (flipNum, gameboard, emptySet){
+		flip: function (flipNum, gameboard, paper){
 			if(this.isSelected){
 				var this_ = this;
-				this.flipNum = flipNum;
+				this.flipNum += flipNum;
+				this.visibleCells = new paper.set();
+				this.invisibleCells = new paper.set();
 				var data = this.flipMatrix(this.dataArr, flipNum);
 				var numRows = data.length,
 					numCols = data[0].length;
@@ -504,15 +506,17 @@
 				for (var rowI = 0; rowI < numRows; rowI++){
 					for (var colJ = 0; colJ < numCols; colJ++) {
 						if(data[rowI][colJ] == 1){
-							this.cells[cellsInd].animate({opacity: 1}, 300);
+							this.cells[cellsInd].animate({opacity: 1}, 00);
+							this.visibleCells.push(this.cells[cellsInd]);
 						}
 						else{
-							this.cells[cellsInd].animate({opacity: 0}, 300);
+							this.cells[cellsInd].animate({opacity: 0}, 00);
+							this.invisibleCells.push(this.cells[cellsInd]);
 						}
 						cellsInd += 1;
 					}
 				}
-				setTimeout(function(){this_.inBoardValidation(gameboard, emptySet);}, 301);
+				setTimeout(function(){this_.inBoardValidation(gameboard, new paper.set());}, 301);
 			}
 		}
 

@@ -231,7 +231,7 @@
 								shape.isSelected = false;
 								shape.goToPos();
 								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
-								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, 0 /* TODO */, shape.posInGameboard.getRotation());
+								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, 0 /* TODO */, shape.getRotation());
 							}
 						}
 					}
@@ -249,12 +249,12 @@
 			);
 			blokus.mapKeyDown(86, // v
 				function (){
-					shape.flip(2, gameboard, new paper.set());
+					shape.flip(2, gameboard, paper);
 				}
 			);
 			blokus.mapKeyDown(72, // h
 				function (){
-					shape.flip(1, gameboard, new paper.set());
+					shape.flip(1, gameboard, paper);
 				}
 			);
 			return shape.cells;
