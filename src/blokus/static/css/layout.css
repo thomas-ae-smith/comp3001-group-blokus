@@ -403,3 +403,15 @@ h1 {
 .playerpanel {
 	background: rgba(0, 0, 0, 0.5);
 }
+#helpscreen {
+	position: absolute;
+	top: 0px; left: 0px; right: 0px;
+	background: url("../img/wood.jpg") center top;
+	border-radius: 5px;
+	z-index: 400;
+	padding: 10px;
+}
+	#helpscreen .buttons {
+		margin: 10px 0;
+		text-align: center;
+	}

@@ -153,6 +153,24 @@
 			</script>
 			<script type="text/html" id="game-template">
 				<div class="loading"></div>
+				<div id="helpscreen" style="display: none">
+					<h1>How to play blokus</h1>
+					<p><h2>About Blokus</h2>
+					Blokus (pronounced "block us") is a simple strategy board game for two or four players. Blokus is much like Dominoes; the aim is to use all of your pieces. Unlike Dominoes though Blokus uses polyominoes, is played on a 20x20 board, and has a few extra rules.</p>
+					<br>
+					<p><h2>How To Play</h2>
+					Blue goes first, followed by yellow, red, and green. On your turn you must take a piece in your colour that has not been previously placed and add it to the board. The placing of these pieces is restricted by the following rules.<br><ul><li>1. The first piece played of each color must be placed in one of the four corners of the board.</li><li>2. All subsequent pieces must be placed so that they share a corner with at least one piece of the same color.</li><li>3. No piece placed may share and edge with any pieces of the same colour.</li></ul></P>
+					<br>
+					<p><h2>2 Player Varient</h2>
+					If there are only 2 players then each player controls 2 colours. This opens up many new strategies as one colour may be sacrificed for the benefit of the other.</p>
+					<br>
+					<p><h2>End of the Game</h2>
+					When a player can no longer place any pieces on the board, they must miss their turn. The other players continue in the normal order of play until no one can place any more pieces on the board. At which point scores are calculated based on the following rules.<br><ul><li>1. Each square which is not placed on the board counts as a negative point.</li><li>2. A bonus of 15 points is awarded if all 21 pieces have been placed on the board.</li><li>3. This bonus is increased to 20 points if the 21 pieces were placed on the board with the single square being placed last.</li></ul>
+					<br>
+					<p><h2>Controls</h2>
+					<ul><li>- To Pick up a piece: Left click on it once. This will attach it to your cursor.</li><li>- To drop a piece: Press 'Esc'</li><li>- To place a piece: Left click on the board in a valid position while holding a piece</li><li>- To rotate a piece: Press the left or right arrow keys while holding a piece</li><li>- To flip a piece horizontally: Press 'H' while holding a piece</li><li>- To flip a piece vertically: Press 'V' while holding a piece</li></ul></p>
+					<div class="buttons"><a class="button close" href="javascript:;">Close</a></div>
+				</div>
 				<div class="playerpanelcontainer left"></div>
 				<div class="playerpanelcontainer right"></div>
 				<!-- everything below is placeholder -->
@@ -182,23 +200,6 @@
 				<div class="name"><%= name %></div>
 				<div class="wins">wins: <span class="val"><%= wins %></val></div>
 				<div class="losses">losses: <span class="val"><%= losses %></val></div>
-			</script>
-			<script type="text/html" id="help-template">
-				<h1>How to play blokus</h1>
-				<p><h2>About Blokus</h2>
-				Blokus (pronounced "block us") is a simple strategy board game for two or four players. Blokus is much like Dominoes; the aim is to use all of your pieces. Unlike Dominoes though Blokus uses polyominoes, is played on a 20x20 board, and has a few extra rules.</p>
-				<br>
-				<p><h2>How To Play</h2>
-				Blue goes first, followed by yellow, red, and green. On your turn you must take a piece in your colour that has not been previously placed and add it to the board. The placing of these pieces is restricted by the following rules.<br><ul><li>1. The first piece played of each color must be placed in one of the four corners of the board.</li><li>2. All subsequent pieces must be placed so that they share a corner with at least one piece of the same color.</li><li>3. No piece placed may share and edge with any pieces of the same colour.</li></ul></P>
-				<br>
-				<p><h2>2 Player Varient</h2>
-				If there are only 2 players then each player controls 2 colours. This opens up many new strategies as one colour may be sacrificed for the benefit of the other.</p>
-				<br>
-				<p><h2>End of the Game</h2>
-				When a player can no longer place any pieces on the board, they must miss their turn. The other players continue in the normal order of play until no one can place any more pieces on the board. At which point scores are calculated based on the following rules.<br><ul><li>1. Each square which is not placed on the board counts as a negative point.</li><li>2. A bonus of 15 points is awarded if all 21 pieces have been placed on the board.</li><li>3. This bonus is increased to 20 points if the 21 pieces were placed on the board with the single square being placed last.</li></ul>
-				<br>
-				<p><h2>Controls</h2>
-				<ul><li>- To Pick up a piece: Left click on it once. This will attach it to your cursor.</li><li>- To drop a piece: Press 'Esc'</li><li>- To place a piece: Left click on the board in a valid position while holding a piece</li><li>- To rotate a piece: Press the left or right arrow keys while holding a piece</li><li>- To flip a piece horizontally: Press 'H' while holding a piece</li><li>- To flip a piece vertically: Press 'V' while holding a piece</li></ul></p>
 			</script>
 			<script type="text/html" id="register-template">
 				<form action="/register/" method="post" class="box form">

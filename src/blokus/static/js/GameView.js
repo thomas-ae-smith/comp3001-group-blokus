@@ -73,8 +73,12 @@
 				this_.$(".uri").html(game.get("uri"));
 
 				this_.$(".help").click(function () {
-					$(".helpscreen").slideDown();
+					$("#helpscreen").slideDown();
 				});
+
+				this_.$("#helpscreen .close").click(function () {
+					$("#helpscreen").slideUp();
+				})
 
 				this.$(".exit").click(function () {
 					if (confirm("Are you sure you want to quit the game?")) {
