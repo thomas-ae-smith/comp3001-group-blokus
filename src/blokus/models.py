@@ -43,6 +43,15 @@ class PieceMaster(models.Model):
 			tup.append(tuple(rowlist))
 		return tuple(tup)
 
+	def get_point_value(self):
+		bitmap = self.get_bitmap()
+		score = 0
+		for y in xrange(len(bitmap)):
+			for x in xrange(len(bitmap[0])):
+				if bitmap[y][x]:
+					score += 1
+		return score
+
 class UserProfile(models.Model):
 
 	status_choices = (
@@ -74,6 +83,7 @@ class Player(models.Model):
 	user = models.ForeignKey(User)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	last_activity = models.DateTimeField(default=datetime.now())
+	points = models.IntegerField(default=0)
 
 	# Returns whether the player is able to make a move or not
 	def is_able_to_move(self):

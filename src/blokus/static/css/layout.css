@@ -163,7 +163,6 @@ label input, label textarea, label select {
 	padding:10px;
 	width:400px;
 	margin-left:200px;
-	height:260px;
 }
 .form p {
 	margin-top:10px;
@@ -171,10 +170,6 @@ label input, label textarea, label select {
 .form a {
 	float:left;
 	margin-right:5px;
-}
-/* Forgotten password form */
-#forgot {
-	height:160px;
 }
 /* Lobby Layout */
 .box {
@@ -373,10 +368,9 @@ h1 {
 .loading {
 	position: absolute;
 	left: 0; top: 0; right: 0; bottom: 0;
-	/* TODO: replace with something nicer */
 	background: transparent url(../img/loading.gif) no-repeat center;
 }
-/*********** Game View CSS *****************/
+/* Game View */
 .gameview svg {
 	position: absolute;
 	top: 0; left: 0; right: 0; bottom: 0;
