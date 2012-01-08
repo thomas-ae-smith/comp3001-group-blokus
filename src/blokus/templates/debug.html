@@ -5,17 +5,21 @@
 <body>
 <p>hello {{user}}.</p>
 <p>All users:
-<ul>
+<table>
+<tr><th>User Id</th><th>Username</th></tr>
 {% for username in users %}
-<li>{{username.id}} {{username.username}}</li>
+<tr><td>{{username.id}}</td><td><center>{{username.username}}</center></td></tr>
 {%endfor%}
-</ul></p>
+</table>
+</p>
 <p>All profiles:
-<ul>
+<table>
+<tr><th>Profile ID</th><th>User ID</th><th>Status</th></tr>
 {% for profile in profiles %}
-<li>{{profile.id}} -&gt; {{profile.user.id}}. ({{profile.status}})</li>
+<tr><td>{{profile.id}}</td><td>-&gt; {{profile.user.id}}</td><td>({{profile.status}})</td></tr>
 {%endfor%}
-</ul></p>
+</table>
+</p>
 <p><a href="{% url socialauth_begin 'facebook' %}">Enter using Facebook</a></p>
 
 
