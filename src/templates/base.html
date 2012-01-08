@@ -50,11 +50,12 @@
 						<a href="javascript:;" id="signout-button" class="button">Logout</a>
 					</div>
 					<div id="signedOut">
-						<form class="login">							<label class="input">
+						<form class="login">
+							<label>
 								<span>Username</span>
 								<input id="loginUsername" type="text" />
 							</label>
-							<label class="input">
+							<label>
 								<span>Password</span>
 								<input id="loginPassword" type="password" />
 							</label>
@@ -187,30 +188,28 @@
 				<p>Blokus is a 2 or 4 player game which.... yada yada</p>
 			</script>
 			<script type="text/html" id="register-template">
-				<div class="form box">
+				<form action="/register/" method="post" class="box">
+					{% csrf_token %}
 					<h1>Register</h1>
 					<p>Registration can't be this quick and easy... can it?</p>
-					<form action="/register/" name="registerForm" method="post">
-						{% csrf_token %}
-						<label class="input">
-							<span>Username</span>
-							<input name="username" type="text" />
-						</label>
-						<label class="input">
-							<span>Email Address</span>
-							<input name="email" type="text" />
-						</label>
-						<label class="input">
-							<span>Password</span>
-							<input name="password" type="password" />
-						</label>
-						<label class="input">
-							<span>Confirm Password</span>
-							<input name="password2" type="password" />
-						</label>
-						<a href="javascript:document.forms.registerForm.submit();" class="button" style="clear:left;">Register</a> <a href="#" class="button">Cancel</a>
-					</form>
-				</div>
+					<label>
+						<span>Username</span>
+						<input name="username" type="text" />
+					</label><br/>
+					<label>
+						<span>Email Address</span>
+						<input name="email" type="text" />
+					</label>
+					<label>
+						<span>Password</span>
+						<input name="password" type="password" />
+					</label>
+					<label>
+						<span>Confirm Password</span>
+						<input name="password2" type="password" />
+					</label>
+					<input type="submit" value="Register" class="button" /> <a href="#" class="button">Cancel</a>
+				</form>
 			</script>
 			<script type="text/html" id="forgot-template">
 				<div id="forgot" class="form box">
@@ -218,11 +217,11 @@
 					<p>Enter your email address below to recieve a new password</p>
 					<form name="forgotForm" action="/forgot/" method="post">
 						{% csrf_token %}
-						<label class="input">
+						<label>
 							<span>Email Address</span>
 							<input name="email" type="text" />
 						</label>
-						<a href="javascript:document.forms.forgotForm.submit();" class="button" style="clear:left;">Send</a> <a href="#" class="button">Cancel</a>
+						<input type="submit" value="Send Email" class="button"/> <a href="#" class="button">Cancel</a>
 					</form>
 				</div>
 			</script>
@@ -238,6 +237,5 @@
 				<% } %>
 			</script>
 		</div>
-
 	</body>
 </html>

@@ -132,17 +132,21 @@ b{ font-weight: bold;}
 	min-height: 400px;
 }
 /* Form field labels */
-.input {
+label {
   margin: 5px 0;
   background: white;
+  display: inline-block;
 }
-.input span {
+label span {
   position: absolute;
   padding: 5px;
   margin-left: 3px;
   color: #999;
 }
-.input input, .input textarea, .input select {
+label input {
+	display: inline-block;
+}
+label input, label textarea, label select {
   position: relative;
   margin: 0;
   border-width: 1px;
@@ -151,7 +155,7 @@ b{ font-weight: bold;}
   font: inherit;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-    .input input, .input textarea, .input select { padding: 4px; }
+    label input, label textarea, label select { padding: 4px; }
 }
 /* Register Form */
 .form {
@@ -197,16 +201,12 @@ b{ font-weight: bold;}
 		#profileBox #profileInfo .welcome {
 			font-size: 20px;
 		}
-
 		#profileBox #profileInfo .stats {
 			margin: 5px 2px;
 		}
 	#profileBox #signedOut {
 		position: absolute;
 		top: 8px; right: 12px;
-	}
-	#profileBox #signedOut label, #profileBox #signedOut input {
-		display: inline-block;
 	}
 	#profileBox #signedOut .links {
 		text-align: right;
@@ -216,12 +216,10 @@ b{ font-weight: bold;}
 		color: white;
 	}
 h1 {
-	/*font-family:Palatino Linotype;*/
 	font-weight:bold;
 	font-size:24pt;
 }
 .modelist {
-	/*font-family:Palatino Linotype;*/
 	font-weight:bold;
 	text-align:center;
 	margin-left:30px;
