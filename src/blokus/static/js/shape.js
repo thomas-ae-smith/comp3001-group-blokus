@@ -213,9 +213,13 @@
 		getCellsOnGameboard: function (gameboard, newSet) {
 			if(this.isShapeInGameboard()){
 				this.posInGameboard = {
-					x: Math.floor((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize),
-					y: Math.floor((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize),
+					x: Math.ceil((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize),
+					y: Math.ceil((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize),
 				};
+				if(this.posInGameboard.x < 4)
+					this.posInGameboard.x -= 1;
+				if(this.posInGameboard.y < 4)
+					this.posInGameboard.y -= 1;
 				var rdata = this.rotateMatrix(this.dataArr, this.rotation);
 				var numRows = rdata.length;
 				var numCols = rdata[0].length;
