@@ -23,7 +23,7 @@
 			return this;
 		},
 
-		renderPieces: function (pieces) {
+		renderPieces: function (pieces, canMove) {
 			var gameview = this.options.gameview,
 				cellSize = this.options.cellSize,
 				colour = this.options.colour,
@@ -39,7 +39,7 @@
 					y = offset.y + piece.get("y") * cellSize,
 					pieceMaster = blokus.pieceMasters.get(piece.get("pieceMasterId")),
 					i = pieceMaster.get("id");
-				gameview.drawPiece(positions[i].x, positions[i].y, pieceMaster.get("data"), colour, 0.3, 0.3);
+				gameview.drawPiece(positions[i].x, positions[i].y, pieceMaster.get("data"), colour, 0.3, 0.3, canMove);
 			});
 		}
 	});

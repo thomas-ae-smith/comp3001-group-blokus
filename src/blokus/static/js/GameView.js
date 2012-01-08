@@ -80,7 +80,7 @@
 						});
 
 						gameboard.renderPieces(colour, placedPieces);
-						playerPanel.renderPieces(unplacedPieces);
+						playerPanel.renderPieces(unplacedPieces, active);
 						
 					});
 				});
@@ -94,7 +94,7 @@
 		},
 
 		//Draws a single piece
-		drawPiece: function (x, y, data, colour, scaleX, scaleY) {
+		drawPiece: function (x, y, data, colour, scaleX, scaleY, canMove) {
 			var gameboard = this.gameboard,
 				paper = this.paper;
 
@@ -133,6 +133,7 @@
 					dataArr: _(data).clone(), 
 					cells: cells,
 					visibleCells: visibleCells,
+					canMove: canMove,
 					invisibleCells: invisibleCells,
 					pos: {x:x, y:y},
 					curScale: {sx: scaleX, sy:scaleY, originalScale: false},

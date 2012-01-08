@@ -22,6 +22,7 @@
 		fullScale: false,
 
 		isSelected: false,
+		canMove: false,
 		rotation: 0,
 		cells: undefined, //The set of cells or squares
 		visibleCells: undefined, //The set of visible cells or squares
@@ -102,6 +103,7 @@
 			this.cells = this.options.cells;
 			this.visibleCells = this.options.visibleCells;
 			this.invisibleCells = this.options.invisibleCells;
+			this.canMove = this.options.canMove;
 			this.pos = this.options.pos;
 			this.dataArr = this.options.dataArr;
 			//this.destCor = this.options.destCor;
@@ -368,12 +370,14 @@
 		/** SELECT SHAPE AND RETURN TO PANEL **/
 
 		selectShape: function (e){
-			this.isSelected = true;
-			this.prevDistX = 0;
-			this.prevDistY = 0;
-			this.mousePageX = e.pageX - e.offsetX + this.initBBox.x;
-			this.mousePageY = e.pageY - e.offsetY + this.initBBox.y;
-			this.setOpacity(0.5, 100);
+			if (this.canMove){
+				this.isSelected = true;
+				this.prevDistX = 0;
+				this.prevDistY = 0;
+				this.mousePageX = e.pageX - e.offsetX + this.initBBox.x;
+				this.mousePageY = e.pageY - e.offsetY + this.initBBox.y;
+				this.setOpacity(0.5, 100);
+			}
 		},
 
 		returnToPanel: function (){
@@ -392,6 +396,7 @@
 
 		goToPos: function (){
 			this.isSelected = false;
+			this.canMove = false;
 			var rotPoint = this.getCenterRotation();
 			var rotation = this.rotation * 90;
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.sx, this.curScale.sy,
