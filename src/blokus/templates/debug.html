@@ -4,6 +4,9 @@
 </head>
 <body>
 <p>hello {{user}}.</p>
+{% if message %}
+<p><em>Message: {{message}}</em></p>
+{% endif %}
 <p>All users:
 <table>
 <tr><th>User Id</th><th>Username</th></tr>
@@ -12,20 +15,36 @@
 {%endfor%}
 </table>
 </p>
+<form class="form-stacked" action="{% url blokus.views.debug_view %}" method="post">
+{% csrf_token %}
 <p>All profiles:
 <table>
 <tr><th>Profile ID</th><th>User ID</th><th>Status</th><th>Spoof Poll</th></tr>
 {% for profile in profiles %}
 <tr><td>{{profile.id}}</td><td>-&gt; {{profile.user.id}}</td>
-<td>({{profile.status}})</td><td><a href="{% url blokus.views.spoof_poll profile.user.id%}">spoof</a></td></tr>
+
+
+
+<td>
+<select name="{{profile.id}}" onchange="this.name = 'c{{profile.id}}'; forms[0].submit()">
+<option>None</option>
+{% for status in profile.status_choices %}
+<option{% if status.0 == profile.status %} selected{%endif%}>{{status.0}}</option>
+{% endfor %}
+</select>
+</td>
+
+
+
+
+<td><a href="{% url blokus.views.spoof_poll profile.user.id%}">spoof</a></td></tr>
 {%endfor%}
 </table>
 </p>
 <p><a href="{% url socialauth_begin 'facebook' %}">Enter using Facebook</a></p>
 
 
-<form class="form-stacked" action="{% url blokus.views.debug_view %}" method="post">
-	{% csrf_token %}
+
 	{% for field in form.visible_fields %}
 	<div class="{% if field.errors %} error{% endif %}">
 	{% if field.errors %}{% for error in field.errors %}
@@ -37,7 +56,7 @@
 		              <span class="help-inline">{{ field.help_text }}</span>
 		          </div>
 		        {% endfor %}
-		        <button type="submit">Add user</button>
+		        <input type="submit" name="Add user" value="Add user"/>
 		      </fieldset>
 </form>
 </body>
