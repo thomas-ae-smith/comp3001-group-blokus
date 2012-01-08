@@ -103,7 +103,7 @@ blokus.utils = (function ($, _, Backbone){
 		var firstTurn = true;
 		for (var colI = 0; colI < 20; colI++){
 			for (var rowJ = 0; rowJ <= 20; rowJ++) {
-				if (get_claim(colI, rowJ) == gameview.game.get("colourTurn")[0]) {
+				if (get_claim(colI, rowJ) == gameview.game.get("colour_turn")[0]) {
 					firstTurn = false;
 				}
 			}
@@ -135,7 +135,7 @@ blokus.utils = (function ($, _, Backbone){
 
 	//True if the grid-square denoted by x,y shares a flat side with another square owned by the same colour.
 	var shares_side = function (x, y){
-		var turn = gameview.game.get("colourTurn")[0];
+		var turn = gameview.game.get("colour_turn")[0];
 		return (
 			(get_claim(x, y - 1) == turn) ||
 			(get_claim(x, y + 1) == turn) ||
@@ -146,7 +146,7 @@ blokus.utils = (function ($, _, Backbone){
 	
 	//True if the grid-square denoted by x,y shares a corner with another square owned by the same colour.
 	var shares_vertex = function (x, y){
-		var turn = gameview.game.get("colourTurn")[0];
+		var turn = gameview.game.get("colour_turn")[0];
 		return (
 			(get_claim(x - 1, y - 1) == turn) ||
 			(get_claim(x + 1, y - 1) == turn) ||

@@ -57,8 +57,9 @@
 
 		        this_.bind("close", function () { clearTimeout(poller); clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
-		        game.bind("change:player_turn", function (game, turn) {
-		        	console.log("TODO New player turn", turn);
+		        game.bind("change:colour_turn", function (game, colour) {
+		        	console.log("TODO New colour turn", colour);
+		        	blokus.showMsg(colour + ", it is now your turn");
 		        });
 
 		        game.bind("change:winner", function (game, winner) {
@@ -127,6 +128,10 @@
 								piece.bind("piece_placed", function (x, y, flip, rotation) {
 									piece.set({ x: x, y: y, flip: flip, rotation: rotation });
 									game.pieces[colour].create(piece.toJSON(), { error: function () { blokus.showError("Piece failed to be placed.") } });
+
+									var colourswitch = {"blue": "yellow", "yellow": "red", "red": "green", "green": "blue"};   // FIXME  temp
+									//blokus._exampleGames[1].colour_turn = colourswitch[game.get("colour_turn")];
+									game.fetch();
 								});
 							}
 						}
@@ -244,7 +249,7 @@
 							if(validPosition){
 								shape.isSelected = false;
 								shape.goToPos();
-								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
+								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colour_turn")[0]});
 								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, 0 /* TODO */, shape.getRotation());
 							}
 						}

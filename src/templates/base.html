@@ -36,6 +36,7 @@
 		<img src="{{ STATIC_URL }}img/logo.png" id="logo"/>
 		<div class="vignette"></div>
 		<div id="errorstackcontainer"><div id="errorstack"></div></div>
+		<div id="msgcontainer"><div id="msg" style="display: none"><div class="content">Message</div><div class="buttons"><a href="javascript:;" class="button close">OK</a></div></div></div>
 		<div id="container"></div>
 		<div class="templates">
 			<script type="text/html" id="lobby-template">
@@ -62,8 +63,10 @@
 							<input type="submit" value="Log in" class="button">
 						</form>
 						<div class="links">
-							<a href="#register">Register</a>
-							<a href="#forgot">Forgot your password?</a>
+							<a href="/debug">Temp register</a>
+							<a href="/login">Temp login</a>
+							<a href="#register">Register (FIXME)</a>
+							<a href="#forgot">Forgot your password? (FIXME)</a>
 						</div>
 					</div>
 				</div>
