@@ -36,12 +36,33 @@
 
 			$el.html(template());
 
-
 			var paper = this.paper = Raphael(el, 800, 600),			// Make the Raphael element 800 x 600 in this view
 				game = this.game = new blokus.Game({ id: this.options.id });
 			
+			var dfd = new $.Deferred();
 
 			game.fetch({ success: function () {
+				var dfds = [];
+
+				_(game.players.models).each(function (player) {
+					var user = player.user = new blokus.User({ id: player.get("userId") });
+					var d = new $.Deferred();
+					dfds.push(d);
+					user.fetch({ success: function () {
+						d.resolve();
+					}, error: function () {
+						d.resolve();
+						blokus.showError("Failed to get user information (id " + user.get("userId") + ") for player");
+					} })
+				});
+
+				$.when.apply(undefined, dfds).always(function () { dfd.resolve(); });
+				
+			}, error: function () {
+				blokus.showError("Failed to fetch game");
+			}});
+			
+			dfd.done(function () {
 				var gamej = game.toJSON(),
 					playerPanels = [],
 					positionId = 0,
@@ -81,7 +102,7 @@
 					$("#helpscreen").slideUp();
 				})
 
-				this.$(".exit").click(function () {
+				this_.$(".exit").click(function () {
 					if (confirm("Are you sure you want to quit the game?")) {
 						location.hash = "";
 					}
@@ -144,9 +165,7 @@
 
 				this_.$(".loading").remove();
 
-			}, error: function () {
-				blokus.showError("Failed to fetch game");
-			}});
+			});
 			return this;
 		},
 

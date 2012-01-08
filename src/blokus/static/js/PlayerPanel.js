@@ -12,7 +12,7 @@
 			var $el = $(this.el),
 				player = this.options.player,
 				template = _.template($('#player-panel-template').html());
-
+				
 			$el.html(template({
 				name: player.user.get("username"),
 				wins: 10,
