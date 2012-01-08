@@ -10,7 +10,7 @@ import hashlib
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
-	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
+	colour_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 	number_of_moves = models.PositiveIntegerField(default=0)
 	uri = models.CharField(max_length=56)
 	winner = models.IntegerField(default=-1)
@@ -142,13 +142,13 @@ class Piece(models.Model):
 	def satisfies_first_move(self):
 		height = len(self.get_bitmap())
 		width = len(self.get_bitmap()[0])
-		if self.player.colour == 'red' and self.player.game.player_turn == 0:
+		if self.x == 0 and self.y == 0:
 			return self.master.get_bitmap()[0][0]
-		elif self.player.colour == 'green' and self.player.game.player_turn == 1:
+		elif self.x + width == 19 and self.y == 0:
 			return self.master.get_bitmap()[0][width]
-		elif self.player.colour == 'yellow' and self.player.game.player_turn == 2:
+		elif self.x + width == 0 and self.y == 19:
 			return self.master.get_bitmap()[height][0]
-		elif self.plaer.colour == 'blue' and self.player.game.player_turn == 3:
+		elif self.x + width == 19 and self.y == 19:
 			return self.master.get_bitmap()[height][width]
 
 	def is_inside_grid(self):
