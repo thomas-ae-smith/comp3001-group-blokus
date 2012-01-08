@@ -338,9 +338,8 @@
 
 		inBoardValidation: function(gameboard, newSet){
 			if(this.isShapeInGameboard()){
-				if (this.cellsOnGameboard != undefined){
+				if (this.cellsOnGameboard != undefined)
 					this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
-				}
 				this.getCellsOnGameboard(gameboard, newSet);
 
 				//Validation
@@ -358,13 +357,10 @@
 				var corOnBoard = this.getCorOnBoard();
 				var validPosition = blokus.utils.valid(corOnBoard);
 				var colour = validPosition ? "#0C3" : "#F0A";
+				this.notInPanel = validPosition ? false : true;
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
-			}
-			else{
+			} else
 				this.notInPanel = true;
-				if (this.cellsOnGameboard != undefined)
-					this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
-			}
 		},
 
 		/** END VALIDATION AND BOUNDARY BOXS **/
@@ -383,6 +379,8 @@
 		returnToPanel: function (){
 			this.isSelected = false;
 			var rotPoint = this.getCenterRotation();
+			if (this.cellsOnGameboard != undefined)
+				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
 			var rotation = this.rotation * 90;
 			this.animate(0, 0, this.initScale.sx, this.initScale.sy,
 							this.initBBox.x, this.initBBox.y, rotation,
