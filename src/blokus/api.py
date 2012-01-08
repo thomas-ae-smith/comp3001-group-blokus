@@ -47,6 +47,8 @@ class UserProfileResource(ModelResource):
 		if request and request.user.id is not None:
 			userProfiles = super(GameResource, self).get_object_list(request)
 			userProfiles.remove(request.user)
+			import sys
+			print >>sys.stderr, userProfiles
 			users_playing = set(request.user)
 			# Game Attributes: <status>:(<typeID>,<playerCount>)
 			# Must be added to if a new game type is introduced.

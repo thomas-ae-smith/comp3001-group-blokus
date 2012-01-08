@@ -139,7 +139,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		},
 		urls: {
 			user: restRootUrl + "user/",
-			userProfile: restRootUrl + "userProfile/",
+			userProfile: restRootUrl + "userprofile/",
 			game: restRootUrl + "game/",
 			pieceMaster: restRootUrl + "piecemaster/"
 		},
