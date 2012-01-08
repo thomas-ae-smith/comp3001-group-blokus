@@ -5,17 +5,40 @@
 <body>
 <p>hello {{user}}.</p>
 <p>All users:
-<ul>
+<table>
+<tr><th>User Id</th><th>Username</th></tr>
 {% for username in users %}
-<li>{{username.id}}</li>
+<tr><td>{{username.id}}</td><td><center>{{username.username}}</center></td></tr>
 {%endfor%}
-</ul></p>
+</table>
+</p>
 <p>All profiles:
-<ul>
+<table>
+<tr><th>Profile ID</th><th>User ID</th><th>Status</th><th>Spoof Poll</th></tr>
 {% for profile in profiles %}
-<li>{{profile.id}} -&gt; {{profile.user.id}}</li>
+<tr><td>{{profile.id}}</td><td>-&gt; {{profile.user.id}}</td>
+<td>({{profile.status}})</td><td><a href="{% url blokus.views.spoof_poll profile.user.id%}">spoof</a></td></tr>
 {%endfor%}
-</ul></p>
+</table>
+</p>
 <p><a href="{% url socialauth_begin 'facebook' %}">Enter using Facebook</a></p>
+
+
+<form class="form-stacked" action="{% url blokus.views.debug_view %}" method="post">
+	{% csrf_token %}
+	{% for field in form.visible_fields %}
+	<div class="{% if field.errors %} error{% endif %}">
+	{% if field.errors %}{% for error in field.errors %}
+	<div class="alert-message block-message error fade in" data-alert="alert" >
+		              <p><strong>{{error}}</strong></p>
+		            </div>{% endfor %}{% endif %}
+		            {{ field.label_tag }}
+		              {{ field }}
+		              <span class="help-inline">{{ field.help_text }}</span>
+		          </div>
+		        {% endfor %}
+		        <button type="submit">Add user</button>
+		      </fieldset>
+</form>
 </body>
 </html>

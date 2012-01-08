@@ -22,6 +22,7 @@
 		fullScale: false,
 
 		isSelected: false,
+		canMove: false,
 		rotation: 0,
 		cells: undefined, //The set of cells or squares
 		visibleCells: undefined, //The set of visible cells or squares
@@ -102,6 +103,7 @@
 			this.cells = this.options.cells;
 			this.visibleCells = this.options.visibleCells;
 			this.invisibleCells = this.options.invisibleCells;
+			this.canMove = this.options.canMove;
 			this.pos = this.options.pos;
 			this.dataArr = this.options.dataArr;
 			//this.destCor = this.options.destCor;
@@ -359,8 +361,12 @@
 				var colour = validPosition ? "#0C3" : "#F0A";
 				this.notInPanel = validPosition ? false : true;
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
-			} else
+			} 
+			else {
 				this.notInPanel = true;
+				if (this.cellsOnGameboard != undefined)
+					this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
+			}
 		},
 
 		/** END VALIDATION AND BOUNDARY BOXS **/
@@ -368,12 +374,14 @@
 		/** SELECT SHAPE AND RETURN TO PANEL **/
 
 		selectShape: function (e){
-			this.isSelected = true;
-			this.prevDistX = 0;
-			this.prevDistY = 0;
-			this.mousePageX = e.pageX - e.offsetX + this.initBBox.x;
-			this.mousePageY = e.pageY - e.offsetY + this.initBBox.y;
-			this.setOpacity(0.5, 100);
+			if (this.canMove){
+				this.isSelected = true;
+				this.prevDistX = 0;
+				this.prevDistY = 0;
+				this.mousePageX = e.pageX - e.offsetX + this.initBBox.x;
+				this.mousePageY = e.pageY - e.offsetY + this.initBBox.y;
+				this.setOpacity(0.5, 100);
+			}
 		},
 
 		returnToPanel: function (){
@@ -385,13 +393,14 @@
 				var rotation = this.rotation * 90;
 				this.animate(0, 0, this.initScale.sx, this.initScale.sy,
 								this.initBBox.x, this.initBBox.y, rotation,
-								rotPoint.x, rotPoint.y, 500)
+								rotPoint.x, rotPoint.y, 500);
 			}
 			this.setOpacity(1, 500);
 		},
 
 		goToPos: function (){
 			this.isSelected = false;
+			this.canMove = false;
 			var rotPoint = this.getCenterRotation();
 			var rotation = this.rotation * 90;
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.sx, this.curScale.sy,
@@ -436,11 +445,12 @@
 
 		rotate: function (rotation, gameboard, emptySet){
 			if(this.isSelected){
+				var this_ = this;
 				this.rotation += rotation;
 				var rotPoint = this.getCenterRotation();
 				//this.cells.rotate(rotation*90, rotPoint.x, rotPoint.y);
 				this.cells.animate({transform: "...r"+rotation*90+" "+rotPoint.x+" "+rotPoint.y}, 150);
-				this.inBoardValidation(gameboard, emptySet);
+				setTimeout(function(){this_.inBoardValidation(gameboard, emptySet);}, 151);
 			}
 		}
 

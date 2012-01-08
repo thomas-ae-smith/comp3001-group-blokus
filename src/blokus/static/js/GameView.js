@@ -45,44 +45,41 @@
 
 				// Create all the player panels
 				_(game.players.models).each(function (player) {
+					var colour = player.get("colour"),
+						options = { paper: paper, game: game, player: player, gameview: this_ },
+						active = false,
+						playerPanel = new blokus.PlayerPanel(options);
+					
+					 // Identify if this is the logged in user
+					if (blokus.user.get("id") === player.get("userId")) {
+						active = true;
+						options.active = true;
+						options.positionId = 0;
+					} else {
+						positionId++;
+						options.positionId = positionId;
+					}
 
-					_(player.get("colours")).each(function (colour) {
-						var options = { paper: paper, game: game, player: player, colour: colour, gameview: this_ },
-							active = false,
-							playerPanel = new blokus.PlayerPanel(options);
-						
-						 // Identify if this is the logged in user
-						if (blokus.user.get("id") === player.get("userId")) {
-							active = true;
-							options.active = true;
-							options.positionId = 0;
-						} else {
-							positionId++;
-							options.positionId = positionId;
+					playerPanels.push(playerPanel);
+
+					// Append to view
+					$el.find(active ? ".playerpanelcontainer.left" : ".playerpanelcontainer.right").append(playerPanel.render().el);
+
+					var unplacedPieces = new blokus.PieceCollection(),
+						placedPieces = game.pieces[colour],
+						placedPieceIds = placedPieces.pluck("pieceMasterId");
+
+					// Determine what pieces have not been placed
+					_(blokus.pieceMasters.models).each(function (pieceMaster) {
+						var id = Number(pieceMaster.get("id"));
+
+						if (placedPieceIds.indexOf(id) === -1) {
+							unplacedPieces.add({ pieceMasterId: id });
 						}
-
-						playerPanels.push(playerPanel);
-
-						// Append to view
-						$el.find(active ? ".playerpanelcontainer.left" : ".playerpanelcontainer.right").append(playerPanel.render().el);
-
-						var unplacedPieces = new blokus.PieceCollection(),
-							placedPieces = game.pieces[colour],
-							placedPieceIds = placedPieces.pluck("pieceMasterId");
-
-						// Determine what pieces have not been placed
-						_(blokus.pieceMasters.models).each(function (pieceMaster) {
-							var id = Number(pieceMaster.get("id"));
-
-							if (placedPieceIds.indexOf(id) === -1) {
-								unplacedPieces.add({ pieceMasterId: id });
-							}
-						});
-
-						gameboard.renderPieces(colour, placedPieces);
-						playerPanel.renderPieces(unplacedPieces);
-						
 					});
+
+					gameboard.renderPieces(colour, placedPieces);
+					playerPanel.renderPieces(unplacedPieces, active);
 				});
 
 				this_.$(".loading").remove();
@@ -94,7 +91,7 @@
 		},
 
 		//Draws a single piece
-		drawPiece: function (x, y, data, colour, scaleX, scaleY) {
+		drawPiece: function (x, y, data, colour, scaleX, scaleY, canMove) {
 			var gameboard = this.gameboard,
 				paper = this.paper;
 
@@ -113,9 +110,6 @@
 						cell.opacity = 1;
 						cells.push(cell);
 						visibleCells.push(cell);
-						cell.node.onmouseover = function (){
-							this.style.cursor = 'pointer';
-						}
 					}
 					else{
 						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
@@ -133,6 +127,7 @@
 					dataArr: _(data).clone(), 
 					cells: cells,
 					visibleCells: visibleCells,
+					canMove: canMove,
 					invisibleCells: invisibleCells,
 					pos: {x:x, y:y},
 					curScale: {sx: scaleX, sy:scaleY, originalScale: false},
@@ -172,17 +167,12 @@
 					}
 				}
 			);
-			shape.cells.mousedown(
+			shape.cells.click(
 				function (e, x, y){
 					// on Start
-					if(!shape.isSelected){
+					if(!shape.isSelected)
 						shape.selectShape(e);
-					}
-				}
-			);
-			shape.cells.mouseup(
-				function(e, x, y){
-					if(shape.isSelected) {
+					else {
 						if(shape.notInPanel){
 							shape.returnToPanel();
 						}
