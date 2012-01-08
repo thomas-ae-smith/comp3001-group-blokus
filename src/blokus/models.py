@@ -202,11 +202,25 @@ class Piece(models.Model):
 		else:
 			self.rotation = (self.rotation - 1) % 4
 
+	# Mapping between the way the orientation is stored on the server (rot and
+	# trans), and the way it is stored at the client (rot, v-flip and h-flip).
+	# (<rot>, <trans>):(<rot>, <flip>)
+	server_client_mapping = {
+		(0,False):(0,0),
+		(1,False):(1,0),
+		(2,False):(2,0),
+		(3,False):(3,0),
+		(0,True):(3,1),
+		(1,True):(2,1),
+		(2,True):(1,1),
+		(3,True):(0,1)
+	}
+
 	def get_flipped(self):
-		return True
+		return server_client_mapping[(self.rotation,self.transposed)][1]
 
 	def get_rotated(self):
-		return True
+		return server_client_mapping[(self.rotation,self.transposed)][0]
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
