@@ -43,6 +43,15 @@ class PieceMaster(models.Model):
 			tup.append(tuple(rowlist))
 		return tuple(tup)
 
+	def get_point_value(self):
+		bitmap = self.get_bitmap()
+		score = 0
+		for y in xrange(len(bitmap)):
+			for x in xrange(len(bitmap[0])):
+				if bitmap[y][x]:
+					score += 1
+		return score
+
 class UserProfile(models.Model):
 
 	status_choices = (
@@ -74,6 +83,7 @@ class Player(models.Model):
 	user = models.ForeignKey(User)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	last_activity = models.DateTimeField(default=datetime.now())
+	points = models.IntegerField(default=0)
 
 	# Returns whether the player is able to make a move or not
 	def is_able_to_move(self):
@@ -191,6 +201,26 @@ class Piece(models.Model):
 			self.rotation = (self.rotation + 1) % 4
 		else:
 			self.rotation = (self.rotation - 1) % 4
+
+	# Mapping between the way the orientation is stored on the server (rot and
+	# trans), and the way it is stored at the client (rot, v-flip and h-flip).
+	# (<rot>, <trans>):(<rot>, <flip>)
+	server_client_mapping = {
+		(0,False):(0,0),
+		(1,False):(1,0),
+		(2,False):(2,0),
+		(3,False):(3,0),
+		(0,True):(3,1),
+		(1,True):(2,1),
+		(2,True):(1,1),
+		(3,True):(0,1)
+	}
+
+	def get_flipped(self):
+		return server_client_mapping[(self.rotation,self.transposed)][1]
+
+	def get_rotated(self):
+		return server_client_mapping[(self.rotation,self.transposed)][0]
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)

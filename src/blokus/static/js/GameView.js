@@ -23,8 +23,7 @@
 			$el.html(template({ gameId: "HJKLO35" }));
 
 			var paper = this.paper = Raphael(el, 800, 600),
-				game = this.game = new blokus.Game({ id: this.options.id });
-			
+				game = this.game = new blokus.Game({ id: this.options.id });			
 
 			game.fetch({ success: function () {
 				// Make the Raphael element 800 x 600 in this view
@@ -40,8 +39,6 @@
 					
 				// Append to view
 				$el.append(gameboard.el);
-
-
 
 				// Create all the player panels
 				_(game.players.models).each(function (player) {
@@ -74,7 +71,20 @@
 						var id = Number(pieceMaster.get("id"));
 
 						if (placedPieceIds.indexOf(id) === -1) {
-							unplacedPieces.add({ pieceMasterId: id });
+							var piece = new blokus.Piece({ pieceMasterId: id });
+							unplacedPieces.add(piece);
+
+							if (active) { // If logged in user
+								piece.bind("piece_placed", function (x, y, flip, rotation) {
+									piece.set({ x: x, y: y, flip: flip, rotation: rotation });
+
+									game.pieces[colour].create(piece.toJSON(), {
+										error: function () {
+											blokus.showError("Piece failed to be placed.")
+										}
+									});
+								});
+							}
 						}
 					});
 
@@ -83,17 +93,18 @@
 				});
 
 				this_.$(".loading").remove();
-
 			}, error: function () {
-				// TODO
+				blokus.showError("Failed to fetch game");
 			}});
 			return this;
 		},
 
 		//Draws a single piece
-		drawPiece: function (x, y, data, colour, scaleX, scaleY, canMove) {
+		drawPiece: function (x, y, piece, colour, scaleX, scaleY, canMove) {
 			var gameboard = this.gameboard,
 				paper = this.paper;
+			
+			var data = blokus.pieceMasters.get(piece.get("pieceMasterId")).get("data");
 
 			var numRows = data.length;
 			var numCols = data[0].length;
@@ -183,6 +194,7 @@
 								shape.isSelected = false;
 								shape.goToPos();
 								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
+								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, 0 /* TODO */, shape.posInGameboard.rotation);
 							}
 						}
 					}
