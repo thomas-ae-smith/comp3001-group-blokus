@@ -2,6 +2,9 @@ from django.shortcuts import render_to_response
 from blokus.api import UserResource
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth import authenticate, login, logout
+from django import forms
+from django.template import RequestContext
 from datetime import timedelta, datetime
 from blokus.models import *
 
@@ -37,15 +40,54 @@ def execute_garbage_collection(request):
 	# A view must return a "web response".
 	return HttpResponse(html)
 
-def register(request):
-	pass
+class UserCreationForm(forms.ModelForm):
+	username = forms.RegexField(label="Username", max_length=30, regex=r'^[\w.@+-]+$',
+        help_text = "Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only.",
+        error_messages = {'invalid': "This value may contain only letters, numbers and @/./+/-/_ characters."})
+	password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
+	email = forms.EmailField(help_text = "Required")
+
+	class Meta:
+        	model = User
+	        fields = ("username", "email")
+
+	def clean_username(self):
+        	username = self.cleaned_data["username"]
+	        try:
+        	    User.objects.get(username=username)
+	        except User.DoesNotExist:
+        	    return username
+	        raise forms.ValidationError("A user with that username already exists.")
+
+	def clean_password2(self):
+        	password1 = self.cleaned_data.get("password1", "")
+        	return password1
+
+	def save(self, commit=True):
+        	user = super(UserCreationForm, self).save(commit=False)
+        	user.set_password(self.cleaned_data["password1"])
+        	if commit:
+            		user.save()
+        	return user
+
 
 @guest_allowed
 def debug_view(request):
 	user = str(request.user.id)
 	if request.user.id is None:
 		user = 'None'
-	return render_to_response('debug.html', {'user': user, 'users': User.objects.all(), 'profiles':UserProfile.objects.all()})
+
+	if request.POST:
+        	form = UserCreationForm(request.POST)
+	        if form.is_valid():
+	            	form.save(True)
+			username = request.POST['username']
+            		password = request.POST['password1']
+            		user = authenticate(username=username, password=password)
+            		login(request, user)
+    	else:
+		form = UserCreationForm()
+        return render_to_response("debug.html", {'form' : form, 'user': user, 'users': User.objects.all(), 'profiles':UserProfile.objects.all()}, context_instance=RequestContext(request))
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):

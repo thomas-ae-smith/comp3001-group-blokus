@@ -7,15 +7,33 @@
 <p>All users:
 <ul>
 {% for username in users %}
-<li>{{username.id}}</li>
+<li>{{username.id}} {{username.username}}</li>
 {%endfor%}
 </ul></p>
 <p>All profiles:
 <ul>
 {% for profile in profiles %}
-<li>{{profile.id}} -&gt; {{profile.user.id}}</li>
+<li>{{profile.id}} -&gt; {{profile.user.id}}. ({{profile.status}})</li>
 {%endfor%}
 </ul></p>
 <p><a href="{% url socialauth_begin 'facebook' %}">Enter using Facebook</a></p>
+
+
+<form class="form-stacked" action="{% url blokus.views.debug_view %}" method="post">
+	{% csrf_token %}
+	{% for field in form.visible_fields %}
+	<div class="{% if field.errors %} error{% endif %}">
+	{% if field.errors %}{% for error in field.errors %}
+	<div class="alert-message block-message error fade in" data-alert="alert" >
+		              <p><strong>{{error}}</strong></p>
+		            </div>{% endfor %}{% endif %}
+		            {{ field.label_tag }}
+		              {{ field }}
+		              <span class="help-inline">{{ field.help_text }}</span>
+		          </div>
+		        {% endfor %}
+		        <button type="submit">Add user</button>
+		      </fieldset>
+</form>
 </body>
 </html>

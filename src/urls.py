@@ -24,7 +24,6 @@ urlpatterns = patterns('',
 	(r'^admin/', include(admin.site.urls)),
 	(r'^debug/$', 'blokus.views.debug_view'),
 	(r'^gc/$', 'blokus.views.execute_garbage_collection'),
-	(r'^register/$', 'blokus.views.register'),
 	(r'^gc-g/$', 'guest.views.delete_old_guests'),
 	url(r'', include('social_auth.urls')),
 )
