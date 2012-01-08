@@ -74,14 +74,18 @@
 						var id = Number(pieceMaster.get("id"));
 
 						if (placedPieceIds.indexOf(id) === -1) {
-							var piece = unplacedPieces.add({ pieceMasterId: id });
+							var piece = new blokus.Piece({ pieceMasterId: id });
+							unplacedPieces.add(piece);
+
 							if (active) { // If logged in user
 								piece.bind("piece_placed", function (x, y, flip, rotation) {
 									piece.set({ x: x, y: y, flip: flip, rotation: rotation });
-									
-									game.pieces[colour].add(piece, {error: function () {
-										blokus.showError("Piece failed to be placed.")
-									}});
+
+									game.pieces[colour].create(piece.toJSON(), {
+										error: function () {
+											blokus.showError("Piece failed to be placed.")
+										}
+									});
 								});
 							}
 						}
@@ -194,7 +198,6 @@
 								shape.isSelected = false;
 								shape.goToPos();
 								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colourTurn")[0]});
-								console.log(shape)
 								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, 0 /* TODO */, shape.posInGameboard.rotation);
 							}
 						}
