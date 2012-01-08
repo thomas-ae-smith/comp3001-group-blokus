@@ -45,44 +45,41 @@
 
 				// Create all the player panels
 				_(game.players.models).each(function (player) {
+					var colour = player.get("colour"),
+						options = { paper: paper, game: game, player: player, gameview: this_ },
+						active = false,
+						playerPanel = new blokus.PlayerPanel(options);
+					
+					 // Identify if this is the logged in user
+					if (blokus.user.get("id") === player.get("userId")) {
+						active = true;
+						options.active = true;
+						options.positionId = 0;
+					} else {
+						positionId++;
+						options.positionId = positionId;
+					}
 
-					_(player.get("colours")).each(function (colour) {
-						var options = { paper: paper, game: game, player: player, colour: colour, gameview: this_ },
-							active = false,
-							playerPanel = new blokus.PlayerPanel(options);
-						
-						 // Identify if this is the logged in user
-						if (blokus.user.get("id") === player.get("userId")) {
-							active = true;
-							options.active = true;
-							options.positionId = 0;
-						} else {
-							positionId++;
-							options.positionId = positionId;
+					playerPanels.push(playerPanel);
+
+					// Append to view
+					$el.find(active ? ".playerpanelcontainer.left" : ".playerpanelcontainer.right").append(playerPanel.render().el);
+
+					var unplacedPieces = new blokus.PieceCollection(),
+						placedPieces = game.pieces[colour],
+						placedPieceIds = placedPieces.pluck("pieceMasterId");
+
+					// Determine what pieces have not been placed
+					_(blokus.pieceMasters.models).each(function (pieceMaster) {
+						var id = Number(pieceMaster.get("id"));
+
+						if (placedPieceIds.indexOf(id) === -1) {
+							unplacedPieces.add({ pieceMasterId: id });
 						}
-
-						playerPanels.push(playerPanel);
-
-						// Append to view
-						$el.find(active ? ".playerpanelcontainer.left" : ".playerpanelcontainer.right").append(playerPanel.render().el);
-
-						var unplacedPieces = new blokus.PieceCollection(),
-							placedPieces = game.pieces[colour],
-							placedPieceIds = placedPieces.pluck("pieceMasterId");
-
-						// Determine what pieces have not been placed
-						_(blokus.pieceMasters.models).each(function (pieceMaster) {
-							var id = Number(pieceMaster.get("id"));
-
-							if (placedPieceIds.indexOf(id) === -1) {
-								unplacedPieces.add({ pieceMasterId: id });
-							}
-						});
-
-						gameboard.renderPieces(colour, placedPieces);
-						playerPanel.renderPieces(unplacedPieces, active);
-						
 					});
+
+					gameboard.renderPieces(colour, placedPieces);
+					playerPanel.renderPieces(unplacedPieces, active);
 				});
 
 				this_.$(".loading").remove();
