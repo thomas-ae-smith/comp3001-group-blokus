@@ -113,9 +113,6 @@
 						cell.opacity = 1;
 						cells.push(cell);
 						visibleCells.push(cell);
-						cell.node.onmouseover = function (){
-							this.style.cursor = 'pointer';
-						}
 					}
 					else{
 						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
@@ -173,17 +170,12 @@
 					}
 				}
 			);
-			shape.cells.mousedown(
+			shape.cells.click(
 				function (e, x, y){
 					// on Start
-					if(!shape.isSelected){
+					if(!shape.isSelected)
 						shape.selectShape(e);
-					}
-				}
-			);
-			shape.cells.mouseup(
-				function(e, x, y){
-					if(shape.isSelected) {
+					else {
 						if(shape.notInPanel){
 							shape.returnToPanel();
 						}
