@@ -125,6 +125,8 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 
 		$.when.apply(undefined, blokusDeferreds).then(function () { Backbone.history.start(); }) // Start blokus when everything is loaded
 				.fail(function () { blokus.showError("Error initializing. Failed to get pieceMasters? (Have you run syncdb?)"); });
+
+		$("#msg .close").click(function () { $("#msg").fadeOut(); });
 	});
 
 	return {
@@ -136,6 +138,9 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			$("#errorstack").append($error);
 			$error.slideDown();
 			setTimeout(function () { $error.slideUp(); }, 3000);
+		},
+		showMsg: function (msg) {
+			$("#msg").fadeIn().find(".content").html(msg);
 		},
 		urls: {
 			user: restRootUrl + "user/",

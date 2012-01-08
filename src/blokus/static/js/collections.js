@@ -43,7 +43,7 @@
 				id: 1,
 				name: "game 1",
 				selected: true,
-				colourTurn: "red",
+				colour_turn: "blue",
 				start_time: "Sun Jan 08 2012 17:26:59 GMT+0000 (GMT)",
 				time_now: "Sun Jan 08 2012 17:26:59 GMT+0000 (GMT)",
 				uri: "KE90D1",

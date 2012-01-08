@@ -121,6 +121,38 @@ b{ font-weight: bold;}
 	font-weight: bold;
 	text-align: center;
 }
+
+#msgcontainer {
+	position: fixed;
+	top: 200px; left: 0; right: 0;
+	z-index: 1000;
+}
+#msg {
+	margin: 0 auto;
+	width: 300px;
+	height: 80px;
+	background: rgba(0, 0, 0, 0.85);
+	border-radius: 5px;
+	color: white;
+	font-weight: bold;
+	text-align: center;
+	padding: 40px 10px;
+}
+	#msg .buttons {
+		margin: 30px 0;
+		text-align: center;
+	}
+.error {
+	padding: 5px;
+	border: 1px dashed red;
+	outline: 1px solid #ffffaa;
+	color: red;
+	background: #ffffaa;
+	margin: 10px;
+	font-weight: bold;
+	text-align: center;
+}
+
 #logo {
 	margin:0 auto;
 	display:block;
