@@ -144,7 +144,7 @@ class Piece(models.Model):
 		return True
 
 	def satisfies_first_move(self):
-		if self.game.number_of_moves < 4:
+		if self.player.game.number_of_moves < 4:
 			height = len(self.get_bitmap())
 			width = len(self.get_bitmap()[0])
 			if self.x == 0 and self.y == 0:
@@ -193,7 +193,7 @@ class Piece(models.Model):
 					if (bool(grid[this_row + self.y + 1][this_col + self.x + 1]) or
 							bool(grid[this_row + self.y + 1][this_col + self.x - 1]) or
 							bool(grid[this_row + self.y - 1][this_col + self.x + 1]) or
-							bool(grid[this_row + self.y] - 1[this_col + self.x - 1])):
+							bool(grid[this_row + self.y - 1][this_col + self.x - 1])):
 						adjacent = True
 
 		return adjacent
@@ -265,6 +265,8 @@ def record_move(sender, instance, **kwargs):
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
 	instance.player.game.colour_turn = instance.player.game.get_next_colour_turn()
 	instance.player.points += instance.master.get_point_value()
+	if instance.player.game.is_game_over():
+		instance.player.game.winner = instance.player.game.get_winning_player()
 
 	instance.player.game.save()
 	instance.player.save()
