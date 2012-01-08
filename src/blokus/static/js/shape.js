@@ -496,16 +496,31 @@
 		flip: function (flipNum, gameboard, paper){
 			if(this.isSelected){
 				var this_ = this;
+				if (this.rotation%2 != 0){
+					if (flipNum == 2)
+						flipNum = 1;
+					else if (flipNum == 1)
+						flipNum = 2;
+				}
+				/*
 				if (this.flipNum == 3)
-					this.flipNum -= flipNum;
+					this.flipNum -= flipNum
 				else if(this.flipNum == flipNum)
 					this.flipNum = 0;
 				else if(this.flipNum != 0)
 					this.flipNum = 3;
 				else
 					this.flipNum = flipNum;
+				*/
+				if (flipNum == 1)
+					this.curScale.sx = -1;
+				if (flipNum == 2)
+					this.curScale.sy = -1;
+				console.log(this.curScale.sx, this.curScale.sy, flipNum);
+					
 				this.visibleCells = new paper.set();
 				this.invisibleCells = new paper.set();
+				/*
 				var data = this.flipMatrix(this.dataArr, this.flipNum);
 				var numRows = data.length,
 					numCols = data[0].length;
@@ -513,19 +528,23 @@
 				for (var rowI = 0; rowI < numRows; rowI++){
 					for (var colJ = 0; colJ < numCols; colJ++) {
 						if(data[rowI][colJ] == 1){
-							this.cells[cellsInd].animate({opacity: 0.5}, 00);
+							this.cells[cellsInd].animate({opacity: 0.5}, 150);
 							this.cells[cellsInd].opacity = 0.5;
 							this.visibleCells.push(this.cells[cellsInd]);
 						}
 						else{
-							this.cells[cellsInd].animate({opacity: 0}, 00);
+							this.cells[cellsInd].animate({opacity: 0}, 150);
 							this.cells[cellsInd].opacity = 0;
 							this.invisibleCells.push(this.cells[cellsInd]);
 						}
 						cellsInd += 1;
 					}
 				}
-				setTimeout(function(){this_.inBoardValidation(gameboard, new paper.set());}, 301);
+				*/
+				var rotPoint = this.getCenterRotation();
+				//this.cells.rotate(rotation*90, rotPoint.x, rotPoint.y);
+				this.cells.animate({transform: "...s"+this.curScale.sx+" "+this.curScale.sy+" "+rotPoint.x+" "+rotPoint.y}, 150);
+				setTimeout(function(){this_.inBoardValidation(gameboard, new paper.set());}, 151);
 			}
 		}
 
