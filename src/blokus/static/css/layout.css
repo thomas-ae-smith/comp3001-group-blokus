@@ -246,6 +246,11 @@ label input, label textarea, label select {
 		margin: 3px 6px;
 		color: white;
 	}
+	#profileBox #profileMenu {
+		float:right;
+		margin-right:10px;
+		margin-top:25px;
+	}
 h1 {
 	font-weight:bold;
 	font-size:24pt;

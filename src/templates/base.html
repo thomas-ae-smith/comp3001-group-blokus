@@ -43,22 +43,23 @@
 				<div id="profileBox" class="box">
 					<img alt="avatar" src="<%= picsrc %>" />
 					<div id="profileInfo">
-						<div class="welcome serif">Hello <span class="username"><%= name %></span>!</div>
-						<div class="stats">wins: <span class="wins"><%= wins %></span> losses: <span class="losses"><%= losses %></span></div>
+						<div class="welcome serif">Hello <%= name %>!</div>
+						<div class="stats"><%= stats %></div>
 					</div>
-					<div id="profileMenu" style="display:none;">
+					<div id="profileMenu" <%= hideProfile %>>
 						<a href="#profile" class="button">Profile</a>
-						<a href="javascript:;" id="signout-button" class="button">Logout</a>
+						<a href="/logout/" id="signout-button" class="button">Logout</a>
 					</div>
-					<div id="signedOut">
-						<form class="login">
+					<div id="signedOut" <%= hideSignOut %>>
+						<form action="/login/" method="post">
+							{% csrf_token %}
 							<label>
 								<span>Username</span>
-								<input id="loginUsername" type="text" />
+								<input name="username" type="text" />
 							</label>
 							<label>
 								<span>Password</span>
-								<input id="loginPassword" type="password" />
+								<input name="password" type="password" />
 							</label>
 							<input type="submit" value="Log in" class="button">
 						</form>

@@ -78,21 +78,6 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			});
 		});
 
-		blokus.user.bind("change", function () {			// One the logged in user is known, show user information (or login is user is anonymous)
-			var name = blokus.user.get("username");
-			if (!name || name === "anon") {
-				$("#username").text("Guest");
-				$("#profileInfo p").text("Please login to save your scores");
-				$("#profileMenu").hide();
-				$("#signedOut").show();
-			} else {
-				$("#username").text(name);
-				$("#profileInfo p").text("wins: 0 losses: 0");
-				$("#profileMenu").show();
-				$("#signedOut").hide();
-			}
-		});
-
 		var authDfd = new $.Deferred();
 		blokusDeferreds.push(authDfd);
 
@@ -106,10 +91,8 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				authDfd.resolve();
 			},
 			error: function () {
-				$("#container").html('<div style="color:white"><b>Not logged in. Please register/login.</b> <a href="/debug" class="button">Temp register</a> <a href="/login" class="button">Temp login</a></div>');
-				// TODO guest accountds
 				//blokus.user.clear()
-				authDfd.reject();
+				authDfd.resolve();
 			}
 		});
 
