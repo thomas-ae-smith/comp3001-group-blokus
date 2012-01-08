@@ -8,32 +8,6 @@
 		yellow: '#ffff00'
 	}
 
-	function rotateMatrix(data, rotation){
-		rotation = Math.abs(rotation % 4);
-		var rotatedData = _(data).clone();
-		for (var numRotation  = 0; numRotation < rotation; numRotation++){
-			var rotatedDataTmp = new Array();
-			var numRows = rotatedData.length;
-			var numCols = rotatedData[0].length;
-			for (var colJ = numCols-1; colJ >= 0 ; colJ--) {
-				var reverseCol = Array();
-				for (var rowI = 0; rowI < numRows; rowI++){
-					reverseCol.push(rotatedData[rowI][colJ]);
-				}
-				rotatedDataTmp.push(reverseCol);
-			}
-			rotatedData = _(rotatedDataTmp).clone();
-		}
-		return rotatedData;
-	}
-
-	function centerOfRotation (data, rot, cellSize, x, y){
-		var rdata = rotateMatrix(data, rot);
-		var w = rdata.length * cellSize,
-			h = rdata[0].length * cellSize;
-		return {x: x+w/2, y: y+h/2};
-	}
-
 	blokus.GameView = Backbone.View.extend({
 		className: "gameview",
 		game: undefined,
@@ -139,6 +113,9 @@
 						cell.opacity = 1;
 						cells.push(cell);
 						visibleCells.push(cell);
+						cell.node.onmouseover = function (){
+							this.style.cursor = 'pointer';
+						}
 					}
 					else{
 						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
@@ -195,14 +172,17 @@
 					}
 				}
 			);
-			shape.cells.click(
+			shape.cells.mousedown(
 				function (e, x, y){
 					// on Start
 					if(!shape.isSelected){
 						shape.selectShape(e);
-						window.s = shape;
 					}
-					else {
+				}
+			);
+			shape.cells.mouseup(
+				function(e, x, y){
+					if(shape.isSelected) {
 						if(shape.notInPanel){
 							shape.returnToPanel();
 						}
