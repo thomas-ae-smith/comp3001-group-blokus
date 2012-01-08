@@ -7,10 +7,12 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 import hashlib
 
+_colour_regex = r"^(red|yellow|green|blue)$"
+
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
-	colour_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
+	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
 	uri = models.CharField(max_length=56)
 	winner = models.IntegerField(default=-1)
@@ -42,6 +44,9 @@ class Game(models.Model):
 			if player.score > winner.score:
 				winner = player
 		return player
+
+	def get_next_colour_turn(self):
+		return {"blue":"yellow","yellow":"red","red":"green","green":"blue"}[self.colour_turn]
 
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
@@ -88,7 +93,6 @@ class UserProfile(models.Model):
 # Green - Top Right
 # Blue - Bottom Right
 # Yellow - Bottom Left
-_colour_regex = r"^(red|yellow|green|blue)$"
 
 class Player(models.Model):
 	game = models.ForeignKey(Game)
@@ -140,16 +144,19 @@ class Piece(models.Model):
 		return True
 
 	def satisfies_first_move(self):
-		height = len(self.get_bitmap())
-		width = len(self.get_bitmap()[0])
-		if self.x == 0 and self.y == 0:
-			return self.master.get_bitmap()[0][0]
-		elif self.x + width == 19 and self.y == 0:
-			return self.master.get_bitmap()[0][width]
-		elif self.x + width == 0 and self.y == 19:
-			return self.master.get_bitmap()[height][0]
-		elif self.x + width == 19 and self.y == 19:
-			return self.master.get_bitmap()[height][width]
+		if self.game.number_of_moves < 4:
+			height = len(self.get_bitmap())
+			width = len(self.get_bitmap()[0])
+			if self.x == 0 and self.y == 0:
+				return self.master.get_bitmap()[0][0]
+			elif self.x + width == 19 and self.y == 0:
+				return self.master.get_bitmap()[0][width]
+			elif self.x + width == 0 and self.y == 19:
+				return self.master.get_bitmap()[height][0]
+			elif self.x + width == 19 and self.y == 19:
+				return self.master.get_bitmap()[height][width]
+		else:
+			return False
 
 	def is_inside_grid(self):
 		height = len(self.get_bitmap())
@@ -256,7 +263,7 @@ def record_move(sender, instance, **kwargs):
 	move.piece = instance
 	move.move_number = instance.player.game.number_of_moves + 1
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
-	instance.player.game.player_turn = instance.player.game.number_of_moves % 4
+	instance.player.game.colour_turn = instance.player.game.get_next_colour_turn()
 	instance.player.points += instance.master.get_point_value()
 
 	instance.player.game.save()
