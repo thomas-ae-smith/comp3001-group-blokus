@@ -44,7 +44,8 @@ class UserProfileResource(ModelResource):
 		return bundle
 
 	def get_object_list(self, request):
-		if request and request.user.id is not None:			userProfiles = super(UserProfileResource, self).get_object_list(request)
+		if request and request.user.id is not None:
+			userProfiles = super(UserProfileResource, self).get_object_list(request)
 			userProfiles.exclude(id=request.user.id)
 			users_playing = {request.user}
 			# Game Attributes: <status>:(<typeID>,<playerCount>)
