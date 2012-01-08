@@ -92,6 +92,7 @@ class UserProfileResource(ModelResource):
 			if len(users_playing) >= game_attributes[request.user.get_profile().status][0]:
 				colours = ['blue', 'yellow', 'red', 'green']
 				game = Game(game_type=game_attributes[request.user.get_profile().status][0])
+				game.save()
 				for user_number in xrange(4):
 					user = None
 					if request.user.get_profile().status == 'looking_for_2':	# Will need to add to this IF
@@ -105,7 +106,6 @@ class UserProfileResource(ModelResource):
 						colour=colours[user_number])
 					user.save()
 					player.save()
-				game.save()
 			return userProfiles
 		return UserProfile.objects.none()
 
