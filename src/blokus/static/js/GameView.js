@@ -72,6 +72,16 @@
 					
 				this_.$(".uri").html(game.get("uri"));
 
+				this_.$(".help").click(function () {
+					$(".helpscreen").slideDown();
+				});
+
+				this.$(".exit").click(function () {
+					if (confirm("Are you sure you want to quit the game?")) {
+						location.hash = "";
+					}
+				})
+
 				// Append to view
 				$el.append(gameboard.el);
 
