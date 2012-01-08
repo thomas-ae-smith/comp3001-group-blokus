@@ -381,10 +381,12 @@
 			var rotPoint = this.getCenterRotation();
 			if (this.cellsOnGameboard != undefined)
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
-			var rotation = this.rotation * 90;
-			this.animate(0, 0, this.initScale.sx, this.initScale.sy,
-							this.initBBox.x, this.initBBox.y, rotation,
-							rotPoint.x, rotPoint.y, 500)
+			if(this.distMoved.x != 0 && this.distMoved.y != 0){
+				var rotation = this.rotation * 90;
+				this.animate(0, 0, this.initScale.sx, this.initScale.sy,
+								this.initBBox.x, this.initBBox.y, rotation,
+								rotPoint.x, rotPoint.y, 500)
+			}
 			this.setOpacity(1, 500);
 		},
 
