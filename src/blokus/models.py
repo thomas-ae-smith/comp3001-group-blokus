@@ -5,12 +5,14 @@ from blokus.common import *
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+import hashlib
 
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 	number_of_moves = models.PositiveIntegerField(default=0)
+	uri = models.CharField(max_length=56)
 
 	def get_grid(self):
 		grid = [[False]*20 for x in xrange(20)]
