@@ -48,7 +48,7 @@ class UserProfileResource(ModelResource):
 			userProfiles = super(GameResource, self).get_object_list(request)
 			userProfiles.remove(request.user)
 			users_playing = set(request.user)
-			# Game Attributes: <status>:(<typeID>,<playerNum>)
+			# Game Attributes: <status>:(<typeID>,<playerCount>)
 			# Must be added to if a new game type is introduced.
 			game_attributes = {
 				'looking_for_2':(1,2),

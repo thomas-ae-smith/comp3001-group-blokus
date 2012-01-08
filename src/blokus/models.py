@@ -1,6 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator, RegexValidator
 from django.db import models
-from datetime import datetime
+from datetime import datetime, timedelta
 from blokus.common import *
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -11,6 +11,9 @@ class Game(models.Model):
 	game_type = models.IntegerField()
 	player_turn = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 	number_of_moves = models.PositiveIntegerField(default=0)
+
+	def get_duration(self):
+		return self.start_time - datetime.now()
 
 	def get_grid(self):
 		grid = [[False]*20 for x in xrange(20)]
