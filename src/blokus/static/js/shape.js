@@ -111,7 +111,7 @@
 			this.gameBBox = this.options.gameBBox;
 			this.gameboardCellSize = this.options.gameboardCellSize;
 			this.cellSize = this.options.cellSize;
-			this.calInitBBox();
+			this.setInitBBoxes();
 			// Apply the current scale given
 			if (this.curScale != undefined){
 				this.cells.scale(this.curScale.sx, this.curScale.sy
@@ -174,7 +174,7 @@
 		//Should be called after calDistTravel
 		moveShape: function (){
 			var time = 0;
-			var rotPoint = this.centerOfRotation();
+			var rotPoint = this.getCenterRotation();
 			var rotation = this.rotation * 90;
 			if(this.cells.getBBox(true).x > 132 && !this.fullScale){
 				this.curScale = {sx: 1, sy: 1};
@@ -284,7 +284,7 @@
 			}
 		},
 
-		calInitBBox: function (){
+		setInitBBoxes: function (){
 			if (this.options.initBBox == undefined){
 				this.initBBox = {
 					x:this.pos.x,
@@ -292,7 +292,7 @@
 					width: this.cells.getBBox().width,
 					height: this.cells.getBBox().height,
 				};
-				var rotPoint = this.centerOfRotation();
+				var rotPoint = this.getCenterRotation();
 				this.cells.transform("r90 "+rotPoint.x+" "+rotPoint.y);
 				this.initRBBox = {
 					x:this.cells.getBBox().x,
@@ -378,7 +378,7 @@
 
 		returnToPanel: function (){
 			this.isSelected = false;
-			var rotPoint = this.centerOfRotation();
+			var rotPoint = this.getCenterRotation();
 			var rotation = this.rotation * 90;
 			this.animate(0, 0, this.initScale.sx, this.initScale.sy,
 							this.initBBox.x, this.initBBox.y, rotation,
@@ -388,11 +388,8 @@
 
 		goToPos: function (){
 			this.isSelected = false;
-			var rotPoint = this.centerOfRotation();
+			var rotPoint = this.getCenterRotation();
 			var rotation = this.rotation * 90;
-			window.s = this;
-			console.log("r"+rotation+" "+rotPoint.x+" "+rotPoint.y);
-			console.log(this.cells.getBBox());
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.sx, this.curScale.sy,
 						 this.initBBox.x, this.initBBox.y, rotation,
 						 rotPoint.x, rotPoint.y, 500);
@@ -403,22 +400,25 @@
 
 		/** ROTATION **/
 
-		centerOfRotation: function (){
-			var rdata = this.rotateMatrix(this.dataArr, this.rotation);
-			rdata =this.dataArr;
-			var h = rdata.length * this.cellSize,
-				w = rdata[0].length * this.cellSize;
+		getCenterRotation: function (){
+			var data =this.dataArr;
+			var h = data.length * this.cellSize,
+				w = data[0].length * this.cellSize;
 			return {x: this.initBBox.x+w/2, y: this.initBBox.y+h/2};
 		},
 
 		rotateMatrix: function(data, rotation){
+			// This if fixes a very weird bug
+			if (rotation > 0)
+				if((rotation+2) %2 != 0)
+					rotation = rotation + 2;
 			rotation = Math.abs(rotation % 4);
 			var rotatedData = _(data).clone();
-			for (var numRotation  = 0; numRotation < rotation; numRotation++){
-				var rotatedDataTmp = new Array();
-				var numRows = rotatedData.length;
-				var numCols = rotatedData[0].length;
-				for (var colJ = numCols-1; colJ >= 0 ; colJ--) {
+			for (var numRotation = 0; numRotation < rotation; numRotation++){
+				var rotatedDataTmp = new Array(),
+					numRows = rotatedData.length,
+					numCols = rotatedData[0].length;
+				for (var colJ = numCols-1; colJ >= 0 ; colJ--){
 					var reverseCol = Array();
 					for (var rowI = 0; rowI < numRows; rowI++){
 						reverseCol.push(rotatedData[rowI][colJ]);
@@ -433,7 +433,7 @@
 		rotate: function (rotation, gameboard, emptySet){
 			if(this.isSelected){
 				this.rotation += rotation;
-				var rotPoint = this.centerOfRotation();
+				var rotPoint = this.getCenterRotation();
 				this.cells.rotate(rotation*90, rotPoint.x, rotPoint.y);
 				this.inBoardValidation(gameboard, emptySet);
 			}
