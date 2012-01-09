@@ -81,7 +81,7 @@
 						gameview: this_
 					}).render(),
 
-					poller = setInterval(function () { game.fetch({ error: function () { blokus.showError("Failed to fetch game"); /* FIXME: remove? */ } }); }, 1000),	// Fetch game model every second (to determined player turn, duration, winner etc)
+					poller = setInterval(function () { game.fetch({ error: function () { blokus.showError("Failed to fetch game"); /* FIXME: remove? */ } }); }, 4000),	// Fetch game model every second (to determined player turn, duration, winner etc)
 		        	ticker = setInterval(function () { this_.updateDuration(); }, 1000); // Keep game duration up-to-date
 
 		        this_.bind("close", function () { clearTimeout(poller); clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
@@ -168,7 +168,6 @@
 									game.getPlayerOfColour(colour).pieces.create(piece.toJSON(), { error: function () { blokus.showError("Piece failed to be placed.") } });
 
 									var colourswitch = {"blue": "yellow", "yellow": "red", "red": "green", "green": "blue"};   // FIXME  temp
-									//blokus._exampleGames[1].colour_turn = colourswitch[game.get("colour_turn")];
 									game.fetch();
 								});
 							}
@@ -195,7 +194,6 @@
 		drawPiece: function (x, y, piece, colour, scaleX, scaleY, canMove) {
 			var gameboard = this.gameboard,
 				paper = this.paper;
-console.log(piece)
 			var data = blokus.pieceMasters.get(piece.get("master_id")).get("data");
 
 			var numRows = data.length;

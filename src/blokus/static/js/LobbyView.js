@@ -5,7 +5,7 @@ blokus.LobbyView = Backbone.View.extend({
         var this_ = this,
             poller = setInterval(function () { // Fetch user model every second (to determined if user is yet in a game)
                 if (this_.pollUser) { blokus.userProfile.fetch(); }
-            }, 1000);
+            }, 4000);
         this.bind("close", function () { clearTimeout(poller); }); // Remove poller timeout when lobbyview is closed
     },
 
