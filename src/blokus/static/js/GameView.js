@@ -159,7 +159,7 @@
 						var id = Number(pieceMaster.get("id"));
 
 						if (placedPieceIds.indexOf(id) === -1) {
-							var piece = new blokus.Piece({ master_id: id });
+							var piece = new blokus.Piece({ master_id: id, player_id: player.get("id") });
 							unplacedPieces.add(piece);
 
 							if (active) { // If logged in user

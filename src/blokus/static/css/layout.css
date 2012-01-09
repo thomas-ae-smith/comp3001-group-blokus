@@ -1,73 +1,17 @@
 @font-face {
-  font-family: 'Droid Serif';
-  font-style: normal;
-  font-weight: bold;
+  font-family: 'Droid Serif'; font-style: normal; font-weight: bold;
   src: local('Droid Serif Bold'), local('DroidSerif-Bold'), url('droidserifbold.woff') format('woff');
 }
 @font-face {
-  font-family: 'Droid Serif';
-  font-style: normal;
-  font-weight: normal;
+  font-family: 'Droid Serif'; font-style: normal; font-weight: normal;
   src: local('Droid Serif'), local('DroidSerif'), url('droidserif.woff') format('woff');
 }
 @font-face {
-  font-family: 'Droid Sans';
-  font-style: normal;
-  font-weight: normal;
+  font-family: 'Droid Sans'; font-style: normal; font-weight: normal;
   src: local('Droid Sans'), local('DroidSans'), url('droidsans.woff') format('woff');
 }
-@font-face {
-  font-family: 'Droid Sans';
-  font-style: normal;
-  font-weight: bold;
+@font-face { font-family: 'Droid Sans'; font-style: normal; font-weight: bold;
   src: local('Droid Sans Bold'), local('DroidSans-Bold'), url('droidsansbold.woff') format('woff');
-}
-/* http://meyerweb.com/eric/tools/css/reset/
-   v2.0 | 20110126
-   License: none (public domain)
-*/
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1.1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
 }
 .clearfix:after {
 	content: ".";
@@ -77,27 +21,17 @@ table {
 	line-height: 0;
 	height: 0;
 }
-.clearfix {
-	display: inline-block;
-}
-html[xmlns] .clearfix {
-	display: block;
-}
-* html .clearfix {
-	height: 1%;
-}
+.clearfix { display: inline-block; }
+html[xmlns] .clearfix { display: block; }
+* html .clearfix { height: 1%; }
 html {
 	background: url("../img/feltbg.jpg") center top;
 	font-family: 'Droid Sans', sans-serif;
 	height: 100%;
 	font-size: 12px;
 }
-h1, h2, h3, h4, h5, .serif, .title {
-	font-family: 'Droid Serif', sans-serif;
-}
-.sans, .sans-serif, .button {
-	font-family: 'Droid Sans', sans-serif;
-}
+h1, h2, h3, h4, h5, .serif, .title { font-family: 'Droid Serif', sans-serif; }
+.sans, .sans-serif, .button { font-family: 'Droid Sans', sans-serif; }
 .vignette {
 	background:transparent -webkit-radial-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
 	width:100%;
@@ -116,14 +50,11 @@ h1, h2, h3, h4, h5, .serif, .title {
 	padding:3px 20px;
 	text-decoration:none;
 }
-.button:hover {
-	background: white;
-}
+.button:hover { background: white; }
 .button.disabled {
 	border-color: #999999;
 	color: #333333;
-	text-shadow: none;
-	box-shadow: none;
+	text-shadow: none; box-shadow: none;
 }
 b{ font-weight: bold;}
 #errorstackcontainer {
@@ -135,47 +66,31 @@ b{ font-weight: bold;}
 	width: 500px;
 }
 .error {
-	padding: 5px;
-	border: 1px dashed red;
-	outline: 1px solid #ffffaa;
-	color: red;
-	background: #ffffaa;
-	margin: 10px;
-	font-weight: bold;
-	text-align: center;
+	background: #ffffaa; border: 1px dashed red; outline: 1px solid #ffffaa;
+	padding: 5px; margin: 10px;
+	font-weight: bold; text-align: center; color: red;
 }
-
 #msgcontainer {
 	position: fixed;
 	top: 200px; left: 0; right: 0;
 	z-index: 1000;
 }
 #msg {
-	margin: 0 auto;
-	width: 300px;
-	height: 80px;
+	margin: 0 auto; padding: 40px 10px;
+	width: 300px; height: 80px;
 	background: rgba(0, 0, 0, 0.85);
 	border-radius: 5px;
-	color: white;
-	font-weight: bold;
-	text-align: center;
-	padding: 40px 10px;
+	font-weight: bold; text-align: center; color: white;
 }
 	#msg .buttons {
 		margin: 30px 0;
 		text-align: center;
 	}
 .error {
-	padding: 5px;
-	border: 1px dashed red;
-	outline: 1px solid #ffffaa;
-	color: red;
-	background: #ffffaa;
-	margin: 10px;
-	font-weight: bold;
-	text-align: center;
+	padding: 5px; margin: 10px;
+	background: #ffffaa; border: 1px dashed red; outline: 1px solid #ffffaa;
+	font-weight: bold; text-align: center; color: red;
 }
-
 #logo {
 	margin:0 auto;
 	display:block;
@@ -218,14 +133,10 @@ label input, label textarea, label select {
 }
 /* Register Form */
 .form {
-	margin-top:80px;
-	padding:10px;
+	margin:80px 0 0 200px; padding:10px;
 	width:400px;
-	margin-left:200px;
 }
-.form p {
-	margin-top:10px;
-}
+.form p { margin-top:10px; }
 .form a {
 	float:left;
 	margin-right:5px;
@@ -262,9 +173,7 @@ label input, label textarea, label select {
 		position: absolute;
 		top: 8px; right: 12px;
 	}
-	#profileBox #signedOut .links {
-		text-align: right;
-	}
+	#profileBox #signedOut .links { text-align: right; }
 	#profileBox #signedOut .links a {
 		margin: 3px 6px;
 		color: white;
@@ -290,49 +199,31 @@ h1 {
 	float:left;
 	cursor: pointer;
 }
-.modelist li:hover {
-	background: rgba(0, 0, 0, 0.72);
-}
-.modelist li div {
-	height:100px;
-}
-.modelist h1 {
-	font-size:48pt;
-}
+.modelist li:hover { background: rgba(0, 0, 0, 0.72); }
+.modelist li div { height:100px; }
+.modelist h1 { font-size:48pt; }
 .modelist h2 {
 	font-size:22pt;
 	padding-top:15px;
 }
-.modelist h3 {
-	font-size:18pt;
-}
+.modelist h3 { font-size:18pt; }
 .modelist p {
 	height: 50px;
 	padding: 10px;
-	line-height: 1.5;
-	font-weight:normal;
+	line-height: 1.5; font-weight:normal;
 }
 #privatelobby, #waiting {
 	width:700px;
 	margin:0px 0px 0px 50px;
 }
-	#waiting {
-		text-align: center;
-	}
+	#waiting { text-align: center; }
 	#privatelobby > div, #waiting > div {
 		position: relative;
 		padding: 16px;
 	}
-	#privatelobby .title, #waiting .title {
-		font-size: 22px;
-		font-weight: bold;
-	}
-	#privatelobby > div > p {
-		margin: 30px 0 10px 0;
-	}
-	#waiting > div > p {
-		margin: 20px 0 5px 0;
-	}
+	#privatelobby .title, #waiting .title { font-size: 22px; font-weight: bold; }
+	#privatelobby > div > p { margin: 30px 0 10px 0; }
+	#waiting > div > p { margin: 20px 0 5px 0; }
 	#waiting > div > .loading {
 		position: relative;
 		width: 100%;
@@ -345,26 +236,19 @@ h1 {
 	}
 	#privatelobby .playerchoices > div {
 		position: absolute;
-		top: 0;
-		bottom: 0;
+		top: 0; bottom: 0;
 		width: 325px;
 		background: rgba(0, 0, 0, 0.42);
 		cursor: pointer;
 	}
-		#privatelobby .playerchoices > div:hover {
-			background: rgba(0, 0, 0, 0.62);
-		}
+		#privatelobby .playerchoices > div:hover { background: rgba(0, 0, 0, 0.62); }
 		#privatelobby .playerchoices > div.sel {
 			outline: 3px solid #CCA;
 			background: rgba(0, 0, 0, 0.79);
 			box-shadow: 0px 0px 9px #FFE;
 		}
-	#privatelobby .playerchoices .p2 {
-		left: 0;
-	}
-	#privatelobby .playerchoices .p4 {
-		right: 0;
-	}
+	#privatelobby .playerchoices .p2 { left: 0; }
+	#privatelobby .playerchoices .p4 { right: 0; }
 		#privatelobby .playerchoices .big {
 			position: absolute;
 			top: 12px; left: 10px;
@@ -386,29 +270,22 @@ h1 {
 		padding: 4px 0;
 		text-indent: 4px;
 	}
-	#privatelobby > div > .players {
-		padding-top: 30px;
-	}
+	#privatelobby > div > .players { padding-top: 30px; }
 		#privatelobby .players > div {
 			position: relative;
 			display: inline-block;
-			border-left: 1px solid rgba(255, 255, 255, 0.08);
-			border-right: 1px solid rgba(0, 0, 0, 0.28);
+			border-left: 1px solid rgba(255, 255, 255, 0.08); border-right: 1px solid rgba(0, 0, 0, 0.28);
 			padding: 0 4px;
 			width: 23%;
 			cursor: pointer;
 		}
 		#privatelobby div .players > div:first-child { border-left: 0; }
 		#privatelobby div .players > div:last-child { border-right: 0; }
-			#privatelobby .players > div > .name {
-				font-size: 14px;
-			}
+			#privatelobby .players > div > .name { font-size: 14px; }
 			#privatelobby .players > div > .colour {
 				position: absolute;
-				top: 5px;
-				right: 5px;
-				width: 4px;
-				height: 4px;
+				top: 5px; right: 5px;
+				width: 4px; height: 4px;
 				border-radius: 2px;
 				background-color: #ccc;
 				font-size: 14px;
@@ -427,20 +304,14 @@ h1 {
 		top: 0;
 	}
 	#privatelobby #start { right: 0; display: none; }
-	#waiting > div > .button {
-	}
 .loading {
 	position: absolute;
 	left: 0; top: 0; right: 0; bottom: 0;
 	background: transparent url(../img/loading.gif) no-repeat center;
 }
 /* Game View */
-.gameview {
-	top:-40px;
-}
-.gameview svg {
-	z-index: 100;
-}
+.gameview { top:-40px; }
+.gameview svg { z-index: 100; }
 .toppanel {
 	position: absolute;
 	top: 0;
@@ -448,31 +319,21 @@ h1 {
 	background: rgba(0, 0, 0, 0.5);
 	color:white;
 }
-.left {
-	left: 0;
-}
-.right {
-	right:0;
-}
+.left { left: 0; }
+.right { right:0; }
 .playerpanelcontainer.left {
 	position: absolute;
 	top: 60px; left: 0;
 	width: 132px;
 }
-.playerpanelcontainer.left .playerpanel {
-	height: 600px;
-}
+.playerpanelcontainer.left .playerpanel { height: 600px; }
 .playerpanelcontainer.right {
 	position: absolute;
 	top: 60px; right: 0;
 	width: 132px;
 }
-.playerpanelcontainer.right .playerpanel {
-	height: 200px;
-}
-.playerpanelcontainer {
-	background: rgba(0, 0, 0, 0.5);
-}
+.playerpanelcontainer.right .playerpanel { height: 200px; }
+.playerpanelcontainer { background: rgba(0, 0, 0, 0.5); }
 .playerpanel div {
 	background: rgba(0, 0, 0, 0.5);
 	color:white;
@@ -488,9 +349,7 @@ h1 {
 		font-size:12pt;
 		float:right;
 	}
-	.playerpanel div p {
-		float:right;
-	}
+	.playerpanel div p { float:right; }
 .game-help {
 	position:absolute;
 	top: 6px;

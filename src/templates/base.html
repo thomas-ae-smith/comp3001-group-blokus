@@ -9,6 +9,7 @@
 		<meta name="description" content="Blokus Game" />
 		<meta name="author" content="Comp3001 Group Blokus" />
 		<link rel="shortcut icon" href="{{ STATIC_URL }}img/icon.ico" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" type="text/css"/>
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
 		{% block extracss %}{% endblock %}
 		<script src="{{ STATIC_URL }}js/jquery.js"></script>
@@ -266,8 +267,8 @@
 		</div>
 		{% if redirect %}
 		<!-- Redirect to particular point on page -->
-		<script type="text/javascript"> 
-			window.location.hash = "{{redirect}}"; 
+		<script type="text/javascript">
+			window.location.hash = "{{redirect}}";
     		</script>
 		{% endif %}
 	</body>

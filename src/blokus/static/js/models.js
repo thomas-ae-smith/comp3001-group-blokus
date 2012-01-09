@@ -1,48 +1,19 @@
 // Define the models used by blokus
 (function ($, _, Backbone) {
-	function getUrlId (url) {
-		return (url.charAt(url.length - 1) === "/" ? url.slice(0, url.length - 1) : url).split("/").pop();
+	function getIdFromUrl (url) {
+		return (url.charAt(url.length-1) === "/" ? url.slice(0, url.length-1) : url).split("/").pop();
 	}
 
 	var Model = Backbone.Model.extend({
-		url : function () {
-			if (this.resourceUrl) {
-	            return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
-            } else if (this.collection) {
-                return this.collection.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
-            } else {
-                throw "Does not have resource url or collection";
-            }
+		url: function () {
+			if (this.resourceUrl) return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
+            else if (this.collection) return this.collection.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
+            else throw "Does not have resource url or collection";
         }
 	});
-	var User = Model.extend({
-			resourceUrl: blokus.urls.user,
 
-			// FIXME: Hacked in bootstrap, baby
-/*			fetch: function (options) {
-				var this_ = this,
-					id = Number(this_.get("id")),
-					model = _(blokus._exampleUsers).find(function (user) {
-						return user.id === id;
-					});
-
-				if (!model) {
-					if (options && options.error) options.error.call(undefined, {}, {status: 404});
-				} else {
-					this.set(this.parse(model));
-					if (options && options.success) options.success.call();
-				}
-			},*/
-
-			parse: function (model) {
-				return model;
-			}
-		}),
-
-		UserProfile = Model.extend({
-			resourceUrl: blokus.urls.userProfile
-		}),
-
+	var User = Model.extend({ resourceUrl: blokus.urls.user }),
+		UserProfile = Model.extend({ resourceUrl: blokus.urls.userProfile }),
 		Game = Model.extend({
 			resourceUrl: blokus.urls.game,
 
@@ -73,12 +44,11 @@
 			parse: function (model) {
 				var players = this.players = new blokus.PlayerCollection(model.players);
 				_(players.models).each(function (player) {
-					//player.url = this.get("player");
-					player.pieces = new blokus.PieceCollection(player.get("pieces"));
-					_(player.pieces.models).each(function (piece) {
-						piece.set({ master_id: getUrlId(piece.get("master")), player_id: getUrlId(piece.get("player")) });
+					var pieces = player.pieces = new blokus.PieceCollection(player.get("pieces"));
+					_(pieces.models).each(function (piece) {
+						piece.set({ master_id: getIdFromUrl(piece.get("master")), player_id: getIdFromUrl(piece.get("player")) });
 					});
-					player.set({ user_id: getUrlId(player.get("user")) });
+					player.set({ user_id: getIdFromUrl(player.get("user")) });
 				});
 				return model;
 			},
@@ -93,15 +63,22 @@
 		PieceMaster = Model.extend({
 			resourceUrl: blokus.urls.pieceMaster,
 
-			parse: function (model) {
+			parse: function (model) { // TODO: remove
 				model.data = model.piece_data;
 				return model;
 			}
 		}),
 
 		Piece = Model.extend({
-			validate: function () {
-				// TODO: check valid place for piece
+			defaults: { client_rotation: 0, client_flip: 0 },
+			initialize: function () {
+				var this_ = this;
+				this.bind("change", function () {
+					this_.set({
+						player: blokus.urls.player + this_.get("player_id"),
+						master: blokus.urls.pieceMaster + this_.get("master_id")
+					});
+				});
 			}
 		}),
 
@@ -149,7 +126,6 @@
 		PieceMaster: PieceMaster,
 		Piece: Piece,
 		Player: Player,
-
 		user: user,
 		userProfile: userProfile,
 		board: board
