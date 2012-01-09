@@ -26,12 +26,12 @@
 			var gameview = this.options.gameview,
 				cellSize = this.options.cellSize,
 				colour = this.options.player.get("colour"),
-				scale = this.options.active ? 0.8 : 0.3,
+				scale = this.options.active ? 0.6 : 0.3,
 				$el = $(this.el),
 				offset = offsets[this.options.positionId],
 				width = 130,
 				height = this.options.active ? 600 : 200,
-				positions = blokus.utils.get_points(blokus.pieceMasters.toJSON(), offset.x + 10, offset.y + 35, width - 27, height - 20);
+				positions = blokus.utils.get_points(blokus.pieceMasters.toJSON(), offset.x + 20, offset.y + 35, width - 27, height - 20);
 
 			pieces.each(function (piece) {
 				var pieceMaster = blokus.pieceMasters.get(piece.get("master_id")),

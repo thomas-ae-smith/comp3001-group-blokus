@@ -558,7 +558,7 @@
 				this_ = this;
 				var cenPoint = this.getCenterOfShape();
 				this.haloCircle = new this.paper.set();
-				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 0, 89)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 0, 89)));
 				this.haloCircle[0].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
@@ -567,7 +567,7 @@
 						console.log("Rotate Left");
 					}
 				});
-				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 91, 179)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 91, 179)));
 				this.haloCircle[1].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
@@ -576,7 +576,7 @@
 						console.log("Rotate Right");
 					}
 				});
-				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 181, 269)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 181, 269)));
 				this.haloCircle[2].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
@@ -585,7 +585,7 @@
 						console.log("Flip Vertical");
 					}
 				});
-				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 271, 359)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 271, 359)));
 				this.haloCircle[3].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
@@ -594,8 +594,8 @@
 						console.log("Flip Horizantal");
 					}
 				});
-				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 30, opacity: 0});
-				this.haloCircle.animate({opacity: 1}, 500);
+				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 10, opacity: 0});
+				this.haloCircle.animate({opacity: 0.3}, 500);
 				this.haloCircle.mouseover( function(){
 						this_.haloOn = true;
 					}
@@ -609,7 +609,7 @@
 				this.haloCircle.toFront();
 			}
 			else if(this.canMove){
-				this.haloCircle.animate({opacity: 1}, 500);
+				this.haloCircle.animate({opacity: 0.3}, 500);
 				this.cells.toFront();
 				this.haloCircle.toFront();
 			}
