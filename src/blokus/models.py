@@ -207,6 +207,11 @@ class Piece(models.Model):
 		return False
 
 	def is_valid_position(self):
+		logging.debug("Does not overlap:" + self.does_not_overlap())
+		logging.debug("Is only adjancent:" + self.is_only_adjacent())
+		logging.debug("Satisfies first move:" + self.satisfies_first_move())
+		logging.debug("Is inside grid:" + self.is_inside_grid())
+		logging.debug("Game is not over: " + self.player.game.winning_colour.strip())
 		return self.does_not_overlap() and
 			self.is_only_adjacent() and
 			self.satisfies_first_move() and
