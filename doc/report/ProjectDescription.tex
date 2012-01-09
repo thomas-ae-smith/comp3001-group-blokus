@@ -1,0 +1,15 @@
+
+\section{Description of Prototype Functionality}
+
+\subsection{Blokus}
+Blokus is an abstract strategic board game for 4 players. Also a 2 player variant exists where each player controls 2 colours. Blokus is played on a 20x20 board using 21 unique polyominoes. On their turn users select a piece from their piece-tray on the left and move it to where they want to place it on the board. Client-side validation is used to highlight the area the piece would cover to show whether a position is valid or invalid as appropriate. If the user wishes to rotate or flip the a piece they either hover over it in their piece-tray and use the control halo that appears or once picked up they can use left and right to rotate or 'h' and 'v' to flip horizontally and vertically respectively. Once the user has decided where to place it they click once more to place the piece on the board.
+
+No piece may overlap with any other piece, the first piece placed for each player must use one of the 4 corner squares. Finally all subsequent pieces must always share a corner with an existing piece of the same colour but must never share a flat side with a piece of the same colour.
+
+If a player cannot place a piece then their turn is skipped. Play continues until no player can place any piece. Once the game is over the score is calculated by subtracting 1 point for each square on each remaining unplaced piece. 15 points are awarded if all pieces were placed, plus an extra 5 if the last piece placed was the monomino. The user's statistics are updated in their profile.
+
+\subsection{Authentication}
+When a user first navigates to the Blokus app they are given a guest user account so that they can play a quick game immediately. If they wish to store their statistics they must register or login. We have chosen to provide Facebook and Google authentication however as some people do not like to use these open authentication systems we have also provided the facility to have a Blokus account without needing to use social authentication.
+
+\subsection{Game Modes}
+Once logged in or just as a guest the user must then decide whether they wish to play a 2 or 4 player game. They click the appropriate button or the quick game button if they don't mind, and once there are enough people waiting a game is created and joined. The user can also choose to host a private game with their friends by selecting private game and defining if it is a 2 or 4 player game. Then the user is given a unique id which they can tell their friends which will put them all in the same game once the 2 or 4 player limit is reached.

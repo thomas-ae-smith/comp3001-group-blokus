@@ -1,0 +1,32 @@
+
+% This is the styling for the 3YP.
+% All styling information is from https://secure.ecs.soton.ac.uk/notes/comp3020/proj_1011/guide.html#Project_Report_Standards
+% Original document by Tom Hennigan (th10g08@ecs.soton.ac.uk)
+% No license or attribution needed seeing as it's just formatting, enjoy!
+
+% A4 paper with the nice article fonts etc.
+\documentclass[12pt,a4paper]{article}
+
+% Wide left margin for the binding.
+% "The left hand, binding margin should not be less than 35mm. The top, right and bottom margins should not be less than 24mm."
+\usepackage[left=35mm, right=24mm, top=24mm, bottom=24mm]{geometry}
+
+% "Each paragraph should be non-indented and be separated by an empty line."
+\usepackage{parskip} % http://www.tex.ac.uk/cgi-bin/texfaq2html?label=parskip
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.4cm}
+
+\usepackage{listings}
+\lstset{basicstyle=\scriptsize}
+
+% Clickable references, glossary, footnotes etc.
+\usepackage[colorlinks=false,pdfborder={0 0 0}]{hyperref}
+
+% Blue Colored URLs
+\usepackage[usenames]{color}
+\definecolor{urlcolor}{rgb}{0,0.08,0.45}
+
+% You can footnote URLs with this utility command.
+\usepackage{url}
+\newcommand{\link}[2]{{#1}\footnote{{#1} - \footurl{#2} }}
+\newcommand{\footurl}[1]{\color{urlcolor}{\underline{\url{#1}}}}
