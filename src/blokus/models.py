@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 import hashlib
 
-_colour_regex = r"^(red|yellow|green|blue)$"
+_colour_regex = r"^(blue|yellow|red|green)$"
 
 class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())

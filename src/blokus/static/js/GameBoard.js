@@ -1,7 +1,7 @@
 (function ($, _, Backbone, blokus) {
 
 	blokus.GameBoard = Backbone.View.extend({
-		offset: { x: 175, y: 75 },
+		offset: { x: 175, y: 125 },
 		borderWidth: 30,
 		width: undefined,
 		height: undefined,
