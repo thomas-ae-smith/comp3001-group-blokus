@@ -178,7 +178,7 @@
 		//Should be called after calDistTravel
 		moveShape: function (){
 			var time = 0;
-			var rotPoint = this.getCenterRotation();
+			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 			if(this.cells.getBBox(true).x > 132 && !this.fullScale){
 				this.curScale = {sx: 1, sy: 1};
@@ -192,13 +192,14 @@
 			}
 			if (time == 0){
 				this.transform( this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
-							this.initBBox.x, this.initBBox.y, rotation,
-							rotPoint.x, rotPoint.y);
+							//this.initBBox.x, this.initBBox.y, rotation,
+							cenPoint.x, cenPoint.y, rotation,
+							cenPoint.x, cenPoint.y);
 			}
 			else{
 				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
-						 this.initBBox.x, this.initBBox.y, rotation,
-						 rotPoint.x, rotPoint.y, time);
+						 cenPoint.x, cenPoint.y, rotation,
+						 cenPoint.x, cenPoint.y, time);
 			}
 			if(this.isShapeInGame()){
 				this.prevDistX = this.distMoved.x;
@@ -206,8 +207,8 @@
 			}
 			else{
 				this.transform( this.prevDistX, this.prevDistY, this.curScale.sx, this.curScale.sy,
-							  this.initBBox.x, this.initBBox.y, rotation,
-							  rotPoint.x, rotPoint.y);
+							  cenPoint.x, cenPoint.y, rotation,
+							  cenPoint.x, cenPoint.y);
 			}
 			this.cells.toFront();
 		},
@@ -302,8 +303,8 @@
 					width: this.cells.getBBox().width,
 					height: this.cells.getBBox().height,
 				};
-				var rotPoint = this.getCenterRotation();
-				this.cells.transform("r90 "+rotPoint.x+" "+rotPoint.y);
+				var cenPoint = this.getCenterOfShape();
+				this.cells.transform("r90 "+cenPoint.x+" "+cenPoint.y);
 				this.initRBBox = {
 					x:this.cells.getBBox().x,
 					y:this.cells.getBBox().y,
@@ -391,14 +392,14 @@
 
 		returnToPanel: function (){
 			this.isSelected = false;
-			var rotPoint = this.getCenterRotation();
+			var cenPoint = this.getCenterOfShape();
 			if (this.cellsOnGameboard != undefined)
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
 			if(this.distMoved.x != 0 && this.distMoved.y != 0){
 				var rotation = this.rotation * 90;
 				this.animate(0, 0, this.initScale.sx, this.initScale.sy,
-								this.initBBox.x, this.initBBox.y, rotation,
-								rotPoint.x, rotPoint.y, 500);
+								cenPoint.x, cenPoint.y, rotation,
+								cenPoint.x, cenPoint.y, 500);
 			}
 			this.setOpacity(1, 500);
 		},
@@ -406,11 +407,11 @@
 		goToPos: function (){
 			this.isSelected = false;
 			this.canMove = false;
-			var rotPoint = this.getCenterRotation();
+			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.sx, this.curScale.sy,
-						 this.initBBox.x, this.initBBox.y, rotation,
-						 rotPoint.x, rotPoint.y, 500);
+						 cenPoint.x, cenPoint.y, rotation,
+						 cenPoint.x, cenPoint.y, 500);
 			this.setOpacity(1, 500);
 		},
 
@@ -426,7 +427,7 @@
 			return Math.abs(rotation % 4);
 		},
 
-		getCenterRotation: function (){
+		getCenterOfShape: function (){
 			var data =this.dataArr;
 			var h = data.length * this.cellSize,
 				w = data[0].length * this.cellSize;
@@ -456,9 +457,9 @@
 			if(this.isSelected){
 				var this_ = this;
 				this.rotation += rotation;
-				var rotPoint = this.getCenterRotation();
-				//this.cells.rotate(rotation*90, rotPoint.x, rotPoint.y);
-				this.cells.animate({transform: "...r"+rotation*90+" "+rotPoint.x+" "+rotPoint.y}, 150);
+				var cenPoint = this.getCenterOfShape();
+				//this.cells.rotate(rotation*90, cenPoint.x, cenPoint.y);
+				this.cells.animate({transform: "...r"+rotation*90+" "+cenPoint.x+" "+cenPoint.y}, 150);
 				setTimeout(function(){this_.inBoardValidation(gameboard, emptySet);}, 151);
 			}
 		},
@@ -518,8 +519,8 @@
 					this.curScale.sy = -1;
 				console.log(this.curScale.sx, this.curScale.sy, flipNum);
 					
-				this.visibleCells = new paper.set();
-				this.invisibleCells = new paper.set();
+				//this.visibleCells = new paper.set();
+				//this.invisibleCells = new paper.set();
 				/*
 				var data = this.flipMatrix(this.dataArr, this.flipNum);
 				var numRows = data.length,
@@ -541,9 +542,9 @@
 					}
 				}
 				*/
-				var rotPoint = this.getCenterRotation();
-				//this.cells.rotate(rotation*90, rotPoint.x, rotPoint.y);
-				this.cells.animate({transform: "...s"+this.curScale.sx+" "+this.curScale.sy+" "+rotPoint.x+" "+rotPoint.y}, 150);
+				var cenPoint = this.getCenterOfShape();
+				//this.cells.rotate(rotation*90, cenPoint.x, cenPoint.y);
+				this.cells.animate({transform: "...s"+this.curScale.sx+" "+this.curScale.sy+" "+cenPoint.x+" "+cenPoint.y}, 150);
 				setTimeout(function(){this_.inBoardValidation(gameboard, new paper.set());}, 151);
 			}
 		}
