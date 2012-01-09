@@ -180,25 +180,17 @@ class Piece(models.Model):
 		#Construct grid of pieces of the same colour.
 		grid = self.player.get_grid()
 
-		#Compare piece being placed to pieces near it on the grid.
-		adjacent = False
-		for this_row in xrange(len(this_bitmap)):
-			for this_col in xrange(len(this_bitmap[this_row])):
-				if bool(this_bitmap[this_row][this_col]):
-					#If cell touches another cell of the same colour, invalid placement.
-					if (bool(grid[this_row + self.y - 1][this_col + self.x]) or
-							bool(grid[this_row + self.y + 1][this_col + self.x]) or
-							bool(grid[this_row + self.y][this_col + self.x + 1]) or
-							bool(grid[this_row + self.y][this_col + self.x - 1])):
-						return False
-					#If cell is adjacent to cell of the same colour, allow placement.
-					if (bool(grid[this_row + self.y + 1][this_col + self.x + 1]) or
-							bool(grid[this_row + self.y + 1][this_col + self.x - 1]) or
-							bool(grid[this_row + self.y - 1][this_col + self.x + 1]) or
-							bool(grid[this_row + self.y - 1][this_col + self.x - 1])):
-						adjacent = True
+		#If cell touches another cell of the same colour, invalid placement.
+		for x_offset, y_offset in ((-1,0),(1,0),(0,1),(0,-1)):
+			if grid[this_col + self.x + x_offset][this_row + self.y + y_offset]:
+				return False
+			
+		#If cell is adjacent to cell of the same colour, allow placement.
+		for x_offset, y_offset in ((1,1),(1,-1),(-1,1),(-1,-1)):
+			if grid[this_col + self.x + x_offset][this_row + self.y + y_offset]:
+				return True
 
-		return adjacent
+		return False
 
 	def is_valid_position(self):
 		return (self.does_not_overlap() and
