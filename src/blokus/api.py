@@ -140,8 +140,9 @@ class GameResource(ModelResource):
 		bundle.data['time_now'] = datetime.now()
 		state = bundle.request.GET.get('state')
 		if state is not None:
-			for player in bundle.data['players']:
-				for piece in player['pieces']:
+			for i, player_data in enumerate(bundle.data['players']):
+				player = Player.objects.get(pk=player_data.data['id'])
+				for j, piece in enumerate(player.data['pieces']):
 					pass
 		return bundle
 

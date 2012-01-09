@@ -237,10 +237,10 @@ class Piece(models.Model):
 	}
 
 	def get_flipped(self):
-		return server_client_mapping[(self.rotation,self.transposed)][1]
+		return self.server_client_mapping[(self.rotation,self.transposed)][1]
 
 	def get_rotated(self):
-		return server_client_mapping[(self.rotation,self.transposed)][0]
+		return self.server_client_mapping[(self.rotation,self.transposed)][0]
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
