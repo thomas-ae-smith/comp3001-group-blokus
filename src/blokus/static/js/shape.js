@@ -513,11 +513,14 @@
 				else
 					this.flipNum = flipNum;
 				*/
-				if (flipNum == 1)
+				if (flipNum == 1 && this.curScale.sx > 0)
 					this.curScale.sx = -1;
-				if (flipNum == 2)
+				else if (flipNum == 1)
+					this.curScale.sx = 1;
+				if (flipNum == 2 && this.curScale.sy > 0)
 					this.curScale.sy = -1;
-				console.log(this.curScale.sx, this.curScale.sy, flipNum);
+				else if (flipNum == 2)
+					this.curScale.sy = 1;
 					
 				//this.visibleCells = new paper.set();
 				//this.invisibleCells = new paper.set();
@@ -543,8 +546,11 @@
 				}
 				*/
 				var cenPoint = this.getCenterOfShape();
-				//this.cells.rotate(rotation*90, cenPoint.x, cenPoint.y);
-				this.cells.animate({transform: "...s"+this.curScale.sx+" "+this.curScale.sy+" "+cenPoint.x+" "+cenPoint.y}, 150);
+				console.log(this.curScale.sx, this.curScale.sy);
+				//this.cells.animate({transform: "s"+this.curScale.sx+" "+this.curScale.sy+" "+cenPoint.x+" "+cenPoint.y}, 150);
+				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
+						 cenPoint.x, cenPoint.y, this.rotation*90,
+						 cenPoint.x, cenPoint.y, 150);
 				setTimeout(function(){this_.inBoardValidation(gameboard, new paper.set());}, 151);
 			}
 		}
