@@ -15,7 +15,7 @@ class Game(models.Model):
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
 	uri = models.CharField(max_length=56)
-	winner = models.IntegerField(default=-1)
+	winner = models.IntegerField(default=-1)	#TODO: Change this to accept players.
 
 	def get_grid(self):
 		grid = [[False]*20 for x in xrange(20)]
