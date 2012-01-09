@@ -53,7 +53,7 @@
 			pieces.each(function (piece) {
 				var x = offset.x + piece.get("x") * cellSize,
 					y = offset.y + piece.get("y") * cellSize,
-					pieceMaster = blokus.pieceMasters.get(piece.get("piece_master_id"));
+					pieceMaster = blokus.pieceMasters.get(piece.get("master_id"));
 
 				gameview.drawPiece(x, y, piece, colour, 1, 1, false);
 				if (piece.get("rotation") == undefined){

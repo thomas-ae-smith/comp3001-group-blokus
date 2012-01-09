@@ -1,5 +1,9 @@
 // Define the models used by blokus
 (function ($, _, Backbone) {
+	function getUrlId (url) {
+		return (url.charAt(url.length - 1) === "/" ? url.slice(0, url.length - 1) : url).split("/").pop();
+	}
+
 	var Model = Backbone.Model.extend({
 		url : function () {
 			if (this.resourceUrl) {
@@ -42,6 +46,13 @@
 		Game = Model.extend({
 			resourceUrl: blokus.urls.game,
 
+			url: function () {
+				console.log(this.resourceUrl, (this.hasOwnProperty("id") ? this.id + "/" : ""),
+						this.has("state") ? "?state=" + this.get("number_of_moves") : "")
+				return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "") +
+						(this.has("state") ? "?state=" + this.get("number_of_moves") : "");
+			},
+
 			// FIXME: Hacked in bootstrap, baby
 			fetch: function (options) {
 				if (this.get("id") > 1) { // TODO remove
@@ -67,6 +78,10 @@
 				_(players.models).each(function (player) {
 					player.pieces = new blokus.PieceCollection(player.get("pieces"));
 					player.pieces.url = players.url + "piece/";
+					_(player.pieces.models).each(function (piece) {
+						piece.set({ master_id: getUrlId(piece.get("master")), player_id: getUrlId(piece.get("player")) });
+					});
+					player.user_id = getUrlId(player.get("user"));
 				});
 				return model;
 			}

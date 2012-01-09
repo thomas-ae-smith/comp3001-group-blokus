@@ -81,7 +81,7 @@
 						gameview: this_
 					}).render(),
 
-					poller = setInterval(function () { game.fetch(); }, 1000),	// Fetch game model every second (to determined player turn, duration, winner etc)
+					poller = setInterval(function () { game.fetch({ error: function () { blokus.showError("Failed to fetch game"); /* FIXME: remove? */ } }); }, 1000),	// Fetch game model every second (to determined player turn, duration, winner etc)
 		        	ticker = setInterval(function () { this_.updateDuration(); }, 1000); // Keep game duration up-to-date
 
 		        this_.bind("close", function () { clearTimeout(poller); clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
@@ -96,6 +96,12 @@
 		        });
 
 		        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
+
+		        game.bind("change:number_of_moves", function (game, numberOfMoves) {
+		        	_(game.pieces.models).each(function (piece) {
+		        		gameboard.renderPiece(game.players.get(piece.get("player_id")).get("colour"), piece);
+		        	});
+		        });
 
 		        this_.startTime = new Date(gamej.start_time); // FIXME Date time check compatbility
 		        this_.timeNow = new Date(gamej.time_now); // FIXME Date time check compatbility
@@ -144,14 +150,14 @@
 
 					var unplacedPieces = new blokus.PieceCollection(),
 						placedPieces = player.pieces,
-						placedPieceIds = placedPieces.pluck("piece_master_id");
+						placedPieceIds = placedPieces.pluck("master_id");
 
 					// Determine what pieces have not been placed
 					_(blokus.pieceMasters.models).each(function (pieceMaster) {
 						var id = Number(pieceMaster.get("id"));
 
 						if (placedPieceIds.indexOf(id) === -1) {
-							var piece = new blokus.Piece({ piece_master_id: id });
+							var piece = new blokus.Piece({ master_id: id });
 							unplacedPieces.add(piece);
 
 							if (active) { // If logged in user
@@ -187,8 +193,8 @@
 		drawPiece: function (x, y, piece, colour, scaleX, scaleY, canMove) {
 			var gameboard = this.gameboard,
 				paper = this.paper;
-
-			var data = blokus.pieceMasters.get(piece.get("piece_master_id")).get("data");
+console.log(piece)
+			var data = blokus.pieceMasters.get(piece.get("master_id")).get("data");
 
 			var numRows = data.length;
 			var numCols = data[0].length;

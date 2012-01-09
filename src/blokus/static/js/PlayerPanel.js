@@ -23,7 +23,6 @@
 		},
 
 		renderPieces: function (pieces, canMove) {
-			console.log(this.options.positionId)
 			var gameview = this.options.gameview,
 				cellSize = this.options.cellSize,
 				colour = this.options.player.get("colour"),
@@ -35,7 +34,7 @@
 				positions = blokus.utils.get_points(blokus.pieceMasters.toJSON(), offset.x + 10, offset.y + 35, width - 27, height - 20);
 
 			pieces.each(function (piece) {
-				var pieceMaster = blokus.pieceMasters.get(piece.get("piece_master_id")),
+				var pieceMaster = blokus.pieceMasters.get(piece.get("master_id")),
 					i = pieceMaster.get("id");
 				gameview.drawPiece(positions[i].x, positions[i].y, piece, colour, scale, scale, canMove);
 			});
