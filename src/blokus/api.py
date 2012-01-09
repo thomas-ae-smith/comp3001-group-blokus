@@ -138,6 +138,11 @@ class GameResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		bundle.data['time_now'] = datetime.now()
+		state = bundle.request.GET.get('state')
+		if state is not None:
+			for player in bundle.data['players']:
+				for piece in player['pieces']:
+					pass
 		return bundle
 
 	#Every time a user gets a game object of theirs, their player timestamp is updated.
@@ -145,9 +150,10 @@ class GameResource(ModelResource):
 		if request and request.user.id is not None:
 			games = super(GameResource, self).get_object_list(request)
 			for game in games:
-				player = Player.objects.get(game=game,user=request.user)
-				player.last_activity = datetime.now()
-				player.save()
+				players = Player.objects.fetch(game=game,user=request.user)
+				for player in players:
+					player.last_activity = datetime.now()
+					player.save()
 			return games
 		return Game.objects.none()
 
