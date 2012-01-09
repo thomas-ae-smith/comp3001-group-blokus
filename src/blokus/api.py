@@ -150,7 +150,7 @@ class GameResource(ModelResource):
 		if request and request.user.id is not None:
 			games = super(GameResource, self).get_object_list(request)
 			for game in games:
-				players = Player.objects.fetch(game=game,user=request.user)
+				players = Player.objects.filter(game=game,user=request.user)
 				for player in players:
 					player.last_activity = datetime.now()
 					player.save()
