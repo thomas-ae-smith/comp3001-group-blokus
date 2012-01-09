@@ -154,6 +154,21 @@
 				</div>
 			</script>
 			<script type="text/html" id="game-template">
+				<input type="button" class="button game-help" value="How to play">
+				<input type="button" class="button game-exit" value="Exit game">
+				<div class="toppanel left">
+					<b>Table ID:</b><br/>
+					<span class="uri"></span><br/>
+					<b>Table URL:</b><br/>
+					http://blahblah.com#<span class="uri"></span>
+				</div>
+				<div class="toppanel right">
+					<b>Duration:</b><br>
+					<span class="duration"></span><br/>
+					<b>Player turn:</b><br>
+					<span class="playerduration"></span><br/>
+					<div class="clock"></div>
+				</div>
 				<div class="loading"></div>
 				<div id="helpscreen" style="display: none">
 					<h1>How to play blokus</h1>
@@ -175,33 +190,13 @@
 				</div>
 				<div class="playerpanelcontainer left"></div>
 				<div class="playerpanelcontainer right"></div>
-				<!-- everything below is placeholder -->
-				<div class="top-panel">
-					<div class="left">
-						<b>Table ID:</b><br>
-						<span class="uri"></span><br><br>
-						<b>Table URL:</b><br>
-						http://blahblah.com#<span class="uri"></span>
-					</div>
-					<input type="button" class="button help" value="How to play">
-					<input type="button" class="button exit" value="Exit game">
-					<div class="right">
-						<b>Duration:</b><br>
-						<span class="duration"></div><br><br>
-						<b>Player turn:</b><br>
-						<span class="playerduration"></div>
-						<div class="clock"></div>
-					</div>
-				</div>
-				<div class="board-bg">
-					<div class="board"></div>
-				</div>
 			</script>
 			<script type="text/html" id="player-panel-template">
-				<img class="pic">
-				<div class="name"><%= name %></div>
-				<div class="wins">wins: <span class="val"><%= wins %></val></div>
-				<div class="losses">losses: <span class="val"><%= losses %></val></div>
+				<div>
+					<img src="<%= pic %>" />
+					<h1><%= name %></h1>
+					<p><%= stats %></p>
+				</div>
 			</script>
 			<script type="text/html" id="register-template">
 				<form action="/register/" method="post" class="box form">

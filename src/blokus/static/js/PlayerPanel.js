@@ -1,9 +1,9 @@
 (function ($, _, Backbone, blokus) {
 	var offsets = [
-		{ x: 0, y: 0 },
-		{ x: 670, y: 0 },
-		{ x: 670, y: 200 },
-		{ x: 670, y: 400 },
+		{ x: 0, y: 60 },
+		{ x: 670, y: 60 },
+		{ x: 670, y: 260 },
+		{ x: 670, y: 460 },
 	];
 	blokus.PlayerPanel = Backbone.View.extend({
 		className: "playerpanel",
@@ -15,8 +15,8 @@
 				
 			$el.html(template({
 				name: player.user.get("username"),
-				wins: 10,
-				losses: 4
+				pic: "/static/img/noavatar.jpg",
+				stats: "wins: 0 losses: 0"
 			}));
 
 			return this;

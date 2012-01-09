@@ -42,7 +42,7 @@
 
 			$el.html(template());
 
-			var paper = this.paper = Raphael(el, 800, 600),			// Make the Raphael element 800 x 600 in this view
+			var paper = this.paper = Raphael(el, 800, 660),			// Make the Raphael element 800 x 600 in this view
 				game = this.game = new blokus.Game({ id: this.options.id });
 			
 			var dfd = new $.Deferred();
@@ -100,7 +100,7 @@
 					
 				this_.$(".uri").html(game.get("uri"));
 
-				this_.$(".help").click(function () {
+				this_.$(".game-help").click(function () {
 					$("#helpscreen").slideDown();
 				});
 
@@ -108,7 +108,7 @@
 					$("#helpscreen").slideUp();
 				})
 
-				this_.$(".exit").click(function () {
+				this_.$(".game-exit").click(function () {
 					if (confirm("Are you sure you want to quit the game?")) {
 						location.hash = "";
 					}

@@ -187,7 +187,7 @@ b{ font-weight: bold;}
 }
 #container > div {
 	position: absolute;
-	top: 0; left: 0; right: 0;
+	left: 0; right: 0;
 	min-height: 400px;
 }
 /* Form field labels */
@@ -435,18 +435,28 @@ h1 {
 	background: transparent url(../img/loading.gif) no-repeat center;
 }
 /* Game View */
+.gameview {
+	top:-40px;
+}
 .gameview svg {
-	position: absolute;
-	top: 0; left: 0; right: 0; bottom: 0;
 	z-index: 100;
 }
-.gameboard {
+.toppanel {
 	position: absolute;
-	left: 200px; right: 200px; top: 0;
+	top: 0;
+	width: 132px;
+	background: rgba(0, 0, 0, 0.5);
+	color:white;
+}
+.left {
+	left: 0;
+}
+.right {
+	right:0;
 }
 .playerpanelcontainer.left {
 	position: absolute;
-	top: 0; left: 0;
+	top: 60px; left: 0;
 	width: 132px;
 }
 .playerpanelcontainer.left .playerpanel {
@@ -454,13 +464,48 @@ h1 {
 }
 .playerpanelcontainer.right {
 	position: absolute;
-	top: 0; right: 0;
+	top: 60px; right: 0;
 	width: 132px;
 }
 .playerpanelcontainer.right .playerpanel {
 	height: 200px;
 }
-.playerpanel {
+.playerpanelcontainer {
+	background: rgba(0, 0, 0, 0.5);
+}
+.playerpanel div {
+	background: rgba(0, 0, 0, 0.5);
+	color:white;
+	padding:3px;
+	height:30px;
+}
+	.playerpanel div img {
+		width: 30px;
+		height: 30px;
+		float:left;
+	}
+	.playerpanel div h1 {
+		font-size:12pt;
+		float:right;
+	}
+	.playerpanel div p {
+		float:right;
+	}
+.game-help {
+	position:absolute;
+	top: 6px;
+	left: 160px;
+	z-index:101;
+}
+.game-exit {
+	position:absolute;
+	top: 6px;
+	right: 160px;
+	z-index:101;
+}
+.panel {
+	position:absolute;
+	top:0;
 	background: rgba(0, 0, 0, 0.5);
 }
 #helpscreen {
