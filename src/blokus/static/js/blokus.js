@@ -56,7 +56,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			success: function (model) {
 				blokus.user.set(model);
 				blokus.userProfile.set(model.userprofile);
-				blokus._exampleGames[1].players[0].userId = blokus.user.get("id"); // FIXME TEMP
+				blokus._exampleGames[1].players[0].user_id = blokus.user.get("id"); // FIXME TEMP
 				authDfd.resolve();
 			},
 			error: function () {
