@@ -52,7 +52,7 @@ class UserProfileResource(ModelResource):
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			userProfiles = super(UserProfileResource, self).get_object_list(request)
-			userProfiles = userProfiles.exclude(id=request.user.get_profile().id)	#BUG: This doesn't appear to be excluding correctly. Maybe something to do with guest accounts?
+			userProfiles = userProfiles.exclude(id=request.user.get_profile().id)
 			users_playing = [request.user]
 			# Game Attributes: <status>:(<typeID>,<playerCount>)
 			# Must be added to if a new game type is introduced.
@@ -236,3 +236,8 @@ class PieceResource(ModelResource):
 		detail_allowed_methods = ['get','post']
 		validation = CleanedDataFormValidation(form_class=PieceForm)
 		authorization = Authorization()
+
+	def dehydrate(self, bundle):
+		bundle.data['rotated'] = bundle.obj.get_rotated()
+		bundle.data['flipped'] = bundle.obj.get_flipped()
+		return bundle
