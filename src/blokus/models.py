@@ -17,9 +17,13 @@ class Game(models.Model):
 	uri = models.CharField(max_length=56)
 	winning_colour = models.CharField(max_length=6, validators=[RegexValidator(regex=r"^(blue|yellow|red|green)?$")])
 
-	def get_grid(self):
+	def get_grid(self, limit_to_player=None):
 		grid = [[False]*20 for x in xrange(20)]
-		players = self.player_set.all()
+		if limit_to_player is None:
+			players = self.player_set.all()
+		else:
+			players = list(player)
+
 		for player in players:
 			pieces = player.piece_set.all()
 			for piece in pieces:
@@ -112,6 +116,9 @@ class Player(models.Model):
 	last_activity = models.DateTimeField(default=datetime.now())
 	score = models.IntegerField(default=0)
 
+	def get_grid(self):
+		return self.game.get_grid(limit_to_player=self)
+
 	# Returns whether the player is able to make a move or not
 	def is_able_to_move(self):
 		grid = self.game.get_grid()
@@ -179,35 +186,24 @@ class Piece(models.Model):
 	# piece of the same colour, but does not actually touch another
 	# piece of the same colour.
 	def is_only_adjacent(self):
-		this_bitmap = self.get_bitmap()
-
 		#Construct grid of pieces of the same colour.
-		grid = [[False]*20 for x in xrange(20)]
-		for that_piece in self.player.piece_set.all():
-			that_bitmap = that_piece.get_bitmap()
-			for that_row in xrange(len(that_bitmap)):
-				for that_col in xrange(len(that_bitmap[that_row])):
-					grid[that_row+that_piece.y][that_col+that_piece.x] = that_bitmap[that_row][that_col]
+		grid = self.player.get_grid()
 
 		#Compare piece being placed to pieces near it on the grid.
-		adjacent = False
-		for this_row in xrange(len(this_bitmap)):
-			for this_col in xrange(len(this_bitmap[this_row])):
-				if bool(this_bitmap[this_row][this_col]):
-					#If cell touches another cell of the same colour, invalid placement.
-					if (bool(grid[this_row + self.y - 1][this_col + self.x]) or
-							bool(grid[this_row + self.y + 1][this_col + self.x]) or
-							bool(grid[this_row + self.y][this_col + self.x + 1]) or
-							bool(grid[this_row + self.y][this_col + self.x - 1])):
-						return False
-					#If cell is adjacent to cell of the same colour, allow placement.
-					if (bool(grid[this_row + self.y + 1][this_col + self.x + 1]) or
-							bool(grid[this_row + self.y + 1][this_col + self.x - 1]) or
-							bool(grid[this_row + self.y - 1][this_col + self.x + 1]) or
-							bool(grid[this_row + self.y - 1][this_col + self.x - 1])):
-						adjacent = True
+		for row_number, row_data in enumerate(self.get_bitmap()):
+			for column_number, cell in enumerate(row_data):
 
-		return adjacent
+				#If cell touches another cell of the same colour, invalid placement.
+				for x_offset, y_offset in ((-1,0),(1,0),(0,1),(0,-1)):
+					if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
+						return False
+			
+				#If cell is adjacent to cell of the same colour, allow placement.
+				for x_offset, y_offset in ((1,1),(1,-1),(-1,1),(-1,-1)):
+					if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
+						return True
+
+		return False
 
 	def is_valid_position(self):
 		return (self.does_not_overlap() and
