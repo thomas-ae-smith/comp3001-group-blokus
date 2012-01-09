@@ -72,7 +72,7 @@
 
 			dfd.done(function () {
 				var gamej = game.toJSON(),
-					playerPanels = [],
+					playerPanels = {},
 					positionId = 0,
 					gameboard = this_.gameboard = new blokus.GameBoard({
 						paper: paper,
@@ -89,10 +89,24 @@
 		        game.bind("change:colour_turn", function (game, colour) {
 		        	console.log("TODO New colour turn", colour);
 		        	blokus.showMsg(colour + ", it is now your turn");
+		        	var player = game.getPlayerOfColour(colour);
+		        	if (player.get("user_id") == blokus.user.get("id")) {
+		        		var playerId = player.get("id");
+		        		var pos = 1;
+		        		_(playerPanels).each(function (playerPanel, id) {
+		        			if (playerId == id) {
+		        				playerPanel.setActive(true, 0);
+		        			} else {
+		        				playerPanel.setActive(false, pos);
+		        				pos++;
+		        			}
+		        		});
+		        	}
 		        });
 
-		        game.bind("change:winner", function (game, winner) {
-		        	console.log("TODO Player wins: ", winner);
+		        game.bind("change:winning_colours", function (game, winning_colours) {
+		        	var colours = winning_colours.split("|");
+		        	console.log("TODO Player wins: ", colours);
 		        });
 
 		        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
@@ -125,6 +139,8 @@
 				// Append to view
 				$el.append(gameboard.el);
 
+				var hasPanelOnLeft = false;
+
 				// Create all the player panels
 				_(game.players.models).each(function (player) {
 					var colour = player.get("colour"),
@@ -134,10 +150,11 @@
 					console.log(blokus.user.get("id"), player.get("user_id"))
 
 					// Identify if this is the logged in user
-					if (blokus.user.get("id") == player.get("user_id")) {
+					if (blokus.user.get("id") == player.get("user_id") && !hasPanelOnLeft) {
 						active = true;
 						options.active = true;
 						options.positionId = 0;
+						hasPanelOnLeft = false;
 					} else {
 						positionId++;
 						options.positionId = positionId;
@@ -145,7 +162,7 @@
 
 					var playerPanel = new blokus.PlayerPanel(options);
 
-					playerPanels.push(playerPanel);
+					playerPanels[player.get("id")] = playerPanel;
 
 					// Append to view
 					$el.find(active ? ".playerpanelcontainer.left" : ".playerpanelcontainer.right").append(playerPanel.render().el);

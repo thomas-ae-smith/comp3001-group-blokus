@@ -46,32 +46,36 @@
 		},
 
 		renderPieces: function (colour, pieces) {
+			var this_ = this;
+			pieces.each(function (piece) {
+				this_.renderPiece(colour, piece);
+			});
+		},
+
+		renderPiece: function (colour, piece) {
 			var gameview = this.options.gameview,
 				cellSize = this.options.cellSize,
 				offset = this.offset,
-				this_ = this;
-			pieces.each(function (piece) {
-				var x = offset.x + piece.get("x") * cellSize,
-					y = offset.y + piece.get("y") * cellSize,
-					pieceMaster = blokus.pieceMasters.get(piece.get("master_id"));
+				x = offset.x + piece.get("x") * cellSize,
+				y = offset.y + piece.get("y") * cellSize,
+				pieceMaster = blokus.pieceMasters.get(piece.get("master_id"));
 
-				gameview.drawPiece(x, y, piece, colour, 1, 1, false);
-				if (piece.get("rotation") == undefined){
-					piece.set("rotation", 0);
-				}
-				//var tmpData = rotateMatrix(pieceMaster.get("data"), piece.get("rotation"));
-				tmpData = pieceMaster.get("data");
-				var numRows = tmpData.length;
-				var numCols = tmpData[0].length;
-				for (var rowI = 0; rowI < numRows; rowI++){
-					for (var colJ = 0; colJ <= numCols; colJ++) {
-						if (tmpData[rowI][colJ] == 1) {
-							//this_.grid[colJ+piece.get("y")][rowI+piece.get("x")]= colour;
-							blokus.board.get("gridPlaced")[colJ+piece.get("x")][rowI+piece.get("y")] = colour;
-						}
+			gameview.drawPiece(x, y, piece, colour, 1, 1, false);
+			if (piece.get("rotation") == undefined){
+				piece.set("rotation", 0);
+			}
+			//var tmpData = rotateMatrix(pieceMaster.get("data"), piece.get("rotation"));
+			tmpData = pieceMaster.get("data");
+			var numRows = tmpData.length;
+			var numCols = tmpData[0].length;
+			for (var rowI = 0; rowI < numRows; rowI++){
+				for (var colJ = 0; colJ <= numCols; colJ++) {
+					if (tmpData[rowI][colJ] == 1) {
+						//this_.grid[colJ+piece.get("y")][rowI+piece.get("x")]= colour;
+						blokus.board.get("gridPlaced")[colJ+piece.get("x")][rowI+piece.get("y")] = colour;
 					}
 				}
-			});
+			}
 		}
 	});
 }(jQuery, _, Backbone, blokus));
