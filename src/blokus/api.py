@@ -86,7 +86,7 @@ class UserProfileResource(ModelResource):
 					if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
 						break
 			elif request.user.get_profile().status[0:7] == "private":
-				for userProfile in UserProfiles:
+				for userProfile in userProfiles:
 					if (userProfile.status == request.user.get_profile().status and
 						userProfile.private_queue == request.user.private_queue):
 						users_playing.append(userProfile.user)
@@ -108,6 +108,8 @@ class UserProfileResource(ModelResource):
 						user = users_playing[user_number % 2]	# block if any new game types
 					else:										# are added.
 						user = users_playing[user_number]
+					import sys
+					print >>sys.stderr, "ADDED USER " + user.username + " to game."
 					user.status = 'ingame'
 					player = Player(
 						game=game,
@@ -115,6 +117,7 @@ class UserProfileResource(ModelResource):
 						colour=colours[user_number])
 					user.save()
 					player.save()
+				print >>sys.stderr, "GAME CONSTRUCTED"
 			return userProfiles
 		return UserProfile.objects.none()
 
