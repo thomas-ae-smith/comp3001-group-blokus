@@ -245,6 +245,6 @@ class PieceResource(ModelResource):
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):
-		bundle.data['rotated'] = bundle.obj.get_rotated()
-		bundle.data['flipped'] = bundle.obj.get_flipped()
+		bundle.data['client_rotate'] = bundle.obj.get_client_rotate()
+		bundle.data['client_flip'] = bundle.obj.get_client_flip()
 		return bundle

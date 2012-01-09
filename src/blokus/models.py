@@ -15,7 +15,7 @@ class Game(models.Model):
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
 	uri = models.CharField(max_length=56)
-	winner = models.IntegerField(default=-1)	#TODO: Change this to accept players.
+	winner = models.IntegerField(default=-1)
 
 	def get_grid(self):
 		grid = [[False]*20 for x in xrange(20)]
@@ -130,7 +130,7 @@ class Piece(models.Model):
 	x = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 
-	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
+	server_rotate = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
@@ -206,11 +206,11 @@ class Piece(models.Model):
 			self.player.game.winner < 0) # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
-		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
+		bitmap = self.master.get_bitmap()	#Need to implement server_rotate and server_transpose.
 		if self.transposed:
-			return transpose_bitmap(rotate_bitmap(bitmap, self.rotation))
+			return transpose_bitmap(rotate_bitmap(bitmap, self.server_rotate))
 		else:
-			return rotate_bitmap(bitmap, self.rotation)
+			return rotate_bitmap(bitmap, self.server_rotate)
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
 		self.rotate(not(bool(self.transposed) ^ bool(horizontal)))
@@ -236,10 +236,10 @@ class Piece(models.Model):
 		(3,True):(0,1)
 	}
 
-	def get_flipped(self):
+	def get_client_flip(self):
 		return self.server_client_mapping[(self.rotation,self.transposed)][1]
 
-	def get_rotated(self):
+	def get_client_rotate(self):
 		return self.server_client_mapping[(self.rotation,self.transposed)][0]
 
 class Move(models.Model):
