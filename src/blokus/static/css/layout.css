@@ -122,9 +122,8 @@ label input {
 }
 label input, label textarea, label select {
   position: relative;
-  margin: 0;
+  margin: 0; padding: 6px;
   border-width: 1px;
-  padding: 6px;
   background: transparent;
   font: inherit;
 }
@@ -147,8 +146,7 @@ label input, label textarea, label select {
 	color:white;
 }
 #profileBox {
-	width:700px;
-	height:64px;
+	width:700px; height:64px;
 	display:block;
 	margin:20px 0px 20px 50px;
 	position: relative;
@@ -156,19 +154,14 @@ label input, label textarea, label select {
 	#profileBox img {
 		position: absolute;
 		top: 12px; left: 12px;
-		width:40px;
-		height:40px;
+		width:40px; height:40px;
 	}
 	#profileBox #profileInfo {
 		position: absolute;
 		top: 12px; left: 64px;
 	}
-		#profileBox #profileInfo .welcome {
-			font-size: 20px;
-		}
-		#profileBox #profileInfo .stats {
-			margin: 5px 2px;
-		}
+		#profileBox #profileInfo .welcome { font-size: 20px; }
+		#profileBox #profileInfo .stats { margin: 5px 2px; }
 	#profileBox #signedOut {
 		position: absolute;
 		top: 8px; right: 12px;
@@ -180,21 +173,15 @@ label input, label textarea, label select {
 	}
 	#profileBox #profileMenu {
 		float:right;
-		margin-right:10px;
-		margin-top:25px;
+		margin-right:10px; margin-top:25px;
 	}
-h1 {
-	font-weight:bold;
-	font-size:24pt;
-}
+h1 { font-weight:bold; font-size:24pt; }
 .modelist {
-	font-weight:bold;
-	text-align:center;
+	font-weight:bold; text-align:center;
 	margin-left:30px;
 }
 .modelist li {
-	margin-left:20px;
-	padding-bottom:20px;
+	margin-left:20px; padding-bottom:20px;
 	width:160px;
 	float:left;
 	cursor: pointer;
@@ -226,8 +213,7 @@ h1 {
 	#waiting > div > p { margin: 20px 0 5px 0; }
 	#waiting > div > .loading {
 		position: relative;
-		width: 100%;
-		height: 30px;
+		width: 100%; height: 30px;
 		margin-bottom: 10px;
 	}
 	#privatelobby .playerchoices {
@@ -290,10 +276,7 @@ h1 {
 				background-color: #ccc;
 				font-size: 14px;
 			}
-			#privatelobby .players > div > .offline {
-				font-size: 10px;
-				color: #ccc;
-			}
+			#privatelobby .players > div > .offline { font-size: 10px; color: #ccc; }
 	#privatelobby .buttons {
 		margin-top: 15px;
 		height: 20px;
@@ -341,8 +324,7 @@ h1 {
 	height:30px;
 }
 	.playerpanel div img {
-		width: 30px;
-		height: 30px;
+		width: 30px; height: 30px;
 		float:left;
 	}
 	.playerpanel div h1 {
@@ -352,14 +334,12 @@ h1 {
 	.playerpanel div p { float:right; }
 .game-help {
 	position:absolute;
-	top: 6px;
-	left: 160px;
+	top: 6px; left: 160px;
 	z-index:101;
 }
 .game-exit {
 	position:absolute;
-	top: 6px;
-	right: 160px;
+	top: 6px; right: 160px;
 	z-index:101;
 }
 .panel {
