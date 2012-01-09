@@ -75,8 +75,8 @@
 				var this_ = this;
 				this.bind("change", function () {
 					this_.set({
-						player: blokus.urls.player + this_.get("player_id"),
-						master: blokus.urls.pieceMaster + this_.get("master_id")
+						player: blokus.urls.player + this_.get("player_id") + "/",
+						master: blokus.urls.pieceMaster + this_.get("master_id") + "/"
 					});
 				});
 			}
