@@ -34,7 +34,7 @@ blokus.utils = (function ($, _, Backbone){
 			pieceLocations[6] = {x: Math.floor(Number(x) + (blockWidth * 9)),y: Math.floor(Number(y) + (blockHeight * 2))};
 			pieceLocations[7] = {x: Math.floor(Number(x) + (blockWidth * 15)),y: Math.floor(Number(y) + (blockHeight * 2))};
 			pieceLocations[8] = {x: Math.floor(Number(x) + (blockWidth * 20)),y: Math.floor(Number(y) + (blockHeight * 2))};
-			
+
 			//row 3
 			pieceLocations[9] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 5.5))};
 			pieceLocations[10] = {x: Math.floor(Number(x) + (blockWidth * 5.5)),y: Math.floor(Number(y) + (blockHeight * 5.5))};
@@ -66,7 +66,7 @@ blokus.utils = (function ($, _, Backbone){
 			pieceLocations[6] = {x: Math.floor(Number(x) + (blockWidth * 4)),y: Math.floor(Number(y) + (blockHeight * 1))};
 			pieceLocations[7] = {x: Math.floor(Number(x) + (blockWidth * 2)),y: Math.floor(Number(y) + (blockHeight * 8))};
 			pieceLocations[8] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 15))};
-			
+
 			//row 3
 			pieceLocations[9] = {x: Math.floor(Number(x) + (blockWidth * 1)),y: Math.floor(Number(y) + (blockHeight * 0))};
 			pieceLocations[10] = {x: Math.floor(Number(x) + (blockWidth * 0)),y: Math.floor(Number(y) + (blockHeight * 18))};
@@ -93,6 +93,19 @@ blokus.utils = (function ($, _, Backbone){
 			return '';
 		}
 	};
+
+	var place_piece = function (piece) {
+		var pieceMasterData = blokus.pieceMaster.get(piece.get("master_id")).get("data"),
+			x = piece.get("x"),
+			y = piece.get("y");
+
+		_(pieceMasterData).each(function (row, rowi) {
+			_(row).each(function (val, coli) {
+				if (val === 0)
+			})
+		})
+
+	}
 
 	//True if no pieces on the board are of the current player's colour.
 	var is_first_turn = function (){
@@ -125,7 +138,7 @@ blokus.utils = (function ($, _, Backbone){
 				return true;
 			}else{
 				return false;
-			}	
+			}
 		}
 	};
 
@@ -139,7 +152,7 @@ blokus.utils = (function ($, _, Backbone){
 			(get_claim(x + 1, y) == turn)
 		);
 	};
-	
+
 	//True if the grid-square denoted by x,y shares a corner with another square owned by the same colour.
 	var shares_vertex = function (x, y){
 		var turn = gameview.game.get("colour_turn")[0];
@@ -174,7 +187,7 @@ blokus.utils = (function ($, _, Backbone){
 				corner = true;
 			}
 		});
-			
+
 		if(corner){
 			//Run remaining validation
 			arr.forEach(function (cor) {
@@ -182,7 +195,7 @@ blokus.utils = (function ($, _, Backbone){
 				sharingSide = sharingSide || shares_side(cor.x, cor.y);
 				sharingVertex = sharingVertex || shares_vertex(cor.x, cor.y);
 			});
-			
+
 			//Valid if not conflicting and in a corner (if first turn) or if not conflicting or sharing side but is sharing corner.
 			return ((!conflicted && firstTurn) || (!conflicted && !sharingSide && sharingVertex));
 		}else{
