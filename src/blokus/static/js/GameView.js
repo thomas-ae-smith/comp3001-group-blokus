@@ -32,6 +32,7 @@
 		paper: undefined,
 		startTime: 0,
 		timeNow: 0,
+		pieces: undefined,
 
 		render: function () {
 			window.gameview = this;
@@ -39,6 +40,8 @@
 				el = this.el,
 				$el = $(el),
 				template = _.template($('#game-template').html());
+
+			this.pieces = { red: {}, blue: {}, yellow: {}, green: {} };
 
 			$el.html(template());
 
@@ -114,6 +117,8 @@
 		        game.bind("change:number_of_moves", function (game, numberOfMoves) {
 		        	_(game.pieces.models).each(function (piece) {
 		        		gameboard.renderPiece(game.players.get(piece.get("player_id")).get("colour"), piece);
+		        		var shape = this_.shapes[colour][piece.get("master_id")];
+		        		//shape.moveToPos TODO
 		        	});
 		        });
 
@@ -276,6 +281,8 @@
 							  }
 				}
 			);
+
+			this.shapes[colour][piece.get("master_id")] = shape;
 
 			var highlighted_set = new paper.set();
 			// TODO Check if the pieces dont overide each other
