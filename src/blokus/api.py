@@ -3,7 +3,7 @@ from blokus.models import *
 from tastypie import fields
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
-from tastypie.validation import CleanedDataFormValidation
+from tastypie.validation import CleanedDataFormValidation, Validation
 from tastypie.serializers import Serializer
 from django.forms import ModelForm, ValidationError
 from django.core.serializers import json
@@ -235,6 +235,13 @@ class PieceForm(ModelForm):
 			raise ValidationError("Not a valid move")
 		return cleaned_data
 
+class PieceValidation(Validation):
+    def is_valid(self, bundle, request=None):
+        if not bundle.data:
+            return {'__all__': 'Not quite what I had in mind.'}
+            
+        return {}
+
 class PieceResource(ModelResource):
 	master = fields.ForeignKey(PieceMasterResource, 'master')
 	player = fields.ForeignKey(PlayerResource, 'player')
@@ -245,7 +252,7 @@ class PieceResource(ModelResource):
 		default_format = 'application/json'
 		list_allowed_methods = ['get','post']
 		detail_allowed_methods = ['get']
-		validation = CleanedDataFormValidation(form_class=PieceForm)
+		validation = PieceValidation()
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):

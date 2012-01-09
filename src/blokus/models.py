@@ -6,6 +6,7 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 import hashlib
+import logging
 
 _colour_regex = r"^(blue|yellow|red|green)$"
 
@@ -22,7 +23,7 @@ class Game(models.Model):
 		if limit_to_player is None:
 			players = self.player_set.all()
 		else:
-			players = list(player)
+			players = [limit_to_player]
 		players = self.player_set.all()
 		for player in players:
 			pieces = player.piece_set.all()
@@ -212,12 +213,12 @@ class Piece(models.Model):
 		return False
 
 	def is_valid_position(self):
-		logging.debug("Does not overlap:" + self.does_not_overlap())
-		logging.debug("Is only adjancent:" + self.is_only_adjacent())
-		logging.debug("Satisfies first move:" + self.satisfies_first_move())
-		logging.debug("Is inside grid:" + self.is_inside_grid())
-		logging.debug("Game is not over: " + self.player.game.winning_colour.strip())
-		return self.does_not_overlap() and self.is_only_adjacent() and self.satisfies_first_move() and self.is_inside_grid() and self.player.game.winning_colour.strip() == "" # Game is not over.
+		#logging.debug("Does not overlap:" + str(self.does_not_overlap()))
+		#logging.debug("Is only adjancent:" + str(self.is_only_adjacent()))
+		#logging.debug("Satisfies first move:" + str(self.satisfies_first_move()))
+		#logging.debug("Is inside grid:" + str(self.is_inside_grid()))
+		#logging.debug("Game is not over: " + str(self.player.game.winning_colours.strip()))
+		return self.does_not_overlap() and self.is_only_adjacent() and self.satisfies_first_move() and self.is_inside_grid() and self.player.game.winning_colours.strip() == "" # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement server_rotate and server_transpose.
