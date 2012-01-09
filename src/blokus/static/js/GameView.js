@@ -297,13 +297,13 @@ console.log(piece)
 					}
 				}
 			);
-			shape.cells.mouseover(function () {shape.halo()});
-			shape.cells.mouseout(function () {
-					if (shape.haloCircle != undefined){
-						shape.haloCircle.attr("opacity", 0);
-						shape.haloCircle.remove();
-					}
-					shape.haloCircle = undefined;
+			shape.cells.mouseover(function () {shape.halo(gameboard)});
+			shape.cells.mouseout(function (e, x, y) {
+				if(shape.outOfShape(x, y)){
+					setTimeout(function (){
+						shape.removeHalo();
+					}, 300);
+				}
 			});
 			blokus.mapKeyDown(37,
 				function () {
