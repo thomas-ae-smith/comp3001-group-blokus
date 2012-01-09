@@ -47,37 +47,6 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			profile: function (id) { switchToView(new blokus.ProfileView({ id: id })); }
 		}))();
 
-		$("#signin-button").click(function () {				// Handle sign in
-			location.href = "/login/";						// HACK
-			var username = $("#loginUsername").html(),
-				password = $("#loginPassword").html();
-			$.ajax({
-				url: "/login/",
-				type: "POST",
-				data: { username: username, password: password },
-				success: function (model) {
-					blokus.user.set(model);
-					blokus.user.fetch();
-				},
-				error: function () {
-					blokus.showError("Invalid username or password!");
-				}
-			});
-			return false;
-		});
-
-		$("#signout-button").click(function () {			// Handle sign out
-			$.ajax({ // Log out
-				url: "/logout",
-				success: function (model) {
-					blokus.user.set(model);
-				},
-				error: function () {
-					blokus.showError("Failed to logout user!");
-				}
-			});
-		});
-
 		var authDfd = new $.Deferred();
 		blokusDeferreds.push(authDfd);
 
@@ -99,7 +68,6 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				// **
 			}
 		});
-
 
 		$(window).keyup(function (e) {
 			_(keyUpMappings[e.keyCode]).each(function (f) { f.call(); });
