@@ -63,9 +63,9 @@
 							<input type="submit" value="Log in" class="button">
 						</form>
 						<div class="links">
-							<a href="/debug">Temp register</a>
-							<a href="#register">Register (FIXME)</a>
-							<a href="#forgot">Forgot your password? (FIXME)</a>
+							<a href="{% url socialauth_begin 'facebook' %}">Login with Facebook</a>
+							<a href="#register">Register</a>
+							<a href="#forgot">Forgot your password?</a>
 						</div>
 					</div>
 				</div>
