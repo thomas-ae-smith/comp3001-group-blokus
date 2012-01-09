@@ -46,7 +46,7 @@ class UserCreationForm(forms.ModelForm):
         error_messages = {'invalid': "This value may contain only letters, numbers and @/./+/-/_ characters."})
 	password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
 	password2 = forms.CharField(label="Password confirmation", widget=forms.PasswordInput, help_text="Enter the same password as above, for verification.")
-	email = forms.EmailField(label="Email Address" help_text = "Required")
+	email = forms.EmailField(label="Email Address", help_text = "Required")
 
 	class Meta:
         	model = User
@@ -74,6 +74,18 @@ class UserCreationForm(forms.ModelForm):
             		user.save()
         	return user
 
+@guest_allowed
+def base(request):
+	form = UserCreationForm()
+	if request.POST:
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+	            	form.save(True)
+			username = request.POST['username']
+	        	password = request.POST['password1']
+        	    	user = authenticate(username=username, password=password)
+            		login(request, user)
+	return render_to_response("game.html", {'form' : form}, context_instance=RequestContext(request))
 
 @guest_allowed
 def debug_view(request):
@@ -109,6 +121,9 @@ def spoof_poll(request, id):
 	request.user = get_object_or_404(User, pk=id)
 	UserProfileResource().get_object_list(request)
 	return redirect('blokus.views.debug_view')
+
+def register(request):
+	return redirect('blokus.views.base')
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):
