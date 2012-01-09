@@ -223,10 +223,10 @@
 					gameBBox: {
 								sx: canvas.offset().top,
 								sy: canvas.offset().left,
-								width: canvas.width(),
-								height: canvas.height(),
-								ex: canvas.offset().left + canvas.width(),
-								ey: canvas.offset().top + canvas.height()
+								width: Number(canvas.attr("width")), // does not work in firefox //canvas.width(),
+								height: Number(canvas.attr("height")), // does not work in firefox //canvas.height(),
+								ex: canvas.offset().left + Number(canvas.attr("width")), //canvas.width()
+								ey: canvas.offset().top + Number(canvas.attr("height")) //canvas.height()
 							  },
 					gameboardBBox: {
 								sx: gameboard.offset.x, // start x

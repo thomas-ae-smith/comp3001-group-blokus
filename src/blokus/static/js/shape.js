@@ -384,8 +384,14 @@
 				this.isSelected = true;
 				this.prevDistX = 0;
 				this.prevDistY = 0;
-				this.mousePageX = e.pageX - e.offsetX + this.initBBox.x;
-				this.mousePageY = e.pageY - e.offsetY + this.initBBox.y;
+				if(e.offsetX != undefined && e.offsetY != undefined){
+					this.mousePageX = e.pageX - e.offsetX + this.initBBox.x;
+					this.mousePageY = e.pageY - e.offsetY + this.initBBox.y;
+				}
+				else{
+					this.mousePageX = e.pageX - e.layerX + this.initBBox.x;
+					this.mousePageY = e.pageY - e.layerY + this.initBBox.y;
+				}
 				this.setOpacity(0.5, 100);
 			}
 		},
