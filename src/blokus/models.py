@@ -173,6 +173,7 @@ class Piece(models.Model):
 				return self.master.get_bitmap()[height][0]
 			elif self.x + width == 19 and self.y == 19:
 				return self.master.get_bitmap()[height][width]
+			return False
 		else:
 			return True
 
