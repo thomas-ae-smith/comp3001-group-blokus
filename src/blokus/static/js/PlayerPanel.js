@@ -12,7 +12,7 @@
 			var $el = $(this.el),
 				player = this.options.player,
 				template = _.template($('#player-panel-template').html());
-				
+
 			$el.html(template({
 				name: player.user.get("username"),
 				pic: "/static/img/noavatar.jpg",
@@ -34,7 +34,7 @@
 				positions = blokus.utils.get_points(blokus.pieceMasters.toJSON(), offset.x + 10, offset.y + 35, width - 27, height - 20);
 
 			pieces.each(function (piece) {
-				var pieceMaster = blokus.pieceMasters.get(piece.get("pieceMasterId")),
+				var pieceMaster = blokus.pieceMasters.get(piece.get("master_id")),
 					i = pieceMaster.get("id");
 				gameview.drawPiece(positions[i].x, positions[i].y, piece, colour, scale, scale, canMove);
 			});

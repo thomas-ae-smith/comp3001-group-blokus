@@ -30,7 +30,7 @@
 			// Render the inset border
 			paper.rect(this.offset.x, this.offset.y, this.width, this.height)
 				 .attr("stroke", "black").glow();
-			
+
 			// Render 20x20 grid
 			for (var x = 0; x < 20; x++) {
 				var row = [];
@@ -53,8 +53,8 @@
 			pieces.each(function (piece) {
 				var x = offset.x + piece.get("x") * cellSize,
 					y = offset.y + piece.get("y") * cellSize,
-					pieceMaster = blokus.pieceMasters.get(piece.get("pieceMasterId"));
-				
+					pieceMaster = blokus.pieceMasters.get(piece.get("master_id"));
+
 				gameview.drawPiece(x, y, piece, colour, 1, 1, false);
 				if (piece.get("rotation") == undefined){
 					piece.set("rotation", 0);

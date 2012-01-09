@@ -46,30 +46,30 @@
 				game = this.game = new blokus.Game({ id: this.options.id });
 
 			window.p = paper;
-			
+
 			var dfd = new $.Deferred();
 
 			game.fetch({ success: function () {
 				var dfds = [];
 
 				_(game.players.models).each(function (player) {
-					var user = player.user = new blokus.User({ id: player.get("userId") });
+					var user = player.user = new blokus.User({ id: player.get("user_id") });
 					var d = new $.Deferred();
 					dfds.push(d);
 					user.fetch({ success: function () {
 						d.resolve();
 					}, error: function () {
 						d.resolve();
-						blokus.showError("Failed to get user information (id " + user.get("userId") + ") for player");
-					} })
+						blokus.showError("Failed to get user information (id " + user.get("user_id") + ") for player");
+					} });
 				});
 
 				$.when.apply(undefined, dfds).always(function () { dfd.resolve(); });
-				
+
 			}, error: function () {
 				blokus.showError("Failed to fetch game");
 			}});
-			
+
 			dfd.done(function () {
 				var gamej = game.toJSON(),
 					playerPanels = [],
@@ -81,7 +81,7 @@
 						gameview: this_
 					}).render(),
 
-					poller = setInterval(function () { game.fetch(); }, 1000),	// Fetch game model every second (to determined player turn, duration, winner etc)
+					poller = setInterval(function () { game.fetch({ error: function () { blokus.showError("Failed to fetch game"); /* FIXME: remove? */ } }); }, 1000),	// Fetch game model every second (to determined player turn, duration, winner etc)
 		        	ticker = setInterval(function () { this_.updateDuration(); }, 1000); // Keep game duration up-to-date
 
 		        this_.bind("close", function () { clearTimeout(poller); clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
@@ -95,11 +95,17 @@
 		        	console.log("TODO Player wins: ", winner);
 		        });
 
-		        game.bind("change:time_now", function (game, timeNow) { updateDuration(timeNow); });
+		        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
+
+		        game.bind("change:number_of_moves", function (game, numberOfMoves) {
+		        	_(game.pieces.models).each(function (piece) {
+		        		gameboard.renderPiece(game.players.get(piece.get("player_id")).get("colour"), piece);
+		        	});
+		        });
 
 		        this_.startTime = new Date(gamej.start_time); // FIXME Date time check compatbility
 		        this_.timeNow = new Date(gamej.time_now); // FIXME Date time check compatbility
-					
+
 				this_.$(".uri").html(game.get("uri"));
 
 				this_.$(".game-help").click(function () {
@@ -124,9 +130,9 @@
 					var colour = player.get("colour"),
 						options = { paper: paper, game: game, player: player, gameview: this_ },
 						active = false;
-					
+
 					 // Identify if this is the logged in user
-					if (blokus.user.get("id") === player.get("userId")) {
+					if (blokus.user.get("id") === player.get("user_id")) {
 						active = true;
 						options.active = true;
 						options.positionId = 0;
@@ -143,15 +149,15 @@
 					$el.find(active ? ".playerpanelcontainer.left" : ".playerpanelcontainer.right").append(playerPanel.render().el);
 
 					var unplacedPieces = new blokus.PieceCollection(),
-						placedPieces = game.pieces[colour],
-						placedPieceIds = placedPieces.pluck("pieceMasterId");
+						placedPieces = player.pieces,
+						placedPieceIds = placedPieces.pluck("master_id");
 
 					// Determine what pieces have not been placed
 					_(blokus.pieceMasters.models).each(function (pieceMaster) {
 						var id = Number(pieceMaster.get("id"));
 
 						if (placedPieceIds.indexOf(id) === -1) {
-							var piece = new blokus.Piece({ pieceMasterId: id });
+							var piece = new blokus.Piece({ master_id: id });
 							unplacedPieces.add(piece);
 
 							if (active) { // If logged in user
@@ -187,8 +193,8 @@
 		drawPiece: function (x, y, piece, colour, scaleX, scaleY, canMove) {
 			var gameboard = this.gameboard,
 				paper = this.paper;
-			
-			var data = blokus.pieceMasters.get(piece.get("pieceMasterId")).get("data");
+console.log(piece)
+			var data = blokus.pieceMasters.get(piece.get("master_id")).get("data");
 
 			var numRows = data.length;
 			var numCols = data[0].length;
@@ -225,7 +231,7 @@
 			var canvas = $(paper.canvas);
 			var shape = new blokus.shape(
 				{
-					dataArr: _(data).clone(), 
+					dataArr: _(data).clone(),
 					cells: cells,
 					visibleCells: visibleCells,
 					canMove: canMove,
@@ -246,7 +252,7 @@
 					gameboardBBox: {
 								sx: gameboard.offset.x, // start x
 								sy: gameboard.offset.y, // start y
-								width: gameboard.width, 
+								width: gameboard.width,
 								height: gameboard.height,
 								ex: gameboard.offset.x + gameboard.width, // end x
 								ey: gameboard.offset.y + gameboard.height  // end y

@@ -1,5 +1,9 @@
 // Define the models used by blokus
 (function ($, _, Backbone) {
+	function getUrlId (url) {
+		return (url.charAt(url.length - 1) === "/" ? url.slice(0, url.length - 1) : url).split("/").pop();
+	}
+
 	var Model = Backbone.Model.extend({
 		url : function () {
 			if (this.resourceUrl) {
@@ -42,8 +46,18 @@
 		Game = Model.extend({
 			resourceUrl: blokus.urls.game,
 
+			url: function () {
+				console.log(this.resourceUrl, (this.hasOwnProperty("id") ? this.id + "/" : ""),
+						this.has("state") ? "?state=" + this.get("number_of_moves") : "")
+				return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "") +
+						(this.has("state") ? "?state=" + this.get("number_of_moves") : "");
+			},
+
 			// FIXME: Hacked in bootstrap, baby
 			fetch: function (options) {
+				if (this.get("id") > 1) { // TODO remove
+					return Model.prototype.fetch.apply(this, arguments);
+				}
 				var this_ = this,
 					id = Number(this_.get("id")),
 					model = _(blokus._exampleGames).find(function (game) {
@@ -59,17 +73,16 @@
 			},
 
 			parse: function (model) {
-				this.players = new blokus.PlayerCollection(model.players);
-				this.players.url = this.url() + "player/";
-				this.pieces = {};
-				this.pieces.red = new blokus.PieceCollection(model.pieces.red);
-				this.pieces.blue = new blokus.PieceCollection(model.pieces.blue);
-				this.pieces.green = new blokus.PieceCollection(model.pieces.green);
-				this.pieces.yellow = new blokus.PieceCollection(model.pieces.yellow);
-				this.pieces.red.url = this.url() + "piece/red/";
-				this.pieces.blue.url = this.url() + "piece/blue/";
-				this.pieces.green.url = this.url() + "piece/green/";
-				this.pieces.yellow.url = this.url() + "piece/yellow/";
+				var players = this.players = new blokus.PlayerCollection(model.players);
+				players.url = this.url() + "player/";
+				_(players.models).each(function (player) {
+					player.pieces = new blokus.PieceCollection(player.get("pieces"));
+					player.pieces.url = players.url + "piece/";
+					_(player.pieces.models).each(function (piece) {
+						piece.set({ master_id: getUrlId(piece.get("master")), player_id: getUrlId(piece.get("player")) });
+					});
+					player.user_id = getUrlId(player.get("user"));
+				});
 				return model;
 			}
 		}),
@@ -89,11 +102,10 @@
 			}
 		}),
 
-		Player = Model.extend({
-		}),
+		Player = Model.extend({}),
 
 		Board = Model.extend({
-		initialize: function(){	
+		initialize: function(){
 						var numXCells = 20;
 						var numYCells = 20;
 						var grid = new Array(numXCells);
@@ -122,6 +134,10 @@
 		userProfile = new UserProfile(),
 		board = new Board();
 
+
+    userProfile.bind("change:game_id", function (user, gameId) {
+        //blokus.router.navigate(gameId ? "game/" + id : "", true);
+    });
 
 	_(window.blokus).extend({
 		User: User,
