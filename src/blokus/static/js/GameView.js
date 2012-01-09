@@ -99,6 +99,7 @@
 
 		        game.bind("change:number_of_moves", function (game, numberOfMoves) {
 		        	_(game.pieces.models).each(function (piece) {
+		        		console.log(game.players.get(piece.get("player_id")).get("colour"), piece)
 		        		gameboard.renderPiece(game.players.get(piece.get("player_id")).get("colour"), piece);
 		        	});
 		        });
