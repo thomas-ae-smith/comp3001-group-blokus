@@ -140,7 +140,7 @@ class GameResource(ModelResource):
 		authorization = GameAuthorization()
 
 	def dehydrate(self, bundle):
-		bundle['time_now'] = datetime.now()
+		bundle.data['time_now'] = datetime.now()
 		return bundle
 
 	#Every time a user gets a game object of theirs, their player timestamp is updated.
