@@ -88,7 +88,7 @@ class UserProfileResource(ModelResource):
 			elif request.user.get_profile().status[0:7] == "private":
 				for userProfile in userProfiles:
 					if (userProfile.status == request.user.get_profile().status and
-						userProfile.private_queue == request.user.private_queue):
+						userProfile.private_queue == request.user.get_profile().private_queue):
 						users_playing.append(userProfile.user)
 					if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
 						break
