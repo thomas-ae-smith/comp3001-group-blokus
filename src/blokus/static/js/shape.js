@@ -20,7 +20,7 @@
 			y: undefined,
 		},
 		fullScale: false,
-
+		paper: undefined,
 		isSelected: false,
 		canMove: false,
 		rotation: 0,
@@ -107,6 +107,7 @@
 			this.canMove = this.options.canMove;
 			this.pos = this.options.pos;
 			this.dataArr = this.options.dataArr;
+			this.paper = this.options.paper;
 			//this.destCor = this.options.destCor;
 			this.prevDist = this.options.prevDist;
 			this.mousePage = this.options.mousePage;
@@ -221,7 +222,7 @@
 
 		/** END MOVEMENT **/
 
-		getCellsOnGameboard: function (gameboard, newSet) {
+		getCellsOnGameboard: function (gameboard) {
 			if(this.isShapeInGameboard()){
 				this.posInGameboard = {
 					x: Math.round((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize),
@@ -236,6 +237,7 @@
 				var transData = this.flipMatrix(rdata, this.flipNum);
 				var numRows = transData.length;
 				var numCols = transData[0].length;
+				var newSet = this.paper.set()
 				for (var rowI = 0; rowI < numRows; rowI++){
 					for (var colJ = 0; colJ < numCols; colJ++) {
 						if (transData[rowI][colJ] == 1) {
@@ -349,11 +351,11 @@
 
 		},
 
-		inBoardValidation: function(gameboard, newSet){
+		inBoardValidation: function(gameboard){
 			if(this.isShapeInGameboard()){
 				if (this.cellsOnGameboard != undefined)
 					this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
-				this.getCellsOnGameboard(gameboard, newSet);
+				this.getCellsOnGameboard(gameboard);
 
 				//Validation
 				var corner = false;
@@ -467,14 +469,14 @@
 			return rotatedData;
 		},
 
-		rotate: function (rotation, gameboard, emptySet){
+		rotate: function (rotation, gameboard){
 			if(this.isSelected){
 				var this_ = this;
 				this.rotation += rotation;
 				var cenPoint = this.getCenterOfShape();
 				//this.cells.rotate(rotation*90, cenPoint.x, cenPoint.y);
 				this.cells.animate({transform: "...r"+rotation*90+" "+cenPoint.x+" "+cenPoint.y}, 150);
-				setTimeout(function(){this_.inBoardValidation(gameboard, emptySet);}, 151);
+				setTimeout(function(){this_.inBoardValidation(gameboard);}, 151);
 			}
 		},
 
@@ -508,7 +510,7 @@
 			}
 		},
 
-		flip: function (flipNum, gameboard, paper){
+		flip: function (flipNum, gameboard){
 			if(this.isSelected){
 				var this_ = this;
 				if (flipNum == 1 && this.curScale.x > 0) // Set animation values
@@ -534,12 +536,17 @@
 				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, this.rotation*90,
 						 cenPoint.x, cenPoint.y, 150);
-				setTimeout(function(){this_.inBoardValidation(gameboard, new paper.set());}, 151);
+				setTimeout(function(){this_.inBoardValidation(gameboard);}, 151);
 			}
-		}
+		},
 
 		/** END FLIP **/
 
+		halo: function(){
+			var cenPoint = this.getCenterOfShape();
+			var c = this.paper.circle(cenPoint.x, cenPoint.y, 50);
+			c.attr({fill:"#FFF", opacity: 0.3});
+		}
 
 	});
 

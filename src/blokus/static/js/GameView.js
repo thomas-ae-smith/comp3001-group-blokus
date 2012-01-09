@@ -44,6 +44,8 @@
 
 			var paper = this.paper = Raphael(el, 800, 660),			// Make the Raphael element 800 x 600 in this view
 				game = this.game = new blokus.Game({ id: this.options.id });
+
+			window.p = paper;
 			
 			var dfd = new $.Deferred();
 
@@ -232,6 +234,7 @@
 					curScale: {x: scaleX, y:scaleY, originalScale: false},
 					cellSize: cellSize,
 					gameboardCellSize: 23,
+					paper: paper,
 					gameBBox: {
 								sx: canvas.offset().top,
 								sy: canvas.offset().left,
@@ -290,22 +293,22 @@
 			);
 			blokus.mapKeyDown(37,
 				function () {
-					shape.rotate(-1, gameboard, new paper.set());
+					shape.rotate(-1, gameboard);
 				}
 			);
 			blokus.mapKeyDown(39,
 				function () {
-					shape.rotate(1, gameboard, new paper.set());
+					shape.rotate(1, gameboard);
 				}
 			);
 			blokus.mapKeyDown(86, // v
 				function (){
-					shape.flip(2, gameboard, paper);
+					shape.flip(2, gameboard);
 				}
 			);
 			blokus.mapKeyDown(72, // h
 				function (){
-					shape.flip(1, gameboard, paper);
+					shape.flip(1, gameboard);
 				}
 			);
 			return shape.cells;
