@@ -229,7 +229,7 @@
 					canMove: canMove,
 					invisibleCells: invisibleCells,
 					pos: {x:x, y:y},
-					curScale: {sx: scaleX, sy:scaleY, originalScale: false},
+					curScale: {x: scaleX, y:scaleY, originalScale: false},
 					cellSize: cellSize,
 					gameboardCellSize: 23,
 					gameBBox: {

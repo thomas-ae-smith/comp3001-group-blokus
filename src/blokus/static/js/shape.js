@@ -12,12 +12,12 @@
 		},
 
 		curScale: {
-			sx: undefined,
-			sy: undefined,
+			x: undefined,
+			y: undefined,
 		},
 		initScale: {
-			sx: undefined,
-			sy: undefined,
+			x: undefined,
+			y: undefined,
 		},
 		fullScale: false,
 
@@ -117,7 +117,7 @@
 			this.setInitBBoxes();
 			// Apply the current scale given
 			if (this.curScale != undefined){
-				this.cells.scale(this.curScale.sx, this.curScale.sy
+				this.cells.scale(this.curScale.x, this.curScale.y
 							, this.pos.x, this.pos.y);
 			}
 		},
@@ -181,23 +181,23 @@
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 			if(this.cells.getBBox(true).x > 132 && !this.fullScale){
-				this.curScale = {sx: 1, sy: 1};
+				this.curScale = {x: 1, y: 1};
 				this.fullScale = true;
 				time = 75;
 			}
 			else if(this.cells.getBBox(true).x < 132 && this.fullScale){
-				this.curScale = {sx: this.initScale.sx, sy: this.initScale.sy};
+				this.curScale = {x: this.initScale.x, y: this.initScale.y};
 				this.fullScale = false;
 				time = 75;
 			}
 			if (time == 0){
-				this.transform( this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
+				this.transform( this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
 							//this.initBBox.x, this.initBBox.y, rotation,
 							cenPoint.x, cenPoint.y, rotation,
 							cenPoint.x, cenPoint.y);
 			}
 			else{
-				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
+				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, time);
 			}
@@ -206,7 +206,7 @@
 				this.prevDistY = this.distMoved.y;
 			}
 			else{
-				this.transform( this.prevDistX, this.prevDistY, this.curScale.sx, this.curScale.sy,
+				this.transform( this.prevDistX, this.prevDistY, this.curScale.x, this.curScale.y,
 							  cenPoint.x, cenPoint.y, rotation,
 							  cenPoint.x, cenPoint.y);
 			}
@@ -405,7 +405,7 @@
 				this.rotation = 0;
 				this.curScale = _(this.initScale).clone();
 				this.flipNum = 0;
-				this.animate(0, 0, this.initScale.sx, this.initScale.sy,
+				this.animate(0, 0, this.initScale.x, this.initScale.y,
 								cenPoint.x, cenPoint.y, this.rotation*90,
 								cenPoint.x, cenPoint.y, 500);
 			}
@@ -417,7 +417,7 @@
 			this.canMove = false;
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
-			this.animate(this.destCor.x, this.destCor.y, this.curScale.sx, this.curScale.sy,
+			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
 			this.setOpacity(1, 500);
@@ -505,14 +505,14 @@
 		flip: function (flipNum, gameboard, paper){
 			if(this.isSelected){
 				var this_ = this;
-				if (flipNum == 1 && this.curScale.sx > 0) // Set animation values
-					this.curScale.sx = -1;
+				if (flipNum == 1 && this.curScale.x > 0) // Set animation values
+					this.curScale.x = -1;
 				else if (flipNum == 1)
-					this.curScale.sx = 1;
-				if (flipNum == 2 && this.curScale.sy > 0)
-					this.curScale.sy = -1;
+					this.curScale.x = 1;
+				if (flipNum == 2 && this.curScale.y > 0)
+					this.curScale.y = -1;
 				else if (flipNum == 2)
-					this.curScale.sy = 1;
+					this.curScale.y = 1;
 
 
 				if (this.flipNum == 3) // Set the flipnum for server
@@ -526,7 +526,7 @@
 
 					
 				var cenPoint = this.getCenterOfShape();
-				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.sx, this.curScale.sy,
+				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, this.rotation*90,
 						 cenPoint.x, cenPoint.y, 150);
 				setTimeout(function(){this_.inBoardValidation(gameboard, new paper.set());}, 151);
