@@ -174,7 +174,7 @@ class Piece(models.Model):
 			elif self.x + width == 19 and self.y == 19:
 				return self.master.get_bitmap()[height][width]
 		else:
-			return False
+			return True
 
 	def is_inside_grid(self):
 		height = len(self.get_bitmap())
@@ -206,11 +206,11 @@ class Piece(models.Model):
 		return False
 
 	def is_valid_position(self):
-		return (self.does_not_overlap() and
-			(self.is_only_adjacent() or
-			self.satisfies_first_move()) and
+		return self.does_not_overlap() and
+			self.is_only_adjacent() and
+			self.satisfies_first_move() and
 			self.is_inside_grid() and
-			self.player.game.winning_colour.strip() == "") # Game is not over.
+			self.player.game.winning_colour.strip() == "" # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement server_rotate and server_transpose.
