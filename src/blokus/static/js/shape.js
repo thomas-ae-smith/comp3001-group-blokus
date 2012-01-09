@@ -546,12 +546,36 @@
 		/** END FLIP **/
 
 		halo: function(){
-			if(this.haloCircle == undefined && !this.isSelected){
+			if(this.haloCircle == undefined && !this.isSelected && this.canMove){
 				var cenPoint = this.getCenterOfShape();
-				this.haloCircle = this.paper.circle(cenPoint.x, cenPoint.y, 50);
-				this.haloCircle.attr({fill:"#FFF", opacity: 0.3});
+				this.haloCircle = new this.paper.set();
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 0, 89)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 91, 179)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 181, 269)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 271, 359)));
+				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 30});
+				window.h = this.haloCircle
 				this.cells.toFront();
 			}
+		},
+		
+		arc: function(center, radius, startAngle, endAngle) {
+			angle = startAngle;
+			coords = this.toCoords(center, radius, angle);
+			path = "M " + coords.x + " " + coords.y;
+			while(angle<=endAngle) {
+				coords = this.toCoords(center, radius, angle);
+				path += " L " + coords.x + " " + coords.y;
+				angle += 1;
+			}
+			return path;
+		},
+
+		toCoords: function(center, radius, angle){
+			var radians = (angle/180) * Math.PI;
+			var x = center.x + Math.cos(radians) * radius;
+			var y = center.y + Math.sin(radians) * radius;
+			return {x:x, y:y};
 		}
 
 	});
