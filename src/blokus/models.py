@@ -6,7 +6,6 @@ from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 import hashlib
-import logging
 
 _colour_regex = r"^(blue|yellow|red|green)$"
 
@@ -16,7 +15,7 @@ class Game(models.Model):
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
 	uri = models.CharField(max_length=56)
-	winning_colour = models.CharField(max_length=6, validators=[RegexValidator(regex=r"^(blue|yellow|red|green)?$")])
+	winning_colours = models.CharField(max_length=18, validators=[RegexValidator(regex=r"^((blue|yellow|red|green)(\|(blue|yellow|red|green))*)?$")])
 
 	def get_grid(self, limit_to_player=None):
 		grid = [[False]*20 for x in xrange(20)]
@@ -24,7 +23,7 @@ class Game(models.Model):
 			players = self.player_set.all()
 		else:
 			players = list(player)
-
+		players = self.player_set.all()
 		for player in players:
 			pieces = player.piece_set.all()
 			for piece in pieces:
@@ -41,26 +40,31 @@ class Game(models.Model):
 				return False
 		return True
 
-	# Returns the player with the highest score.
-	def get_winning_player(self):
+	# Returns the players with the highest score. Will only return multiple players if they share the same score.
+	def get_winning_players(self):
 		players = self.player_set.all()
-		winner = players[0]
+		winners = []
+		highscore = 0
 		for player in players:
-			if player.score > winner.score:
-				winner = player
-		return player
+			if player.score > highscore:
+				winner = [player]
+				highscore = player.score
+			elif player.score == highscore:
+				winner.append(player)
+		return winners
 
 	def get_next_colour_turn(self):
 		return {"blue":"yellow","yellow":"red","red":"green","green":"blue"}[self.colour_turn]
 
 	def end_game(self):
-		winner = self.get_winning_player()
-		winnerProfile = winner.user.get_profile()
-		winnerProfile.wins += 1
-		winnerProfile.save()
-		self.winning_colour = winner.colour
-		for player in self.player_set.exclude(id=winner.id):
-			profile = player.user.get_profile
+		winners = self.get_winning_players()
+		for winner in winners:
+			winnerProfile = winner.user.get_profile()
+			winnerProfile.wins += 1
+			winnerProfile.save()
+		self.winning_colours = "|".join([winner.colour] for winner in winners)
+		for player in set(self.player_set.all()) - set(winners):
+			profile = player.user.get_profile()
 			profile.losses += 1
 			profile.save()
 
@@ -117,9 +121,6 @@ class Player(models.Model):
 	last_activity = models.DateTimeField(default=datetime.now())
 	score = models.IntegerField(default=0)
 
-	def get_grid(self):
-		return self.game.get_grid(limit_to_player=self)
-
 	# Returns whether the player is able to make a move or not
 	def is_able_to_move(self):
 		grid = self.game.get_grid()
@@ -150,7 +151,7 @@ class Piece(models.Model):
 	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 
 	server_rotate = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
-	transposed = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
+	server_flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
 	def does_not_overlap(self):
@@ -174,9 +175,8 @@ class Piece(models.Model):
 				return self.master.get_bitmap()[height][0]
 			elif self.x + width == 19 and self.y == 19:
 				return self.master.get_bitmap()[height][width]
-			return False
 		else:
-			return True
+			return False
 
 	def is_inside_grid(self):
 		height = len(self.get_bitmap())
@@ -217,20 +217,20 @@ class Piece(models.Model):
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement server_rotate and server_transpose.
-		if self.transposed:
+		if self.server_flip:
 			return transpose_bitmap(rotate_bitmap(bitmap, self.server_rotate))
 		else:
 			return rotate_bitmap(bitmap, self.server_rotate)
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
-		self.rotate(not(bool(self.transposed) ^ bool(horizontal)))
-		self.transposed = not self.transposed
+		self.server_rotate(not(bool(self.server_flip) ^ bool(horizontal)))
+		self.server_flip = not self.server_flip
 
 	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
-			self.rotation = (self.rotation + 1) % 4
+			self.server_rotate = (self.server_rotate + 1) % 4
 		else:
-			self.rotation = (self.rotation - 1) % 4
+			self.server_rotate = (self.server_rotate - 1) % 4
 
 	# Mapping between the way the orientation is stored on the server (rot and
 	# trans), and the way it is stored at the client (rot, v-flip and h-flip).
@@ -247,10 +247,10 @@ class Piece(models.Model):
 	}
 
 	def get_client_flip(self):
-		return self.server_client_mapping[(self.rotation,self.transposed)][1]
+		return self.server_client_mapping[(self.server_rotate,self.server_flip)][1]
 
 	def get_client_rotate(self):
-		return self.server_client_mapping[(self.rotation,self.transposed)][0]
+		return self.server_client_mapping[(self.server_rotate,self.server_flip)][0]
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
