@@ -22,6 +22,7 @@
 		fullScale: false,
 		paper: undefined,
 		haloCircle: undefined,
+		haloOn: true,
 		isSelected: false,
 		canMove: false,
 		rotation: 0,
@@ -544,17 +545,80 @@
 		},
 
 		/** END FLIP **/
+		outOfShape: function(x, y){
+			this.calAllBBox();
+			if(x > this.allBBox.sx && y > this.allBBox.sy && x < this.allBBox.ex && y < this.allBBox.ey){
+				return false;
+			}
+			return true;
+		},
 
-		halo: function(){
+		halo: function(gameboard){
 			if(this.haloCircle == undefined && !this.isSelected && this.canMove){
+				this_ = this;
 				var cenPoint = this.getCenterOfShape();
 				this.haloCircle = new this.paper.set();
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 0, 89)));
+				this.haloCircle[0].click(function(){
+					if(this_.haloOn){
+						this_.isSelected = true;
+						this_.rotate(1, gameboard);
+						this_.isSelected = false;
+						console.log("Rotate Left");
+					}
+				});
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 91, 179)));
+				this.haloCircle[1].click(function(){
+					if(this_.haloOn){
+						this_.isSelected = true;
+						this_.rotate(-1, gameboard);
+						this_.isSelected = false;
+						console.log("Rotate Right");
+					}
+				});
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 181, 269)));
+				this.haloCircle[2].click(function(){
+					if(this_.haloOn){
+						this_.isSelected = true;
+						this_.flip(2, gameboard);
+						this_.isSelected = false;
+						console.log("Flip Vertical");
+					}
+				});
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 50, 271, 359)));
-				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 30});
-				window.h = this.haloCircle
+				this.haloCircle[3].click(function(){
+					if(this_.haloOn){
+						this_.isSelected = true;
+						this_.flip(1, gameboard);
+						this_.isSelected = false;
+						console.log("Flip Horizantal");
+					}
+				});
+				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 30, opacity: 0});
+				this.haloCircle.animate({opacity: 1}, 500);
+				this.haloCircle.mouseover( function(){
+						this_.haloOn = true;
+					}
+				);
+				this.haloCircle.mouseout( function(){
+						this_.haloOn = false;
+						this_.removeHalo();
+					}
+				);
+				this.cells.toFront();
+				this.haloCircle.toFront();
+			}
+			else if(this.canMove){
+				this.haloCircle.animate({opacity: 1}, 500);
+				this.cells.toFront();
+				this.haloCircle.toFront();
+			}
+		},
+
+		removeHalo: function(){
+			this_ = this;
+			if (this.haloCircle != undefined && !this.haloOn){
+				this.haloCircle.animate({opacity: 0}, 500);
 				this.cells.toFront();
 			}
 		},
