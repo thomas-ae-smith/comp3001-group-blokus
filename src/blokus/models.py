@@ -179,9 +179,8 @@ class Piece(models.Model):
 				return self.master.get_bitmap()[height][0]
 			elif self.x + width == 19 and self.y == 19:
 				return self.master.get_bitmap()[height][width]
-			return False
 		else:
-			return True
+			return False
 
 	def is_inside_grid(self):
 		height = len(self.get_bitmap())
@@ -204,7 +203,7 @@ class Piece(models.Model):
 					for x_offset, y_offset in ((-1,0),(1,0),(0,1),(0,-1)):
 						if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
 							return False
-				
+
 					#If cell is adjacent to cell of the same colour, allow placement.
 					for x_offset, y_offset in ((1,1),(1,-1),(-1,1),(-1,-1)):
 						if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
@@ -218,7 +217,10 @@ class Piece(models.Model):
 		#logging.debug("Satisfies first move:" + str(self.satisfies_first_move()))
 		#logging.debug("Is inside grid:" + str(self.is_inside_grid()))
 		#logging.debug("Game is not over: " + str(self.player.game.winning_colours.strip()))
-		return self.does_not_overlap() and self.is_only_adjacent() and self.satisfies_first_move() and self.is_inside_grid() and self.player.game.winning_colours.strip() == "" # Game is not over.
+		return (self.does_not_overlap() 
+		and (self.is_only_adjacent() or self.satisfies_first_move()) 
+		and self.is_inside_grid() 
+		and self.player.game.winning_colours.strip() == "") # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement server_rotate and server_transpose.
