@@ -255,6 +255,7 @@ class Piece(models.Model):
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
+	game = models.ForeignKey(Game)
 	move_number = models.PositiveIntegerField()
 
 
@@ -273,6 +274,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 def record_move(sender, instance, **kwargs):
 	move = Move()
 	move.piece = instance
+	move.game = instance.player.game
 	move.move_number = instance.player.game.number_of_moves + 1
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
 	instance.player.game.colour_turn = instance.player.game.get_next_colour_turn()

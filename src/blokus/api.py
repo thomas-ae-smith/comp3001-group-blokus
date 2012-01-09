@@ -137,13 +137,17 @@ class GameResource(ModelResource):
 		authorization = GameAuthorization()
 
 	def dehydrate(self, bundle):
-		bundle.data['time_now'] = datetime.now()
 		state = bundle.request.GET.get('state')
-		if state is not None:
-			for i, player_data in enumerate(bundle.data['players']):
-				player = Player.objects.get(pk=player_data.data['id'])
-				for j, piece in enumerate(player.data['pieces']):
-					pass
+		if state is None:
+			state = 0
+
+		bundle.data['time_now'] = datetime.now()
+
+		new_piece_ids = Move.objects.filter(game=Game.objects.get(pk=bundle.data['id']),move_number__gt=state).values_list('piece', flat=True)
+		for i, player in enumerate(bundle.data['players']):
+			for j, piece in enumerate(player.data['pieces']):
+				if long(piece.data['id']) not in new_piece_ids:
+					del bundle.data['players'][i].data['pieces'][j]
 		return bundle
 
 	#Every time a user gets a game object of theirs, their player timestamp is updated.
