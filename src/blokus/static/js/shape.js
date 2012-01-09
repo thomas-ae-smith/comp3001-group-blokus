@@ -21,6 +21,7 @@
 		},
 		fullScale: false,
 		paper: undefined,
+		haloCircle: undefined,
 		isSelected: false,
 		canMove: false,
 		rotation: 0,
@@ -99,6 +100,7 @@
 		},
 		
 		initialize: function(){
+			this_ = this;
 			this.curScale = this.options.curScale;
 			this.initScale = _(this.curScale).clone();
 			this.cells = this.options.cells;
@@ -413,6 +415,7 @@
 				this.rotation = 0;
 				this.curScale = _(this.initScale).clone();
 				this.flipNum = 0;
+				this.distMoved = { x: 0, y: 0 };
 				this.animate(0, 0, this.initScale.x, this.initScale.y,
 								cenPoint.x, cenPoint.y, this.rotation*90,
 								cenPoint.x, cenPoint.y, 500);
@@ -543,9 +546,12 @@
 		/** END FLIP **/
 
 		halo: function(){
-			var cenPoint = this.getCenterOfShape();
-			var c = this.paper.circle(cenPoint.x, cenPoint.y, 50);
-			c.attr({fill:"#FFF", opacity: 0.3});
+			if(this.haloCircle == undefined && !this.isSelected){
+				var cenPoint = this.getCenterOfShape();
+				this.haloCircle = this.paper.circle(cenPoint.x, cenPoint.y, 50);
+				this.haloCircle.attr({fill:"#FFF", opacity: 0.3});
+				this.cells.toFront();
+			}
 		}
 
 	});
