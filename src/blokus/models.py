@@ -213,11 +213,7 @@ class Piece(models.Model):
 		logging.debug("Satisfies first move:" + self.satisfies_first_move())
 		logging.debug("Is inside grid:" + self.is_inside_grid())
 		logging.debug("Game is not over: " + self.player.game.winning_colour.strip())
-		return self.does_not_overlap() and
-			self.is_only_adjacent() and
-			self.satisfies_first_move() and
-			self.is_inside_grid() and
-			self.player.game.winning_colour.strip() == "" # Game is not over.
+		return self.does_not_overlap() and self.is_only_adjacent() and self.satisfies_first_move() and self.is_inside_grid() and self.player.game.winning_colour.strip() == "" # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement server_rotate and server_transpose.
