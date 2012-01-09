@@ -12,6 +12,9 @@ from datetime import datetime
 import logging
 import random
 
+
+import sys
+
 class UserResource(ModelResource):
 	userprofile = fields.ToOneField('blokus.api.UserProfileResource', 'userprofile', full=True)
 
@@ -46,7 +49,9 @@ class UserProfileResource(ModelResource):
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			userProfiles = super(UserProfileResource, self).get_object_list(request)
-			userProfiles.exclude(id=request.user.id)
+			# print >>sys.stderr, "Pre-exclude USERPROFILES: " + ", ".join([repr(user.user.username) for user in userProfiles]) + "#############################"
+			userProfiles.exclude(id=request.user.id)	#BUG: This doesn't appear to be excluding correctly. Maybe something to do with guest accounts?
+			# print >>sys.stderr, "Post-exclude USERPROFILES: " + ", ".join([repr(user.user.username) for user in userProfiles]) + "#############################"
 			users_playing = [request.user]
 			# Game Attributes: <status>:(<typeID>,<playerCount>)
 			# Must be added to if a new game type is introduced.
@@ -58,16 +63,16 @@ class UserProfileResource(ModelResource):
 			}
 
 			# Get a list of users to play in a game.
-			statuses = set(['looking_for_2','looking_for_4'])
+			statuses = ['looking_for_2','looking_for_4']
 			if request.user.get_profile().status == 'looking_for_any':
 				random.shuffle(statuses)
 				for status in statuses:
 					for userProfile in userProfiles:
 						if userProfile.status in [status, 'looking_for_any']:
 							users_playing.append(userProfile.user)
-							if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
+							if len(users_playing) >= game_attributes[status][1]:
 								break
-					if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
+					if len(users_playing) >= game_attributes[status][1]:
 						request.user.get_profile().status = status
 						break
 			elif request.user.get_profile().status in statuses:
@@ -93,6 +98,7 @@ class UserProfileResource(ModelResource):
 				colours = ['blue', 'yellow', 'red', 'green']
 				game = Game(game_type=game_attributes[request.user.get_profile().status][0])
 				game.save()
+				# print >>sys.stderr, "USERS_PLAYING: " + repr(users_playing) + "###################################\n"
 				for user_number in xrange(4):
 					user = None
 					if request.user.get_profile().status == 'looking_for_2':	# Will need to add to this IF
@@ -106,6 +112,10 @@ class UserProfileResource(ModelResource):
 						colour=colours[user_number])
 					user.save()
 					player.save()
+					# print >>sys.stderr, "PLAYER CREATED: " + repr(player) + "###################################\n"
+					# print >>sys.stderr, "PLAYER CREATED: NAME:" + repr(player.user.username) + "###################################\n"
+				# print >>sys.stderr, "GAME CREATED: " + repr(game) + "###################################\n"
+				# print >>sys.stderr, "GAME CREATED: TYPE: " + repr(game.game_type) + "###################################\n"
 			return userProfiles
 		return UserProfile.objects.none()
 
