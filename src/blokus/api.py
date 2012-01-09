@@ -9,6 +9,7 @@ from django.forms import ModelForm, ValidationError
 from django.core.serializers import json
 from django.utils import simplejson
 from datetime import datetime
+from guest.utils import display_username
 import logging
 import random
 
@@ -23,6 +24,11 @@ class UserResource(ModelResource):
 		list_allowed_methods = []
 		detail_allowed_methods = ['get']
 		authorization = Authorization()
+
+	def obj_get(self, request=None, **kwargs):
+		user = super(UserResource, self).obj_get(request, **kwargs)
+		user.username = display_username(user)
+		return user
 
 class UserProfileResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')

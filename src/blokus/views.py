@@ -10,6 +10,8 @@ from blokus.models import *
 
 from guest.decorators import guest_allowed
 
+import logging
+
 # Garbage collection function called by cronjob.
 def execute_garbage_collection(request):
 	# The amount of time which a single player may be disconnected for before the game is garbage-collected.
@@ -108,13 +110,15 @@ def spoof_poll(request, id):
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):
-	if not request.is_ajax():
-		return HttpResponseBadRequest()
+	#if not request.is_ajax():
+		#return HttpResponseBadRequest()
 	if request.user.id is None:
 		return HttpResponseNotFound()
 
 	ur = UserResource()
 	user = ur.obj_get(pk=request.user.id)
 	ur_bundle = ur.build_bundle(obj=user, request=request)
+
+	full_bundle = ur.full_dehydrate(ur_bundle)
 
 	return HttpResponse(ur.serialize(None, ur.full_dehydrate(ur_bundle), 'application/json'))
