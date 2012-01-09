@@ -236,15 +236,21 @@
 				</div>
 			</script>
 			<script type="text/html" id="profile-template">
-				<h2><%= username %>'s profile</h2>
-				<dl>
-					<dt>Joined</dt><dd><%= joined %></dd>
-					<dt>Wins</dt><dd><%= wins %></dd>
-					<dt>Losses</dt><dd><%= losses %></dd>
-				</dl>
-				<% if (username === blip.user.get("username")) { %>
-					<input type="button" value="Edit">
-				<% } %>
+				<div class="box form">
+					<h1><%= username %>'s profile</h1>
+					<table>
+						<tr>
+							<td><b>Joined</b></td><td><%= joined %></td>
+						</tr>
+						<tr>
+							<td><b>Wins</b></td><td><%= wins %></td>
+						</tr>
+						<tr>
+							<td><b>Losses</b></td><td><%= losses %></td>
+						</tr>
+					</table><br/>
+					<a href="#" class="button">Back</a><br/><br/>
+				</div>
 			</script>
 		</div>
 	</body>

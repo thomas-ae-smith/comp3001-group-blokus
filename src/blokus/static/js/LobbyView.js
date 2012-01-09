@@ -29,11 +29,12 @@ blokus.LobbyView = Backbone.View.extend({
             options = { error: function () { blokus.showError("Failed to save user profile"); } };
 
 		var name = blokus.user.get("username");
+		var userProfile = blokus.user.get("userprofile");
 		var isGuest = !name || name === "anon";
 		$(this.el).html(template({
             picsrc: "/static/img/noavatar.jpg",
             name: isGuest ? "Guest" : name,
-			stats: isGuest ? "Please login to save your scores" : "wins: 10 losses: 8",
+			stats: isGuest ? "Please login to save your scores" : "wins: " + userProfile.wins.toString() + " losses: " + userProfile.losses.toString(),
 			hideSignOut: isGuest ? "" : "style=\"display:none;\"",
 			hideProfile: isGuest ? "style=\"display:none;\"" : ""
         }));

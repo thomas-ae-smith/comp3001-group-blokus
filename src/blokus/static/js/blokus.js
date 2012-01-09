@@ -37,14 +37,14 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				"help": "help",
 				"register": "register",
 				"forgot": "forgot",
-				"profile/:id": "profile"
+				"profile": "profile"
 			},
 			lobby: function () { switchToView(new blokus.LobbyView()); },
 			game: function (id) { switchToView(new blokus.GameView({ id: id })); },
 			help: function () { switchToView(new blokus.HelpView()); },
 			register: function () { switchToView(new blokus.RegisterView()); },
 			forgot: function () { switchToView(new blokus.ForgotView()); },
-			profile: function (id) { switchToView(new blokus.ProfileView({ id: id })); }
+			profile: function () { switchToView(new blokus.ProfileView()); }
 		}))();
 
 		var authDfd = new $.Deferred();
