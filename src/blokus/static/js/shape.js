@@ -181,12 +181,18 @@
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 			if(this.cells.getBBox(true).x > 132 && !this.fullScale){
-				this.curScale = {x: 1, y: 1};
+				this.curScale = {
+					x: this.curScale.x > 0 ? 1 : -1,
+					y: this.curScale.y > 0 ? 1 : -1
+				};
 				this.fullScale = true;
 				time = 75;
 			}
 			else if(this.cells.getBBox(true).x < 132 && this.fullScale){
-				this.curScale = {x: this.initScale.x, y: this.initScale.y};
+				this.curScale = {
+					x: this.curScale.x > 0 ? this.initScale.x : -this.initScale.x, 
+					y: this.curScale.y > 0 ? this.initScale.y : -this.initScale.y  
+				};
 				this.fullScale = false;
 				time = 75;
 			}
@@ -506,14 +512,13 @@
 			if(this.isSelected){
 				var this_ = this;
 				if (flipNum == 1 && this.curScale.x > 0) // Set animation values
-					this.curScale.x = -1;
+					this.curScale.x = this.fullScale ? -1 : -this.initScale.x;
 				else if (flipNum == 1)
-					this.curScale.x = 1;
+					this.curScale.x = this.fullScale ? 1 : this.initScale.x;
 				if (flipNum == 2 && this.curScale.y > 0)
-					this.curScale.y = -1;
+					this.curScale.y = this.fullScale ? -1 : -this.initScale.y;
 				else if (flipNum == 2)
-					this.curScale.y = 1;
-
+					this.curScale.y = this.fullScale ? 1 : this.initScale.y;
 
 				if (this.flipNum == 3) // Set the flipnum for server
 					this.flipNum -= flipNum
