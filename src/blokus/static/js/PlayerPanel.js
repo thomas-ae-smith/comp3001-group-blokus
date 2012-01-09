@@ -23,6 +23,7 @@
 		},
 
 		renderPieces: function (pieces, canMove) {
+			console.log(this.options.positionId)
 			var gameview = this.options.gameview,
 				cellSize = this.options.cellSize,
 				colour = this.options.player.get("colour"),

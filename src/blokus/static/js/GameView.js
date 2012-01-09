@@ -131,8 +131,10 @@
 						options = { paper: paper, game: game, player: player, gameview: this_ },
 						active = false;
 
-					 // Identify if this is the logged in user
-					if (blokus.user.get("id") === player.get("user_id")) {
+					console.log(blokus.user.get("id"), player.get("user_id"))
+
+					// Identify if this is the logged in user
+					if (blokus.user.get("id") == player.get("user_id")) {
 						active = true;
 						options.active = true;
 						options.positionId = 0;
@@ -163,7 +165,7 @@
 							if (active) { // If logged in user
 								piece.bind("piece_placed", function (x, y, flip, rotation) {
 									piece.set({ x: x, y: y, flip: flip, rotation: rotation });
-									game.pieces[colour].create(piece.toJSON(), { error: function () { blokus.showError("Piece failed to be placed.") } });
+									game.getPlayerOfColour(colour).pieces.create(piece.toJSON(), { error: function () { blokus.showError("Piece failed to be placed.") } });
 
 									var colourswitch = {"blue": "yellow", "yellow": "red", "red": "green", "green": "blue"};   // FIXME  temp
 									//blokus._exampleGames[1].colour_turn = colourswitch[game.get("colour_turn")];

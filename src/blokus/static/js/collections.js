@@ -9,8 +9,8 @@
 		UserProfileCollection = Collection.extend({ model: blokus.UserProfile, resourceUrl: blokus.urls.user }),
 		GameCollection = Collection.extend({ model: blokus.Game, resourceUrl: blokus.urls.game }),
 		PieceMasterCollection = Collection.extend({ model: blokus.PieceMaster, resourceUrl: blokus.urls.pieceMaster }),
-		PieceCollection = Collection.extend({ model: blokus.Piece }),
-		PlayerCollection = Backbone.Collection.extend({ model: blokus.Player });
+		PieceCollection = Collection.extend({ model: blokus.Piece, resourceUrl: blokus.urls.piece }),
+		PlayerCollection = Backbone.Collection.extend({ model: blokus.Player, resourceUrl: blokus.urls.player });
 
 	// FIXME: temp bootstrap (until server-side done)
 	var _exampleGames = [

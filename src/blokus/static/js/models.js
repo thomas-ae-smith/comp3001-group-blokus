@@ -9,7 +9,7 @@
 			if (this.resourceUrl) {
 	            return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
             } else if (this.collection) {
-                return this.collection.url + (this.hasOwnProperty("id") ? this.id + "/" : "");
+                return this.collection.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
             } else {
                 throw "Does not have resource url or collection";
             }
@@ -47,8 +47,6 @@
 			resourceUrl: blokus.urls.game,
 
 			url: function () {
-				console.log(this.resourceUrl, (this.hasOwnProperty("id") ? this.id + "/" : ""),
-						this.has("state") ? "?state=" + this.get("number_of_moves") : "")
 				return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "") +
 						(this.has("state") ? "?state=" + this.get("number_of_moves") : "");
 			},
@@ -74,16 +72,21 @@
 
 			parse: function (model) {
 				var players = this.players = new blokus.PlayerCollection(model.players);
-				players.url = this.url() + "player/";
 				_(players.models).each(function (player) {
+					//player.url = this.get("player");
 					player.pieces = new blokus.PieceCollection(player.get("pieces"));
-					player.pieces.url = players.url + "piece/";
 					_(player.pieces.models).each(function (piece) {
 						piece.set({ master_id: getUrlId(piece.get("master")), player_id: getUrlId(piece.get("player")) });
 					});
-					player.user_id = getUrlId(player.get("user"));
+					player.set({ user_id: getUrlId(player.get("user")) });
 				});
 				return model;
+			},
+
+			getPlayerOfColour: function (colour) {
+				return _(this.players.models).find(function (player) {
+					return player.get("colour") === colour;
+				});
 			}
 		}),
 

@@ -106,7 +106,9 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			user: restRootUrl + "user/",
 			userProfile: restRootUrl + "userprofile/",
 			game: restRootUrl + "game/",
-			pieceMaster: restRootUrl + "piecemaster/"
+			pieceMaster: restRootUrl + "piecemaster/",
+			player: restRootUrl + "player/",
+			piece: restRootUrl + "piece/"
 		},
 		mapKeyUp: function (keyCode, callback) {			// Bind a function to a key being released
 			if (!keyUpMappings.hasOwnProperty(keyCode)) { keyUpMappings[keyCode] = []; }

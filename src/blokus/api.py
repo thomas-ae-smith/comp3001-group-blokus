@@ -243,8 +243,8 @@ class PieceResource(ModelResource):
 		queryset = Piece.objects.all()
 		resource_name = 'piece'
 		default_format = 'application/json'
-		list_allowed_methods = ['get']
-		detail_allowed_methods = ['get','post']
+		list_allowed_methods = ['get','post']
+		detail_allowed_methods = ['get']
 		validation = CleanedDataFormValidation(form_class=PieceForm)
 		authorization = Authorization()
 
