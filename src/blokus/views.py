@@ -110,8 +110,8 @@ def spoof_poll(request, id):
 
 @require_http_methods(["GET"])
 def get_logged_in_user(request):
-	#if not request.is_ajax():
-		#return HttpResponseBadRequest()
+	if not request.is_ajax():
+		return HttpResponseBadRequest()
 	if request.user.id is None:
 		return HttpResponseNotFound()
 
