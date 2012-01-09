@@ -13,9 +13,6 @@ from guest.utils import display_username
 import logging
 import random
 
-
-import sys
-
 class UserResource(ModelResource):
 	userprofile = fields.ToOneField('blokus.api.UserProfileResource', 'userprofile', full=True)
 
@@ -55,7 +52,7 @@ class UserProfileResource(ModelResource):
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			userProfiles = super(UserProfileResource, self).get_object_list(request)
-			userProfiles.exclude(id=request.user.id)	#BUG: This doesn't appear to be excluding correctly. Maybe something to do with guest accounts?
+			userProfiles = userProfiles.exclude(id=request.user.get_profile().id)	#BUG: This doesn't appear to be excluding correctly. Maybe something to do with guest accounts?
 			users_playing = [request.user]
 			# Game Attributes: <status>:(<typeID>,<playerCount>)
 			# Must be added to if a new game type is introduced.
@@ -108,8 +105,6 @@ class UserProfileResource(ModelResource):
 						user = users_playing[user_number % 2]	# block if any new game types
 					else:										# are added.
 						user = users_playing[user_number]
-					import sys
-					print >>sys.stderr, "ADDED USER " + user.username + " to game."
 					user.status = 'ingame'
 					player = Player(
 						game=game,
@@ -117,7 +112,6 @@ class UserProfileResource(ModelResource):
 						colour=colours[user_number])
 					user.save()
 					player.save()
-				print >>sys.stderr, "GAME CONSTRUCTED"
 			return userProfiles
 		return UserProfile.objects.none()
 
