@@ -5,13 +5,6 @@
 		parse: function(response) { return response.objects; }
 	});
 
-	var UserCollection = Collection.extend({ model: blokus.User, resourceUrl: blokus.urls.user }),
-		UserProfileCollection = Collection.extend({ model: blokus.UserProfile, resourceUrl: blokus.urls.user }),
-		GameCollection = Collection.extend({ model: blokus.Game, resourceUrl: blokus.urls.game }),
-		PieceMasterCollection = Collection.extend({ model: blokus.PieceMaster, resourceUrl: blokus.urls.pieceMaster }),
-		PieceCollection = Collection.extend({ model: blokus.Piece, resourceUrl: blokus.urls.piece }),
-		PlayerCollection = Backbone.Collection.extend({ model: blokus.Player, resourceUrl: blokus.urls.player });
-
 	// FIXME: temp bootstrap (until server-side done)
 	var _exampleGames = [
 		{ id: 0, name: "the colourblinds" /* players */ },
@@ -50,12 +43,12 @@
 	];
 
 	_(window.blokus).extend({
-		UserCollection: UserCollection,
-		UserProfileCollection: UserProfileCollection,
-		GameCollection: GameCollection,
-		PieceMasterCollection: PieceMasterCollection,
-		PieceCollection: PieceCollection,
-		PlayerCollection: PlayerCollection,
+		UserCollection: Collection.extend({ model: blokus.User, resourceUrl: blokus.urls.user }),
+		UserProfileCollection: Collection.extend({ model: blokus.UserProfile, resourceUrl: blokus.urls.user }),
+		GameCollection: Collection.extend({ model: blokus.Game, resourceUrl: blokus.urls.game }),
+		PieceMasterCollection: Collection.extend({ model: blokus.PieceMaster, resourceUrl: blokus.urls.pieceMaster }),
+		PieceCollection: Collection.extend({ model: blokus.Piece, resourceUrl: blokus.urls.piece }),
+		PlayerCollection: Backbone.Collection.extend({ model: blokus.Player, resourceUrl: blokus.urls.player }),
 
 		_exampleGames: _exampleGames,
 		_exampleUsers: _exampleUsers
