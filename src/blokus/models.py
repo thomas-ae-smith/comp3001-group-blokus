@@ -175,20 +175,22 @@ class Piece(models.Model):
 	# piece of the same colour, but does not actually touch another
 	# piece of the same colour.
 	def is_only_adjacent(self):
-		this_bitmap = self.get_bitmap()
-
 		#Construct grid of pieces of the same colour.
 		grid = self.player.get_grid()
 
-		#If cell touches another cell of the same colour, invalid placement.
-		for x_offset, y_offset in ((-1,0),(1,0),(0,1),(0,-1)):
-			if grid[this_col + self.x + x_offset][this_row + self.y + y_offset]:
-				return False
+		#Compare piece being placed to pieces near it on the grid.
+		for row_number, row_data in enumerate(self.get_bitmap()):
+			for column_number, cell in enumerate(row_data):
+
+				#If cell touches another cell of the same colour, invalid placement.
+				for x_offset, y_offset in ((-1,0),(1,0),(0,1),(0,-1)):
+					if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
+						return False
 			
-		#If cell is adjacent to cell of the same colour, allow placement.
-		for x_offset, y_offset in ((1,1),(1,-1),(-1,1),(-1,-1)):
-			if grid[this_col + self.x + x_offset][this_row + self.y + y_offset]:
-				return True
+				#If cell is adjacent to cell of the same colour, allow placement.
+				for x_offset, y_offset in ((1,1),(1,-1),(-1,1),(-1,-1)):
+					if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
+						return True
 
 		return False
 
