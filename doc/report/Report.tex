@@ -1,0 +1,18 @@
+
+% Include all the formatting etc.
+\include{Style}
+
+%%% Document
+\begin{document}
+
+\include{TitlePage}
+\pagestyle{empty} %get rid of header/footer for toc page
+\tableofcontents{} %put toc in
+\cleardoublepage{} %start new page
+\pagestyle{plain} % put headers/footers back on
+\setcounter{page}{1} %reset the page counter
+\include{ProjectDescription}
+\include{tools_and_techniques}
+\include{Relevant_Statistics}
+
+\end{document}

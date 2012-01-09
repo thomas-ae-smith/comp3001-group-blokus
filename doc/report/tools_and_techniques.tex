@@ -1,0 +1,43 @@
+
+\section{List of Tools and Techniques Used}
+\subsection{Tools}
+\begin{itemize}
+	\setlength{\itemsep}{1pt}
+  	\setlength{\parskip}{0pt}
+  	\setlength{\parsep}{0pt}
+	\item Various Text Editors with syntax highlighting for general development. No language specific IDEs were used to reduce platform incompatibility issues and reduce unnecessary files.
+	\begin{itemize}
+		\setlength{\itemsep}{1pt}
+  		\setlength{\parskip}{0pt}
+  		\setlength{\parsep}{0pt}
+		\item {Sublime Text 2 (All)}
+		\item {Vim (Unix Based Environments)}
+		\item {Notepad++ (Windows Environments)}
+	\end{itemize}
+	\item Google Chrome Developer Tools were used for Javascript debugging.
+	\item Python 2.7 was used as it is the version used on the Google App Engine.
+	\item The Google App Engine SDK 1.6.1 was used as the base platform.
+	\item The Google App Engine was used as the hosting service.
+	\item Mercurial (hosted on BitBucket) was used for collaborative source control. Mercurial was selected over SVN due to its superior branching and the local repository.
+	\begin{itemize}
+		\setlength{\itemsep}{1pt}
+  		\setlength{\parskip}{0pt}
+  		\setlength{\parsep}{0pt}
+		\item {Mercurial (Command Line) (All)}
+		\item {TortoiseHG (Windows Environments)}
+	\end{itemize}
+	\item The Django framework was used both to simplify development and encapsulate some GAE SDK commands such as deploying to the app engine.
+	\item Facebook was used for group contact and organisation.
+	\item Google Docs were used for collaborative authoring and document sharing.
+	\item Mozilla Firefox, Google Chrome, Chromium, IE9 and Safari were used for testing.
+	\item JSON was used to aid in the simplification of client/server communication and used to pass objects around in Javascript.
+	\item AJAX was used to create dynamic forms using asynchronous Javascript.
+	\item cron was used to garbage collect completed or abandoned games and inactive temporary users from the database.
+\end{itemize}
+
+\subsection{Techniques}
+We used a RAD (Rapid Application Development) approach to development having regular meetings and aiming to have a prototype with more functionality at each one. We also used Facebook and Google Docs to ensure that everyone knew the current state and design of the system.
+
+Temporary data was created on the client side and a DEBUG page to emulate many server functions so that front-end development could continue even if the back-end was not working. In this way the various modules of the system were kept separate as far as possible.
+
+We used BitBucket issue tracking to keep track of errors so that issues were not forgotten and everyone could see what needed to be done. This helped in ensuring development time was not wasted and task distribution.
