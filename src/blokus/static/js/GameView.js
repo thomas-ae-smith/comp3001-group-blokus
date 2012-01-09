@@ -2,10 +2,16 @@
 	var cellSize = 22;
 
 	var colours = {
+		/*
 		red: '#ff0000',
 		green: '#00ff00',
 		blue: '#0000ff',
 		yellow: '#ffff00'
+		*/
+		red: '/static/img/blockblue.png',
+		green: '/static/img/blockgreen.png',
+		blue: '/static/img/blockred.png',
+		yellow: '/static/img/blockyellow.png'
 	}
 
 	function prepend0 (i) {
@@ -191,17 +197,23 @@
 			for (var rowI = 0; rowI < numRows; rowI++){
 				for (var colJ = 0; colJ < numCols; colJ++) {
 					if (data[rowI][colJ] == 1) {
-						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+						//var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+												//cellSize, cellSize);
+						//cell.attr({fill: colours[colour]});
+						var cell = paper.image(colours[colour], x+(colJ)*cellSize, y+(rowI)*cellSize,
 												cellSize, cellSize);
-						cell.attr({fill: colours[colour]});
+						cell.attr({opacity: 1});
 						cell.opacity = 1;
 						cells.push(cell);
 						visibleCells.push(cell);
 					}
 					else{
-						var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+						//var cell = paper.rect(x+(colJ)*cellSize, y+(rowI)*cellSize,
+												//cellSize, cellSize);
+						//cell.attr({fill: colours[colour], opacity: 0});
+						var cell = paper.image(colours[colour], x+(colJ)*cellSize, y+(rowI)*cellSize,
 												cellSize, cellSize);
-						cell.attr({fill: colours[colour], opacity: 0});
+						cell.attr({opacity: 0});
 						cell.opacity = 0;
 						cells.push(cell);
 						invisibleCells.push(cell);
