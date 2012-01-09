@@ -121,6 +121,9 @@ class Player(models.Model):
 	last_activity = models.DateTimeField(default=datetime.now())
 	score = models.IntegerField(default=0)
 
+	def get_grid(self):
+		return self.game.get_grid(limit_to_player = self)
+
 	# Returns whether the player is able to make a move or not
 	def is_able_to_move(self):
 		grid = self.game.get_grid()
@@ -175,8 +178,9 @@ class Piece(models.Model):
 				return self.master.get_bitmap()[height][0]
 			elif self.x + width == 19 and self.y == 19:
 				return self.master.get_bitmap()[height][width]
-		else:
 			return False
+		else:
+			return True
 
 	def is_inside_grid(self):
 		height = len(self.get_bitmap())
