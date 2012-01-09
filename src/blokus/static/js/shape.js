@@ -22,6 +22,7 @@
 		fullScale: false,
 		paper: undefined,
 		haloCircle: undefined,
+		haloOn: true,
 		isSelected: false,
 		canMove: false,
 		rotation: 0,
@@ -544,14 +545,101 @@
 		},
 
 		/** END FLIP **/
+		outOfShape: function(x, y){
+			this.calAllBBox();
+			if(x > this.allBBox.sx && y > this.allBBox.sy && x < this.allBBox.ex && y < this.allBBox.ey){
+				return false;
+			}
+			return true;
+		},
 
-		halo: function(){
-			if(this.haloCircle == undefined && !this.isSelected){
+		halo: function(gameboard){
+			if(this.haloCircle == undefined && !this.isSelected && this.canMove){
+				this_ = this;
 				var cenPoint = this.getCenterOfShape();
-				this.haloCircle = this.paper.circle(cenPoint.x, cenPoint.y, 50);
-				this.haloCircle.attr({fill:"#FFF", opacity: 0.3});
+				this.haloCircle = new this.paper.set();
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 0, 89)));
+				this.haloCircle[0].click(function(){
+					if(this_.haloOn){
+						this_.isSelected = true;
+						this_.rotate(1, gameboard);
+						this_.isSelected = false;
+						console.log("Rotate Left");
+					}
+				});
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 91, 179)));
+				this.haloCircle[1].click(function(){
+					if(this_.haloOn){
+						this_.isSelected = true;
+						this_.rotate(-1, gameboard);
+						this_.isSelected = false;
+						console.log("Rotate Right");
+					}
+				});
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 181, 269)));
+				this.haloCircle[2].click(function(){
+					if(this_.haloOn){
+						this_.isSelected = true;
+						this_.flip(2, gameboard);
+						this_.isSelected = false;
+						console.log("Flip Vertical");
+					}
+				});
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 271, 359)));
+				this.haloCircle[3].click(function(){
+					if(this_.haloOn){
+						this_.isSelected = true;
+						this_.flip(1, gameboard);
+						this_.isSelected = false;
+						console.log("Flip Horizantal");
+					}
+				});
+				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 10, opacity: 0});
+				this.haloCircle.animate({opacity: 0.3}, 500);
+				this.haloCircle.mouseover( function(){
+						this_.haloOn = true;
+					}
+				);
+				this.haloCircle.mouseout( function(){
+						this_.haloOn = false;
+						this_.removeHalo();
+					}
+				);
+				this.cells.toFront();
+				this.haloCircle.toFront();
+			}
+			else if(this.canMove){
+				this.haloCircle.animate({opacity: 0.3}, 500);
+				this.cells.toFront();
+				this.haloCircle.toFront();
+			}
+		},
+
+		removeHalo: function(){
+			this_ = this;
+			if (this.haloCircle != undefined && !this.haloOn){
+				this.haloCircle.animate({opacity: 0}, 500);
 				this.cells.toFront();
 			}
+		},
+		
+		arc: function(center, radius, startAngle, endAngle) {
+			angle = startAngle;
+			coords = this.toCoords(center, radius, angle);
+			path = "M " + coords.x + " " + coords.y;
+			while(angle<=endAngle) {
+				coords = this.toCoords(center, radius, angle);
+				path += " L " + coords.x + " " + coords.y;
+				angle += 1;
+			}
+			return path;
+		},
+
+		toCoords: function(center, radius, angle){
+			var radians = (angle/180) * Math.PI;
+			var x = center.x + Math.cos(radians) * radius;
+			var y = center.y + Math.sin(radians) * radius;
+			return {x:x, y:y};
 		}
 
 	});

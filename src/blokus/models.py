@@ -15,7 +15,7 @@ class Game(models.Model):
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
 	uri = models.CharField(max_length=56)
-	winner = models.IntegerField(default=-1)
+	winning_colour = models.CharField(max_length=6, validators=[RegexValidator(regex=r"^(blue|yellow|red|green)?$")])
 
 	def get_grid(self, limit_to_player=None):
 		grid = [[False]*20 for x in xrange(20)]
@@ -43,7 +43,7 @@ class Game(models.Model):
 	# Returns the player with the highest score.
 	def get_winning_player(self):
 		players = self.player_set.all()
-		winner = players.pop()
+		winner = players[0]
 		for player in players:
 			if player.score > winner.score:
 				winner = player
@@ -51,6 +51,17 @@ class Game(models.Model):
 
 	def get_next_colour_turn(self):
 		return {"blue":"yellow","yellow":"red","red":"green","green":"blue"}[self.colour_turn]
+
+	def end_game(self):
+		winner = self.get_winning_player()
+		winnerProfile = winner.user.get_profile()
+		winnerProfile.wins += 1
+		winnerProfile.save()
+		self.winning_colour = winner.colour
+		for player in self.player_set.exclude(id=winner.id):
+			profile = player.user.get_profile
+			profile.losses += 1
+			profile.save()
 
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
@@ -103,7 +114,7 @@ class Player(models.Model):
 	user = models.ForeignKey(User)
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	last_activity = models.DateTimeField(default=datetime.now())
-	points = models.IntegerField(default=0)
+	score = models.IntegerField(default=0)
 
 	def get_grid(self):
 		return self.game.get_grid(limit_to_player=self)
@@ -199,7 +210,7 @@ class Piece(models.Model):
 			(self.is_only_adjacent() or
 			self.satisfies_first_move()) and
 			self.is_inside_grid() and
-			self.player.game.winner < 0) # Game is not over.
+			self.player.game.winning_colour.strip() == "") # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement server_rotate and server_transpose.
@@ -263,9 +274,9 @@ def record_move(sender, instance, **kwargs):
 	move.move_number = instance.player.game.number_of_moves + 1
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
 	instance.player.game.colour_turn = instance.player.game.get_next_colour_turn()
-	instance.player.points += instance.master.get_point_value()
+	instance.player.score += instance.master.get_point_value()
 	if instance.player.game.is_game_over():
-		instance.player.game.winner = instance.player.game.get_winning_player()
+		instance.player.game.end_game()
 
 	instance.player.game.save()
 	instance.player.save()

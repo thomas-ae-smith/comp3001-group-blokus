@@ -199,26 +199,37 @@
 				</div>
 			</script>
 			<script type="text/html" id="register-template">
-				<form action="/register/" method="post" class="box form">
+				<form action="{% url blokus.views.base %}" method="post" class="box form">
 					{% csrf_token %}
 					<h1>Register</h1>
 					<p>Registration can't be this quick and easy... can it?</p>
 					<label>
 						<span>Username</span>
-						<input name="username" type="text" />
+						{{ form.username }}
 					</label><br/>
 					<label>
 						<span>Email Address</span>
-						<input name="email" type="text" />
+						{{ form.email }}
 					</label><br/>
 					<label>
 						<span>Password</span>
-						<input name="password" type="password" />
+						{{ form.password1 }}
 					</label><br/>
 					<label>
 						<span>Confirm Password</span>
-						<input name="password2" type="password" />
+						{{ form.password2 }}
 					</label><br/>
+
+					<!-- Form error messages
+					{% for field in form.visible_fields %}
+		            	{% if field.errors %}
+		            		{% for error in field.errors %}
+		              			<p><strong>{{error}}</strong></p>
+		            		{% endfor %}
+		            	{% endif %}
+		            {% endfor %}
+		        	-->
+
 					<input type="submit" value="Register" class="button" /> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
 				</form>
 			</script>
@@ -253,5 +264,11 @@
 				</div>
 			</script>
 		</div>
+		{% if redirect %}
+		<!-- Redirect to particular point on page -->
+		<script type="text/javascript"> 
+			window.location.hash = "{{redirect}}"; 
+    		</script>
+		{% endif %}
 	</body>
 </html>

@@ -45,33 +45,51 @@ def execute_garbage_collection(request):
 class UserCreationForm(forms.ModelForm):
 	username = forms.RegexField(label="Username", max_length=30, regex=r'^[\w.@+-]+$',
         help_text = "Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only.",
-        error_messages = {'invalid': "This value may contain only letters, numbers and @/./+/-/_ characters."})
-	password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
-	email = forms.EmailField(help_text = "Required")
+        error_messages = {'invalid': "The username may contain only letters, numbers and @/./+/-/_ characters.", 'required': 'Username required'})
+	password1 = forms.CharField(label="Password", widget=forms.PasswordInput, error_messages={'required': 'Password is required.'})
+	password2 = forms.CharField(label="Password confirmation", widget=forms.PasswordInput, help_text="Enter the same password as above, for verification.", error_messages={'required': 'Password confirmation required.'})
+	email = forms.EmailField(label="Email Address", help_text = "Required", error_messages={'required': 'Email address is required.'})
 
 	class Meta:
-        	model = User
-	        fields = ("username", "email")
+		model = User
+		fields = ("username", "email")
 
 	def clean_username(self):
-        	username = self.cleaned_data["username"]
-	        try:
-        	    User.objects.get(username=username)
-	        except User.DoesNotExist:
-        	    return username
-	        raise forms.ValidationError("A user with that username already exists.")
+		username = self.cleaned_data["username"]
+		try:
+			User.objects.get(username=username)
+		except User.DoesNotExist:
+			return username
+		raise forms.ValidationError("A user with that username already exists.")
 
 	def clean_password2(self):
-        	password1 = self.cleaned_data.get("password1", "")
-        	return password1
+		password1 = self.cleaned_data.get("password1", "")
+		password2 = self.cleaned_data["password2"]
+		if password1 != password2:
+			raise forms.ValidationError("The two password fields didn't match.")
+		return password2
 
 	def save(self, commit=True):
-        	user = super(UserCreationForm, self).save(commit=False)
-        	user.set_password(self.cleaned_data["password1"])
-        	if commit:
-            		user.save()
-        	return user
+		user = super(UserCreationForm, self).save(commit=False)
+		user.set_password(self.cleaned_data["password1"])
+		if commit:
+			user.save()
+		return user
 
+@guest_allowed
+def base(request):
+	form = UserCreationForm()
+	if request.POST:
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save(True)
+			username = request.POST['username']
+			password = request.POST['password1']
+			user = authenticate(username=username, password=password)
+			login(request, user)
+		else:
+			return render_to_response("game.html", {'form' : form, 'redirect':'register'}, context_instance=RequestContext(request))
+	return render_to_response("game.html", {'form' : form}, context_instance=RequestContext(request))
 
 @guest_allowed
 def debug_view(request):
