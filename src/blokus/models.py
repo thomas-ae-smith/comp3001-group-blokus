@@ -202,7 +202,8 @@ class Piece(models.Model):
 		return (self.does_not_overlap() and
 			(self.is_only_adjacent() or
 			self.satisfies_first_move()) and
-			self.is_inside_grid())
+			self.is_inside_grid() and
+			self.player.game.winner < 0) # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotation and transposition.
