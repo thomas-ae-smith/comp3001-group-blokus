@@ -140,8 +140,9 @@ class GameResource(ModelResource):
 		bundle.data['time_now'] = datetime.now()
 		state = bundle.request.GET.get('state')
 		if state is not None:
-			for player in bundle.data['players']:
-				for piece in player['pieces']:
+			for i, player_data in enumerate(bundle.data['players']):
+				player = Player.objects.get(pk=player_data.data['id'])
+				for j, piece in enumerate(player.data['pieces']):
 					pass
 		return bundle
 
@@ -244,6 +245,6 @@ class PieceResource(ModelResource):
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):
-		bundle.data['rotated'] = bundle.obj.get_rotated()
-		bundle.data['flipped'] = bundle.obj.get_flipped()
+		bundle.data['client_rotate'] = bundle.obj.get_client_rotate()
+		bundle.data['client_flip'] = bundle.obj.get_client_flip()
 		return bundle

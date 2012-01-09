@@ -291,6 +291,14 @@
 					}
 				}
 			);
+			shape.cells.mouseover(function () {shape.halo()});
+			shape.cells.mouseout(function () {
+					if (shape.haloCircle != undefined){
+						shape.haloCircle.attr("opacity", 0);
+						shape.haloCircle.remove();
+					}
+					shape.haloCircle = undefined;
+			});
 			blokus.mapKeyDown(37,
 				function () {
 					shape.rotate(-1, gameboard);
