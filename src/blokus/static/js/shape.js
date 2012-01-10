@@ -506,7 +506,7 @@
 				
 				var corOnBoard = this.getCorOnBoard();
 				var validPosition = blokus.utils.valid(corOnBoard);
-				var colour = validPosition ? "#0C3" : "#F0A";
+				var colour = validPosition ? "#FFFFFF" : "#666666";
 				this.notInPanel = validPosition ? false : true;
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
 			} 

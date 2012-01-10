@@ -67,7 +67,7 @@
 						game.getPlayerOfColour(colour).pieces.create({
 							x: x,
 							y: y, 
-							client_flip: flip, 
+							client_flip: flip,
 							client_rotation: rotation 
 						}, {
 							error: function () { blokus.showError("Piece failed to be placed.") } 
