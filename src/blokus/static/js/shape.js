@@ -675,9 +675,10 @@
 				this.changeFlipToScale(flipNum);
 					
 				var cenPoint = this.getCenterOfShape();
-				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
-						 cenPoint.x, cenPoint.y, this.rotation*90,
-						 cenPoint.x, cenPoint.y, 150);
+				//this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
+						 //cenPoint.x, cenPoint.y, this.rotation*90,
+						 //cenPoint.x, cenPoint.y, 150);
+				this.cells.animate({transform: "...s"+this.curScale.x+" "+this.curScale.y+" "+cenPoint.x+" "+cenPoint.y}, 150);
 				setTimeout(function(){this_.inBoardValidation();}, 151);
 			}
 		},
@@ -695,6 +696,8 @@
 			if(this.haloCircle == undefined && !this.isSelected && this.canMove){
 				var this_ = this;
 				var cenPoint = this.getCenterOfShape();
+				cenPoint.x += this.pos.x;
+				cenPoint.y += this.pos.y;
 				this.haloCircle = this.paper.set();
 				this.boundaryCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
 				this.boundaryCircle.attr({fill:"#f00", opacity:0});
@@ -735,7 +738,7 @@
 					}
 				});
 				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 10, opacity: 0});
-				this.haloCircle.animate({opacity: 0.3}, 500);
+				this.haloCircle.animate({opacity: 0.3}, 0);
 				this.haloCircle.mouseover( function(){
 						this_.haloOn = true;
 					}
@@ -763,9 +766,9 @@
 		},
 		
 		arc: function(center, radius, startAngle, endAngle) {
-			angle = startAngle;
-			coords = this.toCoords(center, radius, angle);
-			path = "M " + coords.x + " " + coords.y;
+			var angle = startAngle;
+			var coords = this.toCoords(center, radius, angle);
+			var path = "M " + coords.x + " " + coords.y;
 			while(angle<=endAngle) {
 				coords = this.toCoords(center, radius, angle);
 				path += " L " + coords.x + " " + coords.y;
@@ -841,10 +844,8 @@
 			);
 			this.cells.mouseover(function () {
 				if(!this_.isSelected){
-					/*
 					var s = this_.halo();
 					blokus.haloArr.push(s);
-					*/
 				}
 			});
 			blokus.mapKeyDown(37,
