@@ -108,7 +108,7 @@ class UserProfile(models.Model):
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 
-def save(self, *args, **kwargs):
+	def save(self, *args, **kwargs):
 		try:
 			oldRecord = UserProfile.objects.get(id=self.id)
 			if (oldRecord.status != self.status):
