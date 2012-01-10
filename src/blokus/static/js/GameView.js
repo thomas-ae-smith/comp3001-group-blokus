@@ -2,12 +2,6 @@
 	var cellSize = 22;
 
 	var colours = {
-		/*
-		red: '#ff0000',
-		green: '#00ff00',
-		blue: '#0000ff',
-		yellow: '#ffff00'
-		*/
 		red: '/static/img/blockblue.png',
 		green: '/static/img/blockgreen.png',
 		blue: '/static/img/blockred.png',
@@ -160,8 +154,6 @@
 		        poll();
 
 		        this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
-
-
 
 		        this_.startTime = new Date(gamej.start_time); // FIXME Date time check compatbility
 		        this_.timeNow = new Date(gamej.time_now); // FIXME Date time check compatbility
