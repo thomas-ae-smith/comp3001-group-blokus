@@ -36,10 +36,10 @@
 	],
 
 	_exampleUsers = [
-		{ id: 10, name: "zanders3" },
-		{ id: 11, name: "timzo" },
-		{ id: 12, name: "bob" },
-		{ id: 13, name: "superzico" },
+		{ id: 10, username: "zanders3" },
+		{ id: 11, username: "timzo" },
+		{ id: 12, username: "bob" },
+		{ id: 13, username: "superzico" },
 	];
 
 	_(window.blokus).extend({
