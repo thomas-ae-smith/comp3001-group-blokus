@@ -17,6 +17,11 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		var currentView,									// Reference to the current view
 			blokus = window.blokus,
 			switchToView = function (view) {				// Switch to a different view
+				alert("Switching view.");
+				var game_id = blokus.userProfile.get("game_id");
+				if (game_id != null) {
+					view = new blokus.GameView({ id: game_id });
+				}
 				var oldView = currentView,
 					$newview = $(view.render().el);			// Render new view
 				if (oldView) {
@@ -48,7 +53,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				"profile": "profile"
 			},
 			lobby: function () { switchToView(new blokus.LobbyView()); },
-			game: function (id) { switchToView(new blokus.GameView({ id: id })); },
+			game: function (id) { switchToView(xs},
 			help: function () { switchToView(new blokus.HelpView()); },
 			register: function () { switchToView(new blokus.RegisterView()); },
 			forgot: function () { switchToView(new blokus.ForgotView()); },
