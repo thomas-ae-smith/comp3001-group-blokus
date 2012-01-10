@@ -154,14 +154,13 @@ class GameResource(ModelResource):
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			games = super(GameResource, self).get_object_list(request)
-			game = request.user.player_set.all()[0].game.id
 			player = request.user.player_set.all()[0]
-			#player.last_activity = datetime.now()
+			game = player.game
+			player.last_activity = datetime.now()
 			player.save()
 
 			# If a player does not fetch a game model for 60 seconds, they are 
 			# considered disconnected.
-			#for otherPlayer in Player.objects.filter(game=game).exclude(id=request.user.id):
 			for otherPlayer in Player.objects.filter(game=game):
 				if (datetime.now() - otherPlayer.last_activity).seconds > 60:
 					otherPlayer.user.get_profile().status = 'offline'
