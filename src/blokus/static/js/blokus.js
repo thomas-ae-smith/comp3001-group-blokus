@@ -23,13 +23,6 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		}
 	})};
 
-	// Ensure HTML 5 elements are styled by IE
-	document.createElement('header');
-	document.createElement('nav');
-	document.createElement('section');
-	document.createElement('article');
-	document.createElement('aside');
-
 	$(document).ready(function () {							// Note below, a "view" in the following context is what might be considered a "page" - lobby, game, help etc
 		var currentView,									// Reference to the current view
 			blokus = window.blokus,
@@ -61,14 +54,12 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				"game/:id": "game",							// Eg #game/12
 				"help": "help",
 				"register": "register",
-				"forgot": "forgot",
 				"profile": "profile"
 			},
 			lobby: function () { switchToView(new blokus.LobbyView()); },
 			game: function (id) { switchToView(new blokus.GameView({ id: id })); },
 			help: function () { switchToView(new blokus.HelpView()); },
 			register: function () { switchToView(new blokus.RegisterView()); },
-			forgot: function () { switchToView(new blokus.ForgotView()); },
 			profile: function () { switchToView(new blokus.ProfileView()); }
 		}))();
 

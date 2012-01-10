@@ -67,7 +67,6 @@
 						<div class="links">
 							<a href="{% url socialauth_begin 'facebook' %}">Login with Facebook</a>
 							<a href="#register">Register</a>
-							<a href="#forgot">Forgot your password?</a>
 						</div>
 					</div>
 				</div>
@@ -223,19 +222,6 @@
 					</label>{{ form.password2.errors }}<br/>
 					<input type="submit" value="Register" class="button" /> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
 				</form>
-			</script>
-			<script type="text/html" id="forgot-template">
-				<form name="forgotForm" action="/forgot/" method="post" class="form box">
-					{% csrf_token %}
-					<h1>Forgot your password</h1>
-					<p>Enter your email address below to recieve a new password</p>
-					<label>
-						<span>Email Address</span>
-						<input name="email" type="text" />
-					</label><br/>
-					<input type="submit" value="Send Email" class="button"/> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
-				</form>
-				</div>
 			</script>
 			<script type="text/html" id="profile-template">
 				<div class="box form">
