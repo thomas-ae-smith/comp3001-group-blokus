@@ -37,6 +37,8 @@
 			} else {
 				$(".playerpanelcontainer.right").append(this.el);
 			}
+			var boundaries = this.getBoundaries();
+			this.shapePositions = blokus.utils.makePositionArray(boundaries.sx, boundaries.sy, boundaries.width, boundaries.height);
 		},
 
 		getPosition: function () { return this.pos; },

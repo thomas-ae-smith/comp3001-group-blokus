@@ -172,7 +172,13 @@
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 
-			this.transform(boundaries.sx, boundaries.sy, this.curScale.x, this.curScale.y,
+			var scale = panel.isActive() ? 0.6 : 0.3;
+			this.curScale.x = scale;
+			this.curScale.y = scale;
+
+			var pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
+
+			this.transform(pos.x, pos.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y);
 			this.setOpacity(1, 500);
@@ -185,6 +191,8 @@
 			this.isSelected = false;
 			this.canMove = false;
 			this.inPanel = false;
+			this.curScale.x = 1;
+			this.curScale.y = 1;
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,

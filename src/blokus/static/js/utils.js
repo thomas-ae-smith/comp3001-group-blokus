@@ -69,6 +69,7 @@ blokus.utils = (function ($, _, Backbone) {
 			pieceLocations[18] = {x: Math.floor(Number(x) + (blockWidth * 3)), y: Math.floor(Number(y) + (blockHeight * 14))};
 			pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 2)), y: Math.floor(Number(y) + (blockHeight * 21))};
 		}
+		return pieceLocations;
 	}
 
 	//Returns an array of x,y points describing the top left coordinates for each shape.
@@ -80,6 +81,20 @@ blokus.utils = (function ($, _, Backbone) {
 		makePositionArray(x, y, w, h);
 		for (i = 0; i < l; i++) {
 			retVal[i + 1] = pieceLocations[Number(arr[i].id)];
+		}
+		return retVal;
+	};
+
+	//Returns an array of x,y points describing the top left coordinates for each shape.
+	var get_points_from_masters = function (arr, x, y, w, h) {
+		var retVal = {},
+			i = 0,
+			l = arr.length;
+
+		makePositionArray(x, y, w, h);
+		for (i = 0; i < l; i++) {
+			Number(arr[i])
+			retVal[id] = pieceLocations[id];
 		}
 		return retVal;
 	};
@@ -228,6 +243,7 @@ blokus.utils = (function ($, _, Backbone) {
 		get_claim: get_claim,
 		add_cell_to_validation_grid: add_cell_to_validation_grid,
 		add_piece_to_validation_grid: add_piece_to_validation_grid,
-		set_use_validation: set_use_validation
+		set_use_validation: set_use_validation,
+		makePositionArray: makePositionArray
 	};
 }(jQuery, _, Backbone));
