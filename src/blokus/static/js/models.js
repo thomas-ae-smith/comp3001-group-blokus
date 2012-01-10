@@ -12,7 +12,36 @@
         }
 	});
 
-	var User = Model.extend({ resourceUrl: blokus.urls.user }),
+	var User = Model.extend({ 
+			resourceUrl: blokus.urls.user,
+
+			// FIXME: Hacked in bootstrap, baby
+			fetch: function (options) {
+				if (this.get("id") > 13) { // TODO remove
+					return Model.prototype.fetch.apply(this, arguments);
+				}
+				var this_ = this,
+					dfd = new $.Deferred();
+					id = Number(this_.get("id")),
+					model = _(blokus._exampleUsers).find(function (user) {
+						return user.id === id;
+					});
+
+				if (!model) {
+					if (options && options.error) {
+						options.error.call(undefined, {}, {status: 404});
+						dfd.reject();
+					}
+				} else {
+					this.set(this.parse(model));
+					if (options && options.success) {
+						options.success.call();
+						dfd.resolve();
+					}
+				}
+				return dfd;
+			},
+		}),
 		UserProfile = Model.extend({ resourceUrl: blokus.urls.userProfile }),
 		Game = Model.extend({
 			resourceUrl: blokus.urls.game,
@@ -28,22 +57,32 @@
 					return Model.prototype.fetch.apply(this, arguments);
 				}
 				var this_ = this,
+					dfd = new $.Deferred();
 					id = Number(this_.get("id")),
 					model = _(blokus._exampleGames).find(function (game) {
 						return game.id === id;
 					});
 
 				if (!model) {
-					if (options && options.error) options.error.call(undefined, {}, {status: 404});
+					if (options && options.error) {
+						options.error.call(undefined, {}, {status: 404});
+						dfd.reject();
+					}
 				} else {
 					this.set(this.parse(model));
-					if (options && options.success) setTimeout(function(){options.success.call();},100);
+					if (options && options.success) setTimeout(function(){
+						options.success.call();
+						dfd.resolve();
+					},100);
 				}
+				return dfd;
 			},
 
 			parse: function (model) {
-				var players = this.players = new blokus.PlayerCollection(model.players);
-				_(players.models).each(function (player) {
+				if (!this.players) {
+					this.players = new blokus.PlayerCollection(model.players);
+				}
+				_(this.players.models).each(function (player) {
 					var pieces = player.pieces = new blokus.PieceCollection(player.get("pieces"));
 					_(pieces.models).each(function (piece) {
 						piece.set({ master_id: getIdFromUrl(piece.get("master")), player_id: getIdFromUrl(piece.get("player")) });
