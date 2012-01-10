@@ -275,8 +275,6 @@ def delete_players_on_status_change(sender, instance, **kwargs):
 	try:
 		oldRecord = UserProfile.objects.get(id=instance.id)
 		if (oldRecord.status != instance.status):
-			import sys
-			print >>sys.err, "Removing players for user: " + instance.user.username + " (delete_players_on_status_change)"
 			for player in instance.user.player_set.all():
 				player.delete()
 	except UserProfile.DoesNotExist:
@@ -289,7 +287,6 @@ def delete_players_on_status_change(sender, instance, **kwargs):
 def delete_players_on_new_game(sender, instance, **kwargs):
 	oldPlayers = Player.objects.filter(user=instance.user)
 	if len(oldPlayers) > 0 and instance.game_id != oldPlayers[0].game.id:
-		print >>sys.err, "Removing players for user: " + instance.user.username + " (delete_players_on_status_change)"
 		for player in oldPlayers:
 			player.delete()
 
