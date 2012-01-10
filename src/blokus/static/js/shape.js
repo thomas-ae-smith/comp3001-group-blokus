@@ -101,7 +101,7 @@
 		},
 		
 		initialize: function(){
-			this_ = this;
+			var this_ = this;
 			this.curScale = this.options.curScale;
 			this.initScale = _(this.curScale).clone();
 			this.cells = this.options.cells;
@@ -556,7 +556,7 @@
 
 		halo: function(gameboard){
 			if(this.haloCircle == undefined && !this.isSelected && this.canMove){
-				this_ = this;
+				var this_ = this;
 				var cenPoint = this.getCenterOfShape();
 				this.haloCircle = this.paper.set();
 				this.boundaryCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
@@ -614,11 +614,13 @@
 		},
 
 		removeHalo: function(){
-			this_ = this;
+			var this_ = this;
 			if (this.haloCircle != undefined && this.haloOn){
 				this.haloCircle.animate({opacity: 0}, 500);
 				this.boundaryCircle.toBack();
-				setTimeout(function (){this_.haloOn = false;this_.haloCircle.toBack()}, 501);
+				this.haloCircle.toBack();
+				this.haloOn = false;
+				setTimeout(function (){this_.haloCircle.toBack()}, 501);
 				
 			}
 		},

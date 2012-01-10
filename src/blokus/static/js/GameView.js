@@ -209,7 +209,7 @@
 
 		//Draws a single piece
 		drawPiece: function (x, y, piece, colour, scaleX, scaleY, canMove) {
-			this_ = this;
+			var this_ = this;
 			var gameboard = this.gameboard,
 				paper = this.paper;
 			var data = blokus.pieceMasters.get(piece.get("master_id")).get("data");
@@ -310,7 +310,6 @@
 								s.boundaryCircle.toFront();
 								if (s.boundaryCircle != paper.getElementByPoint(e.pageX, e.pageY)){
 									s.removeHalo();
-									s.haloOn = false;
 									blokus.haloArr[i] = undefined;
 								}
 								s.boundaryCircle.toBack();
