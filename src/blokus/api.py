@@ -111,7 +111,7 @@ class UserProfileResource(ModelResource):
 			'looking_for_2': {'typeid':1, 'player_count':2},
 			'looking_for_4': {'typeid':2, 'player_count':4},
 			'private_2': {'typeid':1, 'player_count':2},
-			'private_4': {'typeid':2, 'player_count':2},
+			'private_4': {'typeid':2, 'player_count':4},
 		}
 
 		if status == 'looking_for_any':
