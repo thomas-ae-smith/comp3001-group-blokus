@@ -18,6 +18,9 @@
 				pic: "/static/img/noavatar.jpg",
 				stats: "wins: 0 losses: 0"
 			}));
+			if (this.options.active) {
+				$el.css("background", "rgba(255,255,255,1.0)");
+			}
 
 			return this;
 		},
@@ -41,7 +44,7 @@
 		},
 
 		setActive: function (v, position) {
-			this.active = v;
+			this.optionsactive = v;
 			this.options.positionId = position;
 			this.render();
 		}
