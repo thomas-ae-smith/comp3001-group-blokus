@@ -1,29 +1,7 @@
 (function ($, _, Backbone, blokus) {
 
-	var colours = {
-		/*
-		red: '#ff0000',
-		green: '#00ff00',
-		blue: '#0000ff',
-		yellow: '#ffff00'
-		*/
-		red: '/static/img/blockblue.png',
-		green: '/static/img/blockgreen.png',
-		blue: '/static/img/blockred.png',
-		yellow: '/static/img/blockyellow.png'
-	}
 	
 	blokus.shape = Backbone.View.extend({
-		
-		/*
-		 *  Variables passed in initialize
-		 *  */
-		gameboard: undefined,
-		paper: undefined,
-		colour: undefined,
-		piecemaster: undefined,
-
-		inPanel: false,
 
 		// initial Boundary box
 		initBBox: {
@@ -42,6 +20,7 @@
 			y: undefined,
 		},
 		fullScale: false,
+		paper: undefined,
 		haloCircle: undefined,
 		haloOn: true,
 		isSelected: false,
@@ -51,7 +30,7 @@
 		cells: undefined, //The set of cells or squares
 		visibleCells: undefined, //The set of visible cells or squares
 		invisibleCells: undefined, //The set of invisible cells or squares
-		pos: {x:0, y:0}, // initial position of the shape
+		pos: {x:undefined, y:undefined}, // initial position of the shape
 		cellsOnGameboard: undefined, // the cells which are on the gameboard
 		dataArr: undefined, // The array of 0 or 1s which define the shape
 		//Position of the shape in the gameboard
@@ -93,7 +72,8 @@
 		},
 
 		gameboardCellSize: undefined,
-		cellSize: 22,
+		gameboard: undefined,
+		cellSize: undefined,
 
 		// current visible Boundary box
 		visibleBBox: {
@@ -123,21 +103,13 @@
 		
 		initialize: function(){
 			var this_ = this;
-			this.gameboard = this.options.gameboard;
-			this.paper = this.options.paper;
-			this.colour = colours[this.options.colour];
-			this.piecemaster = this.options.piecemaster;
-			
-			// initialization
-			this.cells = this.paper.set();
-			this.visibleCells = this.paper.set();
-			this.invisibleCells = this.paper.set();
-			this.renderShape(); // Creates the cells
-
-
 			this.curScale = this.options.curScale;
 			this.initScale = _(this.curScale).clone();
+			this.cells = this.options.cells;
+			this.visibleCells = this.options.visibleCells;
+			this.invisibleCells = this.options.invisibleCells;
 			this.canMove = this.options.canMove;
+			this.pos = this.options.pos;
 			this.dataArr = this.options.dataArr;
 			this.paper = this.options.paper;
 			//this.destCor = this.options.destCor;
@@ -147,6 +119,7 @@
 			this.gameBBox = this.options.gameBBox;
 			this.gameboardCellSize = this.options.gameboardCellSize;
 			this.gameboard = this.options.gameboard;
+			this.cellSize = this.options.cellSize;
 			this.setInitBBoxes();
 			// Apply the current scale given
 			var cenPoint = this.getCenterOfShape();
@@ -159,64 +132,6 @@
 		render: function(){
 			return this;
 		},
-
-		/* GLOBAL METHODS */
-		function moveToPanel(panel){
-			console.log(panel);
-		}, 
-		function moveToBoard(x, y, flip, rotation){ this.destCor = {x:x, y:y};
-			this.rotation = rotation;
-			this.changeFlipToScale(flip);
-			this.getDestCor();
-			this.isSelected = false;
-			this.canMove = false;
-			this.inPanel = false;
-			var cenPoint = this.getCenterOfShape();
-			var rotation = this.rotation * 90;
-			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
-						 cenPoint.x, cenPoint.y, rotation,
-						 cenPoint.x, cenPoint.y, 500);
-			this.setOpacity(1, 500);
-		},
-		
-		isInPanel: function(){
-			return this.inPanel;
-		},
-		/* END GLOBAL METHODS */
-
-		renderShape: function(){
-			var data = this.piecemaster.get("data"),
-				numRows = data.length,
-				numCols = data[0].length;
-			this.cells.dataArr = _(data).clone();
-			for (var rowI = 0; rowI < numRows; rowI++){
-				for (var colJ = 0; colJ < numCols; colJ++) {
-					if (data[rowI][colJ] == 1) {
-						//var cell = paper.rect((colJ)*cellSize, (rowI)*cellSize,
-												//cellSize, cellSize);
-						//cell.attr({fill: this.colours});
-						var cell = paper.image(this.colours, (colJ)*this.cellSize, (rowI)*this.cellSize,
-												this.cellSize, this.cellSize);
-						cell.attr({opacity: 1});
-						cell.opacity = 1;
-						this.cells.push(cell);
-						visibleCells.push(cell);
-					}
-					else{
-						//var cell = paper.rect((colJ)*this.cellSize, (rowI)*this.cellSize,
-												//this.cellSize, this.cellSize);
-						//cell.attr({fill: this.colours, opacity: 0});
-						var cell = paper.image(this.colours, (colJ)*this.cellSize, (rowI)*this.cellSize,
-												this.cellSize, this.cellSize);
-						cell.attr({opacity: 0});
-						cell.opacity = 0;
-						this.cells.push(cell);
-						invisibleCells.push(cell);
-					}
-				}
-			}
-		},
-
 
 		setOpacity: function(opacity, time){
 			this.cells.forEach(
@@ -732,91 +647,8 @@
 			var x = center.x + Math.cos(radians) * radius;
 			var y = center.y + Math.sin(radians) * radius;
 			return {x:x, y:y};
-		},
-
-
-		/* MOUSE LISTENER */
-		addMouseListeners: function(){
-			this_ = this;
-			$(window).mousemove(
-				function(e){
-					//on move
-					if (this_.isSelected){
-						this_.calVisibleBBox();
-
-						this_.calDistTravel(e);
-						this_.moveShape();
-						this_.inBoardValidation(gameboard, paper.set());
-					}
-					else{
-						if(blokus.haloArr.length != 0){
-							var i = 0;
-							_(blokus.haloArr).each(function (s){
-								s.boundaryCircle.toFront();
-								if (s.boundaryCircle != paper.getElementByPoint(e.pageX, e.pageY)){
-									s.removeHalo();
-									s.haloOn = false;
-									blokus.haloArr[i] = undefined;
-								}
-								s.boundaryCircle.toBack();
-								i++;
-							});
-							blokus.haloArr.clean(undefined);	
-						}
-					}
-				}
-			);
-			this_.cells.click(
-				function (e, x, y){
-					// on Start
-					if(!this_.isSelected)
-						this_.selectShape(e);
-					else {
-						if(this_.notInPanel){
-							this_.returnToPanel();
-						}
-						else{
-							var corOnBoard = this_.getCorOnBoard();
-							var validPosition = blokus.utils.valid(corOnBoard);
-							if(validPosition){
-								this_.isSelected = false;
-								this_.getDestCor();
-								this_.goToPos();
-								// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
-								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colour_turn")[0]});
-								this_.trigger("piece_placed", this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
-							}
-						}
-					}
-				}
-			);
-			this_.cells.mouseover(function () {
-				if(!this_.isSelected){
-					//var s = this_.halo(gameboard);
-					//blokus.haloArr.push(s);
-				}
-			});
-			blokus.mapKeyDown(37,
-				function () {
-					this_.rotate(-1);
-				}
-			);
-			blokus.mapKeyDown(39,
-				function () {
-					this_.rotate(1);
-				}
-			);
-			blokus.mapKeyDown(86, // v
-				function (){
-					this_.flip(2);
-				}
-			);
-			blokus.mapKeyDown(72, // h
-				function (){
-					this_.flip(1);
-				}
-			);
 		}
+
 	});
 
 
