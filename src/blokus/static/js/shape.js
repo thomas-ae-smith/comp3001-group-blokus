@@ -120,9 +120,10 @@
 			this.cellSize = this.options.cellSize;
 			this.setInitBBoxes();
 			// Apply the current scale given
+			var cenPoint = this.getCenterOfShape();
 			if (this.curScale != undefined){
-				this.cells.scale(this.curScale.x, this.curScale.y
-							, this.pos.x, this.pos.y);
+				this.cells.scale(this.curScale.x, this.curScale.y,
+							cenPoint.x, cenPoint.y);
 			}
 		},
 
@@ -220,7 +221,7 @@
 							  cenPoint.x, cenPoint.y, rotation,
 							  cenPoint.x, cenPoint.y);
 			}
-			this.cells.toFront();
+			//this.cells.toFront();
 		},
 
 		/** END MOVEMENT **/
@@ -557,7 +558,9 @@
 			if(this.haloCircle == undefined && !this.isSelected && this.canMove){
 				this_ = this;
 				var cenPoint = this.getCenterOfShape();
-				this.haloCircle = new this.paper.set();
+				this.haloCircle = this.paper.set();
+				this.boundaryCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
+				this.boundaryCircle.attr({fill:"#f00", opacity:0});
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 0, 89)));
 				this.haloCircle[0].click(function(){
 					if(this_.haloOn){
@@ -600,26 +603,23 @@
 						this_.haloOn = true;
 					}
 				);
-				this.haloCircle.mouseout( function(){
-						this_.haloOn = false;
-						this_.removeHalo();
-					}
-				);
-				this.cells.toFront();
-				this.haloCircle.toFront();
 			}
 			else if(this.canMove){
 				this.haloCircle.animate({opacity: 0.3}, 500);
-				this.cells.toFront();
-				this.haloCircle.toFront();
 			}
+			this.haloOn = true;
+			this.boundaryCircle.toFront();
+			this.haloCircle.toFront();
+			return this;
 		},
 
 		removeHalo: function(){
 			this_ = this;
-			if (this.haloCircle != undefined && !this.haloOn){
+			if (this.haloCircle != undefined && this.haloOn){
 				this.haloCircle.animate({opacity: 0}, 500);
-				this.cells.toFront();
+				this.boundaryCircle.toBack();
+				setTimeout(function (){this_.haloOn = false;this_.haloCircle.toBack()}, 501);
+				
 			}
 		},
 		

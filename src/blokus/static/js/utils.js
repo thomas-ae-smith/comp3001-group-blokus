@@ -1,6 +1,6 @@
 blokus.utils = (function ($, _, Backbone){
 	var pieceLocations = {};
-	var use_validation = false; //Added for debugging the server. FIXME
+	var use_validation = true; //Added for debugging the server. FIXME
 	var blockWidth = 0;
 	var blockHeight = 0;
 
@@ -99,11 +99,13 @@ blokus.utils = (function ($, _, Backbone){
 			x = piece.get("x"),
 			y = piece.get("y");
 
+		/*
 		_(pieceMasterData).each(function (row, rowi) {
 			_(row).each(function (val, coli) {
 				if (val === 0)
 			})
 		})
+		*/
 
 	}
 
