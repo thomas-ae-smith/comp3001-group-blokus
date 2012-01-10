@@ -270,15 +270,17 @@ class Move(models.Model):
 ############
 
 # If a UserProfile changes its status, all Player objects associated with the Use are removed.
-@receiver(post_save, sender=UserProfile)
-def delete_players_on_status_change(sender, instance, created, **kwargs):
-	if not created:
+@receiver(pre_save, sender=UserProfile)
+def delete_players_on_status_change(sender, instance, **kwargs):
+	try:
 		oldRecord = UserProfile.objects.get(id=instance.id)
-		if (oldRecord.id == instance.id) and (oldRecord.status != newRecord.status):
+		if (oldRecord.status != instance.status):
 			import sys
 			print >>sys.err, "Removing players for user: " + instance.user.username + " (delete_players_on_status_change)"
 			for player in instance.user.player_set.all():
 				player.delete()
+	except UserProfile.DoesNotExist:
+		pass
 
 # If a Player object is created for a user with existing Player objects,
 # and the new object is attached to a different game to the old object(s),
