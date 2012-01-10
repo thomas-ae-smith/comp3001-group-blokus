@@ -110,9 +110,10 @@ class UserProfile(models.Model):
 
 	def save(self, *args, **kwargs):
 		try:
-			oldRecord = UserProfile.objects.get(id=self.id)
-			if (oldRecord.status != self.status) or (self.status == 'offline'):
-				self.user.player_set.all().delete()
+			if self.id is not None:
+				oldRecord = UserProfile.objects.get(id=self.id)
+				if (oldRecord.status != self.status) or (self.status == 'offline'):
+					self.user.player_set.all().delete()
 		except UserProfile.DoesNotExist:
 			pass
 
@@ -293,7 +294,7 @@ def delete_players_on_new_game(sender, instance, **kwargs):
 def create_user_profile(sender, instance, created, **kwargs):
 	from blokus.models import UserProfile
 	if created:
-		UserProfile.objects.get_or_create(user=instance)
+		UserProfile.objects.get_or_create(user_id=instance.id)
 
 @receiver(post_save, sender=Piece)
 def record_move(sender, instance, **kwargs):
