@@ -98,7 +98,6 @@ class UserProfileResource(ModelResource):
 
 	def apply_authorization_limits(self, request, object_list):
 		object_list = super(UserProfileResource, self).apply_authorization_limits(request, object_list)
-		logging.debug(object_list[0].user)
 		current_userprofile = object_list[0]
 		status = current_userprofile.status
 
@@ -120,8 +119,12 @@ class UserProfileResource(ModelResource):
 			current_userprofile.status = status
 			current_userprofile.save()
 
+		#Possible set of users to match against
+		possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
+
+		#Users to play include yourself
 		users_playing = [request.user]
-		possible_users = UserProfile.objects.filter(status=status)
+
 		for possible_user in possible_users:
 			users_playing.append(possible_user.user)
 			if len(users_playing) >= game_attributes[status]['player_count']:
@@ -136,10 +139,11 @@ class UserProfileResource(ModelResource):
 		for i, user_playing in enumerate(users_playing):
 			user_playing_profile = user_playing.get_profile()
 			user_playing_profile.status = 'ingame'
+			object_list[0].status = 'ingame'
 			user_playing_profile.save()
-			player = Player(game=game,user=user_playing,colour=colours[i])
-			player.save()
-			
+			for j in xrange(game_attributes[status]['player_count'] % 3):
+				player = Player(game=game,user=user_playing,colour=colours[i])
+				player.save()
 
 		#Return the requested userProfiles object list
 		return object_list
