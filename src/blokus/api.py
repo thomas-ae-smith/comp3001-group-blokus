@@ -40,9 +40,9 @@ class AccountAuthorization(Authorization):
 					result.append(user)
 				elif user_or_userprofile == 'userprofile' and ((user.id == request.user.get_profile().id) or (ingame and user.user.id in player_user_list)):
 					result.append(user)
-			
+
 			return result
-		return object_list.none()		
+		return object_list.none()
 
 
 class UserAuthorization(AccountAuthorization):
@@ -189,6 +189,10 @@ class GameResource(ModelResource):
 	#Every time a user gets a game object of theirs, their player timestamp is updated.
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
+
+			from blokus.models import Game
+			Game.objects.get(id=1).delete() 
+
 			games = super(GameResource, self).get_object_list(request)
 			player = request.user.player_set.all()[0]
 			game = player.game
