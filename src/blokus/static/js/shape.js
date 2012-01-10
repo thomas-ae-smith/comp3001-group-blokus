@@ -7,9 +7,9 @@
 		blue: '#0000ff',
 		yellow: '#ffff00'
 		*/
-		red: '/static/img/blockblue.png',
+		red: '/static/img/blockred.png',
 		green: '/static/img/blockgreen.png',
-		blue: '/static/img/blockred.png',
+		blue: '/static/img/blockblue.png',
 		yellow: '/static/img/blockyellow.png'
 	}
 	
@@ -172,7 +172,7 @@
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 
-			var scale = panel.isActive() ? 0.6 : 0.3;
+			var scale = panel.isActive() ? 0.7 : 0.4;
 			this.curScale.x = scale;
 			this.curScale.y = scale;
 

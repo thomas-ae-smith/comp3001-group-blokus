@@ -48,13 +48,6 @@
 			/* For player panels */
 			var playerPanels = {};
 
-/*
-blokus.Shape = Backbone.View.extend({
-	moveToGameboard:function(x, y, flip, rotation){console.log("shape to gameboard")},
-	moveToPanel:function(){},
-	isInPanel:function(){return true;}
-});
-*/
 
 			/* Render shapes */
 			var colours = ["red", "green", "blue", "yellow"],

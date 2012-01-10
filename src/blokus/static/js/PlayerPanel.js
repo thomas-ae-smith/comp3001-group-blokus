@@ -1,15 +1,15 @@
 (function ($, _, Backbone, blokus) {
 	var _offsets = [
-		{ x: 0, y: 60 },
-		{ x: 670, y: 60 },
-		{ x: 670, y: 260 },
-		{ x: 670, y: 460 },
+		{ x: 0, y: 95 },
+		{ x: 670, y: 95 },
+		{ x: 670, y: 295 },
+		{ x: 670, y: 495 },
 	];
 	var _dimensions = [
-		{ w: 132, h: 570 },
-		{ w: 132, h: 170 },
-		{ w: 132, h: 170 },
-		{ w: 132, h: 170 }
+		{ w: 132, h: 565 },
+		{ w: 132, h: 135 },
+		{ w: 132, h: 135 },
+		{ w: 132, h: 135 }
 	];
 	blokus.PlayerPanel = Backbone.View.extend({
 		className: "playerpanel",
@@ -56,28 +56,7 @@
 				width: dimensions.w,
 				height: dimensions.h
 			};
-		},
-
-		renderPieces: function (pieces, canMove) {
-			var this_ = this,
-				gameview = this.options.gameview,
-				cellSize = this.options.cellSize,
-				colour = this.options.player.get("colour"),
-				scale = this.options.active ? 0.6 : 0.3,
-				$el = $(this.el),
-				offset = offsets[this.options.positionId],
-				width = 130,
-				height = this.options.active ? 600 : 200,
-				positions = blokus.utils.get_points(blokus.pieceMasters.toJSON(), offset.x + 20, offset.y + 35, width - 27, height - 20);
-
-			pieces.each(function (piece) {
-				var master_id = piece.get("master_id"),
-					pieceMaster = blokus.pieceMasters.get(master_id),
-					i = pieceMaster.get("id");
-				var shape = gameview.drawPiece(positions[i].x, positions[i].y, piece, colour, scale, scale, canMove);
-				this_.shapes[master_id] = shape;
-			});
-		},
+		}
 
 	});
 }(jQuery, _, Backbone, blokus));
