@@ -430,6 +430,7 @@
 			this.canMove = false;
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
+			this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
 			this.setOpacity(1, 500);
