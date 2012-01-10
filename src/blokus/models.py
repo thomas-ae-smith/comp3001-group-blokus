@@ -269,13 +269,17 @@ class Move(models.Model):
 # SIGNALS  #
 ############
 
+#@receiver(pre_save, sender=UserProfile)
+#def delete_players_on_status_change(sender, instance, created, **kwargs):
+	#if not created and 
+
 # If a Player object is created for a user with existing Player objects,
 # and the new object is attached to a different game to the old object(s),
 # delete the old Player object.
 @receiver(pre_save, sender=Player)
-def delete_old_players(sender, instance, **kwargs):
+def delete_players_on_new_game(sender, instance, **kwargs):
 	oldPlayers = Player.objects.filter(id=instance.id)
-	if len(oldPlayers > 0) and instance.game_id != oldPlayers[0].game.id:
+	if len(oldPlayers) > 0 and instance.game_id != oldPlayers[0].game.id:
 		for player in oldPlayers:
 			player.delete()
 			player.save()
