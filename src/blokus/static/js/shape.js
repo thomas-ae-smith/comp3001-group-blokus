@@ -23,7 +23,7 @@
 		colour: undefined,
 		pieceMaster: undefined,
 
-		inPanel: false,
+		inPanel: true,
 
 		// initial Boundary box
 		initBBox: {
@@ -159,7 +159,22 @@
 
 		/* GLOBAL METHODS */
 		moveToPanel: function(panel){
-			console.log(panel);
+			var boundaries = panel.getBoundaries();
+
+			this.rotation = 0;
+			this.changeFlipToScale(0);
+			
+			this.isSelected = false;
+			this.canMove = false;
+			this.inPanel = true;
+
+			var cenPoint = this.getCenterOfShape();
+			var rotation = this.rotation * 90;
+
+			this.transform(boundaries.sx, boundaries.sy, this.curScale.x, this.curScale.y,
+						 cenPoint.x, cenPoint.y, rotation,
+						 cenPoint.x, cenPoint.y);
+			this.setOpacity(1, 500);
 		}, 
 		moveToGameboard: function(x, y, flip, rotation){ 
 			this.posInGameboard = {x:x, y:y};

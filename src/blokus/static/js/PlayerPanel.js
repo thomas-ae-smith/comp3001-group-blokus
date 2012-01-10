@@ -1,11 +1,11 @@
 (function ($, _, Backbone, blokus) {
-	var offsets = [
+	var _offsets = [
 		{ x: 0, y: 60 },
 		{ x: 670, y: 60 },
 		{ x: 670, y: 260 },
 		{ x: 670, y: 460 },
 	];
-	var dimensions = [
+	var _dimensions = [
 		{ w: 132, h: 570 },
 		{ w: 132, h: 170 },
 		{ w: 132, h: 170 },
@@ -44,8 +44,8 @@
 		isActive: function () { return pos === 0 },
 
 		getBoundaries: function () {
-			var offsets = offsets[this.pos],
-				dimensions = dimensions[this.pos];
+			var offsets = _offsets[this.pos],
+				dimensions = _dimensions[this.pos];
 			return {
 				sx: offsets.x,
 				sy: offsets.y,
