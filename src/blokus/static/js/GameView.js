@@ -240,6 +240,7 @@
 
 		//Draws a single piece
 		drawPiece: function (x, y, piece, colour, scaleX, scaleY, canMove) {
+			var this_ = this;
 			var gameboard = this.gameboard,
 				paper = this.paper;
 			var data = blokus.pieceMasters.get(piece.get("master_id")).get("data");
@@ -310,7 +311,18 @@
 
 			this.shapes[colour][piece.get("master_id")] = shape;
 
-			var highlighted_set = new paper.set();
+			if (blokus.haloArr == undefined){
+				blokus.haloArr = new Array();
+				Array.prototype.clean = function(deleteValue) {
+					for (var i = 0; i < this.length; i++) {
+						if (this[i] == deleteValue) {         
+							this.splice(i, 1);
+							i--;
+							}
+						}
+						return this;
+					};
+			}
 			// TODO Check if the pieces dont overide each other
 			//shapeSet.board_piece_set = new Array();
 			$(window).mousemove(
@@ -321,7 +333,23 @@
 
 						shape.calDistTravel(e);
 						shape.moveShape();
-						shape.inBoardValidation(gameboard, new paper.set());
+						shape.inBoardValidation(gameboard, paper.set());
+					}
+					else{
+						if(blokus.haloArr.length != 0){
+							var i = 0;
+							_(blokus.haloArr).each(function (s){
+								s.boundaryCircle.toFront();
+								if (s.boundaryCircle != paper.getElementByPoint(e.pageX, e.pageY)){
+									s.removeHalo();
+									s.haloOn = false;
+									blokus.haloArr[i] = undefined;
+								}
+								s.boundaryCircle.toBack();
+								i++;
+							});
+							blokus.haloArr.clean(undefined);	
+						}
 					}
 				}
 			);
@@ -347,12 +375,10 @@
 					}
 				}
 			);
-			shape.cells.mouseover(function () {shape.halo(gameboard)});
-			shape.cells.mouseout(function (e, x, y) {
-				if(shape.outOfShape(x, y)){
-					setTimeout(function (){
-						shape.removeHalo();
-					}, 300);
+			shape.cells.mouseover(function () {
+				if(!shape.isSelected){
+					var s = shape.halo(gameboard);
+					blokus.haloArr.push(s);
 				}
 			});
 			blokus.mapKeyDown(37,
