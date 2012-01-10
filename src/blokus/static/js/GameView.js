@@ -32,13 +32,17 @@
 		paper: undefined,
 		startTime: 0,
 		timeNow: 0,
+		shapes: undefined,
 
 		render: function () {
 			window.gameview = this;
 			var this_ = this,
 				el = this.el,
 				$el = $(el),
-				template = _.template($('#game-template').html());
+				template = _.template($('#game-template').html()),
+				playerPanels = {};
+
+			this.shapes = { red: {}, blue: {}, yellow: {}, green: {} };
 
 			$el.html(template());
 
@@ -48,6 +52,48 @@
 			window.p = paper;
 
 			var dfd = new $.Deferred();
+
+			game.bind("change:colour_turn", function (game, colour) {
+	        	console.log("TODO New colour turn", colour);
+	        	var player = game.getPlayerOfColour(colour);
+	        	if (player.get("user_id") == blokus.user.get("id")) {
+	        		var playerId = player.get("id");
+	        		var pos = 1;
+	        		_(playerPanels).each(function (playerPanel, id) {
+	        			if (playerId == id) {
+	        				playerPanel.setActive(true, 0);
+	        			} else {
+	        				playerPanel.setActive(false, pos);
+	        				pos++;
+	        			}
+	        		});
+	        		blokus.showMsg(colour + ", it is now your turn");
+	        	} else {
+	        		blokus.showMsg(colour + "'s turn");
+	        	}
+	        });
+
+	        game.bind("change:winning_colours", function (game, winning_colours) {
+	        	var colours = winning_colours.split("|");
+	        	console.log("TODO Player wins: ", colours);
+	        });
+
+	        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
+
+	        game.bind("change:number_of_moves", function (game, numberOfMoves) {
+	        	console.log(game)
+	        	_(game.players.models).each(function (player) {
+	        		var colour = player.get("colour");
+		        	_(player.pieces.models).each(function (piece) {
+		        		//gameboard.renderPiece(colour, piece);
+		        		var shape = this_.shapes[colour][piece.get("master_id")];
+		        		console.log(shape)
+		        		window.k = shape;
+		        		window.l = piece;
+		        		//shape.moveToPos TODO
+		        	});
+		        });
+	        });
 
 			game.fetch({ success: function () {
 				var dfds = [];
@@ -70,9 +116,24 @@
 				blokus.showError("Failed to fetch game");
 			}});
 
+			this_.$(".uri").html(game.get("uri"));
+
+			this_.$(".game-help").click(function () {
+				$("#helpscreen").slideDown();
+			});
+
+			this_.$("#helpscreen .close").click(function () {
+				$("#helpscreen").slideUp();
+			});
+
+			this_.$(".game-exit").click(function () {
+				if (confirm("Are you sure you want to quit the game?")) {
+					location.hash = "";
+				}
+			});
+
 			dfd.done(function () {
 				var gamej = game.toJSON(),
-					playerPanels = [],
 					positionId = 0,
 					gameboard = this_.gameboard = new blokus.GameBoard({
 						paper: paper,
@@ -80,51 +141,35 @@
 						game: game,
 						gameview: this_
 					}).render(),
+					polling = true,
+					errorCount = 0,
 
-					poller = setInterval(function () { game.fetch({ error: function () { blokus.showError("Failed to fetch game"); /* FIXME: remove? */ } }); }, 4000),	// Fetch game model every second (to determined player turn, duration, winner etc)
+					poll = function () {// Fetch game model every few seconds to determined player turn, duration, winner etc
+						if (polling) {
+							game.fetch({
+								success: function () { errorCount = 0; },
+								error: function () { blokus.showError("Failed to fetch game"); /* TODO */ }
+							}).always(function () {
+								setTimeout(poll, 4000);
+							});
+						}
+					},
+
 		        	ticker = setInterval(function () { this_.updateDuration(); }, 1000); // Keep game duration up-to-date
 
-		        this_.bind("close", function () { clearTimeout(poller); clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
+		        poll();
 
-		        game.bind("change:colour_turn", function (game, colour) {
-		        	console.log("TODO New colour turn", colour);
-		        	blokus.showMsg(colour + ", it is now your turn");
-		        });
+		        this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
-		        game.bind("change:winner", function (game, winner) {
-		        	console.log("TODO Player wins: ", winner);
-		        });
 
-		        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
-
-		        game.bind("change:number_of_moves", function (game, numberOfMoves) {
-		        	_(game.pieces.models).each(function (piece) {
-		        		console.log(game.players.get(piece.get("player_id")).get("colour"), piece)
-		        		gameboard.renderPiece(game.players.get(piece.get("player_id")).get("colour"), piece);
-		        	});
-		        });
 
 		        this_.startTime = new Date(gamej.start_time); // FIXME Date time check compatbility
 		        this_.timeNow = new Date(gamej.time_now); // FIXME Date time check compatbility
 
-				this_.$(".uri").html(game.get("uri"));
-
-				this_.$(".game-help").click(function () {
-					$("#helpscreen").slideDown();
-				});
-
-				this_.$("#helpscreen .close").click(function () {
-					$("#helpscreen").slideUp();
-				})
-
-				this_.$(".game-exit").click(function () {
-					if (confirm("Are you sure you want to quit the game?")) {
-						location.hash = "";
-					}
-				})
-
 				// Append to view
 				$el.append(gameboard.el);
+
+				var hasPanelOnLeft = false;
 
 				// Create all the player panels
 				_(game.players.models).each(function (player) {
@@ -135,10 +180,11 @@
 					console.log(blokus.user.get("id"), player.get("user_id"))
 
 					// Identify if this is the logged in user
-					if (blokus.user.get("id") == player.get("user_id")) {
+					if (blokus.user.get("id") == player.get("user_id") && !hasPanelOnLeft) {
 						active = true;
 						options.active = true;
 						options.positionId = 0;
+						hasPanelOnLeft = false;
 					} else {
 						positionId++;
 						options.positionId = positionId;
@@ -146,7 +192,7 @@
 
 					var playerPanel = new blokus.PlayerPanel(options);
 
-					playerPanels.push(playerPanel);
+					playerPanels[player.get("id")] = playerPanel;
 
 					// Append to view
 					$el.find(active ? ".playerpanelcontainer.left" : ".playerpanelcontainer.right").append(playerPanel.render().el);
@@ -186,6 +232,7 @@
 		},
 
 		updateDuration: function (timeNow) {
+			if (!this.startTime) return;
 			if (timeNow) this.timeNow = new Date(timeNow);
 			else this.timeNow.setSeconds(this.timeNow.getSeconds() + 1);
 			this.$(".duration").html(niceTime(dateDifference(this.startTime, this.timeNow)));
@@ -193,6 +240,7 @@
 
 		//Draws a single piece
 		drawPiece: function (x, y, piece, colour, scaleX, scaleY, canMove) {
+			var this_ = this;
 			var gameboard = this.gameboard,
 				paper = this.paper;
 			var data = blokus.pieceMasters.get(piece.get("master_id")).get("data");
@@ -261,7 +309,20 @@
 				}
 			);
 
-			var highlighted_set = new paper.set();
+			this.shapes[colour][piece.get("master_id")] = shape;
+
+			if (blokus.haloArr == undefined){
+				blokus.haloArr = new Array();
+				Array.prototype.clean = function(deleteValue) {
+					for (var i = 0; i < this.length; i++) {
+						if (this[i] == deleteValue) {         
+							this.splice(i, 1);
+							i--;
+							}
+						}
+						return this;
+					};
+			}
 			// TODO Check if the pieces dont overide each other
 			//shapeSet.board_piece_set = new Array();
 			$(window).mousemove(
@@ -272,7 +333,23 @@
 
 						shape.calDistTravel(e);
 						shape.moveShape();
-						shape.inBoardValidation(gameboard, new paper.set());
+						shape.inBoardValidation(gameboard, paper.set());
+					}
+					else{
+						if(blokus.haloArr.length != 0){
+							var i = 0;
+							_(blokus.haloArr).each(function (s){
+								s.boundaryCircle.toFront();
+								if (s.boundaryCircle != paper.getElementByPoint(e.pageX, e.pageY)){
+									s.removeHalo();
+									s.haloOn = false;
+									blokus.haloArr[i] = undefined;
+								}
+								s.boundaryCircle.toBack();
+								i++;
+							});
+							blokus.haloArr.clean(undefined);	
+						}
 					}
 				}
 			);
@@ -298,12 +375,10 @@
 					}
 				}
 			);
-			shape.cells.mouseover(function () {shape.halo(gameboard)});
-			shape.cells.mouseout(function (e, x, y) {
-				if(shape.outOfShape(x, y)){
-					setTimeout(function (){
-						shape.removeHalo();
-					}, 300);
+			shape.cells.mouseover(function () {
+				if(!shape.isSelected){
+					var s = shape.halo(gameboard);
+					blokus.haloArr.push(s);
 				}
 			});
 			blokus.mapKeyDown(37,

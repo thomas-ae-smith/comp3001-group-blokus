@@ -39,6 +39,12 @@
 					i = pieceMaster.get("id");
 				gameview.drawPiece(positions[i].x, positions[i].y, piece, colour, scale, scale, canMove);
 			});
+		},
+
+		setActive: function (v, position) {
+			this.active = v;
+			this.options.positionId = position;
+			this.render();
 		}
 	});
 }(jQuery, _, Backbone, blokus));
