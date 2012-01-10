@@ -133,6 +133,7 @@
 			this.visibleCells = this.paper.set();
 			this.invisibleCells = this.paper.set();
 			this.renderShape(); // Creates the cells
+			this.setBBoxs(); //Set initial and gameboard Boundary box
 
 
 			this.curScale = this.options.curScale;
@@ -146,7 +147,6 @@
 			this.gameBBox = this.options.gameBBox;
 			this.gameboardCellSize = this.options.gameboardCellSize;
 			this.gameboard = this.options.gameboard;
-			this.setInitBBoxes();
 			// Apply the current scale given
 			var cenPoint = this.getCenterOfShape();
 			if (this.curScale != undefined){
@@ -387,25 +387,31 @@
 			}
 		},
 
-		setInitBBoxes: function (){
-			if (this.options.initBBox == undefined){
-				this.initBBox = {
-					x:this.pos.x,
-					y:this.pos.y,
-					width: this.cells.getBBox().width,
-					height: this.cells.getBBox().height,
-				};
-				var cenPoint = this.getCenterOfShape();
-				this.cells.transform("r90 "+cenPoint.x+" "+cenPoint.y);
-				this.initRBBox = {
-					x:this.cells.getBBox().x,
-					y:this.cells.getBBox().y,
-					width: this.cells.getBBox().width,
-					height: this.cells.getBBox().height,
-				};
-				this.cells.transform("");
-				this.options.initBBox = this.initBBox; // prevent from rerun
-			}
+		setBBoxs: function (){
+			this.initBBox = {
+				x:this.pos.x,
+				y:this.pos.y,
+				width: this.cells.getBBox().width,
+				height: this.cells.getBBox().height,
+			};
+			var cenPoint = this.getCenterOfShape();
+			this.cells.transform("r90 "+cenPoint.x+" "+cenPoint.y);
+			this.initRBBox = {
+				x:this.cells.getBBox().x,
+				y:this.cells.getBBox().y,
+				width: this.cells.getBBox().width,
+				height: this.cells.getBBox().height,
+			};
+			this.cells.transform("");
+			this.options.initBBox = this.initBBox; // prevent from rerun
+			this.gameboardBBox = {
+						sx: this.gameboard.offset.x, // start x
+						sy: this.gameboard.offset.y, // start y
+						width: this.gameboard.width,
+						height: this.gameboard.height,
+						ex: this.gameboard.offset.x + gameboard.width, // end x
+						ey: this.gameboard.offset.y + gameboard.height  // end y
+			};
 		},
 
 		calAllBBox: function (){
