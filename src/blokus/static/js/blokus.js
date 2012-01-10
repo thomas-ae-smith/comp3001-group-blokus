@@ -80,7 +80,13 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			_(keyDownMappings[e.keyCode]).each(function (f) { f.call(); });
 		});
 
-		$(window).bind('beforeunload', function(){ blokus.userProfile.set({status: "offline"}); blokus.userProfile.save(); });
+		$(window).bind('beforeunload', function(){ 
+			blokus.userProfile.set({status: "offline"}); 
+			blokus.userProfile.save(); 
+			if (blokus.userProfile.get("game_id") != null) {
+				return "Leaving this page will terminate the game."
+			}
+		});
 
 		blokus.pieceMasters = new blokus.PieceMasterCollection();
 		var pieceMastersFetched = new $.Deferred()
