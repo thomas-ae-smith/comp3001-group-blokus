@@ -39,7 +39,8 @@
 			var this_ = this,
 				el = this.el,
 				$el = $(el),
-				template = _.template($('#game-template').html());
+				template = _.template($('#game-template').html()),
+				playerPanels = {};
 
 			this.shapes = { red: {}, blue: {}, yellow: {}, green: {} };
 
@@ -51,6 +52,48 @@
 			window.p = paper;
 
 			var dfd = new $.Deferred();
+
+			game.bind("change:colour_turn", function (game, colour) {
+	        	console.log("TODO New colour turn", colour);
+	        	var player = game.getPlayerOfColour(colour);
+	        	if (player.get("user_id") == blokus.user.get("id")) {
+	        		var playerId = player.get("id");
+	        		var pos = 1;
+	        		_(playerPanels).each(function (playerPanel, id) {
+	        			if (playerId == id) {
+	        				playerPanel.setActive(true, 0);
+	        			} else {
+	        				playerPanel.setActive(false, pos);
+	        				pos++;
+	        			}
+	        		});
+	        		blokus.showMsg(colour + ", it is now your turn");
+	        	} else {
+	        		blokus.showMsg(colour + "'s turn");
+	        	}
+	        });
+
+	        game.bind("change:winning_colours", function (game, winning_colours) {
+	        	var colours = winning_colours.split("|");
+	        	console.log("TODO Player wins: ", colours);
+	        });
+
+	        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
+
+	        game.bind("change:number_of_moves", function (game, numberOfMoves) {
+	        	console.log(game)
+	        	_(game.players.models).each(function (player) {
+	        		var colour = player.get("colour");
+		        	_(player.pieces.models).each(function (piece) {
+		        		//gameboard.renderPiece(colour, piece);
+		        		var shape = this_.shapes[colour][piece.get("master_id")];
+		        		console.log(shape)
+		        		window.k = shape;
+		        		window.l = piece;
+		        		//shape.moveToPos TODO
+		        	});
+		        });
+	        });
 
 			game.fetch({ success: function () {
 				var dfds = [];
@@ -73,9 +116,24 @@
 				blokus.showError("Failed to fetch game");
 			}});
 
+			this_.$(".uri").html(game.get("uri"));
+
+			this_.$(".game-help").click(function () {
+				$("#helpscreen").slideDown();
+			});
+
+			this_.$("#helpscreen .close").click(function () {
+				$("#helpscreen").slideUp();
+			});
+
+			this_.$(".game-exit").click(function () {
+				if (confirm("Are you sure you want to quit the game?")) {
+					location.hash = "";
+				}
+			});
+
 			dfd.done(function () {
 				var gamej = game.toJSON(),
-					playerPanels = {},
 					positionId = 0,
 					gameboard = this_.gameboard = new blokus.GameBoard({
 						paper: paper,
@@ -103,58 +161,10 @@
 
 		        this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
-		        game.bind("change:colour_turn", function (game, colour) {
-		        	console.log("TODO New colour turn", colour);
-		        	blokus.showMsg(colour + ", it is now your turn");
-		        	var player = game.getPlayerOfColour(colour);
-		        	if (player.get("user_id") == blokus.user.get("id")) {
-		        		var playerId = player.get("id");
-		        		var pos = 1;
-		        		_(playerPanels).each(function (playerPanel, id) {
-		        			if (playerId == id) {
-		        				playerPanel.setActive(true, 0);
-		        			} else {
-		        				playerPanel.setActive(false, pos);
-		        				pos++;
-		        			}
-		        		});
-		        	}
-		        });
 
-		        game.bind("change:winning_colours", function (game, winning_colours) {
-		        	var colours = winning_colours.split("|");
-		        	console.log("TODO Player wins: ", colours);
-		        });
-
-		        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
-
-		        game.bind("change:number_of_moves", function (game, numberOfMoves) {
-		        	console.log(game)
-		        	_(game.pieces.models).each(function (piece) {
-		        		gameboard.renderPiece(game.players.get(piece.get("player_id")).get("colour"), piece);
-		        		var shape = this_.shapes[colour][piece.get("master_id")];
-		        		//shape.moveToPos TODO
-		        	});
-		        });
 
 		        this_.startTime = new Date(gamej.start_time); // FIXME Date time check compatbility
 		        this_.timeNow = new Date(gamej.time_now); // FIXME Date time check compatbility
-
-				this_.$(".uri").html(game.get("uri"));
-
-				this_.$(".game-help").click(function () {
-					$("#helpscreen").slideDown();
-				});
-
-				this_.$("#helpscreen .close").click(function () {
-					$("#helpscreen").slideUp();
-				})
-
-				this_.$(".game-exit").click(function () {
-					if (confirm("Are you sure you want to quit the game?")) {
-						location.hash = "";
-					}
-				})
 
 				// Append to view
 				$el.append(gameboard.el);
@@ -222,6 +232,7 @@
 		},
 
 		updateDuration: function (timeNow) {
+			if (!this.startTime) return;
 			if (timeNow) this.timeNow = new Date(timeNow);
 			else this.timeNow.setSeconds(this.timeNow.getSeconds() + 1);
 			this.$(".duration").html(niceTime(dateDifference(this.startTime, this.timeNow)));
