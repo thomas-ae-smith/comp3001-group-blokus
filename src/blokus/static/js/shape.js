@@ -72,6 +72,7 @@
 		},
 
 		gameboardCellSize: undefined,
+		gameboard: undefined,
 		cellSize: undefined,
 
 		// current visible Boundary box
@@ -117,6 +118,7 @@
 			this.gameboardBBox = this.options.gameboardBBox;
 			this.gameBBox = this.options.gameBBox;
 			this.gameboardCellSize = this.options.gameboardCellSize;
+			this.gameboard = this.options.gameboard;
 			this.cellSize = this.options.cellSize;
 			this.setInitBBoxes();
 			// Apply the current scale given
@@ -225,8 +227,8 @@
 		},
 
 		/** END MOVEMENT **/
-		getDestCor: function(gameboard){
-			var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
+		getDestCor: function(){
+			var cell = this.gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
 			if(this.rotation%2 == 0){
 				this.destCor = {
 					x: cell.attr("x") - this.initBBox.x,
@@ -242,7 +244,7 @@
 			return this.destCor;
 		},
 
-		getCellsOnGameboard: function (gameboard) {
+		getCellsOnGameboard: function () {
 			if(this.posInGameboard.x > 5)
 				this.posInGameboard.x = Math.ceil((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize);
 			if(this.posInGameboard.y > 5)
@@ -256,8 +258,8 @@
 			for (var rowI = 0; rowI < numRows; rowI++){
 				for (var colJ = 0; colJ < numCols; colJ++) {
 					if (transData[rowI][colJ] == 1) {
-						newSet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
-						gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
+						newSet.push(this.gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
+						this.gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
 							x:this.posInGameboard.x+colJ,
 							y:this.posInGameboard.y+rowI
 						};
@@ -266,8 +268,8 @@
 					}
 				}
 			}
-			var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
-			this.destCor = this.getDestCor(gameboard);
+			var cell = this.gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
+			this.getDestCor();
 			this.cellsOnGameboard = newSet;
 			this.notInPanel = false;
 			return this.cellsOnGameboard;
@@ -348,7 +350,7 @@
 
 		},
 
-		inBoardValidation: function(gameboard){
+		inBoardValidation: function(){
 			if (this.cellsOnGameboard != undefined)
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
 			if(this.isShapeInGameboard()){
@@ -356,7 +358,7 @@
 					x: Math.round((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize),
 					y: Math.round((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize),
 				};
-				this.getCellsOnGameboard(gameboard);
+				this.getCellsOnGameboard();
 
 				//Validation
 				var corner = false;
@@ -430,7 +432,7 @@
 			this.canMove = false;
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
-			this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
+			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
 			this.setOpacity(1, 500);
@@ -474,14 +476,14 @@
 			return rotatedData;
 		},
 
-		rotate: function (rotation, gameboard){
+		rotate: function (rotation){
 			if(this.isSelected){
 				var this_ = this;
 				this.rotation += rotation;
 				var cenPoint = this.getCenterOfShape();
 				//this.cells.rotate(rotation*90, cenPoint.x, cenPoint.y);
 				this.cells.animate({transform: "...r"+rotation*90+" "+cenPoint.x+" "+cenPoint.y}, 150);
-				setTimeout(function(){this_.inBoardValidation(gameboard);}, 151);
+				setTimeout(function(){this_.inBoardValidation();}, 151);
 			}
 		},
 
@@ -535,7 +537,7 @@
 				this.flipNum = flipNum;
 		},
 
-		flip: function (flipNum, gameboard){
+		flip: function (flipNum){
 			if(this.isSelected){
 				var this_ = this;
 				this.changeFlipToScale(flipNum);
@@ -544,7 +546,7 @@
 				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, this.rotation*90,
 						 cenPoint.x, cenPoint.y, 150);
-				setTimeout(function(){this_.inBoardValidation(gameboard);}, 151);
+				setTimeout(function(){this_.inBoardValidation();}, 151);
 			}
 		},
 
@@ -557,7 +559,7 @@
 			return true;
 		},
 
-		halo: function(gameboard){
+		halo: function(){
 			if(this.haloCircle == undefined && !this.isSelected && this.canMove){
 				var this_ = this;
 				var cenPoint = this.getCenterOfShape();
@@ -568,7 +570,7 @@
 				this.haloCircle[0].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
-						this_.rotate(1, gameboard);
+						this_.rotate(1);
 						this_.isSelected = false;
 						console.log("Rotate Left");
 					}
@@ -577,7 +579,7 @@
 				this.haloCircle[1].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
-						this_.rotate(-1, gameboard);
+						this_.rotate(-1);
 						this_.isSelected = false;
 						console.log("Rotate Right");
 					}
@@ -586,7 +588,7 @@
 				this.haloCircle[2].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
-						this_.flip(2, gameboard);
+						this_.flip(2);
 						this_.isSelected = false;
 						console.log("Flip Vertical");
 					}
@@ -595,7 +597,7 @@
 				this.haloCircle[3].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
-						this_.flip(1, gameboard);
+						this_.flip(1);
 						this_.isSelected = false;
 						console.log("Flip Horizantal");
 					}
