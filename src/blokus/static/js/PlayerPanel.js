@@ -5,8 +5,16 @@
 		{ x: 670, y: 260 },
 		{ x: 670, y: 460 },
 	];
+	var dimensions = [
+		{ w: 132, h: 570 },
+		{ w: 132, h: 170 },
+		{ w: 132, h: 170 },
+		{ w: 132, h: 170 }
+	];
 	blokus.PlayerPanel = Backbone.View.extend({
 		className: "playerpanel",
+		shapes: {},
+		pos: 0,
 
 		render: function () {
 			var $el = $(this.el),
@@ -18,15 +26,39 @@
 				pic: "/static/img/noavatar.jpg",
 				stats: "wins: 0 losses: 0"
 			}));
-			if (this.options.active) {
-				$el.css("background", "rgba(255,255,255,1.0)");
-			}
 
 			return this;
 		},
 
+		setPosition: function (pos) {
+			this.pos = pos;
+			if (pos === 0) {
+				$(".playerpanelcontainer.left").append(this.el);
+			} else {
+				$(".playerpanelcontainer.right").append(this.el);
+			}
+		},
+
+		getPosition: function () { return pos; },
+
+		isActive: function () { return pos === 0 },
+
+		getBoundaries: function () {
+			var offsets = offsets[this.pos],
+				dimensions = dimensions[this.pos];
+			return {
+				sx: offsets.x,
+				sy: offsets.y,
+				ex: offsets.x + dimensions.w,
+				ey: offsets.y + dimensions.h,
+				width: dimensions.w,
+				height: dimensions.h
+			};
+		},
+
 		renderPieces: function (pieces, canMove) {
-			var gameview = this.options.gameview,
+			var this_ = this,
+				gameview = this.options.gameview,
 				cellSize = this.options.cellSize,
 				colour = this.options.player.get("colour"),
 				scale = this.options.active ? 0.6 : 0.3,
@@ -37,16 +69,13 @@
 				positions = blokus.utils.get_points(blokus.pieceMasters.toJSON(), offset.x + 20, offset.y + 35, width - 27, height - 20);
 
 			pieces.each(function (piece) {
-				var pieceMaster = blokus.pieceMasters.get(piece.get("master_id")),
+				var master_id = piece.get("master_id"),
+					pieceMaster = blokus.pieceMasters.get(master_id),
 					i = pieceMaster.get("id");
-				gameview.drawPiece(positions[i].x, positions[i].y, piece, colour, scale, scale, canMove);
+				var shape = gameview.drawPiece(positions[i].x, positions[i].y, piece, colour, scale, scale, canMove);
+				this_.shapes[master_id] = shape;
 			});
 		},
 
-		setActive: function (v, position) {
-			this.optionsactive = v;
-			this.options.positionId = position;
-			this.render();
-		}
 	});
 }(jQuery, _, Backbone, blokus));
