@@ -355,13 +355,72 @@ h1 { font-weight:bold; font-size:24pt; }
 }
 #helpscreen {
 	position: absolute;
-	top: 0px; left: 0px; right: 0px;
+	top: 125px; left: 175px; right: 185px;
 	background: url("../img/wood.jpg") center top;
 	border-radius: 5px;
 	z-index: 400;
 	padding: 10px;
+	height: 420px;
 }
+	#helpscreen h1 {
+		text-align: center;
+		text-shadow: 0px 1px 1px #630;
+		font-weight: bold;
+		opacity: .75;
+		font-size: 250%;
+		padding-bottom: 5px;
+	}
+
+	#helpscreen #slider {
+		overflow: scroll;
+		height: 330px;
+		margin: 10px 0px;
+		border: 5px inset rgba(66, 33, 0, .5);
+	}
+
+	#slider #inner {
+		background: url("../img/wood_light.jpg") center top;
+		background-attachment: scroll;
+		padding: 0px 10px;
+		border: 1px solid rgba(0, 0, 0, .5);
+	}
+
 	#helpscreen .buttons {
 		margin: 10px 0;
 		text-align: center;
+	}
+
+	#helpscreen .buttons a {
+		background: rgba(0, 0, 0, 0.2);
+		border: 3px outset rgba(66, 33, 0, .5);
+		text-shadow: 0px 1px 1px #630;
+		opacity: .8;
+		box-shadow: 0px 0px 6px rgba(0,0,0,0.8);
+	}
+
+	#helpscreen .buttons a:hover {
+		background: transparent;
+		/*background: url("../img/wood.jpg") center top;*/
+		background: ;
+	}
+
+	#inner h2 {
+		text-align: center;
+		text-shadow: 0px 1px 1px #630;
+		font-weight: bold;
+		opacity: .75;
+		font-size: 150%;
+		padding: 5px;
+	}
+
+	#helpscreen p {
+		opacity: .8;
+		padding-bottom: 5px;
+	}
+
+	#helpscreen li {
+		list-style-type: disc;
+		opacity: .8;
+		padding-bottom: 5px;
+		margin-left: 2em;
 	}

@@ -33,6 +33,7 @@
 		startTime: 0,
 		timeNow: 0,
 		shapes: undefined,
+		help: false,
 
 		render: function () {
 			window.gameview = this;
@@ -119,11 +120,18 @@
 			this_.$(".uri").html(game.get("uri"));
 
 			this_.$(".game-help").click(function () {
-				$("#helpscreen").slideDown();
+				if (this_.help == true) {
+					$("#helpscreen").slideUp();
+					this_.help = false;	
+				} else {
+					$("#helpscreen").slideDown();
+					this_.help = true;
+				}
 			});
 
 			this_.$("#helpscreen .close").click(function () {
 				$("#helpscreen").slideUp();
+				this_.help = false;
 			});
 
 			this_.$(".game-exit").click(function () {
