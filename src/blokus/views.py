@@ -111,9 +111,6 @@ def login_journey(request):
 
 @guest_allowed
 def debug_view(request):
-	from blokus.models import Game
-	Game.objects.get(id=1).delete() 
-
 	user = str(request.user.id)
 	if request.user.id is None:
 		user = 'None'
