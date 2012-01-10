@@ -13,6 +13,24 @@ from guest.utils import display_username
 import logging
 import random
 
+#Can only view own user object and others you are playing with
+class UserAuthorization(Authorization):
+	def apply_limits(self, request, object_list):
+		if request and request.user.id is not None:
+			players_attached = request.user.player_set.all()
+			ingame = len(players_attached) > 0
+			if ingame:
+				player_user_list = players_attached[0].game.player_set.all().values_list('user',flat=True)
+
+			result = []
+			for user in object_list:
+				if user.id == request.user.id:
+					result.append(user)
+				elif ingame and user.id in player_user_list:
+					result.append(user)
+			return result
+		return object_list.none()	
+
 class UserResource(ModelResource):
 	userprofile = fields.ToOneField('blokus.api.UserProfileResource', 'userprofile', full=True)
 
@@ -23,12 +41,19 @@ class UserResource(ModelResource):
 		excludes = ['password', 'is_staff', 'is_superuser']
 		list_allowed_methods = []
 		detail_allowed_methods = ['get']
-		authorization = Authorization()
+		authorization = UserAuthorization()
 
 	def obj_get(self, request=None, **kwargs):
 		user = super(UserResource, self).obj_get(request, **kwargs)
 		user.username = display_username(user)
 		return user
+
+	#Dont show emails to others
+	def dehydrate(self, bundle):
+		if str(bundle.request.user.id) != bundle.data['id']:
+			del bundle.data['email']
+			del bundle.data['idxf_email_l_iexact']
+		return bundle
 
 class UserProfileResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')
@@ -52,8 +77,12 @@ class UserProfileResource(ModelResource):
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			userProfiles = super(UserProfileResource, self).get_object_list(request)
-			userProfiles = userProfiles.exclude(id=request.user.get_profile().id)
+			userProfile = userProfiles[0]
+
+
+
 			users_playing = [request.user]
+
 			# Game Attributes: <status>:(<typeID>,<playerCount>)
 			# Must be added to if a new game type is introduced.
 			game_attributes = {
@@ -62,6 +91,8 @@ class UserProfileResource(ModelResource):
 				'private_2':(1,2),
 				'private_4':(2,4),
 			}
+
+			#if request.user.get_profile().status 
 
 			# Get a list of users to play in a game.
 			statuses = ['looking_for_2','looking_for_4']
