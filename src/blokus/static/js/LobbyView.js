@@ -19,7 +19,7 @@ blokus.LobbyView = Backbone.View.extend({
 		var isGuest = name == "Guest";
 		$(this.el).html(template({
             picsrc: "/static/img/noavatar.jpg",
-            name: isGuest ? "Guest" : name,
+            name: name,
 			stats: isGuest ? "Please login to save your scores" : "wins: " + userProfile.wins.toString() + " losses: " + userProfile.losses.toString(),
 			hideSignOut: isGuest ? "" : "style=\"display:none;\"",
 			hideProfile: isGuest ? "style=\"display:none;\"" : ""
