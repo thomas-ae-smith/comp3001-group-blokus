@@ -75,7 +75,6 @@
 
 	        game.bind("change:winning_colours", function (game, winning_colours) {
 	        	var colours = winning_colours.split("|");
-	        	console.log("TODO Player wins: ", colours);
 	        });
 
 	        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
