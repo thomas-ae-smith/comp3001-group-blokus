@@ -7,7 +7,7 @@ blokus.LobbyView = Backbone.View.extend({
                 if (this_.pollUser) { blokus.userProfile.fetch(); }
             }, 4000);
         blokus.userProfile.bind("change:game_id", function (up, game_id) {
-            //blokus.router.navigate("game/" + game_id, true);
+            blokus.router.navigate("game/" + game_id, true);
         });
         this.bind("close", function () { clearTimeout(poller); }); // Remove poller timeout when lobbyview is closed
     },

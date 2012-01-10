@@ -166,7 +166,7 @@
 			this.changeFlipToScale(0);
 			
 			this.isSelected = false;
-			this.canMove = panel.isActive();
+			this.canMove = panel.isActive() && panel.options.player.get("user_id") == blokus.user.get("id");
 			console.log(panel.options.player.get("colour"), panel.isActive())
 			this.inPanel = true;
 
