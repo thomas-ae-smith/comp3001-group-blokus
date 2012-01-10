@@ -207,30 +207,19 @@
 					<label>
 						<span>Username</span>
 						{{ form.username }}
-					</label><br/>
+					</label>{{ form.username.errors }}<br/>
 					<label>
 						<span>Email Address</span>
 						{{ form.email }}
-					</label><br/>
+					</label>{{ form.email.errors }}<br/>
 					<label>
 						<span>Password</span>
 						{{ form.password1 }}
-					</label><br/>
+					</label>{{ form.password1.errors }}<br/>
 					<label>
 						<span>Confirm Password</span>
 						{{ form.password2 }}
-					</label><br/>
-
-					<!-- Form error messages
-					{% for field in form.visible_fields %}
-		            	{% if field.errors %}
-		            		{% for error in field.errors %}
-		              			<p><strong>{{error}}</strong></p>
-		            		{% endfor %}
-		            	{% endif %}
-		            {% endfor %}
-		        	-->
-
+					</label>{{ form.password2.errors }}<br/>
 					<input type="submit" value="Register" class="button" /> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
 				</form>
 			</script>

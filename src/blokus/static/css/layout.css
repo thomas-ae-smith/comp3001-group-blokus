@@ -131,6 +131,12 @@ label input, label textarea, label select {
     label input, label textarea, label select { padding: 4px; }
 }
 /* Register Form */
+.errorlist {
+	display: inline-block;
+	color: red;
+	font-weight: bold;
+	margin-left: 10px;
+}
 .form {
 	margin:80px 0 0 200px; padding:10px;
 	width:400px;
