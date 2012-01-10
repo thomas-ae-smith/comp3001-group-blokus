@@ -796,12 +796,11 @@
 						this_.inBoardValidation();
 					}
 					else{
-						/*
 						if(blokus.haloArr.length != 0){
 							var i = 0;
 							_(blokus.haloArr).each(function (s){
 								s.boundaryCircle.toFront();
-								if (s.boundaryCircle != paper.getElementByPoint(e.pageX, e.pageY)){
+								if (s.boundaryCircle != this_.paper.getElementByPoint(e.pageX, e.pageY)){
 									s.removeHalo();
 									s.haloOn = false;
 									blokus.haloArr[i] = undefined;
@@ -811,7 +810,6 @@
 							});
 							blokus.haloArr.clean(undefined);	
 						}
-						*/
 					}
 				}
 			);
@@ -833,6 +831,7 @@
 								this_.goToPos();
 								// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
 								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colour_turn")[0]});
+								this_.moveToGameboard();
 								this_.trigger("piece_placed", this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
 							}
 						}
@@ -841,8 +840,10 @@
 			);
 			this.cells.mouseover(function () {
 				if(!this_.isSelected){
-					//var s = this_.halo(gameboard);
-					//blokus.haloArr.push(s);
+					/*
+					var s = this_.halo();
+					blokus.haloArr.push(s);
+					*/
 				}
 			});
 			blokus.mapKeyDown(37,
