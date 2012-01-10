@@ -111,9 +111,8 @@ class UserProfile(models.Model):
 	def save(self, *args, **kwargs):
 		try:
 			oldRecord = UserProfile.objects.get(id=self.id)
-			if (oldRecord.status != self.status):
-				for player in self.user.player_set.all():
-					player.delete()
+			if (oldRecord.status != self.status) or (self.status == 'offline'):
+				self.user.player_set.all().delete()
 		except UserProfile.DoesNotExist:
 			pass
 
@@ -228,9 +227,9 @@ class Piece(models.Model):
 		#logging.debug("Satisfies first move:" + str(self.satisfies_first_move()))
 		#logging.debug("Is inside grid:" + str(self.is_inside_grid()))
 		#logging.debug("Game is not over: " + str(self.player.game.winning_colours.strip()))
-		return (self.does_not_overlap() 
-		and (self.is_only_adjacent() or self.satisfies_first_move()) 
-		and self.is_inside_grid() 
+		return (self.does_not_overlap()
+		and (self.is_only_adjacent() or self.satisfies_first_move())
+		and self.is_inside_grid()
 		and self.player.game.winning_colours.strip() == "") # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
