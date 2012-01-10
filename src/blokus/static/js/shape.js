@@ -159,10 +159,10 @@
 		},
 
 		/* GLOBAL METHODS */
-		function moveToPanel(panel){
+		moveToPanel: function(panel){
 			console.log(panel);
 		}, 
-		function moveToBoard(x, y, flip, rotation){ this.destCor = {x:x, y:y};
+		moveToBoard: function(x, y, flip, rotation){ this.destCor = {x:x, y:y};
 			this.rotation = rotation;
 			this.changeFlipToScale(flip);
 			this.getDestCor();
