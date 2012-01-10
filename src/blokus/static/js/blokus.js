@@ -123,6 +123,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		mapKeyDown: function (keyCode, callback) {			// Bind a function to a key being pressed
 			if (!keyDownMappings.hasOwnProperty(keyCode)) { keyDownMappings[keyCode] = []; }
 			keyDownMappings[keyCode].push(callback);
-		}
+		},
+		haloArr: new Array()
 	};
 }(jQuery, _, Backbone, Raphael));

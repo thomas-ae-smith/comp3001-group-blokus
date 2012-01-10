@@ -1,7 +1,30 @@
 (function ($, _, Backbone, blokus) {
+	"use strict";
 
+	var colours = {
+		/*
+		red: '#ff0000',
+		green: '#00ff00',
+		blue: '#0000ff',
+		yellow: '#ffff00'
+		*/
+		red: '/static/img/blockred.png',
+		green: '/static/img/blockgreen.png',
+		blue: '/static/img/blockblue.png',
+		yellow: '/static/img/blockyellow.png'
+	}
 	
-	blokus.shape = Backbone.View.extend({
+	blokus.Shape = Backbone.View.extend({
+		
+		/*
+		 *  Variables passed in initialize
+		 *  */
+		gameboard: undefined,
+		paper: undefined,
+		colour: undefined,
+		pieceMaster: undefined,
+
+		inPanel: true,
 
 		// initial Boundary box
 		initBBox: {
@@ -12,15 +35,14 @@
 		},
 
 		curScale: {
-			x: undefined,
-			y: undefined,
+			x: 1,
+			y: 1,
 		},
 		initScale: {
-			x: undefined,
-			y: undefined,
+			x: 0.3,
+			y: 0.3,
 		},
 		fullScale: false,
-		paper: undefined,
 		haloCircle: undefined,
 		haloOn: true,
 		isSelected: false,
@@ -30,7 +52,7 @@
 		cells: undefined, //The set of cells or squares
 		visibleCells: undefined, //The set of visible cells or squares
 		invisibleCells: undefined, //The set of invisible cells or squares
-		pos: {x:undefined, y:undefined}, // initial position of the shape
+		pos: {x:0, y:0}, // initial position of the shape
 		cellsOnGameboard: undefined, // the cells which are on the gameboard
 		dataArr: undefined, // The array of 0 or 1s which define the shape
 		//Position of the shape in the gameboard
@@ -71,9 +93,8 @@
 			ey: undefined
 		},
 
-		gameboardCellSize: undefined,
-		gameboard: undefined,
-		cellSize: undefined,
+		gameboardCellSize: 23,
+		cellSize: 22,
 
 		// current visible Boundary box
 		visibleBBox: {
@@ -103,24 +124,28 @@
 		
 		initialize: function(){
 			var this_ = this;
-			this.curScale = this.options.curScale;
-			this.initScale = _(this.curScale).clone();
-			this.cells = this.options.cells;
-			this.visibleCells = this.options.visibleCells;
-			this.invisibleCells = this.options.invisibleCells;
-			this.canMove = this.options.canMove;
-			this.pos = this.options.pos;
-			this.dataArr = this.options.dataArr;
+			this.gameboard = this.options.gameboard;
 			this.paper = this.options.paper;
+			this.colour = colours[this.options.colour];
+			this.pieceMaster = this.options.pieceMaster;
+			
+			// initialization
+			this.cells = this.paper.set();
+			this.visibleCells = this.paper.set();
+			this.invisibleCells = this.paper.set();
+			this.renderShape(); // Creates the cells
+			this.setBBoxs(); //Set initial and gameboard Boundary box
+			this.initScale = _(this.curScale).clone();
+			this.addMouseListeners()
+
+			//this.canMove = this.options.canMove;
+			//this.dataArr = this.options.dataArr;
 			//this.destCor = this.options.destCor;
 			this.prevDist = this.options.prevDist;
 			this.mousePage = this.options.mousePage;
-			this.gameboardBBox = this.options.gameboardBBox;
-			this.gameBBox = this.options.gameBBox;
-			this.gameboardCellSize = this.options.gameboardCellSize;
+			//this.gameboardBBox = this.options.gameboardBBox;
+			//this.gameboardCellSize = this.options.gameboardCellSize;
 			this.gameboard = this.options.gameboard;
-			this.cellSize = this.options.cellSize;
-			this.setInitBBoxes();
 			// Apply the current scale given
 			var cenPoint = this.getCenterOfShape();
 			if (this.curScale != undefined){
@@ -131,6 +156,98 @@
 
 		render: function(){
 			return this;
+		},
+
+		/* GLOBAL METHODS */
+		moveToPanel: function(panel){
+			var boundaries = panel.getBoundaries();
+
+			this.rotation = 0;
+			this.changeFlipToScale(0);
+			
+			this.isSelected = false;
+			this.canMove = panel.isActive();
+			console.log(panel.options.player.get("colour"), panel.isActive())
+			this.inPanel = true;
+
+			var cenPoint = this.getCenterOfShape();
+			var rotation = this.rotation * 90;
+
+			var scale = panel.isActive() ? 0.7 : 0.4;
+			this.curScale.x = scale;
+			this.curScale.y = scale;
+
+			this.pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
+
+			this.transform(this.pos.x, this.pos.y, this.curScale.x, this.curScale.y,
+						 cenPoint.x, cenPoint.y, rotation,
+						 cenPoint.x, cenPoint.y);
+			this.setVisibleCellsOpacity(1, 500);
+		}, 
+		moveToGameboard: function(x, y, flip, rotation){ 
+			this.posInGameboard = {x:x, y:y};
+			this.rotation = rotation;
+			this.changeFlipToScale(flip);
+			this.getDestCor();
+			this.isSelected = false;
+			this.canMove = false;
+			this.inPanel = false;
+			this.curScale.x = 1;
+			this.curScale.y = 1;
+			var cenPoint = this.getCenterOfShape();
+			var rotation = this.rotation * 90;
+			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
+						 cenPoint.x, cenPoint.y, rotation,
+						 cenPoint.x, cenPoint.y, 500);
+			this.setVisibleCellsOpacity(1, 500);
+		},
+		
+		isInPanel: function(){
+			return this.inPanel;
+		},
+		/* END GLOBAL METHODS */
+
+		renderShape: function(){
+			var data = this.pieceMaster.get("data"),
+				numRows = data.length,
+				numCols = data[0].length;
+			this.cells.dataArr = _(data).clone();
+			this.dataArr = _(data).clone();
+			for (var rowI = 0; rowI < numRows; rowI++){
+				for (var colJ = 0; colJ < numCols; colJ++) {
+					if (data[rowI][colJ] == 1) {
+						//var cell = paper.rect((colJ)*cellSize, (rowI)*cellSize,
+												//cellSize, cellSize);
+						//cell.attr({fill: this.colour});
+						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
+												this.cellSize, this.cellSize);
+						cell.attr({opacity: 0});
+						cell.opacity = 0;
+						this.cells.push(cell);
+						this.visibleCells.push(cell);
+					}
+					else{
+						//var cell = this.paper.rect((colJ)*this.cellSize, (rowI)*this.cellSize,
+												//this.cellSize, this.cellSize);
+						//cell.attr({fill: this.colour, opacity: 0});
+						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
+												this.cellSize, this.cellSize);
+						cell.attr({opacity: 0});
+						cell.opacity = 0;
+						this.cells.push(cell);
+						this.invisibleCells.push(cell);
+					}
+				}
+			}
+		},
+
+		setVisibleCellsOpacity: function(opacity, time){
+			this.visibleCells.forEach(
+				function (c) {
+					c.animate({"opacity": opacity}, time);
+					c.opacity = opacity;
+				}
+			);
 		},
 
 		setOpacity: function(opacity, time){
@@ -302,25 +419,40 @@
 			}
 		},
 
-		setInitBBoxes: function (){
-			if (this.options.initBBox == undefined){
-				this.initBBox = {
-					x:this.pos.x,
-					y:this.pos.y,
-					width: this.cells.getBBox().width,
-					height: this.cells.getBBox().height,
-				};
-				var cenPoint = this.getCenterOfShape();
-				this.cells.transform("r90 "+cenPoint.x+" "+cenPoint.y);
-				this.initRBBox = {
-					x:this.cells.getBBox().x,
-					y:this.cells.getBBox().y,
-					width: this.cells.getBBox().width,
-					height: this.cells.getBBox().height,
-				};
-				this.cells.transform("");
-				this.options.initBBox = this.initBBox; // prevent from rerun
-			}
+		setBBoxs: function (){
+			var canvas = $(this.paper.canvas);
+			this.initBBox = {
+				x:this.pos.x,
+				y:this.pos.y,
+				width: this.cells.getBBox().width,
+				height: this.cells.getBBox().height,
+			};
+			var cenPoint = this.getCenterOfShape();
+			this.cells.transform("r90 "+cenPoint.x+" "+cenPoint.y);
+			this.initRBBox = {
+				x:this.cells.getBBox().x,
+				y:this.cells.getBBox().y,
+				width: this.cells.getBBox().width,
+				height: this.cells.getBBox().height,
+			};
+			this.cells.transform("");
+			this.options.initBBox = this.initBBox; // prevent from rerun
+			this.gameboardBBox = {
+						sx: this.gameboard.offset.x, // start x
+						sy: this.gameboard.offset.y, // start y
+						width: this.gameboard.width,
+						height: this.gameboard.height,
+						ex: this.gameboard.offset.x + this.gameboard.width, // end x
+						ey: this.gameboard.offset.y + this.gameboard.height  // end y
+			};
+			this.gameBBox = {
+						sx: canvas.offset().top,
+						sy: canvas.offset().left,
+						width: Number(canvas.attr("width")), // does not work in firefox //canvas.width(),
+						height: Number(canvas.attr("height")), // does not work in firefox //canvas.height(),
+						ex: canvas.offset().left + Number(canvas.attr("width")), //canvas.width()
+						ey: canvas.offset().top + Number(canvas.attr("height")) //canvas.height()
+		  };
 		},
 
 		calAllBBox: function (){
@@ -374,7 +506,7 @@
 				
 				var corOnBoard = this.getCorOnBoard();
 				var validPosition = blokus.utils.valid(corOnBoard);
-				var colour = validPosition ? "#0C3" : "#F0A";
+				var colour = validPosition ? "#FFFFFF" : "#666666";
 				this.notInPanel = validPosition ? false : true;
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
 			} 
@@ -406,7 +538,7 @@
 					this.mousePageX = e.pageX - e.layerX + this.initBBox.x;
 					this.mousePageY = e.pageY - e.layerY + this.initBBox.y;
 				}
-				this.setOpacity(0.5, 100);
+				this.setVisibleCellsOpacity(0.5, 100);
 			}
 		},
 
@@ -420,11 +552,11 @@
 				this.curScale = _(this.initScale).clone();
 				this.flipNum = 0;
 				this.distMoved = { x: 0, y: 0 };
-				this.animate(0, 0, this.initScale.x, this.initScale.y,
+				this.animate(this.pos.x, this.pos.y, this.initScale.x, this.initScale.y,
 								cenPoint.x, cenPoint.y, this.rotation*90,
 								cenPoint.x, cenPoint.y, 500);
 			}
-			this.setOpacity(1, 500);
+			this.setVisibleCellsOpacity(1, 500);
 		},
 
 		goToPos: function (){
@@ -435,7 +567,7 @@
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
-			this.setOpacity(1, 500);
+			this.setVisibleCellsOpacity(1, 500);
 		},
 
 		/** END SELECT SHAPE AND RETURN TO PANEL **/
@@ -647,8 +779,95 @@
 			var x = center.x + Math.cos(radians) * radius;
 			var y = center.y + Math.sin(radians) * radius;
 			return {x:x, y:y};
-		}
+		},
 
+
+		/* MOUSE LISTENER */
+		addMouseListeners: function(){
+			var this_ = this;
+			$(window).mousemove(
+				function(e){
+					//on move
+					if (this_.isSelected){
+						this_.calVisibleBBox();
+
+						this_.calDistTravel(e);
+						this_.moveShape();
+						this_.inBoardValidation();
+					}
+					else{
+						if(blokus.haloArr.length != 0){
+							var i = 0;
+							_(blokus.haloArr).each(function (s){
+								s.boundaryCircle.toFront();
+								if (s.boundaryCircle != this_.paper.getElementByPoint(e.pageX, e.pageY)){
+									s.removeHalo();
+									s.haloOn = false;
+									blokus.haloArr[i] = undefined;
+								}
+								s.boundaryCircle.toBack();
+								i++;
+							});
+							blokus.haloArr.clean(undefined);	
+						}
+					}
+				}
+			);
+			this.cells.click(
+				function (e, x, y){
+					// on Start
+					if(!this_.isSelected)
+						this_.selectShape(e);
+					else {
+						if(this_.notInPanel){
+							this_.returnToPanel();
+						}
+						else{
+							var corOnBoard = this_.getCorOnBoard();
+							var validPosition = blokus.utils.valid(corOnBoard);
+							if(validPosition){
+								this_.isSelected = false;
+								//this_.getDestCor();
+								this_.goToPos();
+								// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
+								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colour_turn")[0]});
+								//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
+								this_.inPanel = false;
+								this_.trigger("piece_placed", this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
+							}
+						}
+					}
+				}
+			);
+			this.cells.mouseover(function () {
+				if(!this_.isSelected){
+					/*
+					var s = this_.halo();
+					blokus.haloArr.push(s);
+					*/
+				}
+			});
+			blokus.mapKeyDown(37,
+				function () {
+					this_.rotate(-1);
+				}
+			);
+			blokus.mapKeyDown(39,
+				function () {
+					this_.rotate(1);
+				}
+			);
+			blokus.mapKeyDown(86, // v
+				function (){
+					this_.flip(2);
+				}
+			);
+			blokus.mapKeyDown(72, // h
+				function (){
+					this_.flip(1);
+				}
+			);
+		}
 	});
 
 
