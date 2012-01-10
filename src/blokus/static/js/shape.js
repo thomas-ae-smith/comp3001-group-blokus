@@ -225,59 +225,52 @@
 		},
 
 		/** END MOVEMENT **/
-
-		getCellsOnGameboard: function (gameboard) {
-			if(this.isShapeInGameboard()){
-				this.posInGameboard = {
-					x: Math.round((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize),
-					y: Math.round((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize),
+		getDestCor: function(gameboard){
+			var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
+			if(this.rotation%2 == 0){
+				this.destCor = {
+					x: cell.attr("x") - this.initBBox.x,
+					y: cell.attr("y") - this.initBBox.y
 				};
-				if(this.posInGameboard.x > 5)
-					this.posInGameboard.x = Math.ceil((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize);
-				if(this.posInGameboard.y > 5)
-					this.posInGameboard.y = Math.ceil((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize);
-				var rotation = this.getRotation();
-				var rdata = this.rotateMatrix(this.dataArr, rotation);
-				var transData = this.flipMatrix(rdata, this.flipNum);
-				var numRows = transData.length;
-				var numCols = transData[0].length;
-				var newSet = this.paper.set()
-				for (var rowI = 0; rowI < numRows; rowI++){
-					for (var colJ = 0; colJ < numCols; colJ++) {
-						if (transData[rowI][colJ] == 1) {
-							newSet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
-							gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
-								x:this.posInGameboard.x+colJ,
-								y:this.posInGameboard.y+rowI
-							};
-							// TODO for validation, make the "r" something variable for different players
-							//shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
-						}
-					}
-				}
-				var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
-				if(this.rotation%2 == 0){
-					this.destCor = {
-						x: cell.attr("x") - this.initBBox.x,
-						y: cell.attr("y") - this.initBBox.y
-					};
-				}
-				else{
-					this.destCor = {
-						x: cell.attr("x") - this.initRBBox.x,
-						y: cell.attr("y") - this.initRBBox.y
-					};
-				}
-				this.cellsOnGameboard = newSet;
-				this.notInPanel = false;
-				return this.cellsOnGameboard;
 			}
 			else{
-				this.notInPanel = true;
-				this.posInGameboard = {x:undefined, y:undefined};
-				this.cellsOnGameboard = undefined;
-				return undefined;
+				this.destCor = {
+					x: cell.attr("x") - this.initRBBox.x,
+					y: cell.attr("y") - this.initRBBox.y
+				};
 			}
+			return this.destCor;
+		},
+
+		getCellsOnGameboard: function (gameboard) {
+			if(this.posInGameboard.x > 5)
+				this.posInGameboard.x = Math.ceil((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize);
+			if(this.posInGameboard.y > 5)
+				this.posInGameboard.y = Math.ceil((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize);
+			var rotation = this.getRotation();
+			var rdata = this.rotateMatrix(this.dataArr, rotation);
+			var transData = this.flipMatrix(rdata, this.flipNum);
+			var numRows = transData.length;
+			var numCols = transData[0].length;
+			var newSet = this.paper.set()
+			for (var rowI = 0; rowI < numRows; rowI++){
+				for (var colJ = 0; colJ < numCols; colJ++) {
+					if (transData[rowI][colJ] == 1) {
+						newSet.push(gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
+						gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
+							x:this.posInGameboard.x+colJ,
+							y:this.posInGameboard.y+rowI
+						};
+						// TODO for validation, make the "r" something variable for different players
+						//shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
+					}
+				}
+			}
+			var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
+			this.destCor = this.getDestCor(gameboard);
+			this.cellsOnGameboard = newSet;
+			this.notInPanel = false;
+			return this.cellsOnGameboard;
 		},
 
 		/** VALIDATION AND BOUNDARY BOXS **/
@@ -356,9 +349,13 @@
 		},
 
 		inBoardValidation: function(gameboard){
+			if (this.cellsOnGameboard != undefined)
+				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
 			if(this.isShapeInGameboard()){
-				if (this.cellsOnGameboard != undefined)
-					this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
+				this.posInGameboard = {
+					x: Math.round((this.visibleBBox.sx - this.gameboardBBox.sx)/ this.gameboardCellSize),
+					y: Math.round((this.visibleBBox.sy - this.gameboardBBox.sy)/ this.gameboardCellSize),
+				};
 				this.getCellsOnGameboard(gameboard);
 
 				//Validation
@@ -381,6 +378,9 @@
 			} 
 			else {
 				this.notInPanel = true;
+				this.notInPanel = true;
+				this.posInGameboard = {x:undefined, y:undefined};
+				this.cellsOnGameboard = undefined;
 				if (this.cellsOnGameboard != undefined)
 					this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
 			}
@@ -430,7 +430,6 @@
 			this.canMove = false;
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
-			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
 			this.setOpacity(1, 500);
@@ -515,27 +514,30 @@
 			}
 		},
 
+		changeFlipToScale: function(flipNum){
+			if (flipNum == 1 && this.curScale.x > 0) // Set animation values
+				this.curScale.x = this.fullScale ? -1 : -this.initScale.x;
+			else if (flipNum == 1)
+				this.curScale.x = this.fullScale ? 1 : this.initScale.x;
+			if (flipNum == 2 && this.curScale.y > 0)
+				this.curScale.y = this.fullScale ? -1 : -this.initScale.y;
+			else if (flipNum == 2)
+				this.curScale.y = this.fullScale ? 1 : this.initScale.y;
+
+			if (this.flipNum == 3) // Set the flipnum for server
+				this.flipNum -= flipNum
+			else if(this.flipNum == flipNum)
+				this.flipNum = 0;
+			else if(this.flipNum != 0)
+				this.flipNum = 3;
+			else
+				this.flipNum = flipNum;
+		},
+
 		flip: function (flipNum, gameboard){
 			if(this.isSelected){
 				var this_ = this;
-				if (flipNum == 1 && this.curScale.x > 0) // Set animation values
-					this.curScale.x = this.fullScale ? -1 : -this.initScale.x;
-				else if (flipNum == 1)
-					this.curScale.x = this.fullScale ? 1 : this.initScale.x;
-				if (flipNum == 2 && this.curScale.y > 0)
-					this.curScale.y = this.fullScale ? -1 : -this.initScale.y;
-				else if (flipNum == 2)
-					this.curScale.y = this.fullScale ? 1 : this.initScale.y;
-
-				if (this.flipNum == 3) // Set the flipnum for server
-					this.flipNum -= flipNum
-				else if(this.flipNum == flipNum)
-					this.flipNum = 0;
-				else if(this.flipNum != 0)
-					this.flipNum = 3;
-				else
-					this.flipNum = flipNum;
-
+				this.changeFlipToScale(flipNum);
 					
 				var cenPoint = this.getCenterOfShape();
 				this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
