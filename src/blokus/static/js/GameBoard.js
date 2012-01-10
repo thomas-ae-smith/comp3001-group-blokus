@@ -61,21 +61,7 @@
 				pieceMaster = blokus.pieceMasters.get(piece.get("master_id"));
 
 			gameview.drawPiece(x, y, piece, colour, 1, 1, false);
-			if (piece.get("rotation") == undefined){
-				piece.set("rotation", 0);
-			}
-			//var tmpData = rotateMatrix(pieceMaster.get("data"), piece.get("rotation"));
-			tmpData = pieceMaster.get("data");
-			var numRows = tmpData.length;
-			var numCols = tmpData[0].length;
-			for (var rowI = 0; rowI < numRows; rowI++){
-				for (var colJ = 0; colJ <= numCols; colJ++) {
-					if (tmpData[rowI][colJ] == 1) {
-						//this_.grid[colJ+piece.get("y")][rowI+piece.get("x")]= colour;
-						blokus.board.get("gridPlaced")[colJ+piece.get("x")][rowI+piece.get("y")] = colour;
-					}
-				}
-			}
+			add_piece_to_validation_grid(piece, colour)
 		}
 	});
 }(jQuery, _, Backbone, blokus));

@@ -102,7 +102,7 @@ blokus.utils = (function ($, _, Backbone) {
 	//Get the owner of the square or '' if out of bounds.
 	var get_claim = function (x, y) {
 		if ((x >= 0) && (x < 20) && (y >= 0) && (y < 20)) {
-			return blokus.board.get("gridPlaced")[x][y];
+			return (blokus.board.get("gridPlaced")[x][y]).toString();
 		} else {
 			return '';
 		}
@@ -163,7 +163,7 @@ blokus.utils = (function ($, _, Backbone) {
 		if (isNaN(x) || isNaN(y)) {
 			return false;
 		} else {
-			if (get_claim(x, y) !== '0') {
+			if (get_claim(x, y).toString() !== '0') {
 				return true;
 			} else {
 				return false;
