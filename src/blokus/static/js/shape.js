@@ -138,8 +138,7 @@
 			this.curScale = this.options.curScale;
 			this.initScale = _(this.curScale).clone();
 			this.canMove = this.options.canMove;
-			this.dataArr = this.options.dataArr;
-			this.paper = this.options.paper;
+			//this.dataArr = this.options.dataArr;
 			//this.destCor = this.options.destCor;
 			this.prevDist = this.options.prevDist;
 			this.mousePage = this.options.mousePage;
@@ -189,6 +188,7 @@
 				numRows = data.length,
 				numCols = data[0].length;
 			this.cells.dataArr = _(data).clone();
+			this.dataArr = _(data).clone();
 			for (var rowI = 0; rowI < numRows; rowI++){
 				for (var colJ = 0; colJ < numCols; colJ++) {
 					if (data[rowI][colJ] == 1) {
