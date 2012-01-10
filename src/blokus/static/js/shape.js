@@ -7,9 +7,9 @@
 		blue: '#0000ff',
 		yellow: '#ffff00'
 		*/
-		red: '/static/img/blockblue.png',
+		red: '/static/img/blockred.png',
 		green: '/static/img/blockgreen.png',
-		blue: '/static/img/blockred.png',
+		blue: '/static/img/blockblue.png',
 		yellow: '/static/img/blockyellow.png'
 	}
 	
@@ -45,7 +45,7 @@
 		haloCircle: undefined,
 		haloOn: true,
 		isSelected: false,
-		canMove: true,
+		canMove: false,
 		rotation: 0,
 		flipNum: 0,
 		cells: undefined, //The set of cells or squares
@@ -181,7 +181,7 @@
 			this.transform(pos.x, pos.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y);
-			this.setOpacity(1, 500);
+			this.setVisibleCellsOpacity(1, 500);
 		}, 
 		moveToGameboard: function(x, y, flip, rotation){ 
 			this.posInGameboard = {x:x, y:y};
@@ -198,7 +198,7 @@
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
-			this.setOpacity(1, 500);
+			this.setVisibleCellsOpacity(1, 500);
 		},
 		
 		isInPanel: function(){
@@ -220,8 +220,8 @@
 						//cell.attr({fill: this.colour});
 						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
 												this.cellSize, this.cellSize);
-						cell.attr({opacity: 1});
-						cell.opacity = 1;
+						cell.attr({opacity: 0});
+						cell.opacity = 0;
 						this.cells.push(cell);
 						this.visibleCells.push(cell);
 					}
@@ -240,6 +240,14 @@
 			}
 		},
 
+		setVisibleCellsOpacity: function(opacity, time){
+			this.visibleCells.forEach(
+				function (c) {
+					c.animate({"opacity": opacity}, time);
+					c.opacity = opacity;
+				}
+			);
+		},
 
 		setOpacity: function(opacity, time){
 			this.cells.forEach(
@@ -529,7 +537,7 @@
 					this.mousePageX = e.pageX - e.layerX + this.initBBox.x;
 					this.mousePageY = e.pageY - e.layerY + this.initBBox.y;
 				}
-				this.setOpacity(0.5, 100);
+				this.setVisibleCellsOpacity(0.5, 100);
 			}
 		},
 
@@ -547,7 +555,7 @@
 								cenPoint.x, cenPoint.y, this.rotation*90,
 								cenPoint.x, cenPoint.y, 500);
 			}
-			this.setOpacity(1, 500);
+			this.setVisibleCellsOpacity(1, 500);
 		},
 
 		goToPos: function (){
@@ -558,7 +566,7 @@
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
-			this.setOpacity(1, 500);
+			this.setVisibleCellsOpacity(1, 500);
 		},
 
 		/** END SELECT SHAPE AND RETURN TO PANEL **/
@@ -775,7 +783,7 @@
 
 		/* MOUSE LISTENER */
 		addMouseListeners: function(){
-			this_ = this;
+			var this_ = this;
 			$(window).mousemove(
 				function(e){
 					//on move
@@ -806,7 +814,7 @@
 					}
 				}
 			);
-			this_.cells.click(
+			this.cells.click(
 				function (e, x, y){
 					// on Start
 					if(!this_.isSelected)
@@ -830,7 +838,7 @@
 					}
 				}
 			);
-			this_.cells.mouseover(function () {
+			this.cells.mouseover(function () {
 				if(!this_.isSelected){
 					//var s = this_.halo(gameboard);
 					//blokus.haloArr.push(s);
