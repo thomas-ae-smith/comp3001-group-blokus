@@ -13,7 +13,7 @@
 		yellow: '/static/img/blockyellow.png'
 	}
 	
-	blokus.shape = Backbone.View.extend({
+	blokus.Shape = Backbone.View.extend({
 		
 		/*
 		 *  Variables passed in initialize
@@ -21,7 +21,7 @@
 		gameboard: undefined,
 		paper: undefined,
 		colour: undefined,
-		piecemaster: undefined,
+		pieceMaster: undefined,
 
 		inPanel: false,
 
@@ -45,7 +45,7 @@
 		haloCircle: undefined,
 		haloOn: true,
 		isSelected: false,
-		canMove: false,
+		canMove: true,
 		rotation: 0,
 		flipNum: 0,
 		cells: undefined, //The set of cells or squares
@@ -126,7 +126,7 @@
 			this.gameboard = this.options.gameboard;
 			this.paper = this.options.paper;
 			this.colour = colours[this.options.colour];
-			this.piecemaster = this.options.piecemaster;
+			this.pieceMaster = this.options.pieceMaster;
 			
 			// initialization
 			this.cells = this.paper.set();
@@ -134,16 +134,15 @@
 			this.invisibleCells = this.paper.set();
 			this.renderShape(); // Creates the cells
 			this.setBBoxs(); //Set initial and gameboard Boundary box
-
-
-			this.curScale = this.options.curScale;
 			this.initScale = _(this.curScale).clone();
-			this.canMove = this.options.canMove;
+			this.addMouseListeners()
+
+			//this.canMove = this.options.canMove;
 			//this.dataArr = this.options.dataArr;
 			//this.destCor = this.options.destCor;
 			this.prevDist = this.options.prevDist;
 			this.mousePage = this.options.mousePage;
-			this.gameboardBBox = this.options.gameboardBBox;
+			//this.gameboardBBox = this.options.gameboardBBox;
 			//this.gameboardCellSize = this.options.gameboardCellSize;
 			this.gameboard = this.options.gameboard;
 			// Apply the current scale given
@@ -162,7 +161,8 @@
 		moveToPanel: function(panel){
 			console.log(panel);
 		}, 
-		moveToBoard: function(x, y, flip, rotation){ this.destCor = {x:x, y:y};
+		moveToGameboard: function(x, y, flip, rotation){ 
+			this.posInGameboard = {x:x, y:y};
 			this.rotation = rotation;
 			this.changeFlipToScale(flip);
 			this.getDestCor();
@@ -183,7 +183,7 @@
 		/* END GLOBAL METHODS */
 
 		renderShape: function(){
-			var data = this.piecemaster.get("data"),
+			var data = this.pieceMaster.get("data"),
 				numRows = data.length,
 				numCols = data[0].length;
 			this.cells.dataArr = _(data).clone();
@@ -193,24 +193,24 @@
 					if (data[rowI][colJ] == 1) {
 						//var cell = paper.rect((colJ)*cellSize, (rowI)*cellSize,
 												//cellSize, cellSize);
-						//cell.attr({fill: this.colours});
-						var cell = paper.image(this.colours, (colJ)*this.cellSize, (rowI)*this.cellSize,
+						//cell.attr({fill: this.colour});
+						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
 												this.cellSize, this.cellSize);
 						cell.attr({opacity: 1});
 						cell.opacity = 1;
 						this.cells.push(cell);
-						visibleCells.push(cell);
+						this.visibleCells.push(cell);
 					}
 					else{
-						//var cell = paper.rect((colJ)*this.cellSize, (rowI)*this.cellSize,
+						//var cell = this.paper.rect((colJ)*this.cellSize, (rowI)*this.cellSize,
 												//this.cellSize, this.cellSize);
-						//cell.attr({fill: this.colours, opacity: 0});
-						var cell = paper.image(this.colours, (colJ)*this.cellSize, (rowI)*this.cellSize,
+						//cell.attr({fill: this.colour, opacity: 0});
+						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
 												this.cellSize, this.cellSize);
 						cell.attr({opacity: 0});
 						cell.opacity = 0;
 						this.cells.push(cell);
-						invisibleCells.push(cell);
+						this.invisibleCells.push(cell);
 					}
 				}
 			}
@@ -409,8 +409,8 @@
 						sy: this.gameboard.offset.y, // start y
 						width: this.gameboard.width,
 						height: this.gameboard.height,
-						ex: this.gameboard.offset.x + gameboard.width, // end x
-						ey: this.gameboard.offset.y + gameboard.height  // end y
+						ex: this.gameboard.offset.x + this.gameboard.width, // end x
+						ey: this.gameboard.offset.y + this.gameboard.height  // end y
 			};
 			this.gameBBox = {
 						sx: canvas.offset().top,
@@ -760,9 +760,10 @@
 
 						this_.calDistTravel(e);
 						this_.moveShape();
-						this_.inBoardValidation(gameboard, paper.set());
+						this_.inBoardValidation();
 					}
 					else{
+						/*
 						if(blokus.haloArr.length != 0){
 							var i = 0;
 							_(blokus.haloArr).each(function (s){
@@ -777,6 +778,7 @@
 							});
 							blokus.haloArr.clean(undefined);	
 						}
+						*/
 					}
 				}
 			);
