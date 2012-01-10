@@ -13,9 +13,9 @@ from guest.utils import display_username
 import logging
 import random
 
-#Can only view own user object and others you are playing with
-class UserAuthorization(Authorization):
-	def apply_limits(self, request, object_list):
+#Can only view own user/userprofile object and others you are playing with
+class AccountAuthorization(Authorization):
+	def apply_limits(self, request, object_list, user_or_userprofile='user'):
 		if request and request.user.id is not None:
 			players_attached = request.user.player_set.all()
 			ingame = len(players_attached) > 0
@@ -24,12 +24,23 @@ class UserAuthorization(Authorization):
 
 			result = []
 			for user in object_list:
-				if user.id == request.user.id:
-					result.append(user)
-				elif ingame and user.id in player_user_list:
-					result.append(user)
+				if user_or_userprofile == 'user':
+					if user.id == request.user.id:
+						result.append(user)
+					elif ingame and user.id in player_user_list:
+						result.append(user)
+				elif user_or_userprofile == 'userprofile':
+					if user.id == request.user.get_profile().id:
+						result.append(user)
+					elif ingame and user.user.id in player_user_list:
+						result.append(user)
 			return result
-		return object_list.none()	
+		return object_list.none()		
+
+
+class UserAuthorization(AccountAuthorization):
+	def apply_limits(self, request, object_list):
+		return super(UserAuthorization, self).apply_limits(request, object_list)
 
 class UserResource(ModelResource):
 	userprofile = fields.ToOneField('blokus.api.UserProfileResource', 'userprofile', full=True)
@@ -55,6 +66,10 @@ class UserResource(ModelResource):
 			del bundle.data['idxf_email_l_iexact']
 		return bundle
 
+class UserProfileAuthorization(AccountAuthorization):
+	def apply_limits(self, request, object_list):
+		return super(UserProfileAuthorization, self).apply_limits(request, object_list, user_or_userprofile='userprofile')
+
 class UserProfileResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')
 
@@ -64,7 +79,7 @@ class UserProfileResource(ModelResource):
 		default_format = 'application/json'
 		list_allowed_methods = []
 		detail_allowed_methods = ['get','put']
-		authorization = Authorization()
+		authorization = UserProfileAuthorization()
 
 	def dehydrate(self, bundle):
 		player_set = bundle.obj.user.player_set.all()
