@@ -75,6 +75,7 @@
 
 	        game.bind("change:winning_colours", function (game, winning_colours) {
 	        	var colours = winning_colours.split("|");
+	        	console.log("TODO Player wins: ", colours);
 	        });
 
 	        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
@@ -288,6 +289,7 @@
 					curScale: {x: scaleX, y:scaleY, originalScale: false},
 					cellSize: cellSize,
 					gameboardCellSize: 23,
+					gameboard: gameboard,
 					paper: paper,
 					gameBBox: {
 								sx: canvas.offset().top,
@@ -366,6 +368,7 @@
 							var validPosition = blokus.utils.valid(corOnBoard);
 							if(validPosition){
 								shape.isSelected = false;
+								shape.getDestCor();
 								shape.goToPos();
 								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colour_turn")[0]});
 								piece.trigger("piece_placed", shape.posInGameboard.x, shape.posInGameboard.y, this.flipNum, shape.getRotation());
@@ -376,8 +379,8 @@
 			);
 			shape.cells.mouseover(function () {
 				if(!shape.isSelected){
-					var s = shape.halo(gameboard);
-					blokus.haloArr.push(s);
+					//var s = shape.halo(gameboard);
+					//blokus.haloArr.push(s);
 				}
 			});
 			blokus.mapKeyDown(37,

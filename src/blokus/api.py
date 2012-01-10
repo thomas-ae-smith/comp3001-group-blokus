@@ -8,7 +8,7 @@ from tastypie.serializers import Serializer
 from django.forms import ModelForm, ValidationError
 from django.core.serializers import json
 from django.utils import simplejson
-from datetime import datetime
+from datetime import datetime, timedelta
 from guest.utils import display_username
 import logging
 import random
@@ -44,7 +44,7 @@ class UserProfileResource(ModelResource):
 	def dehydrate(self, bundle):
 		player_set = bundle.obj.user.player_set.all()
 		if len(player_set) > 0:
-			bundle.data['game_id'] = player_set[0].game.pk
+			bundle.data['game_id'] = player_set.all()[0].game.id
 		else:
 			bundle.data['game_id'] = None
 		return bundle
@@ -154,11 +154,17 @@ class GameResource(ModelResource):
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			games = super(GameResource, self).get_object_list(request)
-			for game in games:
-				players = Player.objects.filter(game=game,user=request.user)
-				for player in players:
-					player.last_activity = datetime.now()
-					player.save()
+			player = request.user.player_set.all()[0]
+			game = player.game
+			player.last_activity = datetime.now()
+			player.save()
+
+			# If a player does not fetch a game model for 60 seconds, they are 
+			# considered disconnected.
+			for otherPlayer in Player.objects.filter(game=game):
+				if (datetime.now() - otherPlayer.last_activity).seconds > 60:
+					otherPlayer.user.get_profile().status = 'offline'
+					otherPlayer.save()
 			return games
 		return Game.objects.none()
 
@@ -239,7 +245,6 @@ class PieceValidation(Validation):
     def is_valid(self, bundle, request=None):
         if not bundle.data:
             return {'__all__': 'Not quite what I had in mind.'}
-            
         return {}
 
 class PieceResource(ModelResource):
