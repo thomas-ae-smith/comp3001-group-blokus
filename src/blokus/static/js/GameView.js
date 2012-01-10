@@ -167,6 +167,8 @@ blokus.Shape = Backbone.View.extend({
 	        	/* Move panel to left if active player, otherwise right */
 	        	var pos = 1;
 				_(playerPanels).each(function (panel, playerId) {
+					var player = game.players.get(playerId),
+						colour = player.get("colour");
 					if (playerId == activePlayerId) {
 						panel.setPosition(0);
 					} else {

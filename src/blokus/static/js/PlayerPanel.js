@@ -39,9 +39,9 @@
 			}
 		},
 
-		getPosition: function () { return pos; },
+		getPosition: function () { return this.pos; },
 
-		isActive: function () { return pos === 0 },
+		isActive: function () { return this.pos === 0 },
 
 		getBoundaries: function () {
 			var offsets = _offsets[this.pos],

@@ -165,7 +165,8 @@
 			this.changeFlipToScale(0);
 			
 			this.isSelected = false;
-			this.canMove = false;
+			this.canMove = panel.isActive();
+			console.log(panel.options.player.get("colour"), panel.isActive())
 			this.inPanel = true;
 
 			var cenPoint = this.getCenterOfShape();
