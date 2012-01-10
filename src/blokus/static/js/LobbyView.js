@@ -16,7 +16,7 @@ blokus.LobbyView = Backbone.View.extend({
 
 		var name = blokus.user.get("username");
 		var userProfile = blokus.user.get("userprofile");
-		var isGuest = !name || name === "anon";
+		var isGuest = name == "Guest";
 		$(this.el).html(template({
             picsrc: "/static/img/noavatar.jpg",
             name: isGuest ? "Guest" : name,

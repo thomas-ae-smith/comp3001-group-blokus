@@ -58,9 +58,5 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     $('input, textarea').live('focusout', function() {
         $(this).prev('span').css('color', '#999');
     });
-
-    $(function() {
-        $('input, textarea').each(function() { toggleLabel.call(this); });
-    });
-
+	
 })(jQuery);

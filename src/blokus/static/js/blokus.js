@@ -28,6 +28,14 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				}
 				currentView = view;
 				$("#container").append($newview);
+				
+				//Ensure input field labels are hidden if they contain text
+				$('input, textarea').each(function() {
+					var input = $(this);
+					if (input.val()) {
+						input.prev('span').css('visibility', 'hidden')
+					}
+				});
 			};
 
 		blokus.router = new (Backbone.Router.extend({		// Make a new router, which binds hash-urls to events. Each hash-url should load a view.
