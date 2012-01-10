@@ -32,7 +32,7 @@
 		paper: undefined,
 		startTime: 0,
 		timeNow: 0,
-		pieces: undefined,
+		shapes: undefined,
 
 		render: function () {
 			window.gameview = this;
@@ -41,7 +41,7 @@
 				$el = $(el),
 				template = _.template($('#game-template').html());
 
-			this.pieces = { red: {}, blue: {}, yellow: {}, green: {} };
+			this.shapes = { red: {}, blue: {}, yellow: {}, green: {} };
 
 			$el.html(template());
 
@@ -83,11 +83,25 @@
 						game: game,
 						gameview: this_
 					}).render(),
+					polling = true,
+					errorCount = 0,
 
-					poller = setInterval(function () { game.fetch({ error: function () { blokus.showError("Failed to fetch game"); /* FIXME: remove? */ } }); }, 4000),	// Fetch game model every second (to determined player turn, duration, winner etc)
+					poll = function () {// Fetch game model every few seconds to determined player turn, duration, winner etc
+						if (polling) {
+							game.fetch({
+								success: function () { errorCount = 0; },
+								error: function () { blokus.showError("Failed to fetch game"); /* TODO */ }
+							}).always(function () {
+								setTimeout(poll, 4000);
+							});
+						}
+					},
+
 		        	ticker = setInterval(function () { this_.updateDuration(); }, 1000); // Keep game duration up-to-date
 
-		        this_.bind("close", function () { clearTimeout(poller); clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
+		        poll();
+
+		        this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
 		        game.bind("change:colour_turn", function (game, colour) {
 		        	console.log("TODO New colour turn", colour);
@@ -115,6 +129,7 @@
 		        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
 
 		        game.bind("change:number_of_moves", function (game, numberOfMoves) {
+		        	console.log(game)
 		        	_(game.pieces.models).each(function (piece) {
 		        		gameboard.renderPiece(game.players.get(piece.get("player_id")).get("colour"), piece);
 		        		var shape = this_.shapes[colour][piece.get("master_id")];

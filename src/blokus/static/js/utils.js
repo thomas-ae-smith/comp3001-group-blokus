@@ -94,18 +94,6 @@ blokus.utils = (function ($, _, Backbone){
 		}
 	};
 
-	var place_piece = function (piece) {
-		var pieceMasterData = blokus.pieceMaster.get(piece.get("master_id")).get("data"),
-			x = piece.get("x"),
-			y = piece.get("y");
-
-		_(pieceMasterData).each(function (row, rowi) {
-			_(row).each(function (val, coli) {
-				if (val === 0)
-			})
-		})
-
-	}
 
 	//True if no pieces on the board are of the current player's colour.
 	var is_first_turn = function (){
