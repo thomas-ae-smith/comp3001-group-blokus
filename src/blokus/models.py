@@ -320,6 +320,9 @@ def cleanup_game(sender, instance, **kwargs):
 	for player in instance.player_set.all():
 		for piece in player.piece_set.all():
 			piece.delete()
+		userProfile = player.user.get_profile()
+		userProfile.status = 'offline'
+		userProfile.save()
 		player.delete()
 	for move in instance.move_set.all():
 		move.delete()
