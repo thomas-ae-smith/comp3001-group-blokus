@@ -19,7 +19,6 @@
 	blokus.GameView = Backbone.View.extend({
 		className: "gameview",
 		game: undefined,
-		help: false,
 
 		render: function () {
 			window.gameview = this;	
@@ -63,7 +62,7 @@
 						gameboard: gameboard,
 						paper: paper,
 						colour: colour 
-		        	});
+					});
 					shape.bind("piece_placed", function (x, y, flip, rotation) {
 						game.getPlayerOfColour(colour).pieces.create({
 							x: x,
@@ -72,63 +71,25 @@
 							client_rotation: rotation 
 						}, {
 							error: function () { blokus.showError("Piece failed to be placed.") } 
-		        });
+						});
 						poll();
-	        });
+					});
 					shapes[colour][id] = shape;
 				});
-
-				$.when.apply(undefined, dfds).always(function () { dfd.resolve(); });
-
-			}, error: function () {
-				blokus.showError("Failed to fetch game");
-			}});
-
-			this_.$(".uri").html(game.get("uri"));
-
-			this_.$(".game-help").click(function () {
-				if (this_.help == true) {
-					$("#helpscreen").slideUp();
-					this_.help = false;	
-				} else {
-					$("#helpscreen").slideDown();
-					this_.help = true;
-				}
 			});
 
 			/* Game polling */
 			var polling = true,
-			this_.$("#helpscreen .close").click(function () {
-				$("#helpscreen").slideUp();
-				this_.help = false;
-			});
-
-			this_.$(".game-exit").click(function () {
-				if (confirm("Are you sure you want to quit the game?")) {
-					location.hash = "";
-				}
-			});
-
-			dfd.done(function () {
-				var gamej = game.toJSON(),
-					positionId = 0,
-					gameboard = this_.gameboard = new blokus.GameBoard({
-						paper: paper,
-						cellSize: cellSize,
-						game: game,
-						gameview: this_
-					}).render(),
-					polling = true,
-					errorCount = 0,
-					poll = function () {// Fetch game model every few seconds to determined player turn, duration, winner etc
-						if (polling) {
-							game.fetch({
-								success: function () { errorCount = 0; },
+				errorCount = 0,
+				poll = function () {// Fetch game model every few seconds to determined player turn, duration, winner etc
+					if (polling) {
+						game.fetch({
+							success: function () { errorCount = 0; },
 							error: error
-							}).always(function () {
-								setTimeout(poll, 4000);
-							});
-						}
+						}).always(function () {
+							setTimeout(poll, 4000);
+						});
+					}
 				};
 
 
@@ -168,7 +129,7 @@
 				$.when.apply(undefined, dfds).always(function () {
 
 					// Set up panels for all players
-				_(game.players.models).each(function (player) {
+					_(game.players.models).each(function (player) {
 						var id = player.get("id");
 						playerPanels[id] = new blokus.PlayerPanel({
 							player: player
@@ -227,9 +188,9 @@
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = piece.get("master_id");
 	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("client_flip"), piece.get("client_rotation"));
-								});
+	        		});
 	        	});
-							}
+	        }
 
 
 	        /* Handle winners */
@@ -237,7 +198,7 @@
 	        	if (!winningColours) return;
 	        	var colours = winningColours.split("|");
 	        	console.log("TODO Player wins: ", colours);
-						}
+	        }
 
 			game.fetch({ success: init, error: error });
 			game.bind("change:colour_turn", handleTurn);
@@ -246,22 +207,33 @@
 	        game.bind("change:time_now", function (game, timeNow) { updateDuration(timeNow); });
 
 
-			this_.$(".game-help").click(function () { $("#helpscreen").slideDown(); });
+			this_.$(".game-help").click(function () {
+				if (this_.help == true) {
+					$("#helpscreen").slideUp();
+					this_.help = false;	
+				} else {
+					$("#helpscreen").slideDown();
+					this_.help = true;
+				}
+			});
 
-			this_.$("#helpscreen .close").click(function () { $("#helpscreen").slideUp(); });
+			this_.$("#helpscreen .close").click(function () {
+				$("#helpscreen").slideUp();
+				this_.help = false;
+			});
 
 			this_.$(".game-exit").click(function () {
 				if (confirm("Are you sure you want to quit the game?")) {
 					location.hash = "";
-					}
+				}
 			});
 
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
 			this_.$(".uri").html(game.get("uri"));
 
-						return this;
-			}
+	        return this;
+		}
 
-							});
+	});
 }(jQuery, _, Backbone, blokus));
