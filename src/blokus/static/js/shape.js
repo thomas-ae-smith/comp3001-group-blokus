@@ -225,6 +225,22 @@
 		},
 
 		/** END MOVEMENT **/
+		getDestCor: function(gameboard){
+			var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
+			if(this.rotation%2 == 0){
+				this.destCor = {
+					x: cell.attr("x") - this.initBBox.x,
+					y: cell.attr("y") - this.initBBox.y
+				};
+			}
+			else{
+				this.destCor = {
+					x: cell.attr("x") - this.initRBBox.x,
+					y: cell.attr("y") - this.initRBBox.y
+				};
+			}
+			return this.destCor;
+		},
 
 		getCellsOnGameboard: function (gameboard) {
 			if(this.isShapeInGameboard()){
@@ -256,18 +272,7 @@
 					}
 				}
 				var cell = gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
-				if(this.rotation%2 == 0){
-					this.destCor = {
-						x: cell.attr("x") - this.initBBox.x,
-						y: cell.attr("y") - this.initBBox.y
-					};
-				}
-				else{
-					this.destCor = {
-						x: cell.attr("x") - this.initRBBox.x,
-						y: cell.attr("y") - this.initRBBox.y
-					};
-				}
+				this.destCor = this.getDestCor(gameboard);
 				this.cellsOnGameboard = newSet;
 				this.notInPanel = false;
 				return this.cellsOnGameboard;
