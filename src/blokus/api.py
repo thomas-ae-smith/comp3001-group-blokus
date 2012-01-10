@@ -17,23 +17,30 @@ import random
 class AccountAuthorization(Authorization):
 	def apply_limits(self, request, object_list, user_or_userprofile='user'):
 		if request and request.user.id is not None:
+
+			result = []
+
+			#If putting then can only do so on own account
+			if request.method != 'GET':
+				for user in object_list:
+					if user_or_userprofile == 'user' and user.id == request.user.id:
+						result.append(user)
+					elif user_or_userprofile == 'userprofile' and user.user.id == request.user.id:
+						result.append(user)
+				return result
+
+			#If getting then can also see other players your with
 			players_attached = request.user.player_set.all()
 			ingame = len(players_attached) > 0
 			if ingame:
 				player_user_list = players_attached[0].game.player_set.all().values_list('user',flat=True)
 
-			result = []
 			for user in object_list:
-				if user_or_userprofile == 'user':
-					if user.id == request.user.id:
-						result.append(user)
-					elif ingame and user.id in player_user_list:
-						result.append(user)
-				elif user_or_userprofile == 'userprofile':
-					if user.id == request.user.get_profile().id:
-						result.append(user)
-					elif ingame and user.user.id in player_user_list:
-						result.append(user)
+				if user_or_userprofile == 'user' and ((user.id == request.user.id) or (ingame and user.id in player_user_list)):
+					result.append(user)
+				elif user_or_userprofile == 'userprofile' and ((user.id == request.user.get_profile().id) or (ingame and user.user.id in player_user_list)):
+					result.append(user)
+			
 			return result
 		return object_list.none()		
 
@@ -92,11 +99,14 @@ class UserProfileResource(ModelResource):
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
 			userProfiles = super(UserProfileResource, self).get_object_list(request)
-			userProfile = userProfiles[0]
 
+			current_userprofile = request.user.get_profile()
+			status = current_userprofile.status
 
+			#If setting status or not polling own profile we dont try and make matches
+			if request.method != 'GET' or request.current_userprofile.id != userProfiles[0].id:
+				return userProfiles
 
-			users_playing = [request.user]
 
 			# Game Attributes: <status>:(<typeID>,<playerCount>)
 			# Must be added to if a new game type is introduced.
@@ -106,8 +116,23 @@ class UserProfileResource(ModelResource):
 				'private_2':(1,2),
 				'private_4':(2,4),
 			}
+			"""
+			if status = 'looking_for_any':
+				status = ['looking_for_2','looking_for_4'][random.randint(0,1)]
 
-			#if request.user.get_profile().status 
+			users_playing = [request.user]
+	
+			possible_users = UserProfile.objects.filter(status=status)
+			possible_users = random.shuffle(possible_users)
+			for possible_user in possible_users:
+				users_playing.append(possible_user)
+				if len(users_playing) >= game_attributes[status][1]:
+
+					break
+			"""
+
+
+
 
 			# Get a list of users to play in a game.
 			statuses = ['looking_for_2','looking_for_4']

@@ -7,6 +7,7 @@ from django import forms
 from django.template import RequestContext
 from datetime import timedelta, datetime
 from blokus.models import *
+from guest.utils import display_username
 
 from guest.decorators import guest_allowed
 
@@ -134,7 +135,8 @@ def get_logged_in_user(request):
 		return HttpResponseNotFound()
 
 	ur = UserResource()
-	user = ur.obj_get(pk=request.user.id)
+	user = User.objects.get(pk=request.user.id)
+	user.username = display_username(user)
 	ur_bundle = ur.build_bundle(obj=user, request=request)
 
 	full_bundle = ur.full_dehydrate(ur_bundle)
