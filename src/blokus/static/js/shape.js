@@ -827,11 +827,12 @@
 							var validPosition = blokus.utils.valid(corOnBoard);
 							if(validPosition){
 								this_.isSelected = false;
-								this_.getDestCor();
+								//this_.getDestCor();
 								this_.goToPos();
 								// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
 								_(corOnBoard).forEach(function (cor) {blokus.board.get("gridPlaced")[cor.x][cor.y] = gameview.game.get("colour_turn")[0]});
-								this_.moveToGameboard();
+								//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
+								this_.inPanel = false;
 								this_.trigger("piece_placed", this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
 							}
 						}
