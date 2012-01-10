@@ -137,7 +137,7 @@
 							for (var jBoard=0; jBoard<numYCells; jBoard++) {
 								var cell = 0;
 								grid[iBoard][jBoard] = cell;
-								gridPlaced[iBoard][jBoard] = cell;
+								gridPlaced[iBoard][jBoard] = '0';
 							}
 						}
 						this.set({
