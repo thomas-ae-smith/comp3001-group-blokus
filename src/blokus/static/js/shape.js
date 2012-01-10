@@ -34,12 +34,12 @@
 		},
 
 		curScale: {
-			x: undefined,
-			y: undefined,
+			x: 1,
+			y: 1,
 		},
 		initScale: {
-			x: undefined,
-			y: undefined,
+			x: 0.3,
+			y: 0.3,
 		},
 		fullScale: false,
 		haloCircle: undefined,
@@ -92,7 +92,7 @@
 			ey: undefined
 		},
 
-		gameboardCellSize: undefined,
+		gameboardCellSize: 23,
 		cellSize: 22,
 
 		// current visible Boundary box
@@ -144,8 +144,7 @@
 			this.prevDist = this.options.prevDist;
 			this.mousePage = this.options.mousePage;
 			this.gameboardBBox = this.options.gameboardBBox;
-			this.gameBBox = this.options.gameBBox;
-			this.gameboardCellSize = this.options.gameboardCellSize;
+			//this.gameboardCellSize = this.options.gameboardCellSize;
 			this.gameboard = this.options.gameboard;
 			// Apply the current scale given
 			var cenPoint = this.getCenterOfShape();
@@ -388,6 +387,7 @@
 		},
 
 		setBBoxs: function (){
+			var canvas = $(this.paper.canvas);
 			this.initBBox = {
 				x:this.pos.x,
 				y:this.pos.y,
@@ -412,6 +412,14 @@
 						ex: this.gameboard.offset.x + gameboard.width, // end x
 						ey: this.gameboard.offset.y + gameboard.height  // end y
 			};
+			this.gameBBox = {
+						sx: canvas.offset().top,
+						sy: canvas.offset().left,
+						width: Number(canvas.attr("width")), // does not work in firefox //canvas.width(),
+						height: Number(canvas.attr("height")), // does not work in firefox //canvas.height(),
+						ex: canvas.offset().left + Number(canvas.attr("width")), //canvas.width()
+						ey: canvas.offset().top + Number(canvas.attr("height")) //canvas.height()
+		  };
 		},
 
 		calAllBBox: function (){
