@@ -278,11 +278,10 @@ class Move(models.Model):
 # delete the old Player object.
 @receiver(pre_save, sender=Player)
 def delete_players_on_new_game(sender, instance, **kwargs):
-	oldPlayers = Player.objects.filter(id=instance.id)
+	oldPlayers = Player.objects.filter(user=instance.user)
 	if len(oldPlayers) > 0 and instance.game_id != oldPlayers[0].game.id:
 		for player in oldPlayers:
 			player.delete()
-			player.save()
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
