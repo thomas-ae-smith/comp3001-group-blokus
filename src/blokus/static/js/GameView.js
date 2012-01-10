@@ -187,7 +187,7 @@
 	        		var colour = player.get("colour");
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = piece.get("master_id");
-	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("client_flipped"), piece.get("client_rotations"));
+	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("client_flip"), piece.get("client_rotation"));
 	        		});
 	        	});
 	        }

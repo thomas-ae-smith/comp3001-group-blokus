@@ -1,4 +1,5 @@
 (function ($, _, Backbone, blokus) {
+	"use strict";
 
 	var colours = {
 		/*
@@ -176,9 +177,9 @@
 			this.curScale.x = scale;
 			this.curScale.y = scale;
 
-			var pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
+			this.pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
 
-			this.transform(pos.x, pos.y, this.curScale.x, this.curScale.y,
+			this.transform(this.pos.x, this.pos.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y);
 			this.setVisibleCellsOpacity(1, 500);
@@ -551,7 +552,7 @@
 				this.curScale = _(this.initScale).clone();
 				this.flipNum = 0;
 				this.distMoved = { x: 0, y: 0 };
-				this.animate(0, 0, this.initScale.x, this.initScale.y,
+				this.animate(this.pos.x, this.pos.y, this.initScale.x, this.initScale.y,
 								cenPoint.x, cenPoint.y, this.rotation*90,
 								cenPoint.x, cenPoint.y, 500);
 			}
