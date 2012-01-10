@@ -68,12 +68,8 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				authDfd.resolve();
 			},
 			error: function () {
-				// ** Do not remove following until guest accounts working properly
-				$("#container").html('<div style="color:white"><b>Not logged in. Please register/login.</b> <a href="/debug" class="button">Temp register</a> <a href="/login" class="button">Temp login</a></div>');
-				// TODO guest accountds
-				//blokus.user.clear()
+				blokus.showError("Failed to create guest user account!");
 				authDfd.reject();
-				// **
 			}
 		});
 

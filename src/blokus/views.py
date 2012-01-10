@@ -92,6 +92,10 @@ def base(request):
 			return render_to_response("game.html", {'form' : form, 'redirect':'register'}, context_instance=RequestContext(request))
 	return render_to_response("game.html", {'form' : form}, context_instance=RequestContext(request))
 
+def logout_journey(request):
+	logout(request)
+	return redirect('blokus.views.base')
+
 @guest_allowed
 def debug_view(request):
 	user = str(request.user.id)
