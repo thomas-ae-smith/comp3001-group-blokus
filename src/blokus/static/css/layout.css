@@ -322,7 +322,7 @@ h1 { font-weight:bold; font-size:24pt; }
 	width: 132px;
 }
 .playerpanelcontainer.right .playerpanel { height: 200px; }
-.playerpanelcontainer { background: rgba(0, 0, 0, 0.5); }
+.playerpanelcontainer { background: rgba(1, 1, 1, 0.5); }
 .playerpanel div {
 	background: rgba(0, 0, 0, 0.5);
 	color:white;
