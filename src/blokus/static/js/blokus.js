@@ -94,6 +94,17 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		$("#msg .close").click(function () { $("#msg").fadeOut(); });
 	});
 
+
+	Array.prototype.clean = function(deleteValue) { //remove a given value from the files
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] == deleteValue) {         
+				this.splice(i, 1);
+				i--;
+			}
+		}
+		return this;
+	};
+
 	return {
 		DEBUG: DEBUG,
 		log: function () { if (DEBUG) console.log.apply(console, arguments); },
