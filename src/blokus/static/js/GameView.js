@@ -18,6 +18,7 @@
 
 	blokus.GameView = Backbone.View.extend({
 		className: "gameview",
+		game: undefined,
 
 		render: function () {
 			window.gameview = this;	
@@ -25,7 +26,7 @@
 				el = this.el,
 				$el = $(el),
 				template = _.template($('#game-template').html()),
-				game = new blokus.Game({ id: this.options.id }),
+				game = this.game = new blokus.Game({ id: this.options.id }),
 				error = function () { blokus.showError("Failed to fetch game"); /* TODO */ };
 			console.log(el, paper)
 			window.p = paper
@@ -102,12 +103,14 @@ blokus.Shape = Backbone.View.extend({
 			/* Keep game duration up-to-date */
 			var startTime,
 				timeNow,
-				ticker = setInterval(function (newTimeNow) {
+				updateDuration = function (newTimeNow) {
+					console.log(newTimeNow)
 					if (!startTime) return;
 					if (newTimeNow) timeNow = new Date(newTimeNow);
 					else timeNow.setSeconds(timeNow.getSeconds() + 1);
-					this.$(".duration").html(niceTime(dateDifference(startTime, timeNow)));
-				}, 1000);
+					this_.$(".duration").html(niceTime(dateDifference(startTime, timeNow)));
+				},
+				ticker = setInterval(updateDuration, 1000);
 
 
 			/* Initial setting up of game */
@@ -206,7 +209,7 @@ blokus.Shape = Backbone.View.extend({
 			game.bind("change:colour_turn", handleTurn);
 	        game.bind("change:number_of_moves", handlePlacedPieces);
 	        game.bind("change:winning_colours", handleWinners);
-	        game.bind("change:time_now", function (game, timeNow) { this_.updateDuration(timeNow); });
+	        game.bind("change:time_now", function (game, timeNow) { updateDuration(timeNow); });
 
 
 			this_.$(".game-help").click(function () { $("#helpscreen").slideDown(); });
