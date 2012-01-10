@@ -43,7 +43,7 @@
 
 		setActive: function (v, position) {
 			this.active = v;
-			this.options.position = this.options.positionId;
+			this.options.positionId = position;
 			this.render();
 		}
 	});

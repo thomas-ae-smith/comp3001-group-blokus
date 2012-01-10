@@ -1,7 +1,7 @@
 // Define the models used by blokus
 (function ($, _, Backbone) {
 	function getIdFromUrl (url) {
-		return (url.charAt(url.length-1) === "/" ? url.slice(0, url.length-1) : url).split("/").pop();
+		return Number((url.charAt(url.length-1) === "/" ? url.slice(0, url.length-1) : url).split("/").pop());
 	}
 
 	var Model = Backbone.Model.extend({
@@ -64,6 +64,7 @@
 			resourceUrl: blokus.urls.pieceMaster,
 
 			parse: function (model) { // TODO: remove
+				model.id = Number(model.id);
 				model.data = model.piece_data;
 				return model;
 			}
