@@ -3,20 +3,36 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 	var DEBUG = true,										// DEBUG = true for logging to console
 		restRootUrl = "/api/rest/",
 		keyDownMappings = {},								// Maps of key-codes to array of functions to call when key is released
+		authDfd = undefined,
 		keyUpMappings = {},									// Maps of key-codes to array of functions to call when key is pressed
 		blokusDeferreds = [];								// List of jQuery Deferred objects to be resolved before starting blokus
-
-	// Ensure HTML 5 elements are styled by IE
-	document.createElement('header');
-	document.createElement('nav');
-	document.createElement('section');
-	document.createElement('article');
-	document.createElement('aside');
+		
+	var getCurrentUser = function(callback) {
+		$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
+			url: "/get_logged_in_user/",
+  			dataType: 'json',
+			success: function (model) {
+				blokus.user.set(model);
+				blokus.userProfile.set(model.userprofile);
+				blokus._exampleGames[1].players[0].user = blokus.user.get("id"); // FIXME TEMP
+				authDfd.resolve();
+				if (callback != null) callback();
+			},
+			error: function () {
+				blokus.showError("Failed to create guest user account!");
+				authDfd.reject();
+			}
+		});
+	};
 
 	$(document).ready(function () {							// Note below, a "view" in the following context is what might be considered a "page" - lobby, game, help etc
 		var currentView,									// Reference to the current view
 			blokus = window.blokus,
 			switchToView = function (view) {				// Switch to a different view
+				var game_id = blokus.userProfile.get("game_id");
+				if (game_id != null) {
+					view = new blokus.GameView({ id: game_id });
+				}
 				var oldView = currentView,
 					$newview = $(view.render().el);			// Render new view
 				if (oldView) {
@@ -44,34 +60,19 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				"game/:id": "game",							// Eg #game/12
 				"help": "help",
 				"register": "register",
-				"forgot": "forgot",
 				"profile": "profile"
 			},
 			lobby: function () { switchToView(new blokus.LobbyView()); },
 			game: function (id) { switchToView(new blokus.GameView({ id: id })); },
 			help: function () { switchToView(new blokus.HelpView()); },
 			register: function () { switchToView(new blokus.RegisterView()); },
-			forgot: function () { switchToView(new blokus.ForgotView()); },
 			profile: function () { switchToView(new blokus.ProfileView()); }
 		}))();
 
-		var authDfd = new $.Deferred();
+		authDfd = new $.Deferred();
 		blokusDeferreds.push(authDfd);
 
-		$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
-			url: "/get_logged_in_user/",
-  			dataType: 'json',
-			success: function (model) {
-				blokus.user.set(model);
-				blokus.userProfile.set(model.userprofile);
-				blokus._exampleGames[1].players[0].user = blokus.user.get("id"); // FIXME TEMP
-				authDfd.resolve();
-			},
-			error: function () {
-				blokus.showError("Failed to create guest user account!");
-				authDfd.reject();
-			}
-		});
+		getCurrentUser(null);
 
 		$(window).keyup(function (e) {
 			_(keyUpMappings[e.keyCode]).each(function (f) { f.call(); });
@@ -106,6 +107,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		showMsg: function (msg) {
 			$("#msg").fadeIn().find(".content").html(msg);
 		},
+		getCurrentUser: getCurrentUser,
 		urls: {
 			user: restRootUrl + "user/",
 			userProfile: restRootUrl + "userprofile/",

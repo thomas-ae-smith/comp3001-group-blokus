@@ -14,19 +14,17 @@ blokus.LobbyView = Backbone.View.extend({
 			template = _.template($('#lobby-template').html()),
             options = { error: function () { blokus.showError("Failed to save user profile"); } };
 
-		var name = blokus.user.get("username");
-		var userProfile = blokus.user.get("userprofile");
-		var isGuest = name == "Guest";
-		$(this.el).html(template({
-            picsrc: "/static/img/noavatar.jpg",
-            name: name,
-			stats: isGuest ? "Please login to save your scores" : "wins: " + userProfile.wins.toString() + " losses: " + userProfile.losses.toString(),
-			hideSignOut: isGuest ? "" : "style=\"display:none;\"",
-			hideProfile: isGuest ? "style=\"display:none;\"" : ""
-        }));
-		if (!isGuest) {
-			$("#profileMenu").show();
-			$("#signedOut").hide();
+		function renderTemplate () {
+			var name = blokus.user.get("username");
+			var userProfile = blokus.user.get("userprofile");
+			var isGuest = name == "Guest";
+			$(this_.el).html(template({
+				picsrc: "/static/img/noavatar.jpg",
+				name: name,
+				stats: isGuest ? "Please login to save your scores" : "wins: " + userProfile.wins.toString() + " losses: " + userProfile.losses.toString(),
+				hideSignOut: isGuest ? "" : "style=\"display:none;\"",
+				hideProfile: isGuest ? "style=\"display:none;\"" : ""
+			}));
 		}
         function selectGameType (type, title) {
             if (type == "private") {
@@ -44,7 +42,22 @@ blokus.LobbyView = Backbone.View.extend({
                 });
             }
         }
-
+        
+        renderTemplate();
+		this.$("#loginForm").submit(function(event) {
+			event.preventDefault();
+			var $form = $(this);
+			$.post( $form.attr('action'), $form.serialize(), function(data) {
+				if (data == "true") {
+					blokus.getCurrentUser(function() {
+						renderTemplate();
+					});
+				} else {
+					blokus.showError(data);
+				}
+			}).error(function() { blokus.showError("Failed to login"); });
+		});
+		
 		this.$(".modelist li").click(function (e) {
 			// Which one has been selected?
 			var $button = $(e.currentTarget),

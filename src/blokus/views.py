@@ -7,6 +7,7 @@ from django import forms
 from django.template import RequestContext
 from datetime import timedelta, datetime
 from blokus.models import *
+from guest.utils import display_username
 
 from guest.decorators import guest_allowed
 
@@ -95,6 +96,19 @@ def logout_journey(request):
 	logout(request)
 	return redirect('blokus.views.base')
 
+def login_journey(request):
+	username = request.POST['username'];
+	password = request.POST['password'];
+	user = authenticate(username=username, password=password)
+	if user is not None:
+		if user.is_active:
+			login(request, user)
+			return HttpResponse("true")
+		else:
+			return HttpResponse("Account disabled!")
+	else:
+		return HttpResponse("Invalid username/password!")
+
 @guest_allowed
 def debug_view(request):
 	user = str(request.user.id)
@@ -138,7 +152,8 @@ def get_logged_in_user(request):
 		return HttpResponseNotFound()
 
 	ur = UserResource()
-	user = ur.obj_get(pk=request.user.id)
+	user = User.objects.get(pk=request.user.id)
+	user.username = display_username(user)
 	ur_bundle = ur.build_bundle(obj=user, request=request)
 
 	full_bundle = ur.full_dehydrate(ur_bundle)

@@ -17,23 +17,30 @@ import random
 class AccountAuthorization(Authorization):
 	def apply_limits(self, request, object_list, user_or_userprofile='user'):
 		if request and request.user.id is not None:
+
+			result = []
+
+			#If putting then can only do so on own account
+			if request.method != 'GET':
+				for user in object_list:
+					if user_or_userprofile == 'user' and user.id == request.user.id:
+						result.append(user)
+					elif user_or_userprofile == 'userprofile' and user.user.id == request.user.id:
+						result.append(user)
+				return result
+
+			#If getting then can also see other players your with
 			players_attached = request.user.player_set.all()
 			ingame = len(players_attached) > 0
 			if ingame:
 				player_user_list = players_attached[0].game.player_set.all().values_list('user',flat=True)
 
-			result = []
 			for user in object_list:
-				if user_or_userprofile == 'user':
-					if user.id == request.user.id:
-						result.append(user)
-					elif ingame and user.id in player_user_list:
-						result.append(user)
-				elif user_or_userprofile == 'userprofile':
-					if user.id == request.user.get_profile().id:
-						result.append(user)
-					elif ingame and user.user.id in player_user_list:
-						result.append(user)
+				if user_or_userprofile == 'user' and ((user.id == request.user.id) or (ingame and user.id in player_user_list)):
+					result.append(user)
+				elif user_or_userprofile == 'userprofile' and ((user.id == request.user.get_profile().id) or (ingame and user.user.id in player_user_list)):
+					result.append(user)
+			
 			return result
 		return object_list.none()		
 
@@ -89,77 +96,57 @@ class UserProfileResource(ModelResource):
 			bundle.data['game_id'] = None
 		return bundle
 
-	def get_object_list(self, request):
-		if request and request.user.id is not None:
-			userProfiles = super(UserProfileResource, self).get_object_list(request)
-			userProfile = userProfiles[0]
+	def apply_authorization_limits(self, request, object_list):
+		object_list = super(UserProfileResource, self).apply_authorization_limits(request, object_list)
+		current_userprofile = object_list[0]
+		status = current_userprofile.status
 
+		#If setting status we dont try and make matches
+		if status in ['offline','ingame'] or request.method != 'GET' or request.user.id != current_userprofile.user.id:
+			return object_list
 
+		# Game Attributes: <status>:(<typeID>,<playerCount>)
+		# Must be added to if a new game type is introduced.
+		game_attributes = {
+			'looking_for_2': {'typeid':1, 'player_count':2},
+			'looking_for_4': {'typeid':2, 'player_count':4},
+			'private_2': {'typeid':1, 'player_count':2},
+			'private_4': {'typeid':2, 'player_count':4},
+		}
 
-			users_playing = [request.user]
+		if status == 'looking_for_any':
+			status = ['looking_for_2','looking_for_4'][random.randint(0,1)]
+			current_userprofile.status = status
+			current_userprofile.save()
 
-			# Game Attributes: <status>:(<typeID>,<playerCount>)
-			# Must be added to if a new game type is introduced.
-			game_attributes = {
-				'looking_for_2':(1,2),
-				'looking_for_4':(2,4),
-				'private_2':(1,2),
-				'private_4':(2,4),
-			}
+		#Possible set of users to match against
+		possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
 
-			#if request.user.get_profile().status 
+		#Users to play include yourself
+		users_playing = [request.user]
 
-			# Get a list of users to play in a game.
-			statuses = ['looking_for_2','looking_for_4']
-			if request.user.get_profile().status == 'looking_for_any':
-				random.shuffle(statuses)
-				for status in statuses:
-					for userProfile in userProfiles:
-						if userProfile.status in [status, 'looking_for_any']:
-							users_playing.append(userProfile.user)
-							if len(users_playing) >= game_attributes[status][1]:
-								break
-					if len(users_playing) >= game_attributes[status][1]:
-						request.user.get_profile().status = status
-						break
-			elif request.user.get_profile().status in statuses:
-				for userProfile in userProfiles:
-					if userProfile.status in [request.user.get_profile().status, 'looking_for_any']:
-						users_playing.append(userProfile.user)
-					if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
-						break
-			elif request.user.get_profile().status[0:7] == "private":
-				for userProfile in userProfiles:
-					if (userProfile.status == request.user.get_profile().status and
-						userProfile.private_queue == request.user.get_profile().private_queue):
-						users_playing.append(userProfile.user)
-					if len(users_playing) >= game_attributes[request.user.get_profile().status][1]:
-						break
-				request.user.get_profile().status = {'private_2':'looking_for_2', 'private_4':'looking_for_4'}[request.user.get_profile().status]
-			else:
-				# If the users status is not one that required joining a game,
-				# return the UserModels without setting up any games.
-				return userProfiles
+		for possible_user in possible_users:
+			users_playing.append(possible_user.user)
+			if len(users_playing) >= game_attributes[status]['player_count']:
+				break
 
-			if len(users_playing) >= game_attributes[request.user.get_profile().status][0]:
-				colours = ['blue', 'yellow', 'red', 'green']
-				game = Game(game_type=game_attributes[request.user.get_profile().status][0])
-				game.save()
-				for user_number in xrange(4):
-					user = None
-					if request.user.get_profile().status == 'looking_for_2':	# Will need to add to this IF
-						user = users_playing[user_number % 2]	# block if any new game types
-					else:										# are added.
-						user = users_playing[user_number]
-					user.status = 'ingame'
-					player = Player(
-						game=game,
-						user=user,
-						colour=colours[user_number])
-					user.save()
-					player.save()
-			return userProfiles
-		return UserProfile.objects.none()
+		#Create game
+		game = Game(game_type=game_attributes[status]['typeid'])
+		game.save()
+
+		#For each player set status to ingame and create their player object
+		colours = ['blue', 'yellow', 'red', 'green']
+		for i, user_playing in enumerate(users_playing):
+			user_playing_profile = user_playing.get_profile()
+			user_playing_profile.status = 'ingame'
+			object_list[0].status = 'ingame'
+			user_playing_profile.save()
+			for j in xrange(game_attributes[status]['player_count'] % 3):
+				player = Player(game=game,user=user_playing,colour=colours[i])
+				player.save()
+
+		#Return the requested userProfiles object list
+		return object_list
 
 class GameAuthorization(Authorization):
 	#Limits return set so only games are shown that current user is playing in.
