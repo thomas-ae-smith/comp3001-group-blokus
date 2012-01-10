@@ -121,6 +121,9 @@ class UserProfileResource(ModelResource):
 
 		#Possible set of users to match against
 		possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
+		logging.debug(possible_users)
+		if len(possible_users) < game_attributes[status]['player_count'] - 1:
+			return object_list
 
 		#Users to play include yourself
 		users_playing = [request.user]
