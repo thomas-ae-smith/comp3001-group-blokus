@@ -96,6 +96,19 @@ def logout_journey(request):
 	logout(request)
 	return redirect('blokus.views.base')
 
+def login_journey(request):
+	username = request.POST['username'];
+	password = request.POST['password'];
+	user = authenticate(username=username, password=password)
+	if user is not None:
+		if user.is_active:
+			login(request, user)
+			return HttpResponse("true")
+		else:
+			return HttpResponse("Account disabled!")
+	else:
+		return HttpResponse("Invalid username/password!")
+
 @guest_allowed
 def debug_view(request):
 	user = str(request.user.id)

@@ -52,7 +52,7 @@
 						<a href="/logout/" id="signout-button" class="button">Logout</a>
 					</div>
 					<div id="signedOut" <%= hideSignOut %>>
-						<form action="/login/" method="post">
+						<form action="/login/" id="loginForm" method="post">
 							{% csrf_token %}
 							<label>
 								<span>Username</span>

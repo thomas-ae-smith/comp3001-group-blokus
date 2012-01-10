@@ -16,7 +16,7 @@ rest_api.register(PlayerResource())
 urlpatterns = patterns('',
 	(r'^_ah/warmup$', 'djangoappengine.views.warmup'),
 	(r'^get_logged_in_user/$', 'blokus.views.get_logged_in_user'),
-	(r'^login/$', 'django.contrib.auth.views.login'),
+	(r'^login/$', 'blokus.views.login_journey'),
 	(r'^$', 'blokus.views.base'),
 	(r'^api/', include(rest_api.urls)),
 	(r'^admin/', include(admin.site.urls)),
