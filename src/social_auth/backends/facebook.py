@@ -14,6 +14,7 @@ field, check OAuthBackend class for details on how to extend it.
 import logging
 logger = logging.getLogger(__name__)
 
+
 import cgi
 from urllib import urlencode
 from urllib2 import urlopen
@@ -39,12 +40,11 @@ class FacebookBackend(OAuthBackend):
 
     def get_user_details(self, response):
         """Return user details from Facebook account"""
-        return {USERNAME: response.get('username') or response['name'],
+        return {USERNAME: response.get('username'),
                 'email': response.get('email', ''),
                 'fullname': response['name'],
                 'first_name': response.get('first_name', ''),
                 'last_name': response.get('last_name', '')}
-
 
 
 class FacebookAuth(BaseOAuth2):
@@ -70,9 +70,9 @@ class FacebookAuth(BaseOAuth2):
                          sanitize_log_data(access_token),
                          extra=dict(data=data))
         except ValueError:
-            params.update({'access_token': sanitize_log_data(access_token)})
+            extra = {'access_token': sanitize_log_data(access_token)}
             logger.error('Could not load user data from Facebook.',
-                         exc_info=True, extra=dict(data=params))
+                         exc_info=True, extra=extra)
         return data
 
     def auth_complete(self, *args, **kwargs):

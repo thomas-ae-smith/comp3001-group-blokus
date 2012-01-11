@@ -3,7 +3,8 @@ from uuid import uuid4
 from django.conf import settings
 
 from social_auth.models import User
-from social_auth.backends.pipeline import USERNAME, USERNAME_MAX_LENGTH, warn_setting
+from social_auth.backends.pipeline import USERNAME, USERNAME_MAX_LENGTH, \
+                                          warn_setting
 from social_auth.signals import socialauth_not_registered, \
                                 socialauth_registered, \
                                 pre_update
@@ -25,7 +26,7 @@ def get_username(details, user=None, *args, **kwargs):
         username = uuid4().get_hex()
     elif details.get(USERNAME):
         username = details[USERNAME]
-    elif settings.hasattr('SOCIAL_AUTH_DEFAULT_USERNAME'):
+    elif hasattr(settings, 'SOCIAL_AUTH_DEFAULT_USERNAME'):
         username = settings.SOCIAL_AUTH_DEFAULT_USERNAME
         if callable(username):
             username = username()
@@ -91,7 +92,7 @@ def update_user_details(backend, details, response, user, is_new=False, *args,
     if not getattr(settings, 'SOCIAL_AUTH_CHANGE_SIGNAL_ONLY', False):
         for name, value in details.iteritems():
             # do not update username, it was already generated
-            if name == USERNAME:
+            if name in (USERNAME, 'id', 'pk'):
                 continue
             if value and value != getattr(user, name, None):
                 setattr(user, name, value)
