@@ -114,8 +114,10 @@ class UserProfile(models.Model):
 				if (oldRecord.status != self.status) or (self.status == 'offline'):
 					self.user.player_set.all().delete()
 					self.user.get_profile().private_hash = None
+					self.user.get_profile().save()
 				if self.status not in set(['private_2', 'private_4']):
 					self.user.get_profile().private_hash = None
+					self.user.get_profile().save()
 		except UserProfile.DoesNotExist:
 			pass
 
