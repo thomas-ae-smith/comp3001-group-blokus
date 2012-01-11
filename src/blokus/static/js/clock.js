@@ -43,10 +43,8 @@
 			this.seconds += 1;
 			if(this.seconds > 59){
 				this.seconds = 0;
-				this.minutes -= 1;
-			}
-			if(this.seconds == 1)
 				this.minutes += 1;
+			}
 			if(this.minutes > 59)
 				this.minutes = 0;
 			setTimeout(function(){this_.drawHandle();}, 1000);

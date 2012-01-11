@@ -109,7 +109,7 @@
 		}),
 
 		Piece = Model.extend({
-			defaults: { client_rotation: 0, client_flip: 0 },
+			defaults: { client_rotate: 0, client_flip: 0 },
 			initialize: function () {
 				var this_ = this;
 				this.bind("change", function () {

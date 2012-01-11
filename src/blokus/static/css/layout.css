@@ -298,11 +298,12 @@ h1 { font-weight:bold; font-size:24pt; }
 	text-align:centre;
 	padding:5px;
 }
+.left { left: 0;  }
+.right { right:0; }
 .toppanel h1 {
 	font-size: 12pt;
+	padding: 17px 0px 0px 0px;
 }
-.left { left: 0; }
-.right { right:0; }
 .playerpanelcontainer.left {
 	position: absolute;
 	top: 60px; left: 0;

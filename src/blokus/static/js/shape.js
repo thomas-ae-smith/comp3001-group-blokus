@@ -166,7 +166,8 @@
 			var boundaries = panel.getBoundaries();
 
 			this.rotation = 0;
-			this.changeFlipToScale(0);
+			this.keepTrackOfFlip(0);
+			this.changeFlipToScale();
 
 			this.isSelected = false;
 			this.canMove = panel.isEnabled && panel.isActive;
@@ -192,7 +193,7 @@
 			var this_ = this;
 			this.posInGameboard = {x:x, y:y};
 			this.rotation = rotation;
-			this.changeFlipToScale(flip);
+			this.changeFlipToScale(); //Don't need to keep track of flip
 			this.getDestCor();
 			this.isSelected = false;
 			this.canMove = false;
@@ -210,6 +211,7 @@
 			//_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
 			var rdata = this.rotateMatrix(this.dataArr, this.getRotation());
 			var transData = this.flipMatrix(rdata, this.flipNum);
+			console.log(transData, this.dataArr, this.flipNum, this.rotation, this.colour, this.curScale.x, this.curScale.y, flip);
 			blokus.utils.add_piece_to_validation_grid(transData, this.posInGameboard.x, this.posInGameboard.y, this.colour);
 		},
 
@@ -662,7 +664,7 @@
 			}
 		},
 
-		changeFlipToScale: function(flipNum){
+		keepTrackOfFlip: function(flipNum){
 			if (this.flipNum == 3) // Set the flipnum for server
 				this.flipNum -= flipNum
 			else if(this.flipNum == flipNum)
@@ -671,6 +673,8 @@
 				this.flipNum = 3;
 			else
 				this.flipNum = flipNum;
+		},
+		changeFlipToScale: function(){
 
 			if (this.flipNum == 0)
 				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
@@ -685,7 +689,8 @@
 		flip: function (flipNum){
 			if(this.isSelected){
 				var this_ = this;
-				this.changeFlipToScale(flipNum);
+				this.keepTrackOfFlip(flipNum);
+				this.changeFlipToScale();
 
 				var cenPoint = this.getCenterOfShape();
 				var x = this.distMoved.x != 0 ? this.distMoved.x : this.pos.x;
@@ -878,11 +883,16 @@
 							if(validPosition){
 								this_.isSelected = false;
 								this_.goToPos();
-								// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
-								_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
-								//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
-								this_.inPanel = false;
-								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
+								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation(),
+									function () { // success
+										// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
+										_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
+										//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
+										this_.inPanel = false;
+									}, function () { // error
+										this_.returnToPanel();
+										this_.canMove = true;
+									});
 							}
 						}
 					}
