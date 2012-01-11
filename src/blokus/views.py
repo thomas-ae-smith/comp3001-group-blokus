@@ -23,12 +23,11 @@ def execute_garbage_collection(request):
 	removed_game_ids = []
 	removed_player_ids = []
 	for game in Game.objects.all():
+		if len (game.player_set.all()) < 4:
+			game.delete()
+			break
 		for player in game.player_set.all():
-			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS):
-				for player_dead in game.player_set.all():
-					removed_player_ids.append(player_dead.id)
-					player_dead.delete()
-				removed_game_ids.append(game.id)
+			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
 				game.delete()
 				break
 
