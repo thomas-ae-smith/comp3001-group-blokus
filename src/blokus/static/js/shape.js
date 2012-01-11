@@ -44,6 +44,8 @@
 		},
 		fullScale: false,
 		haloCircle: undefined,
+		haloImgs: undefined,
+		haloBCircle: undefined,
 		haloOn: true,
 		isSelected: false,
 		canMove: false,
@@ -154,6 +156,9 @@
 				this.cells.scale(this.curScale.x, this.curScale.y,
 							cenPoint.x, cenPoint.y);
 			}
+			this.haloImgs = this.paper.set();
+			this.haloImgs.push(this.paper.image('/static/img/rotateL.png', 0, 0, 18, 18));
+			this.haloImgs.push(this.paper.image('/static/img/rotateR.png', 0, 0, 18, 18));
 		},
 
 		render: function(){
@@ -717,33 +722,49 @@
 
 		halo: function(){
 			if(this.haloCircle == undefined){
-				var this_ = this;
-				var cenPoint = this.getCenterOfShape();
+				var this_ = this,
+					cenPoint = this.getCenterOfShape(),
+					i = 0;
 				cenPoint.x += this.pos.x;
 				cenPoint.y += this.pos.y;
+				var imgCorArr = [];  
+				imgCorArr.push(this.toCoords(cenPoint, 20, 45)); // rrImg
+				imgCorArr.push(this.toCoords(cenPoint, 20, 135)); //rlImg 
+				imgCorArr[0].x -= 2;
+				imgCorArr[1].x -= 10;
+				//imgCorArr[1].y += 5;
 				this.haloCircle = this.paper.set();
-				this.boundaryCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
-				this.boundaryCircle.attr({fill:"#f00", opacity:0});
+				this.haloBCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
+				this.haloBCircle.attr({fill:"#f00", opacity:0});
 				window.c = this;
+				this.haloImgs.forEach(function (img) {
+					img.transform("t"+imgCorArr[i].x+" "+imgCorArr[i].y); 
+					i++;
+				});
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 0, 89)));
-				this.haloCircle[0].click(function(){
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 91, 179)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 181, 269)));
+				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 271, 359)));
+				var rotLeftFunc = function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
 						this_.rotate(1);
 						this_.isSelected = false;
 						console.log("Rotate Left");
 					}
-				});
-				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 91, 179)));
-				this.haloCircle[1].click(function(){
+				};
+				var rotRightFunc = function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
 						this_.rotate(-1);
 						this_.isSelected = false;
 						console.log("Rotate Right");
 					}
-				});
-				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 181, 269)));
+				};
+				this.haloCircle[0].click(rotLeftFunc);
+				this.haloImgs[0].click(rotLeftFunc);
+				this.haloCircle[1].click(rotRightFunc);
+				this.haloImgs[1].click(rotRightFunc);
 				this.haloCircle[2].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
@@ -752,7 +773,6 @@
 						console.log("Flip Vertical");
 					}
 				});
-				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 271, 359)));
 				this.haloCircle[3].click(function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
@@ -761,18 +781,21 @@
 						console.log("Flip Horizantal");
 					}
 				});
-				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 10, opacity: 0});
+				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 14, opacity: 0});
 				this.haloCircle.animate({opacity: 0.3}, 0);
 				this.haloCircle.mouseover( function(){
 						this_.haloOn = true;
 					}
 				);
+				this.haloImgs.scale(0.6, 0.6, 0, 0);
 			}
 			this.haloCircle.animate({opacity: 0.3}, 500);
+			this.haloImgs.animate({opacity:1}, 500);
 			this.haloOn = true;
-			if(this.haloCircle != undefined && this.boundaryCircle != undefined){
-				this.boundaryCircle.toFront();
-				this.haloCircle.toFront();
+			if(this.haloCircle != undefined && this.haloBCircle != undefined && this.haloImgs != undefined){
+				this.haloCircle.toBack();
+				this.haloBCircle.toBack();
+				//this.haloImgs.toFront();
 			}
 			return this;
 		},
@@ -781,8 +804,10 @@
 			var this_ = this;
 			if (this.haloCircle != undefined && this.haloOn){
 				this.haloCircle.animate({opacity: 0}, 500);
-				this.boundaryCircle.toBack();
+				this.haloImgs.animate({opacity: 0}, 500);
+				this.haloBCircle.toBack();
 				this.haloCircle.toBack();
+				this.haloImgs.toBack();
 				this.haloOn = false;
 				setTimeout(function (){this_.haloCircle.toBack()}, 501);
 				
@@ -826,15 +851,15 @@
 						if(blokus.haloArr.length != 0){
 							var i = 0;
 							_(blokus.haloArr).each(function (s){
-								s.boundaryCircle.toFront();
-								if (s.boundaryCircle != this_.paper.getElementByPoint(e.pageX, e.pageY)){
+								s.haloBCircle.toFront();
+								if (s.haloBCircle != this_.paper.getElementByPoint(e.pageX, e.pageY)){
 									s.removeHalo();
 									if(!s.isSelected)
 										s.returnToPanel();
 									s.haloOn = false;
 									blokus.haloArr[i] = undefined;
 								}
-								s.boundaryCircle.toBack();
+								s.haloBCircle.toBack();
 								i++;
 							});
 							blokus.haloArr.clean(undefined);	
