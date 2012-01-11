@@ -135,6 +135,12 @@ class UserProfileResource(ModelResource):
 
 		#Create game
 		game = Game(game_type=game_attributes[status]['typeid'])
+		#If the status is looking for a public game, generate the uri from the first player.
+		if status in {"looking_for_2", "looking_for_4", "looking_for_any"}:
+			md5Obj = hashlib.md5()
+			md5Obj.update(str(users_playing[0].id))
+			game.uri = md5Obj.digest()
+			import sys
 		game.save()
 
 		#For each player set status to ingame and create their player object
