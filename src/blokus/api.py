@@ -135,6 +135,12 @@ class UserProfileResource(ModelResource):
 
 		#Create game
 		game = Game(game_type=game_attributes[status]['typeid'])
+		#If the status is looking for a public game, generate the uri from the first player.
+		if status in set(["looking_for_2", "looking_for_4", "looking_for_any"]):
+			md5Obj = hashlib.md5()
+			md5Obj.update(str(users_playing[0].id))
+			game.uri = md5Obj.digest()
+			import sys
 		game.save()
 
 		#For each player set status to ingame and create their player object
@@ -219,13 +225,13 @@ class PlayerResource(ModelResource):
 		resource_name = 'player'
 		default_format = 'application/json'
 		list_allowed_methods = []
-		detail_allowed_methods = ['get','put']
+		detail_allowed_methods = []
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):
 		bundle.data['can_move'] = bundle.obj.is_able_to_move()
 		import sys
-		pront >>sys.stderr, "IT WORKED!!!!"
+		print >>sys.stderr, "PlayerResource dehydrate method worked. Can remove print statement from it."
 		return bundle
 
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
@@ -302,8 +308,8 @@ class PieceResource(ModelResource):
 		queryset = Piece.objects.all()
 		resource_name = 'piece'
 		default_format = 'application/json'
-		list_allowed_methods = ['get','post']
-		detail_allowed_methods = ['get']
+		list_allowed_methods = ['post']
+		detail_allowed_methods = []
 		validation = PieceValidation()
 		authorization = Authorization()
 

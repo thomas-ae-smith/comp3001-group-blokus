@@ -69,6 +69,11 @@ class Game(models.Model):
 			profile.losses += 1
 			profile.save()
 
+	def get_uri(self):
+		#md5Obj = hashlib.md5()
+		#md5Obj.update(self.player_set)
+		pass
+
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
 
@@ -114,6 +119,9 @@ class UserProfile(models.Model):
 				oldRecord = UserProfile.objects.get(id=self.id)
 				if (oldRecord.status != self.status) or (self.status == 'offline'):
 					self.user.player_set.all().delete()
+					self.user.get_profile().private_queue = None
+				if self.status not in set(['private_2', 'private_4']):
+					self.user.get_profile().private_queue = None
 		except UserProfile.DoesNotExist:
 			pass
 
