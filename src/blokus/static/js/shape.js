@@ -551,7 +551,7 @@
 			var cenPoint = this.getCenterOfShape();
 			if (this.cellsOnGameboard != undefined)
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
-			if(this.distMoved.x != 0 && this.distMoved.y != 0){
+			//if(this.distMoved.x != 0 && this.distMoved.y != 0){
 				this.rotation = 0;
 				this.curScale = _(this.initScale).clone();
 				this.flipNum = 0;
@@ -559,7 +559,7 @@
 				this.animate(this.pos.x, this.pos.y, this.initScale.x, this.initScale.y,
 								cenPoint.x, cenPoint.y, this.rotation*90,
 								cenPoint.x, cenPoint.y, 500);
-			}
+			//}
 			this.setVisibleCellsOpacity(1, 500);
 		},
 
@@ -715,7 +715,7 @@
 		},
 
 		halo: function(){
-			if(this.haloCircle == undefined && !this.isSelected && this.canMove){
+			if(this.haloCircle == undefined){
 				var this_ = this;
 				var cenPoint = this.getCenterOfShape();
 				cenPoint.x += this.pos.x;
@@ -767,9 +767,7 @@
 					}
 				);
 			}
-			else if(this.canMove){
-				this.haloCircle.animate({opacity: 0.3}, 500);
-			}
+			this.haloCircle.animate({opacity: 0.3}, 500);
 			this.haloOn = true;
 			if(this.haloCircle != undefined && this.boundaryCircle != undefined){
 				this.boundaryCircle.toFront();
@@ -830,6 +828,8 @@
 								s.boundaryCircle.toFront();
 								if (s.boundaryCircle != this_.paper.getElementByPoint(e.pageX, e.pageY)){
 									s.removeHalo();
+									if(!s.isSelected)
+										s.returnToPanel();
 									s.haloOn = false;
 									blokus.haloArr[i] = undefined;
 								}
@@ -844,8 +844,17 @@
 			this.cells.click(
 				function (e, x, y){
 					// on Start
-					if(!this_.isSelected)
+					if(!this_.isSelected){
 						this_.selectShape(e);
+						var i = 0;
+						_(blokus.haloArr).each(function (s){ // Remove All halos when a shape is selected
+							s.removeHalo();
+							s.haloOn = false;
+							blokus.haloArr[i] = undefined;
+							i++;
+						});
+						blokus.haloArr.clean(undefined);	
+					}
 					else {
 						if(this_.notInPanel){
 							this_.returnToPanel();
