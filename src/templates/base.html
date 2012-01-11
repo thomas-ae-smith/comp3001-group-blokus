@@ -22,11 +22,8 @@
 		<script src="{{ STATIC_URL }}js/models.js"></script>
 		<script src="{{ STATIC_URL }}js/collections.js"></script>
 		<script src="{{ STATIC_URL }}js/shape.js"></script>
-		<script src="{{ STATIC_URL }}js/ForgotView.js"></script>
 		<script src="{{ STATIC_URL }}js/GameView.js"></script>
-		<script src="{{ STATIC_URL }}js/HelpView.js"></script>
 		<script src="{{ STATIC_URL }}js/LobbyView.js"></script>
-		<script src="{{ STATIC_URL }}js/ProfileView.js"></script>
 		<script src="{{ STATIC_URL }}js/RegisterView.js"></script>
 		<script src="{{ STATIC_URL }}js/GameBoard.js"></script>
 		<script src="{{ STATIC_URL }}js/PlayerPanel.js"></script>
@@ -244,23 +241,6 @@
 					</label>{{ form.password2.errors }}<br/>
 					<input type="submit" value="Register" class="button" /> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
 				</form>
-			</script>
-			<script type="text/html" id="profile-template">
-				<div class="box form">
-					<h1><%= username %>'s profile</h1>
-					<table>
-						<tr>
-							<td><b>Joined</b></td><td><%= joined %></td>
-						</tr>
-						<tr>
-							<td><b>Wins</b></td><td><%= wins %></td>
-						</tr>
-						<tr>
-							<td><b>Losses</b></td><td><%= losses %></td>
-						</tr>
-					</table><br/>
-					<a href="#" class="button">Back</a><br/><br/>
-				</div>
 			</script>
 		</div>
 		{% if redirect %}
