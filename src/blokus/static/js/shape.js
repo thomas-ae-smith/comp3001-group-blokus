@@ -189,6 +189,7 @@
 			this.initScale.y = scale;
 
 			this.pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
+			console.log(this.pos.y)
 
 			this.transform(this.pos.x, this.pos.y, this.curScale.x, this.curScale.y,
 						 cenPoint.x, cenPoint.y, rotation,
@@ -731,7 +732,7 @@
 				cenPoint.y += this.pos.y;
 				var imgCorArr = [];
 				imgCorArr.push(this.toCoords(cenPoint, 20, 45)); //rrImg
-				imgCorArr.push(this.toCoords(cenPoint, 20, 135));//rlImg 
+				imgCorArr.push(this.toCoords(cenPoint, 20, 135));//rlImg
 				imgCorArr.push(this.toCoords(cenPoint, 20, 225));//brImg
 				imgCorArr.push(this.toCoords(cenPoint, 20, 315));//blImg
 				imgCorArr[0].x -= 2; imgCorArr[1].x -= 10; imgCorArr[2].x -= 10; imgCorArr[2].y -= 5; imgCorArr[3].y -= 5;
