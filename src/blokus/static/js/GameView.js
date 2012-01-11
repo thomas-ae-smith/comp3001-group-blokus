@@ -153,7 +153,7 @@
 					});
 
 					// Initialize game view
-					startTime = new Date(game.get("start_time"));// FIXME Date time check compatbility
+					startTime = new Date(game.get("start_time"));
 					timeNow = new Date(game.get("time_now"));
 					handleTurn(game, game.get("colour_turn"));
 		        	handlePlacedPieces(game, game.get("number_of_moves"));
@@ -252,11 +252,10 @@
 
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
-			/* Indicate the url of this game */
-			this_.$(".uri").html(game.get("uri"));
+			/* Render the clock */
 			var clock = new blokus.Clock({paper:paper, center:{x:773, y:30}}).render();
-			window.gameview = this; // FIXME
-			window.p = paper // FIXME
+			window.gameview = this;
+			window.p = paper;
 
 	        return this;
 		}
