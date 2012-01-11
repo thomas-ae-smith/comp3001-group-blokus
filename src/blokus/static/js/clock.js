@@ -5,8 +5,10 @@
 		radius: 20,
 		paper: undefined,
 		colour: "#FFF",
-		handle: undefined,
+		secHandle: undefined,
+		minHandle: undefined,
 		seconds: 0,
+		minutes: 0,
 
 		initialize: function(){
 			this.center = this.options.center;
@@ -19,8 +21,8 @@
 			for (var i=0; i <= 360; i+=6){
 				var from = this.toCoords(this.center, this.radius, i);
 				var to = this.toCoords(this.center, this.radius+6, i);
-				var min = this.paper.path("M "+from.x+" "+from.y+" L "+to.x+" "+to.y+"z");
-				min.attr({stroke:"#fff", "stroke-width": i%30 ? 0.1:1})
+				var pointers = this.paper.path("M "+from.x+" "+from.y+" L "+to.x+" "+to.y+"z");
+				pointers.attr({stroke:"#fff", "stroke-width": i%30 ? 0.1:1})
 			}
 			this.drawHandle();
 			return this;
@@ -28,27 +30,26 @@
 
 		drawHandle: function(){
 			var this_ = this;
-			if(this.handle != undefined)
-				this.handle.remove();
-			var to = this.toCoords(this.center, this.radius-1, this.seconds*6);
-			this.handle = this.paper.path("M "+this.center.x+" "+this.center.y+" L "+to.x+" "+to.y+"z");
-			this.handle.attr({stroke:"#fff", "stroke-width": 1})
+			if(this.secHandle != undefined)
+				this.secHandle.remove();
+			if(this.minHandle != undefined)
+				this.minHandle.remove();
+			var to = this.toCoords(this.center, this.radius-3, this.seconds*6-90);
+			this.secHandle = this.paper.path("M "+this.center.x+" "+this.center.y+" L "+to.x+" "+to.y+"z");
+			to = this.toCoords(this.center, this.radius-6, this.minutes*6-90);
+			this.secHandle.attr({stroke:"#fff", "stroke-width": 1})
+			this.minHandle = this.paper.path("M "+this.center.x+" "+this.center.y+" L "+to.x+" "+to.y+"z");
+			this.minHandle.attr({stroke:"#fff", "stroke-width": 2})
 			this.seconds += 1;
 			this.seconds = this.seconds > 59 ? 0 : this.seconds;
-			setTimeout(function(){this_.drawHandle();}, 1000);
-		},
-
-
-		arc: function(center, radius, startAngle, endAngle) {
-			var angle = startAngle;
-			var coords = this.toCoords(center, radius, angle);
-			var path = "M " + coords.x + " " + coords.y;
-			while(angle<=endAngle) {
-				coords = this.toCoords(center, radius, angle);
-				path += " L " + coords.x + " " + coords.y;
-				angle += 1;
+			if(this.seconds > 59){
+				this.seconds = 0;
+				this.minutes += 1;
 			}
-			return path;
+			if(this.minutes > 59){
+				this.minutes = 0;
+			}
+			setTimeout(function(){this_.drawHandle();}, 1000);
 		},
 
 		toCoords: function(center, radius, angle){
