@@ -166,8 +166,8 @@
 			this.changeFlipToScale(0);
 			
 			this.isSelected = false;
-			this.canMove = panel.isActive() && panel.options.player.get("user_id") == blokus.user.get("id");
-			console.log(panel.options.player.get("colour"), panel.isActive())
+			this.canMove = panel.isActive();// TODO FIX IT IS BROCKEN //&& panel.options.player.get("user_id") == blokus.user.get("id");
+			console.log(panel.options.player.get("colour"), panel.isActive(),panel.options.player.get("user_id") == blokus.user.get("id"))
 			this.inPanel = true;
 
 			var cenPoint = this.getCenterOfShape();
@@ -176,6 +176,8 @@
 			var scale = panel.isActive() ? 0.7 : 0.4;
 			this.curScale.x = scale;
 			this.curScale.y = scale;
+			this.initScale.x = scale;
+			this.initScale.y = scale;
 
 			this.pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
 
@@ -748,8 +750,9 @@
 				this.haloCircle.animate({opacity: 0.3}, 500);
 			}
 			this.haloOn = true;
-			this.boundaryCircle.toFront();
-			this.haloCircle.toFront();
+			console.log(this.haloCircle);
+			//this.boundaryCircle.toFront();
+			//this.haloCircle.toFront();
 			return this;
 		},
 
@@ -757,10 +760,10 @@
 			var this_ = this;
 			if (this.haloCircle != undefined && this.haloOn){
 				this.haloCircle.animate({opacity: 0}, 500);
-				this.boundaryCircle.toBack();
-				this.haloCircle.toBack();
+				//this.boundaryCircle.toBack();
+				//this.haloCircle.toBack();
 				this.haloOn = false;
-				setTimeout(function (){this_.haloCircle.toBack()}, 501);
+				//setTimeout(function (){this_.haloCircle.toBack()}, 501);
 				
 			}
 		},
@@ -802,13 +805,13 @@
 						if(blokus.haloArr.length != 0){
 							var i = 0;
 							_(blokus.haloArr).each(function (s){
-								s.boundaryCircle.toFront();
+								//s.boundaryCircle.toFront();
 								if (s.boundaryCircle != this_.paper.getElementByPoint(e.pageX, e.pageY)){
 									s.removeHalo();
 									s.haloOn = false;
 									blokus.haloArr[i] = undefined;
 								}
-								s.boundaryCircle.toBack();
+								//s.boundaryCircle.toBack();
 								i++;
 							});
 							blokus.haloArr.clean(undefined);	
@@ -844,8 +847,8 @@
 			);
 			this.cells.mouseover(function () {
 				if(!this_.isSelected){
-					var s = this_.halo();
-					blokus.haloArr.push(s);
+					//var s = this_.halo();
+					//blokus.haloArr.push(s);
 				}
 			});
 			blokus.mapKeyDown(37,
