@@ -316,6 +316,22 @@ h1 { font-weight:bold; font-size:24pt; }
 }
 .playerpanelcontainer.right .playerpanel { height: 200px; }
 .playerpanelcontainer { background: rgba(1, 1, 1, 0.5); }
+#turntext {
+	position:absolute;
+	top: 36px;
+	left: 0px;
+	width: 126px;
+	height: 560px;
+	background: rgba(0,0,0,0.6);
+	font-weight:bold;
+	z-index:110;
+}
+	#turntext div {
+		margin-top:250px;
+		width:123px;
+		background:0;
+		text-align:center;
+	}
 .playerpanel div {
 	background: rgba(0, 0, 0, 0.5);
 	color:white;

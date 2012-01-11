@@ -33,7 +33,20 @@
 
 		setPosition: function (pos) {
 			this.pos = pos;
-			if (pos === 0) {
+			this.isActive = pos == 0;
+			this.isEnabled = this.isLoggedInPlayer();
+			
+			$(this.el).css('background', this.isEnabled && this.isActive ? 'rgba(125,125,125,0.8)' : 'transparent');
+			
+			var turnText = $(this.el).find("#turntext");
+			turnText.find('div').html("Waiting for " + this.options.player.user.get("username") + "...");
+			if (this.isEnabled || !this.isActive) {
+				turnText.hide();
+			} else {
+				turnText.show();
+			}
+			this.isEnabled = true;
+			if (this.isActive) {
 				$(".playerpanelcontainer.left").append(this.el);
 			} else {
 				$(".playerpanelcontainer.right").append(this.el);
@@ -44,9 +57,10 @@
 
 		getPosition: function () { return this.pos; },
 
-		isActive: function () { return this.pos === 0 },
+		isEnabled: false,
+		isActive: false,
 
-		isOpponent: function () { return gameview.game.players.at(0).get("user_id") != blokus.user.get("id"); },
+		isLoggedInPlayer: function () { return this.options.player.user.get("id") == blokus.user.get("id"); },
 
 		getBoundaries: function () {
 			var offsets = _offsets[this.pos],
