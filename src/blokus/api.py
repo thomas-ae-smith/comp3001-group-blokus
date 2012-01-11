@@ -308,13 +308,11 @@ class PieceResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		import sys
-		bundle.data['client_rotate'] = bundle.obj.get_client_rotate()
-		bundle.data['client_flip'] = bundle.obj.get_client_flip()
+		bundle.data['rotate'] = bundle.obj.get_client_rotate()
+		bundle.data['flip'] = bundle.obj.get_client_flip()
 		return bundle
 
 	def hydrate(self, bundle):
-		import sys
-		print >>sys.stderr, "Bundle: " + repr(bundle)
-		bundle.data['server_rotate'] = bundle.obj.get_server_rotate(bundle.data['client_rotate'], bundle.data['client_flip'])
-		bundle.data['server_flip'] = bundle.obj.get_server_flip(bundle.data['client_rotate'], bundle.data['client_flip'])
+		bundle.data['rotate'] = bundle.obj.get_server_rotate(bundle.data['rotate'], bundle.data['flip'])
+		bundle.data['flip'] = bundle.obj.get_server_flip(bundle.data['rotate'], bundle.data['flip'])
 		return bundle
