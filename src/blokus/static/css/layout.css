@@ -1,17 +1,10 @@
 @font-face {
-  font-family: 'Droid Serif'; font-style: normal; font-weight: bold;
-  src: local('Droid Serif Bold'), local('DroidSerif-Bold'), url('DroidSerif-Bold.ttf') format('truetype');
-}
-@font-face {
   font-family: 'Droid Serif'; font-style: normal; font-weight: normal;
   src: local('Droid Serif'), local('DroidSerif'), url('DroidSerif.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Droid Sans'; font-style: normal; font-weight: normal;
   src: local('Droid Sans'), local('DroidSans'), url('DroidSans.ttf') format('truetype');
-}
-@font-face { font-family: 'Droid Sans'; font-style: normal; font-weight: bold;
-  src: local('Droid Sans Bold'), local('DroidSans-Bold'), url('DroidSans-Bold.ttf') format('truetype');
 }
 .clearfix:after {
 	content: ".";
@@ -51,11 +44,6 @@ h1, h2, h3, h4, h5, .serif, .title { font-family: 'Droid Serif', sans-serif; }
 	text-decoration:none;
 }
 .button:hover { background: white; }
-.button.disabled {
-	border-color: #999999;
-	color: #333333;
-	text-shadow: none; box-shadow: none;
-}
 b{ font-weight: bold;}
 #errorstackcontainer {
 	position: fixed;
@@ -304,9 +292,14 @@ h1 { font-weight:bold; font-size:24pt; }
 .toppanel {
 	position: absolute;
 	top: 0;
-	width: 132px;
+	width: 122px;
 	background: rgba(0, 0, 0, 0.5);
 	color:white;
+	text-align:centre;
+	padding:5px;
+}
+.toppanel h1 {
+	font-size: 12pt;
 }
 .left { left: 0; }
 .right { right:0; }
