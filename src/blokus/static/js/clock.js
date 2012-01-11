@@ -2,9 +2,11 @@
 	blokus.Clock = Backbone.View.extend({
 		
 		center: {x:undefined, y:undefined},
-		radius: 25,
+		radius: 20,
 		paper: undefined,
 		colour: "#FFF",
+		handle: undefined,
+		seconds: 0,
 
 		initialize: function(){
 			this.center = this.options.center;
@@ -14,15 +16,28 @@
 		},
 
 		render: function(){
-			for (var i=0; i <= 360; i+=30){
+			for (var i=0; i <= 360; i+=6){
 				var from = this.toCoords(this.center, this.radius, i);
-				var to = this.toCoords(this.center, this.radius+4, i);
-				var min = this.paper.path("M"+from.x+" "+from.y+" l "+to.x+" "+to.y+"z");
-				console.log("TEMP");
-				min.attr("fill", this.colour);
+				var to = this.toCoords(this.center, this.radius+6, i);
+				var min = this.paper.path("M "+from.x+" "+from.y+" L "+to.x+" "+to.y+"z");
+				min.attr({stroke:"#fff", "stroke-width": i%30 ? 0.1:1})
 			}
+			this.drawHandle();
 			return this;
 		},
+
+		drawHandle: function(){
+			var this_ = this;
+			if(this.handle != undefined)
+				this.handle.remove();
+			var to = this.toCoords(this.center, this.radius-1, this.seconds*6);
+			this.handle = this.paper.path("M "+this.center.x+" "+this.center.y+" L "+to.x+" "+to.y+"z");
+			this.handle.attr({stroke:"#fff", "stroke-width": 1})
+			this.seconds += 1;
+			this.seconds = this.seconds > 59 ? 0 : this.seconds;
+			setTimeout(function(){this_.drawHandle();}, 1000);
+		},
+
 
 		arc: function(center, radius, startAngle, endAngle) {
 			var angle = startAngle;
