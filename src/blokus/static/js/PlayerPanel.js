@@ -41,10 +41,11 @@
 			var turnText = $(this.el).find("#turntext");
 			turnText.find('div').html("Waiting for " + this.options.player.user.get("username") + "...");
 			if (this.isEnabled || !this.isActive) {
-				turnText.hide();
+				//turnText.hide();
 			} else {
-				turnText.show();
+				//turnText.show();
 			}
+			turnText.hide();
 			this.isEnabled = true;
 			if (this.isActive) {
 				$(".playerpanelcontainer.left").append(this.el);
