@@ -177,6 +177,7 @@ class GameResource(ModelResource):
 		if state is None:
 			state = 0
 
+		# Return the current server-time of the game.
 		bundle.data['time_now'] = datetime.now()
 
 		new_piece_ids = Move.objects.filter(game=Game.objects.get(pk=bundle.data['id']),move_number__gt=state).values_list('piece', flat=True)
@@ -191,7 +192,7 @@ class GameResource(ModelResource):
 		if request and request.user.id is not None:
 
 			from blokus.models import Game
-			Game.objects.get(id=1).delete() 
+			Game.objects.get(id=1).delete()
 
 			games = super(GameResource, self).get_object_list(request)
 			player = request.user.player_set.all()[0]
@@ -220,6 +221,12 @@ class PlayerResource(ModelResource):
 		list_allowed_methods = []
 		detail_allowed_methods = ['get','put']
 		authorization = Authorization()
+
+	def dehydrate(self, bundle):
+		bundle.data['can_move'] = bundle.obj.is_able_to_move()
+		import sys
+		pront >>sys.stderr, "IT WORKED!!!!"
+		return bundle
 
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
 #Coversion is done here.
