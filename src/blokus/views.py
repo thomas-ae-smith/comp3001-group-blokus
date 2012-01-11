@@ -20,16 +20,15 @@ def execute_garbage_collection(request):
 	TIMEOUT_IN_SECONDS = 60 * 15
 
 	# If any game contains a player who has not been seen online in TIMEOUT_IN_SECONDS,
-	# delete the game and all its players.
+	# or contains a null player, delete the game and all its players.
 	removed_game_ids = []
 	removed_player_ids = []
 	for game in Game.objects.all():
+		if len (game.player_set.all()) < 4:
+			game.delete()
+			break
 		for player in game.player_set.all():
 			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
-				for player_dead in game.player_set.all():
-					removed_player_ids.append(player_dead.id)
-					player_dead.delete()
-				removed_game_ids.append(game.id)
 				game.delete()
 				break
 
@@ -94,8 +93,8 @@ def base(request):
 
 			login(request, user)
 		else:
-			return render_to_response("game.html", {'form' : form, 'redirect':'register'}, context_instance=RequestContext(request))
-	return render_to_response("game.html", {'form' : form}, context_instance=RequestContext(request))
+			return render_to_response("base.html", {'form' : form, 'redirect':'register'}, context_instance=RequestContext(request))
+	return render_to_response("base.html", {'form' : form}, context_instance=RequestContext(request))
 
 def logout_journey(request):
 	logout(request)

@@ -94,6 +94,7 @@ class UserProfileResource(ModelResource):
 			bundle.data['game_id'] = player_set.all()[0].game.id
 		else:
 			bundle.data['game_id'] = None
+
 		return bundle
 
 	def apply_authorization_limits(self, request, object_list):
@@ -139,15 +140,17 @@ class UserProfileResource(ModelResource):
 
 		#For each player set status to ingame and create their player object
 		colours = ['blue', 'yellow', 'red', 'green']
+		k = 0
 		for i, user_playing in enumerate(users_playing):
 			user_playing_profile = user_playing.get_profile()
 			user_playing_profile.status = 'ingame'
 			object_list[0].status = 'ingame'
 			user_playing_profile.save()
-			for j in xrange(game_attributes[status]['player_count'] % 3):
-				player = Player(game=game,user=user_playing,colour=colours[i])
+			for j in xrange(1 if game_attributes[status]['typeid'] == 2 else 2):
+				player = Player(game=game,user=user_playing,colour=colours[k])
 				player.save()
-
+				k += 1
+		
 		#Return the requested userProfiles object list
 		return object_list
 
@@ -177,6 +180,7 @@ class GameResource(ModelResource):
 		if state is None:
 			state = 0
 
+		# Return the current server-time of the game.
 		bundle.data['time_now'] = datetime.now()
 
 		new_piece_ids = Move.objects.filter(game=Game.objects.get(pk=bundle.data['id']),move_number__gt=state).values_list('piece', flat=True)
@@ -189,10 +193,6 @@ class GameResource(ModelResource):
 	#Every time a user gets a game object of theirs, their player timestamp is updated.
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
-
-			from blokus.models import Game
-			Game.objects.get(id=1).delete() 
-
 			games = super(GameResource, self).get_object_list(request)
 			player = request.user.player_set.all()[0]
 			game = player.game
@@ -201,10 +201,12 @@ class GameResource(ModelResource):
 
 			# If a player does not fetch a game model for 60 seconds, they are 
 			# considered disconnected.
-			for otherPlayer in Player.objects.filter(game=game):
+			"""for otherPlayer in Player.objects.filter(game=game):
 				if (datetime.now() - otherPlayer.last_activity).seconds > 60:
+					import sys
+					print >>sys.stderr, "THERE HAS BEEN NO RESPONSE FROM THE USER " + str(otherPlayer.user.id) + " FOR " + str((datetime.now() - otherPlayer.last_activity).seconds) + " SECONDS!"
 					otherPlayer.user.get_profile().status = 'offline'
-					otherPlayer.save()
+					otherPlayer.save()"""
 			return games
 		return Game.objects.none()
 
@@ -218,8 +220,12 @@ class PlayerResource(ModelResource):
 		resource_name = 'player'
 		default_format = 'application/json'
 		list_allowed_methods = []
-		detail_allowed_methods = ['get','put']
+		detail_allowed_methods = []
 		authorization = Authorization()
+
+	def dehydrate(self, bundle):
+		bundle.data['can_move'] = bundle.obj.is_able_to_move()
+		return bundle
 
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
 #Coversion is done here.
@@ -295,12 +301,18 @@ class PieceResource(ModelResource):
 		queryset = Piece.objects.all()
 		resource_name = 'piece'
 		default_format = 'application/json'
-		list_allowed_methods = ['get','post']
-		detail_allowed_methods = ['get']
+		list_allowed_methods = ['post']
+		detail_allowed_methods = []
 		validation = PieceValidation()
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):
-		bundle.data['client_rotate'] = bundle.obj.get_client_rotate()
-		bundle.data['client_flip'] = bundle.obj.get_client_flip()
+		import sys
+		bundle.data['rotate'] = bundle.obj.get_client_rotate()
+		bundle.data['flip'] = bundle.obj.get_client_flip()
+		return bundle
+
+	def hydrate(self, bundle):
+		bundle.data['rotate'] = bundle.obj.get_server_rotate(bundle.data['rotate'], bundle.data['flip'])
+		bundle.data['flip'] = bundle.obj.get_server_flip(bundle.data['rotate'], bundle.data['flip'])
 		return bundle

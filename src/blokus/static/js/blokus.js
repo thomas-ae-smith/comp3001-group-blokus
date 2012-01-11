@@ -6,7 +6,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		authDfd = undefined,
 		keyUpMappings = {},									// Maps of key-codes to array of functions to call when key is pressed
 		blokusDeferreds = [];								// List of jQuery Deferred objects to be resolved before starting blokus
-		
+
 	var getCurrentUser = function(callback) {
 		$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
 			url: "/get_logged_in_user/",
@@ -44,7 +44,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 				}
 				currentView = view;
 				$("#container").append($newview);
-				
+
 				//Ensure input field labels are hidden if they contain text
 				$('input, textarea').each(function() {
 					var input = $(this);
@@ -57,16 +57,12 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		blokus.router = new (Backbone.Router.extend({		// Make a new router, which binds hash-urls to events. Each hash-url should load a view.
 			routes: {
 				"": "lobby",								// When there is no hash url
-				"game/:id": "game",							// Eg #game/12
-				"help": "help",
-				"register": "register",
-				"profile": "profile"
+				"game/:id": "game",
+				"register": "register"
 			},
 			lobby: function () { switchToView(new blokus.LobbyView()); },
 			game: function (id) { switchToView(new blokus.GameView({ id: id })); },
-			help: function () { switchToView(new blokus.HelpView()); },
-			register: function () { switchToView(new blokus.RegisterView()); },
-			profile: function () { switchToView(new blokus.ProfileView()); }
+			register: function () { switchToView(new blokus.RegisterView()); }
 		}))();
 
 		authDfd = new $.Deferred();
@@ -80,11 +76,12 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			_(keyDownMappings[e.keyCode]).each(function (f) { f.call(); });
 		});
 
-		$(window).bind('beforeunload', function(){ 
-			blokus.userProfile.set({status: "offline"}); 
-			blokus.userProfile.save(); 
-			if (blokus.userProfile.get("game_id") != null) {
-				return "Leaving this page will terminate the game."
+		$(window).bind('beforeunload', function(){
+			if (blokus.userProfile.get("game_id") == null) {
+				blokus.userProfile.set({status: "offline"});
+				blokus.userProfile.save();
+			} else {
+				return "Are you sure you wish to quit."
 			}
 		});
 
@@ -105,7 +102,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 
 	Array.prototype.clean = function(deleteValue) { //remove a given value from the files
 		for (var i = 0; i < this.length; i++) {
-			if (this[i] == deleteValue) {         
+			if (this[i] == deleteValue) {
 				this.splice(i, 1);
 				i--;
 			}
@@ -142,6 +139,10 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		mapKeyDown: function (keyCode, callback) {			// Bind a function to a key being pressed
 			if (!keyDownMappings.hasOwnProperty(keyCode)) { keyDownMappings[keyCode] = []; }
 			keyDownMappings[keyCode].push(callback);
+		},
+		// Get template source
+		getTemplate: function (name) {
+			return _.template($('#' + name + '-template').html());
 		},
 		haloArr: new Array()
 	};

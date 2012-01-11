@@ -14,13 +14,13 @@ blokus.LobbyView = Backbone.View.extend({
 
 	render: function () {
 		var this_ = this,
-			template = _.template($('#lobby-template').html()),
+			template = blokus.getTemplate("lobby"),
             options = { error: function () { blokus.showError("Failed to save user profile"); } };
 
 		function renderTemplate () {
 			var name = blokus.user.get("username");
 			var userProfile = blokus.user.get("userprofile");
-			var isGuest = name == "Guest";
+			var isGuest = userProfile.is_guest
 			$(this_.el).html(template({
 				picsrc: blokus.userProfile.get("profile_image_url"),
 				name: name,
@@ -45,7 +45,7 @@ blokus.LobbyView = Backbone.View.extend({
                 });
             }
         }
-        
+
         renderTemplate();
 		this.$("#loginForm").submit(function(event) {
 			event.preventDefault();
@@ -60,7 +60,7 @@ blokus.LobbyView = Backbone.View.extend({
 				}
 			}).error(function() { blokus.showError("Failed to login"); });
 		});
-		
+
 		this.$(".modelist li").click(function (e) {
 			// Which one has been selected?
 			var $button = $(e.currentTarget),
@@ -91,7 +91,6 @@ blokus.LobbyView = Backbone.View.extend({
                 dfd = blokus.userProfile.save({ status: "private_4" }, options);
             }
             dfd.then(function () {
-                this_.$("#privatelobby .error").remove();
                 game = new blokus.Game({ id: blokus.userProfile.get("gameid") });
                 game.fetch({ success: function () {
                     this_.$("#privatelobby .p" + type).addClass("sel").siblings().removeClass("sel");

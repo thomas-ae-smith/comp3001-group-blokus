@@ -2,26 +2,18 @@
 	"use strict";
 
 	var colours = {
-		/*
-		red: '#ff0000',
-		green: '#00ff00',
-		blue: '#0000ff',
-		yellow: '#ffff00'
-		*/
 		red: '/static/img/blockred.png',
 		green: '/static/img/blockgreen.png',
 		blue: '/static/img/blockblue.png',
 		yellow: '/static/img/blockyellow.png'
 	}
-	
+
 	blokus.Shape = Backbone.View.extend({
-		
-		/*
-		 *  Variables passed in initialize
-		 *  */
+		/*  Variables passed in initialize */
 		gameboard: undefined,
 		paper: undefined,
 		colour: undefined,
+		colourPath: undefined,
 		pieceMaster: undefined,
 
 		inPanel: true,
@@ -60,7 +52,7 @@
 		cellsOnGameboard: undefined, // the cells which are on the gameboard
 		dataArr: undefined, // The array of 0 or 1s which define the shape
 		//Position of the shape in the gameboard
-		posInGameboard: {x:undefined, y:undefined}, 
+		posInGameboard: {x:undefined, y:undefined},
 		destCor: {
 			x: undefined,
 			y: undefined
@@ -81,7 +73,7 @@
 		gameboardBBox: {
 			sx: undefined, // start x
 			sy: undefined, // start y
-			width: undefined, 
+			width: undefined,
 			height: undefined,
 			ex: undefined, // end x
 			ey: undefined  // end y
@@ -125,14 +117,15 @@
 			x: 0,
 			y: 0
 		},
-		
+
 		initialize: function(){
 			var this_ = this;
 			this.gameboard = this.options.gameboard;
 			this.paper = this.options.paper;
-			this.colour = colours[this.options.colour];
+			this.colour = this.options.colour;
+			this.colourPath = colours[this.options.colour];
 			this.pieceMaster = this.options.pieceMaster;
-			
+
 			// initialization
 			this.cells = this.paper.set();
 			this.visibleCells = this.paper.set();
@@ -159,6 +152,9 @@
 			this.haloImgs = this.paper.set();
 			this.haloImgs.push(this.paper.image('/static/img/rotateL.png', 0, 0, 18, 18));
 			this.haloImgs.push(this.paper.image('/static/img/rotateR.png', 0, 0, 18, 18));
+			this.haloImgs.push(this.paper.image('/static/img/flipV.png', 0, 0, 18, 18));
+			this.haloImgs.push(this.paper.image('/static/img/flipH.png', 0, 0, 18, 18));
+			this.haloImgs.attr("opacity", 0);
 		},
 
 		render: function(){
@@ -170,17 +166,17 @@
 			var boundaries = panel.getBoundaries();
 
 			this.rotation = 0;
-			this.changeFlipToScale(0);
-			
+			this.keepTrackOfFlip(0);
+			this.changeFlipToScale();
+
 			this.isSelected = false;
-			this.canMove = panel.isActive();// TODO FIX IT IS BROCKEN //&& panel.options.player.get("user_id") == blokus.user.get("id");
-			console.log(panel.options.player.get("colour"), panel.isActive(),panel.options.player.get("user_id") == blokus.user.get("id"))
+			this.canMove = panel.isEnabled && panel.isActive;
 			this.inPanel = true;
 
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 
-			var scale = panel.isActive() ? 0.7 : 0.4;
+			var scale = panel.isActive ? 0.7 : 0.4;
 			this.curScale.x = scale;
 			this.curScale.y = scale;
 			this.initScale.x = scale;
@@ -189,14 +185,15 @@
 			this.pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
 
 			this.transform(this.pos.x, this.pos.y, this.curScale.x, this.curScale.y,
-						 cenPoint.x, cenPoint.y, rotation,
+						 panel.isActive ? cenPoint.x : 0, panel.isActive ? cenPoint.y : 0, rotation,
 						 cenPoint.x, cenPoint.y);
 			this.setVisibleCellsOpacity(1, 500);
-		}, 
-		moveToGameboard: function(x, y, flip, rotation){ 
+		},
+		moveToGameboard: function(x, y, flip, rotation){
+			var this_ = this;
 			this.posInGameboard = {x:x, y:y};
 			this.rotation = rotation;
-			this.changeFlipToScale(flip);
+			this.changeFlipToScale(); //Don't need to keep track of flip
 			this.getDestCor();
 			this.isSelected = false;
 			this.canMove = false;
@@ -209,15 +206,23 @@
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
 			this.setVisibleCellsOpacity(1, 500);
+			// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
+			//var corOnBoard = this_.getCorOnBoard();
+			//_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
+			var rdata = this.rotateMatrix(this.dataArr, this.getRotation());
+			var transData = this.flipMatrix(rdata, this.flipNum);
+			console.log(transData, this.dataArr, this.flipNum, this.rotation, this.colour, this.curScale.x, this.curScale.y, flip);
+			blokus.utils.add_piece_to_validation_grid(transData, this.posInGameboard.x, this.posInGameboard.y, this.colour);
 		},
-		
+
 		isInPanel: function(){
 			return this.inPanel;
 		},
 		/* END GLOBAL METHODS */
 
 		renderShape: function(){
-			var data = this.pieceMaster.get("data"),
+			console.log(this.options.pieceMaster)
+			var data = this.pieceMaster.get("piece_data"),
 				numRows = data.length,
 				numCols = data[0].length;
 			this.cells.dataArr = _(data).clone();
@@ -227,8 +232,8 @@
 					if (data[rowI][colJ] == 1) {
 						//var cell = paper.rect((colJ)*cellSize, (rowI)*cellSize,
 												//cellSize, cellSize);
-						//cell.attr({fill: this.colour});
-						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
+						//cell.attr({fill: this.colourPath});
+						var cell = this.paper.image(this.colourPath, (colJ)*this.cellSize, (rowI)*this.cellSize,
 												this.cellSize, this.cellSize);
 						cell.attr({opacity: 0});
 						cell.opacity = 0;
@@ -238,8 +243,8 @@
 					else{
 						//var cell = this.paper.rect((colJ)*this.cellSize, (rowI)*this.cellSize,
 												//this.cellSize, this.cellSize);
-						//cell.attr({fill: this.colour, opacity: 0});
-						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
+						//cell.attr({fill: this.colourPath, opacity: 0});
+						var cell = this.paper.image(this.colourPath, (colJ)*this.cellSize, (rowI)*this.cellSize,
 												this.cellSize, this.cellSize);
 						cell.attr({opacity: 0});
 						cell.opacity = 0;
@@ -323,8 +328,8 @@
 			}
 			else if(this.cells.getBBox(true).x < 132 && this.fullScale){
 				this.curScale = {
-					x: this.curScale.x > 0 ? this.initScale.x : -this.initScale.x, 
-					y: this.curScale.y > 0 ? this.initScale.y : -this.initScale.y  
+					x: this.curScale.x > 0 ? this.initScale.x : -this.initScale.x,
+					y: this.curScale.y > 0 ? this.initScale.y : -this.initScale.y
 				};
 				this.fullScale = false;
 				time = 75;
@@ -512,13 +517,13 @@
 						conflict = true; //Check for conflicting piece
 					}
 				});
-				
+
 				var corOnBoard = this.getCorOnBoard();
 				var validPosition = blokus.utils.valid(corOnBoard);
 				var colour = validPosition ? "#FFFFFF" : "#666666";
 				this.notInPanel = validPosition ? false : true;
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
-			} 
+			}
 			else {
 				this.notInPanel = true;
 				this.notInPanel = true;
@@ -659,22 +664,7 @@
 			}
 		},
 
-		changeFlipToScale: function(flipNum){
-			/*
-			if (flipNum == 0)
-				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
-			else if (flipNum == 1 && this.curScale.x > 0) // Set animation values
-				this.curScale = this.fullScale ? {x:-1, y:1} : {x:-this.initScale.x, y:this.initScale.y};
-			else if (flipNum == 1)
-				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
-			else if (flipNum == 2 && this.curScale.y > 0)
-				this.curScale= this.fullScale ? {x:1, y:-1} : {x:this.initScale.x, y:-this.initScale.y};
-			else if (flipNum == 2)
-				this.curScale= this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
-			else if (flipNum == 3)
-				this.curScale= this.fullScale ? {x:-1, y:-1} : {x:-this.initScale.x, y:-this.initScale.y};
-			*/
-
+		keepTrackOfFlip: function(flipNum){
 			if (this.flipNum == 3) // Set the flipnum for server
 				this.flipNum -= flipNum
 			else if(this.flipNum == flipNum)
@@ -683,6 +673,8 @@
 				this.flipNum = 3;
 			else
 				this.flipNum = flipNum;
+		},
+		changeFlipToScale: function(){
 
 			if (this.flipNum == 0)
 				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
@@ -697,9 +689,9 @@
 		flip: function (flipNum){
 			if(this.isSelected){
 				var this_ = this;
-				this.changeFlipToScale(flipNum);
-				console.log(this.curScale.x, this.curScale.y);
-					
+				this.keepTrackOfFlip(flipNum);
+				this.changeFlipToScale();
+
 				var cenPoint = this.getCenterOfShape();
 				var x = this.distMoved.x != 0 ? this.distMoved.x : this.pos.x;
 				var y = this.distMoved.y != 0 ? this.distMoved.y : this.pos.y;
@@ -727,18 +719,19 @@
 					i = 0;
 				cenPoint.x += this.pos.x;
 				cenPoint.y += this.pos.y;
-				var imgCorArr = [];  
-				imgCorArr.push(this.toCoords(cenPoint, 20, 45)); // rrImg
-				imgCorArr.push(this.toCoords(cenPoint, 20, 135)); //rlImg 
-				imgCorArr[0].x -= 2;
-				imgCorArr[1].x -= 10;
+				var imgCorArr = [];
+				imgCorArr.push(this.toCoords(cenPoint, 20, 45)); //rrImg
+				imgCorArr.push(this.toCoords(cenPoint, 20, 135));//rlImg
+				imgCorArr.push(this.toCoords(cenPoint, 20, 225));//brImg
+				imgCorArr.push(this.toCoords(cenPoint, 20, 315));//blImg
+				imgCorArr[0].x -= 2; imgCorArr[1].x -= 10; imgCorArr[2].x -= 10; imgCorArr[2].y -= 5; imgCorArr[3].y -= 5;
 				//imgCorArr[1].y += 5;
 				this.haloCircle = this.paper.set();
 				this.haloBCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
 				this.haloBCircle.attr({fill:"#f00", opacity:0});
 				window.c = this;
 				this.haloImgs.forEach(function (img) {
-					img.transform("t"+imgCorArr[i].x+" "+imgCorArr[i].y); 
+					img.transform("t"+imgCorArr[i].x+" "+imgCorArr[i].y);
 					i++;
 				});
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 0, 89)));
@@ -750,7 +743,6 @@
 						this_.isSelected = true;
 						this_.rotate(1);
 						this_.isSelected = false;
-						console.log("Rotate Left");
 					}
 				};
 				var rotRightFunc = function(){
@@ -758,35 +750,35 @@
 						this_.isSelected = true;
 						this_.rotate(-1);
 						this_.isSelected = false;
-						console.log("Rotate Right");
 					}
 				};
-				this.haloCircle[0].click(rotLeftFunc);
-				this.haloImgs[0].click(rotLeftFunc);
-				this.haloCircle[1].click(rotRightFunc);
-				this.haloImgs[1].click(rotRightFunc);
-				this.haloCircle[2].click(function(){
+				var flipVFunc = function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
 						this_.flip(2);
 						this_.isSelected = false;
-						console.log("Flip Vertical");
 					}
-				});
-				this.haloCircle[3].click(function(){
+				};
+				var flipHFunc = function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
 						this_.flip(1);
 						this_.isSelected = false;
-						console.log("Flip Horizantal");
 					}
-				});
+				}
+				this.haloCircle[0].click(rotLeftFunc);
+				this.haloImgs[0].click(rotLeftFunc);
+				this.haloCircle[1].click(rotRightFunc);
+				this.haloImgs[1].click(rotRightFunc);
+				this.haloCircle[2].click(flipVFunc);
+				this.haloImgs[2].click(flipVFunc);
+				this.haloCircle[3].click(flipHFunc);
+				this.haloImgs[3].click(flipHFunc);
 				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 14, opacity: 0});
 				this.haloCircle.animate({opacity: 0.3}, 0);
 				this.haloCircle.mouseover( function(){
 						this_.haloOn = true;
-					}
-				);
+				});
 				this.haloImgs.scale(0.6, 0.6, 0, 0);
 			}
 			this.haloCircle.animate({opacity: 0.3}, 500);
@@ -810,10 +802,10 @@
 				this.haloImgs.toBack();
 				this.haloOn = false;
 				setTimeout(function (){this_.haloCircle.toBack()}, 501);
-				
+
 			}
 		},
-		
+
 		arc: function(center, radius, startAngle, endAngle) {
 			var angle = startAngle;
 			var coords = this.toCoords(center, radius, angle);
@@ -862,7 +854,7 @@
 								s.haloBCircle.toBack();
 								i++;
 							});
-							blokus.haloArr.clean(undefined);	
+							blokus.haloArr.clean(undefined);
 						}
 					}
 				}
@@ -879,7 +871,7 @@
 							blokus.haloArr[i] = undefined;
 							i++;
 						});
-						blokus.haloArr.clean(undefined);	
+						blokus.haloArr.clean(undefined);
 					}
 					else {
 						if(this_.notInPanel){
@@ -890,13 +882,17 @@
 							var validPosition = blokus.utils.valid(corOnBoard);
 							if(validPosition){
 								this_.isSelected = false;
-								//this_.getDestCor();
 								this_.goToPos();
-								// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
-								_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
-								//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
-								this_.inPanel = false;
-								this_.trigger("piece_placed", this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
+								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation(),
+									function () { // success
+										// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
+										_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
+										//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
+										this_.inPanel = false;
+									}, function () { // error
+										this_.returnToPanel();
+										this_.canMove = true;
+									});
 							}
 						}
 					}

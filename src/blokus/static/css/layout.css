@@ -1,17 +1,10 @@
 @font-face {
-  font-family: 'Droid Serif'; font-style: normal; font-weight: bold;
-  src: local('Droid Serif Bold'), local('DroidSerif-Bold'), url('droidserifbold.woff') format('woff');
-}
-@font-face {
   font-family: 'Droid Serif'; font-style: normal; font-weight: normal;
-  src: local('Droid Serif'), local('DroidSerif'), url('droidserif.woff') format('woff');
+  src: local('Droid Serif'), local('DroidSerif'), url('DroidSerif.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Droid Sans'; font-style: normal; font-weight: normal;
-  src: local('Droid Sans'), local('DroidSans'), url('droidsans.woff') format('woff');
-}
-@font-face { font-family: 'Droid Sans'; font-style: normal; font-weight: bold;
-  src: local('Droid Sans Bold'), local('DroidSans-Bold'), url('droidsansbold.woff') format('woff');
+  src: local('Droid Sans'), local('DroidSans'), url('DroidSans.ttf') format('truetype');
 }
 .clearfix:after {
 	content: ".";
@@ -51,11 +44,6 @@ h1, h2, h3, h4, h5, .serif, .title { font-family: 'Droid Serif', sans-serif; }
 	text-decoration:none;
 }
 .button:hover { background: white; }
-.button.disabled {
-	border-color: #999999;
-	color: #333333;
-	text-shadow: none; box-shadow: none;
-}
 b{ font-weight: bold;}
 #errorstackcontainer {
 	position: fixed;
@@ -304,12 +292,18 @@ h1 { font-weight:bold; font-size:24pt; }
 .toppanel {
 	position: absolute;
 	top: 0;
-	width: 132px;
+	width: 122px;
 	background: rgba(0, 0, 0, 0.5);
 	color:white;
+	text-align:centre;
+	padding:5px;
 }
-.left { left: 0; }
+.left { left: 0;  }
 .right { right:0; }
+.toppanel h1 {
+	font-size: 12pt;
+	padding: 17px 0px 0px 0px;
+}
 .playerpanelcontainer.left {
 	position: absolute;
 	top: 60px; left: 0;
@@ -323,6 +317,22 @@ h1 { font-weight:bold; font-size:24pt; }
 }
 .playerpanelcontainer.right .playerpanel { height: 200px; }
 .playerpanelcontainer { background: rgba(1, 1, 1, 0.5); }
+#turntext {
+	position:absolute;
+	top: 36px;
+	left: 0px;
+	width: 126px;
+	height: 560px;
+	background: rgba(0,0,0,0.6);
+	font-weight:bold;
+	z-index:110;
+}
+	#turntext div {
+		margin-top:250px;
+		width:123px;
+		background:0;
+		text-align:center;
+	}
 .playerpanel div {
 	background: rgba(0, 0, 0, 0.5);
 	color:white;

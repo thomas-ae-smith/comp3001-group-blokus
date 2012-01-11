@@ -21,7 +21,6 @@ class Game(models.Model):
 	game_type = models.IntegerField()
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
-	uri = models.CharField(max_length=56)
 	winning_colours = models.CharField(max_length=18, validators=[RegexValidator(regex=r"^((blue|yellow|red|green)(\|(blue|yellow|red|green))*)?$")])
 
 	def get_grid(self, limit_to_player=None):
@@ -108,12 +107,13 @@ class UserProfile(models.Model):
 		('private_4','In private lobby'),
 	)
 
-	private_queue = models.IntegerField(default=0)
+	private_hash = models.CharField(max_length=255,null=True)
 	user = models.OneToOneField(User)
 	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 	profile_image_url = models.CharField(max_length=255,default='/static/img/noavatar.jpg')
+	is_guest = models.BooleanField(default=False)
 
 	def save(self, *args, **kwargs):
 		try:
@@ -121,6 +121,9 @@ class UserProfile(models.Model):
 				oldRecord = UserProfile.objects.get(id=self.id)
 				if (oldRecord.status != self.status) or (self.status == 'offline'):
 					self.user.player_set.all().delete()
+					self.user.get_profile().private_hash = None
+				if self.status not in set(['private_2', 'private_4']):
+					self.user.get_profile().private_hash = None
 		except UserProfile.DoesNotExist:
 			pass
 
@@ -173,8 +176,8 @@ class Piece(models.Model):
 	x = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 
-	server_rotate = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
-	server_flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
+	rotate = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
+	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
 	def does_not_overlap(self):
@@ -242,21 +245,21 @@ class Piece(models.Model):
 		and self.player.game.winning_colours.strip() == "") # Game is not over.
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
-		bitmap = self.master.get_bitmap()	#Need to implement server_rotate and server_transpose.
-		if self.server_flip:
-			return transpose_bitmap(rotate_bitmap(bitmap, self.server_rotate))
+		bitmap = self.master.get_bitmap()	#Need to implement rotate and transpose.
+		if self.flip:
+			return transpose_bitmap(rotate_bitmap(bitmap, self.rotate))
 		else:
-			return rotate_bitmap(bitmap, self.server_rotate)
+			return rotate_bitmap(bitmap, self.rotate)
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
-		self.server_rotate(not(bool(self.server_flip) ^ bool(horizontal)))
-		self.server_flip = not self.server_flip
+		self.rotate(not(bool(self.flip) ^ bool(horizontal)))
+		self.flip = not self.flip
 
 	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
-			self.server_rotate = (self.server_rotate + 1) % 4
+			self.rotate = (self.rotate + 1) % 4
 		else:
-			self.server_rotate = (self.server_rotate - 1) % 4
+			self.rotate = (self.rotate - 1) % 4
 
 	# Mapping between the way the orientation is stored on the server (rot and
 	# trans), and the way it is stored at the client (rot, v-flip and h-flip).
@@ -273,10 +276,18 @@ class Piece(models.Model):
 	}
 
 	def get_client_flip(self):
-		return self.server_client_mapping[(self.server_rotate,self.server_flip)][1]
+		return self.server_client_mapping[(self.rotate,self.flip)][1]
 
 	def get_client_rotate(self):
-		return self.server_client_mapping[(self.server_rotate,self.server_flip)][0]
+		return self.server_client_mapping[(self.rotate,self.flip)][0]
+
+	def get_server_flip(self, rotate, flip):
+		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
+		return client_server_mapping[(rotate,flip)][1]
+
+	def get_server_rotate(self, rotate, flip):
+		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
+		return client_server_mapping[(rotate,flip)][0]
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
@@ -319,7 +330,6 @@ def record_move(sender, instance, **kwargs):
 	instance.player.game.save()
 	instance.player.save()
 	move.save()
-	print kwargs
 
 # If a game is deleted, remove all hanging moves, pieces and players
 # associated with the game.

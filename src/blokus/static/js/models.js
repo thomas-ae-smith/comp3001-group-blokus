@@ -12,7 +12,7 @@
         }
 	});
 
-	var User = Model.extend({ 
+	var User = Model.extend({
 			resourceUrl: blokus.urls.user,
 
 			// FIXME: Hacked in bootstrap, baby
@@ -102,15 +102,14 @@
 		PieceMaster = Model.extend({
 			resourceUrl: blokus.urls.pieceMaster,
 
-			parse: function (model) { // TODO: remove
+			parse: function (model) {
 				model.id = Number(model.id);
-				model.data = model.piece_data;
 				return model;
 			}
 		}),
 
 		Piece = Model.extend({
-			defaults: { client_rotation: 0, client_flip: 0 },
+			defaults: { client_rotate: 0, client_flip: 0 },
 			initialize: function () {
 				var this_ = this;
 				this.bind("change", function () {
@@ -122,7 +121,11 @@
 			}
 		}),
 
-		Player = Model.extend({}),
+		Player = Model.extend({
+			getId: function () {
+				return getIdFromUrl(this.get("user"));
+			}
+		}),
 
 		Board = Model.extend({
 		initialize: function(){

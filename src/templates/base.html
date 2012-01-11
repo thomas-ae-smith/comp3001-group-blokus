@@ -3,16 +3,13 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="google-site-verification" content="bkY2l8MrBlNwS68f0w2LZbNpJB3FPMEgRx734kU5cDo" />
-		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
-		Remove this if you use the .htaccess -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-		<title>Blokus{% block title %}{% endblock %}</title>
+		<title>Blokus Game</title>
 		<meta name="description" content="Blokus Game" />
 		<meta name="author" content="Comp3001 Group Blokus" />
 		<link rel="shortcut icon" href="{{ STATIC_URL }}img/icon.ico" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" type="text/css"/>
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
-		{% block extracss %}{% endblock %}
 		<script src="{{ STATIC_URL }}js/jquery.js"></script>
 		<script src="{{ STATIC_URL }}js/raphael.js"></script>
 		<script src="{{ STATIC_URL }}js/underscore.js"></script>
@@ -22,16 +19,14 @@
 		<script src="{{ STATIC_URL }}js/models.js"></script>
 		<script src="{{ STATIC_URL }}js/collections.js"></script>
 		<script src="{{ STATIC_URL }}js/shape.js"></script>
-		<script src="{{ STATIC_URL }}js/ForgotView.js"></script>
 		<script src="{{ STATIC_URL }}js/GameView.js"></script>
-		<script src="{{ STATIC_URL }}js/HelpView.js"></script>
 		<script src="{{ STATIC_URL }}js/LobbyView.js"></script>
-		<script src="{{ STATIC_URL }}js/ProfileView.js"></script>
 		<script src="{{ STATIC_URL }}js/RegisterView.js"></script>
 		<script src="{{ STATIC_URL }}js/GameBoard.js"></script>
 		<script src="{{ STATIC_URL }}js/PlayerPanel.js"></script>
 		<script src="{{ STATIC_URL }}js/utils.js"></script>
 		<script src="{{ STATIC_URL }}js/labels.js"></script>
+		<script src="{{ STATIC_URL }}js/clock.js"></script>
 	</head>
 	<body>
 		<img src="{{ STATIC_URL }}img/logo.png" id="logo"/>
@@ -159,21 +154,16 @@
 				<input type="button" class="button game-help" value="How to play">
 				<input type="button" class="button game-exit" value="Exit game">
 				<div class="toppanel left">
-					<b>Table ID:</b><br/>
-					<span class="uri"></span><br/>
-					<b>Table URL:</b><br/>
-					http://blahblah.com#<span class="uri"></span>
+					<h1>Player Turn</h1>
+					<span class="playerduration"></span>
 				</div>
 				<div class="toppanel right">
-					<b>Duration:</b><br>
+					<h1>Duration</h1>
 					<span class="duration"></span><br/>
-					<b>Player turn:</b><br>
-					<span class="playerduration"></span><br/>
-					<div class="clock"></div>
 				</div>
 				<div class="loading"></div>
 				<div id="helpscreen" style="display: none">
-					<h1>How to Play</h2>
+					<h1>How to Play</h1>
 					<div id="slider">
 					<div id="inner">
 					<h2>About Blokus</h2>
@@ -220,6 +210,7 @@
 					<h1><%= name %></h1>
 					<p><%= stats %></p>
 				</div>
+				<div id="turntext"><div></div></div>
 			</script>
 			<script type="text/html" id="register-template">
 				<form action="{% url blokus.views.base %}" method="post" class="box form">
@@ -244,23 +235,6 @@
 					</label>{{ form.password2.errors }}<br/>
 					<input type="submit" value="Register" class="button" /> <input type="button" value="Cancel" class="button" onclick="window.location.href='#'"/>
 				</form>
-			</script>
-			<script type="text/html" id="profile-template">
-				<div class="box form">
-					<h1><%= username %>'s profile</h1>
-					<table>
-						<tr>
-							<td><b>Joined</b></td><td><%= joined %></td>
-						</tr>
-						<tr>
-							<td><b>Wins</b></td><td><%= wins %></td>
-						</tr>
-						<tr>
-							<td><b>Losses</b></td><td><%= losses %></td>
-						</tr>
-					</table><br/>
-					<a href="#" class="button">Back</a><br/><br/>
-				</div>
 			</script>
 		</div>
 		{% if redirect %}

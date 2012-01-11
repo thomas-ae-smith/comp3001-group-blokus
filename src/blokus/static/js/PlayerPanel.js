@@ -7,9 +7,9 @@
 	];
 	var _dimensions = [
 		{ w: 132, h: 565 },
-		{ w: 132, h: 135 },
-		{ w: 132, h: 135 },
-		{ w: 132, h: 135 }
+		{ w: 132, h: 165 },
+		{ w: 132, h: 165 },
+		{ w: 132, h: 165 }
 	];
 	blokus.PlayerPanel = Backbone.View.extend({
 		className: "playerpanel",
@@ -19,12 +19,13 @@
 		render: function () {
 			var $el = $(this.el),
 				player = this.options.player,
-				template = _.template($('#player-panel-template').html());
+				template = blokus.getTemplate("player-panel");
 
+			var profile = player.user.get("userprofile");
 			$el.html(template({
 				name: player.user.get("username"),
 				pic: "/static/img/noavatar.jpg",
-				stats: "wins: 0 losses: 0"
+				stats: profile != null ? "wins: " + profile.wins + " losses: " + profile.losses : ""
 			}));
 
 			return this;
@@ -32,7 +33,21 @@
 
 		setPosition: function (pos) {
 			this.pos = pos;
-			if (pos === 0) {
+			this.isActive = pos == 0;
+			this.isEnabled = this.isLoggedInPlayer();
+			
+			$(this.el).css('background', this.isEnabled && this.isActive ? 'rgba(125,125,125,0.8)' : 'transparent');
+			
+			var turnText = $(this.el).find("#turntext");
+			turnText.find('div').html("Waiting for " + this.options.player.user.get("username") + "...");
+			if (this.isEnabled || !this.isActive) {
+				//turnText.hide();
+			} else {
+				//turnText.show();
+			}
+			turnText.hide();
+			this.isEnabled = true;
+			if (this.isActive) {
 				$(".playerpanelcontainer.left").append(this.el);
 			} else {
 				$(".playerpanelcontainer.right").append(this.el);
@@ -43,7 +58,10 @@
 
 		getPosition: function () { return this.pos; },
 
-		isActive: function () { return this.pos === 0 },
+		isEnabled: false,
+		isActive: false,
+
+		isLoggedInPlayer: function () { return this.options.player.user.get("id") == blokus.user.get("id"); },
 
 		getBoundaries: function () {
 			var offsets = _offsets[this.pos],

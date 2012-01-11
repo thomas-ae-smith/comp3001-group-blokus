@@ -1,7 +1,6 @@
 blokus.RegisterView = Backbone.View.extend({
 	render: function () {
-		var template = _.template($('#register-template').html());
-		$(this.el).html(template());
+		$(this.el).html(blokus.getTemplate("register")());
 		return this;
 	}
 });
