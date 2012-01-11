@@ -41,7 +41,6 @@
 			this.minHandle = this.paper.path("M "+this.center.x+" "+this.center.y+" L "+to.x+" "+to.y+"z");
 			this.minHandle.attr({stroke:"#fff", "stroke-width": 2})
 			this.seconds += 1;
-			this.seconds = this.seconds > 59 ? 0 : this.seconds;
 			if(this.seconds > 59){
 				this.seconds = 0;
 				this.minutes += 1;
