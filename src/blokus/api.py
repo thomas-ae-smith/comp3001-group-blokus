@@ -129,7 +129,7 @@ class UserProfileResource(ModelResource):
 			possible_users = UserProfile.objects.filter(status=status,private_hash=current_userprofile.private_hash).exclude(id=current_userprofile.id)
 		else:
 			possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
-		
+
 		if len(possible_users) < game_attributes[status]['player_count'] - 1:
 			return object_list
 
@@ -410,8 +410,8 @@ class PieceResource(ModelResource):
 		return bundle
 
 	def hydrate(self, bundle):
-		import models.PieceMaster
-		bundle.data['master'] = models.PieceMaster.objects.get(id=bundle.data['master'])	#HACK HACK HACK!!! Client returns master **ID**
+		from blokus.models import PieceMaster
+		bundle.data['master'] = PieceMaster.objects.get(id=bundle.data['master'])	#HACK HACK HACK!!! Client returns master **ID**
 		bundle.data['rotation'] = self.get_server_rotation(bundle.data['rotation'], bundle.data['flip'])
 		bundle.data['flip'] = self.get_server_flip(bundle.data['rotation'], bundle.data['flip'])
 		import sys

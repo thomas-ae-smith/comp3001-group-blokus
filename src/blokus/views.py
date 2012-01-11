@@ -163,3 +163,18 @@ def get_logged_in_user(request):
 	full_bundle = ur.full_dehydrate(ur_bundle)
 
 	return HttpResponse(ur.serialize(None, ur.full_dehydrate(ur_bundle), 'application/json'))
+
+@require_http_methods(["GET", "POST"])
+def create_piece(request):
+	if not request.is_ajax():
+		return HttpResponseBadRequest()
+	if request.user.id is None:
+		return HttpResponseNotFound()
+	import sys
+	print >>sys.stderr, 'contents of request' + repr(request)
+	#master_id
+	#x
+	#y
+	#flip
+	#rotate
+
