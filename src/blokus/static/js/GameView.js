@@ -251,7 +251,7 @@
 
 			/* Indicate the url of this game */
 			this_.$(".uri").html(game.get("uri"));
-			var clock = new blokus.Clock({paper:paper, center:{x:770, y:30}}).render();
+			var clock = new blokus.Clock({paper:paper, center:{x:773, y:30}}).render();
 			window.gameview = this; // FIXME
 			window.p = paper // FIXME
 
