@@ -1,14 +1,17 @@
 (function ($, _, Backbone, blokus) {
+
 	blokus.GameBoard = Backbone.View.extend({
 		offset: { x: 175, y: 125 },
 		borderWidth: 30,
 		width: undefined,
 		height: undefined,
+		cellSize: undefined,
 		border: 1,
 		className: "gameboard",
 		grid: undefined,
 
 		initialize: function(){
+			this.cellSize = this.options.cellSize;
 			this.width = this.cellSize * 20;
 			this.height = this.cellSize * 20;
 		},

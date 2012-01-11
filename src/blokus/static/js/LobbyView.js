@@ -14,7 +14,7 @@ blokus.LobbyView = Backbone.View.extend({
 
 	render: function () {
 		var this_ = this,
-			template = _.template($('#lobby-template').html()),
+			template = blokus.getTemplate("lobby"),
             options = { error: function () { blokus.showError("Failed to save user profile"); } };
 
 		function renderTemplate () {
@@ -45,7 +45,7 @@ blokus.LobbyView = Backbone.View.extend({
                 });
             }
         }
-        
+
         renderTemplate();
 		this.$("#loginForm").submit(function(event) {
 			event.preventDefault();
@@ -60,7 +60,7 @@ blokus.LobbyView = Backbone.View.extend({
 				}
 			}).error(function() { blokus.showError("Failed to login"); });
 		});
-		
+
 		this.$(".modelist li").click(function (e) {
 			// Which one has been selected?
 			var $button = $(e.currentTarget),

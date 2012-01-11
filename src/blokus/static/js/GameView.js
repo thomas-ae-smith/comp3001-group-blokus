@@ -134,7 +134,6 @@
 
 				/* When all users are fetched */
 				$.when.apply(undefined, dfds).always(function () {
-					console.log(game.players)
 					// Set up panels for all players
 					_(game.players.models).each(function (player) {
 						var id = player.get("id");
@@ -185,7 +184,6 @@
 	        	if (activePlayer.get("user_id") == blokus.user.get("id")) {
 	        		blokus.showMsg(colour + ", it is now your turn");
 	        	} else {
-	        		console.log(activePlayer.user)
 	        		blokus.showMsg(colour + "'s (" + activePlayer.user.get("username") + ") turn");
 	        	}
 	        }

@@ -19,7 +19,7 @@
 		render: function () {
 			var $el = $(this.el),
 				player = this.options.player,
-				template = _.template($('#player-panel-template').html());
+				template = blokus.getTemplate("player-panel");
 
 			$el.html(template({
 				name: player.user.get("username"),
