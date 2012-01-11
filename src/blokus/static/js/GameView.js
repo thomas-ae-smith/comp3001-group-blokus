@@ -139,6 +139,7 @@
 
 				/* When all users are fetched */
 				$.when.apply(undefined, dfds).always(function () {
+					console.log("Users are all fetched")
 					// Set up panels for all players
 					_(game.players.models).each(function (player) {
 						var id = player.get("id");
