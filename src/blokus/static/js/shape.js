@@ -159,6 +159,8 @@
 			this.haloImgs = this.paper.set();
 			this.haloImgs.push(this.paper.image('/static/img/rotateL.png', 0, 0, 18, 18));
 			this.haloImgs.push(this.paper.image('/static/img/rotateR.png', 0, 0, 18, 18));
+			this.haloImgs.push(this.paper.image('/static/img/flipV.png', 0, 0, 18, 18));
+			this.haloImgs.push(this.paper.image('/static/img/flipH.png', 0, 0, 18, 18));
 		},
 
 		render: function(){
@@ -728,10 +730,15 @@
 				cenPoint.x += this.pos.x;
 				cenPoint.y += this.pos.y;
 				var imgCorArr = [];  
-				imgCorArr.push(this.toCoords(cenPoint, 20, 45)); // rrImg
-				imgCorArr.push(this.toCoords(cenPoint, 20, 135)); //rlImg 
+				imgCorArr.push(this.toCoords(cenPoint, 20, 45)); //rrImg
+				imgCorArr.push(this.toCoords(cenPoint, 20, 135));//rlImg 
+				imgCorArr.push(this.toCoords(cenPoint, 20, 225));//brImg
+				imgCorArr.push(this.toCoords(cenPoint, 20, 315));//blImg
 				imgCorArr[0].x -= 2;
 				imgCorArr[1].x -= 10;
+				imgCorArr[2].x -= 10;
+				imgCorArr[2].y -= 5;
+				imgCorArr[3].y -= 5;
 				//imgCorArr[1].y += 5;
 				this.haloCircle = this.paper.set();
 				this.haloBCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
@@ -761,32 +768,35 @@
 						console.log("Rotate Right");
 					}
 				};
-				this.haloCircle[0].click(rotLeftFunc);
-				this.haloImgs[0].click(rotLeftFunc);
-				this.haloCircle[1].click(rotRightFunc);
-				this.haloImgs[1].click(rotRightFunc);
-				this.haloCircle[2].click(function(){
+				var flipVFunc = function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
 						this_.flip(2);
 						this_.isSelected = false;
 						console.log("Flip Vertical");
 					}
-				});
-				this.haloCircle[3].click(function(){
+				};
+				var flipHFunc = function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
 						this_.flip(1);
 						this_.isSelected = false;
 						console.log("Flip Horizantal");
 					}
-				});
+				}
+				this.haloCircle[0].click(rotLeftFunc);
+				this.haloImgs[0].click(rotLeftFunc);
+				this.haloCircle[1].click(rotRightFunc);
+				this.haloImgs[1].click(rotRightFunc);
+				this.haloCircle[2].click(flipVFunc);
+				this.haloImgs[2].click(flipVFunc);
+				this.haloCircle[3].click(flipHFunc);
+				this.haloImgs[3].click(flipHFunc);
 				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 14, opacity: 0});
 				this.haloCircle.animate({opacity: 0.3}, 0);
 				this.haloCircle.mouseover( function(){
 						this_.haloOn = true;
-					}
-				);
+				});
 				this.haloImgs.scale(0.6, 0.6, 0, 0);
 			}
 			this.haloCircle.animate({opacity: 0.3}, 500);
