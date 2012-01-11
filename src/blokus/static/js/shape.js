@@ -189,10 +189,9 @@
 			this.initScale.y = scale;
 
 			this.pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
-			console.log(this.pos.y)
 
 			this.transform(this.pos.x, this.pos.y, this.curScale.x, this.curScale.y,
-						 cenPoint.x, cenPoint.y, rotation,
+						 panel.isActive() ? cenPoint.x : 0, panel.isActive() ? cenPoint.y : 0, rotation,
 						 cenPoint.x, cenPoint.y);
 			this.setVisibleCellsOpacity(1, 500);
 		},

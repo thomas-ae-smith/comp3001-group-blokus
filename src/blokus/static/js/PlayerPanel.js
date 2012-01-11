@@ -7,9 +7,9 @@
 	];
 	var _dimensions = [
 		{ w: 132, h: 565 },
-		{ w: 132, h: 135 },
-		{ w: 132, h: 135 },
-		{ w: 132, h: 135 }
+		{ w: 132, h: 165 },
+		{ w: 132, h: 165 },
+		{ w: 132, h: 165 }
 	];
 	blokus.PlayerPanel = Backbone.View.extend({
 		className: "playerpanel",
