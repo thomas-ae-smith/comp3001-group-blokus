@@ -167,6 +167,7 @@
 			function handleTurn (game, colour) {
 	        	var activePlayer = game.getPlayerOfColour(colour),
 	        		activePlayerId = activePlayer.get("id");
+	        	console.log("active", activePlayer)
 
 	        	/* Move panel to left if active player, otherwise right */
 	        	var pos = 1;
