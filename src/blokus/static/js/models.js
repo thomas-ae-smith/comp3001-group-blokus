@@ -121,7 +121,11 @@
 			}
 		}),
 
-		Player = Model.extend({}),
+		Player = Model.extend({
+			getId: function () {
+				return getIdFromUrl(this.get("user"));
+			}
+		}),
 
 		Board = Model.extend({
 		initialize: function(){

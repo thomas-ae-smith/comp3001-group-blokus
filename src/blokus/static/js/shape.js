@@ -2,12 +2,6 @@
 	"use strict";
 
 	var colours = {
-		/*
-		red: '#ff0000',
-		green: '#00ff00',
-		blue: '#0000ff',
-		yellow: '#ffff00'
-		*/
 		red: '/static/img/blockred.png',
 		green: '/static/img/blockgreen.png',
 		blue: '/static/img/blockblue.png',
@@ -15,10 +9,7 @@
 	}
 
 	blokus.Shape = Backbone.View.extend({
-
-		/*
-		 *  Variables passed in initialize
-		 *  */
+		/*  Variables passed in initialize */
 		gameboard: undefined,
 		paper: undefined,
 		colour: undefined,
@@ -176,13 +167,13 @@
 			this.changeFlipToScale(0);
 
 			this.isSelected = false;
-			this.canMove = panel.isActive();// TODO FIX IT IS BROCKEN //&& panel.options.player.get("user_id") == blokus.user.get("id");
+			this.canMove = panel.isEnabled;
 			this.inPanel = true;
 
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 
-			var scale = panel.isActive() ? 0.7 : 0.4;
+			var scale = panel.isActive ? 0.7 : 0.4;
 			this.curScale.x = scale;
 			this.curScale.y = scale;
 			this.initScale.x = scale;
@@ -662,21 +653,6 @@
 		},
 
 		changeFlipToScale: function(flipNum){
-			/*
-			if (flipNum == 0)
-				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
-			else if (flipNum == 1 && this.curScale.x > 0) // Set animation values
-				this.curScale = this.fullScale ? {x:-1, y:1} : {x:-this.initScale.x, y:this.initScale.y};
-			else if (flipNum == 1)
-				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
-			else if (flipNum == 2 && this.curScale.y > 0)
-				this.curScale= this.fullScale ? {x:1, y:-1} : {x:this.initScale.x, y:-this.initScale.y};
-			else if (flipNum == 2)
-				this.curScale= this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
-			else if (flipNum == 3)
-				this.curScale= this.fullScale ? {x:-1, y:-1} : {x:-this.initScale.x, y:-this.initScale.y};
-			*/
-
 			if (this.flipNum == 3) // Set the flipnum for server
 				this.flipNum -= flipNum
 			else if(this.flipNum == flipNum)
@@ -896,7 +872,6 @@
 							var validPosition = blokus.utils.valid(corOnBoard);
 							if(validPosition){
 								this_.isSelected = false;
-								//this_.getDestCor();
 								this_.goToPos();
 								// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
 								_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});

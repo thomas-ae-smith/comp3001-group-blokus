@@ -93,7 +93,7 @@
 							error: function () {
 								if (fetchFailedCount > 3) blokus.showError(errors.fetchGame);
 							}
-						}).always(function () { setTimeout(poll, 4000); }); // Call this function 4 seconds after fetch succeeded/failed
+						}).always(function () { setTimeout(poll, 2000); }); // Call this function 2 seconds after fetch succeeded/failed
 					}
 				};
 
@@ -108,7 +108,7 @@
 					if (newTimeNow) timeNow = new Date(newTimeNow);
 					else timeNow.setSeconds(timeNow.getSeconds() + 1);
 					this_.$(".duration").html(niceTime(dateDifference(startTime, timeNow)));
-					
+
 					if (playerStartTime != null) this_.$(".playerduration").html(niceTime(dateDifference(playerStartTime, timeNow)));
 				},
 				ticker = setInterval(updateDuration, 1000);
@@ -124,10 +124,12 @@
 				var dfds = [];
 
 				_(game.players.models).each(function (player) {
-					var user = player.user = new blokus.User({ id: player.get("user_id") }),
+					var user = player.user = new blokus.User({ id: player.getId() }),
 						d = new $.Deferred();
+					console.log("created user:", user)
 					dfds.push(d);
 					user.fetch({ success: function () {
+						console.log("fetched user:", user)
 						d.resolve();
 					}, error: function () {
 						d.resolve();
@@ -137,6 +139,7 @@
 
 				/* When all users are fetched */
 				$.when.apply(undefined, dfds).always(function () {
+					console.log("Users are all fetched")
 					// Set up panels for all players
 					_(game.players.models).each(function (player) {
 						var id = player.get("id");
@@ -164,15 +167,17 @@
 			function handleTurn (game, colour) {
 	        	var activePlayer = game.getPlayerOfColour(colour),
 	        		activePlayerId = activePlayer.get("id");
+	        	console.log("active", activePlayer)
 
 	        	/* Move panel to left if active player, otherwise right */
 	        	var pos = 1;
 				_(playerPanels).each(function (panel, playerId) {
-					var player = game.players.get(playerId),
+					var player = game.players.get(Number(playerId)),
 						colour = player.get("colour");
+					console.log("Player:", player)
 					// Move the panel
 					if (playerId == activePlayerId) {
-						panel.setPosition(0);
+						panel.setPosition(0);						
 					} else {
 						panel.setPosition(pos);
 						pos++;
@@ -183,12 +188,6 @@
 					});
 				});
 
-				// Indicate whose player's turn it is
-	        	if (activePlayer.get("user_id") == blokus.user.get("id")) {
-	        		blokus.showMsg(colour + ", it is now your turn");
-	        	} else {
-	        		blokus.showMsg(colour + "'s (" + activePlayer.user.get("username") + ") turn");
-	        	}
 				playerStartTime = new Date(timeNow);
 	        }
 
@@ -209,7 +208,7 @@
 	        function handleWinners (game, winningColours) {
 	        	if (!winningColours) return;
 	        	var colours = winningColours.split("|");
-	        	console.log("TODO Player wins: ", colours);  // TODO
+				blokus.showMsg(colours + " Wins!");
 	        }
 
 	        /* Setting up view */

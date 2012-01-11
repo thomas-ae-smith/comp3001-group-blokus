@@ -224,8 +224,6 @@ class PlayerResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		bundle.data['can_move'] = bundle.obj.is_able_to_move()
-		import sys
-		print >>sys.stderr, "PlayerResource dehydrate method worked. Can remove print statement from it."
 		return bundle
 
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
