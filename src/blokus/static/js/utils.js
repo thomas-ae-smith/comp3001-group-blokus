@@ -116,20 +116,14 @@ blokus.utils = (function ($, _, Backbone) {
 	}
 
 	//Given a piece populate the validation grid with the piece information for the given colour.
-	var add_piece_to_validation_grid = function (piece, colour) {
-		var	pieceMaster = blokus.pieceMasters.get(piece.get("master_id")),
-			tmpData = pieceMaster.get("piece_data"),
-			numRows = tmpData.length,
-			numCols = tmpData[0].length;
-
-		if (piece.get("rotation") === undefined) {
-			piece.set("rotation", 0);
-		}
+	var add_piece_to_validation_grid = function (pieceData, x, y, colour) {
+		var	numRows = pieceData.length,
+			numCols = pieceData[0].length;
 
 		for (var rowI = 0; rowI < numRows; rowI++) {
 			for (var colJ = 0; colJ <= numCols; colJ++) {
-				if (tmpData[rowI][colJ] == 1) {
-					add_cell_to_validation_grid(colJ + piece.get("x"), rowI + piece.get("y"), colour);
+				if (pieceData[rowI][colJ] == 1) {
+					add_cell_to_validation_grid(colJ + x, rowI + y, colour);
 				}
 			}
 		}
