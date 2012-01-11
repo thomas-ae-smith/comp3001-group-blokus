@@ -225,7 +225,7 @@ class PlayerResource(ModelResource):
 		resource_name = 'player'
 		default_format = 'application/json'
 		list_allowed_methods = []
-		detail_allowed_methods = ['get','put']
+		detail_allowed_methods = []
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):
@@ -308,8 +308,8 @@ class PieceResource(ModelResource):
 		queryset = Piece.objects.all()
 		resource_name = 'piece'
 		default_format = 'application/json'
-		list_allowed_methods = ['get','post']
-		detail_allowed_methods = ['get']
+		list_allowed_methods = ['post']
+		detail_allowed_methods = []
 		validation = PieceValidation()
 		authorization = Authorization()
 
