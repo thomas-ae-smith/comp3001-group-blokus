@@ -93,7 +93,7 @@
 							error: function () {
 								if (fetchFailedCount > 3) blokus.showError(errors.fetchGame);
 							}
-						}).always(function () { setTimeout(poll, 4000); }); // Call this function 4 seconds after fetch succeeded/failed
+						}).always(function () { setTimeout(poll, 2000); }); // Call this function 2 seconds after fetch succeeded/failed
 					}
 				};
 
