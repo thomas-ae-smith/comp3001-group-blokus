@@ -246,6 +246,9 @@
 
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
+			/* Indicate the url of this game */
+			this_.$(".uri").html(game.get("uri"));
+			var clock = new blokus.Clock({paper:paper, center:{x:770, y:30}}).render();
 			window.gameview = this; // FIXME
 			window.p = paper // FIXME
 
