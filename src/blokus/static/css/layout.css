@@ -1,17 +1,17 @@
 @font-face {
   font-family: 'Droid Serif'; font-style: normal; font-weight: bold;
-  src: local('Droid Serif Bold'), local('DroidSerif-Bold'), url('droidserifbold.woff') format('application/x-woff');
+  src: local('Droid Serif Bold'), local('DroidSerif-Bold'), url('DroidSerif-Bold.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Droid Serif'; font-style: normal; font-weight: normal;
-  src: local('Droid Serif'), local('DroidSerif'), url('droidserif.woff') format('application/x-woff');
+  src: local('Droid Serif'), local('DroidSerif'), url('DroidSerif.ttf') format('truetype');
 }
 @font-face {
   font-family: 'Droid Sans'; font-style: normal; font-weight: normal;
-  src: local('Droid Sans'), local('DroidSans'), url('droidsans.woff') format('application/x-woff');
+  src: local('Droid Sans'), local('DroidSans'), url('DroidSans.ttf') format('truetype');
 }
 @font-face { font-family: 'Droid Sans'; font-style: normal; font-weight: bold;
-  src: local('Droid Sans Bold'), local('DroidSans-Bold'), url('droidsansbold.woff') format('application/x-woff');
+  src: local('Droid Sans Bold'), local('DroidSans-Bold'), url('DroidSans-Bold.ttf') format('truetype');
 }
 .clearfix:after {
 	content: ".";
