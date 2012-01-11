@@ -72,7 +72,7 @@
 
 						// Create the piece in the game model
 						game.getPlayerOfColour(colour).pieces.create(
-								{ master: pieceMaster.url(), x: x, y: y, client_flip: flip, client_rotate: rotation },
+								{ master: Number(pieceMaster.get("id")), x: x, y: y, client_flip: flip, client_rotate: rotation },
 								{
 									success: function () { successCallback.call(); },
 									error: function () {
@@ -132,10 +132,8 @@
 				_(game.players.models).each(function (player) {
 					var user = player.user = new blokus.User({ id: player.getId() }),
 						d = new $.Deferred();
-					console.log("created user:", user)
 					dfds.push(d);
 					user.fetch({ success: function () {
-						console.log("fetched user:", user)
 						d.resolve();
 					}, error: function () {
 						d.resolve();
@@ -145,7 +143,6 @@
 
 				/* When all users are fetched */
 				$.when.apply(undefined, dfds).always(function () {
-					console.log("Users are all fetched")
 					// Set up panels for all players
 					_(game.players.models).each(function (player) {
 						var id = player.get("id");
@@ -173,14 +170,12 @@
 			function handleTurn (game, colour) {
 	        	var activePlayer = game.getPlayerOfColour(colour),
 	        		activePlayerId = activePlayer.get("id");
-	        	console.log("active", activePlayer)
 
 	        	/* Move panel to left if active player, otherwise right */
 	        	var pos = 1;
 				_(playerPanels).each(function (panel, playerId) {
 					var player = game.players.get(Number(playerId)),
 						colour = player.get("colour");
-					console.log("Player:", player)
 					// Move the panel
 					if (playerId == activePlayerId) {
 						panel.setPosition(0);
