@@ -177,7 +177,7 @@
 					console.log("Player:", player)
 					// Move the panel
 					if (playerId == activePlayerId) {
-						panel.setPosition(0);						
+						panel.setPosition(0);
 					} else {
 						panel.setPosition(pos);
 						pos++;
@@ -239,7 +239,8 @@
 			/* Handle closing the game */
 			this_.$(".game-exit").click(function () {
 				if (confirm("Are you sure you want to quit the game?")) {
-					location.hash = "";
+					blokus.userProfile.save({ status: "offline" })
+					blokus.router.navigate("", true);
 				}
 			});
 
