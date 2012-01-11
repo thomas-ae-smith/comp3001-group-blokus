@@ -68,6 +68,9 @@ LOGIN_ERROR_URL    = '/'
 
 SOCIAL_AUTH_EXPIRATION = 'expires'
 
+FACEBOOK_EXTRA_DATA = [('profile_image_url', 'profile_image_url')]
+GOOGLE_EXTRA_DATA = [('profile_image_url', 'profile_image_url')]
+
 # The username of a guest user for display purposes.
 GUEST_USER_NAME = 'Guest'
 # A dummy password for guests.

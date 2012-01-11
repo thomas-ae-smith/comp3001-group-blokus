@@ -8,6 +8,10 @@ from django.contrib.auth.models import User
 import hashlib
 import logging
 
+from social_auth.signals import pre_update
+from social_auth.backends.facebook import FacebookBackend
+from social_auth.backends.google import GoogleBackend
+
 _colour_regex = r"^(blue|yellow|red|green)$"
 
 class Game(models.Model):
@@ -107,6 +111,7 @@ class UserProfile(models.Model):
 	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
+	profile_image_url = models.CharField(max_length=255)
 
 	def save(self, *args, **kwargs):
 		try:
@@ -117,6 +122,7 @@ class UserProfile(models.Model):
 			pass
 
 		super(UserProfile, self).save(*args, **kwargs)
+
 
 
 # Colours MUST correspond to positions:
@@ -325,3 +331,8 @@ def cleanup_game(sender, instance, **kwargs):
 		player.delete()
 	for move in instance.move_set.all():
 		move.delete()
+
+@receiver(pre_update, sender=FacebookBackend)
+def facebook_extra_values(sender, user, response, details, **kwargs):
+	user.get_profile().profile_image_url = response.profile_image_url
+	return True
