@@ -91,7 +91,6 @@ blokus.LobbyView = Backbone.View.extend({
                 dfd = blokus.userProfile.save({ status: "private_4" }, options);
             }
             dfd.then(function () {
-                this_.$("#privatelobby .error").remove();
                 game = new blokus.Game({ id: blokus.userProfile.get("gameid") });
                 game.fetch({ success: function () {
                     this_.$("#privatelobby .p" + type).addClass("sel").siblings().removeClass("sel");

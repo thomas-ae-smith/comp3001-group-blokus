@@ -46,6 +46,8 @@
 
 		isActive: function () { return this.pos === 0 },
 
+		isOpponent: function () { return gameview.game.players.at(0).get("user_id") != blokus.user.get("id"); },
+
 		getBoundaries: function () {
 			var offsets = _offsets[this.pos],
 				dimensions = _dimensions[this.pos];

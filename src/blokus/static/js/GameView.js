@@ -101,12 +101,15 @@
 			/* Keep game duration up-to-date using server time to avoid discrepancies between clients */
 			var startTime,
 				timeNow,
+				playerStartTime = null,
 				// Every second, increment the time now. Accepts a time argument from server to indicate current time
 				updateDuration = function (newTimeNow) {
 					if (!startTime) return;
 					if (newTimeNow) timeNow = new Date(newTimeNow);
 					else timeNow.setSeconds(timeNow.getSeconds() + 1);
 					this_.$(".duration").html(niceTime(dateDifference(startTime, timeNow)));
+					
+					if (playerStartTime != null) this_.$(".playerduration").html(niceTime(dateDifference(playerStartTime, timeNow)));
 				},
 				ticker = setInterval(updateDuration, 1000);
 
@@ -186,6 +189,7 @@
 	        	} else {
 	        		blokus.showMsg(colour + "'s (" + activePlayer.user.get("username") + ") turn");
 	        	}
+				playerStartTime = new Date(timeNow);
 	        }
 
 	        /* Handle pieces being placed */
@@ -241,9 +245,6 @@
 			});
 
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
-
-			/* Indicate the url of this game */
-			this_.$(".uri").html(game.get("uri"));
 
 			window.gameview = this; // FIXME
 			window.p = paper // FIXME
