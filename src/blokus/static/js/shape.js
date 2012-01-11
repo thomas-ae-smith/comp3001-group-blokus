@@ -13,6 +13,7 @@
 		gameboard: undefined,
 		paper: undefined,
 		colour: undefined,
+		colourPath: undefined,
 		pieceMaster: undefined,
 
 		inPanel: true,
@@ -121,7 +122,8 @@
 			var this_ = this;
 			this.gameboard = this.options.gameboard;
 			this.paper = this.options.paper;
-			this.colour = colours[this.options.colour];
+			this.colour = this.options.colour;
+			this.colourPath = colours[this.options.colour];
 			this.pieceMaster = this.options.pieceMaster;
 
 			// initialization
@@ -164,7 +166,8 @@
 			var boundaries = panel.getBoundaries();
 
 			this.rotation = 0;
-			this.changeFlipToScale(0);
+			this.keepTrackOfFlip(0);
+			this.changeFlipToScale();
 
 			this.isSelected = false;
 			this.canMove = panel.isEnabled && panel.isActive;
@@ -187,9 +190,10 @@
 			this.setVisibleCellsOpacity(1, 500);
 		},
 		moveToGameboard: function(x, y, flip, rotation){
+			var this_ = this;
 			this.posInGameboard = {x:x, y:y};
 			this.rotation = rotation;
-			this.changeFlipToScale(flip);
+			this.changeFlipToScale(); //Don't need to keep track of flip
 			this.getDestCor();
 			this.isSelected = false;
 			this.canMove = false;
@@ -202,6 +206,13 @@
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
 			this.setVisibleCellsOpacity(1, 500);
+			// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
+			//var corOnBoard = this_.getCorOnBoard();
+			//_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
+			var rdata = this.rotateMatrix(this.dataArr, this.getRotation());
+			var transData = this.flipMatrix(rdata, this.flipNum);
+			console.log(transData, this.dataArr, this.flipNum, this.rotation, this.colour, this.curScale.x, this.curScale.y, flip);
+			blokus.utils.add_piece_to_validation_grid(transData, this.posInGameboard.x, this.posInGameboard.y, this.colour);
 		},
 
 		isInPanel: function(){
@@ -210,6 +221,7 @@
 		/* END GLOBAL METHODS */
 
 		renderShape: function(){
+			console.log(this.options.pieceMaster)
 			var data = this.pieceMaster.get("piece_data"),
 				numRows = data.length,
 				numCols = data[0].length;
@@ -220,8 +232,8 @@
 					if (data[rowI][colJ] == 1) {
 						//var cell = paper.rect((colJ)*cellSize, (rowI)*cellSize,
 												//cellSize, cellSize);
-						//cell.attr({fill: this.colour});
-						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
+						//cell.attr({fill: this.colourPath});
+						var cell = this.paper.image(this.colourPath, (colJ)*this.cellSize, (rowI)*this.cellSize,
 												this.cellSize, this.cellSize);
 						cell.attr({opacity: 0});
 						cell.opacity = 0;
@@ -231,8 +243,8 @@
 					else{
 						//var cell = this.paper.rect((colJ)*this.cellSize, (rowI)*this.cellSize,
 												//this.cellSize, this.cellSize);
-						//cell.attr({fill: this.colour, opacity: 0});
-						var cell = this.paper.image(this.colour, (colJ)*this.cellSize, (rowI)*this.cellSize,
+						//cell.attr({fill: this.colourPath, opacity: 0});
+						var cell = this.paper.image(this.colourPath, (colJ)*this.cellSize, (rowI)*this.cellSize,
 												this.cellSize, this.cellSize);
 						cell.attr({opacity: 0});
 						cell.opacity = 0;
@@ -652,7 +664,7 @@
 			}
 		},
 
-		changeFlipToScale: function(flipNum){
+		keepTrackOfFlip: function(flipNum){
 			if (this.flipNum == 3) // Set the flipnum for server
 				this.flipNum -= flipNum
 			else if(this.flipNum == flipNum)
@@ -661,6 +673,8 @@
 				this.flipNum = 3;
 			else
 				this.flipNum = flipNum;
+		},
+		changeFlipToScale: function(){
 
 			if (this.flipNum == 0)
 				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
@@ -675,8 +689,8 @@
 		flip: function (flipNum){
 			if(this.isSelected){
 				var this_ = this;
-				this.changeFlipToScale(flipNum);
-				console.log(this.curScale.x, this.curScale.y);
+				this.keepTrackOfFlip(flipNum);
+				this.changeFlipToScale();
 
 				var cenPoint = this.getCenterOfShape();
 				var x = this.distMoved.x != 0 ? this.distMoved.x : this.pos.x;
@@ -729,7 +743,6 @@
 						this_.isSelected = true;
 						this_.rotate(1);
 						this_.isSelected = false;
-						console.log("Rotate Left");
 					}
 				};
 				var rotRightFunc = function(){
@@ -737,7 +750,6 @@
 						this_.isSelected = true;
 						this_.rotate(-1);
 						this_.isSelected = false;
-						console.log("Rotate Right");
 					}
 				};
 				var flipVFunc = function(){
@@ -745,7 +757,6 @@
 						this_.isSelected = true;
 						this_.flip(2);
 						this_.isSelected = false;
-						console.log("Flip Vertical");
 					}
 				};
 				var flipHFunc = function(){
@@ -753,7 +764,6 @@
 						this_.isSelected = true;
 						this_.flip(1);
 						this_.isSelected = false;
-						console.log("Flip Horizantal");
 					}
 				}
 				this.haloCircle[0].click(rotLeftFunc);
@@ -873,11 +883,16 @@
 							if(validPosition){
 								this_.isSelected = false;
 								this_.goToPos();
-								// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
-								_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
-								//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
-								this_.inPanel = false;
-								this_.trigger("piece_placed", this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
+								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation(),
+									function () { // success
+										// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
+										_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
+										//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
+										this_.inPanel = false;
+									}, function () { // error
+										this_.returnToPanel();
+										this_.canMove = true;
+									});
 							}
 						}
 					}

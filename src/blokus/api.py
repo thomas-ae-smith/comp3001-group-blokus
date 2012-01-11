@@ -94,6 +94,7 @@ class UserProfileResource(ModelResource):
 			bundle.data['game_id'] = player_set.all()[0].game.id
 		else:
 			bundle.data['game_id'] = None
+
 		return bundle
 
 	def apply_authorization_limits(self, request, object_list):

@@ -54,6 +54,9 @@ def create_guest():
     user.save()
     guest = Guest.create_guest(user)
     guest.save()
+    up = user.get_profile()
+    up.is_guest = True
+    up.save()
     return user
 
 def assign_guest(request):
@@ -79,7 +82,7 @@ def is_a_guest(user):
 def display_username(user):
     """Returns a username suitable for display (the guest usernames are not)."""
     if is_a_guest(user):
-        return settings.GUEST_USER_NAME #Todo: make identifiable maybe?
+        return "%s%s" % (settings.GUEST_USER_NAME, user.id)
     else:
         return user.username
 

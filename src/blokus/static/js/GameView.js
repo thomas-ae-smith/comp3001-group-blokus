@@ -65,15 +65,21 @@
 					});
 
 					// When this shape is placed on the board, update the model
-					shape.bind("piece_placed", function (x, y, flip, rotation) {
+					shape.bind("piece_placed", function (pieceMaster, x, y, flip, rotation, successCallback, errorCallback) {
 						/* FIXME temp turn progression */
 						var colourswitch = {"blue": "yellow", "yellow": "red", "red": "green", "green": "blue"};
 						blokus._exampleGames[1].colour_turn = colourswitch[blokus._exampleGames[1].colour_turn];
 
 						// Create the piece in the game model
 						game.getPlayerOfColour(colour).pieces.create(
-								{ x: x, y: y, client_flip: flip, client_rotation: rotation },
-								{ error: function () { blokus.showError(errors.placePiece) } });
+								{ master: pieceMaster.url(), x: x, y: y, client_flip: flip, client_rotate: rotation },
+								{
+									success: function () { successCallback.call(); },
+									error: function () {
+										blokus.showError(errors.placePiece);
+										errorCallback.call();
+									}
+								});
 
 						// Ask for the updated game model
 						poll();
@@ -198,7 +204,7 @@
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = piece.get("master_id");
 	        			// Move the piece onto the game board at specified location
-	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("client_flip"), piece.get("client_rotation"));
+	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("client_flip"), piece.get("client_rotate"));
 	        		});
 	        	});
 	        }
@@ -248,7 +254,7 @@
 
 			/* Indicate the url of this game */
 			this_.$(".uri").html(game.get("uri"));
-			var clock = new blokus.Clock({paper:paper, center:{x:770, y:30}}).render();
+			var clock = new blokus.Clock({paper:paper, center:{x:773, y:30}}).render();
 			window.gameview = this; // FIXME
 			window.p = paper // FIXME
 
