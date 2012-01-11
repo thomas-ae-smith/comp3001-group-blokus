@@ -309,3 +309,10 @@ class PieceResource(ModelResource):
 		bundle.data['client_rotate'] = bundle.obj.get_client_rotate()
 		bundle.data['client_flip'] = bundle.obj.get_client_flip()
 		return bundle
+
+	def hydrate(self, bundle):
+		import sys
+		print sys.stderr, "CLIENT_ROTATE: " + repr(bundle.data['server_rotate'])
+		bundle.data['server_rotate'] = bundle.obj.get_server_rotate(bundle.data['server_rotate'], bundle.data['server_flip'])
+		bundle.data['server_flip'] = bundle.obj.get_server_flip(bundle.data['server_rotate'], bundle.data['server_flip'])
+		return bundle

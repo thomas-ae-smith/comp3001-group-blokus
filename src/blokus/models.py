@@ -272,6 +272,14 @@ class Piece(models.Model):
 	def get_client_rotate(self):
 		return self.server_client_mapping[(self.server_rotate,self.server_flip)][0]
 
+	def get_server_flip(self, rotate, flip):
+		client_server_mapping = dict((v,k) for k, v in server_client_mapping.iteritems())
+		return client_server_mapping[(rotate,flip)][1]
+
+	def get_server_rotate(self, rotate, flip):
+		client_server_mapping = dict((v,k) for k, v in server_client_mapping.iteritems())
+		return client_server_mapping[(rotate,flip)][0]
+
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	game = models.ForeignKey(Game)
