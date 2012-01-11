@@ -160,7 +160,7 @@ class UserProfileResource(ModelResource):
 				player = Player(game=game,user=user_playing,colour=colours[k])
 				player.save()
 				k += 1
-		
+
 		#Return the requested userProfiles object list
 		return object_list
 
@@ -209,7 +209,7 @@ class GameResource(ModelResource):
 			player.last_activity = datetime.now()
 			player.save()
 
-			# If a player does not fetch a game model for 60 seconds, they are 
+			# If a player does not fetch a game model for 60 seconds, they are
 			# considered disconnected.
 			"""for otherPlayer in Player.objects.filter(game=game):
 				if (datetime.now() - otherPlayer.last_activity).seconds > 60:

@@ -221,7 +221,6 @@
 		/* END GLOBAL METHODS */
 
 		renderShape: function(){
-			console.log(this.options.pieceMaster)
 			var data = this.pieceMaster.get("piece_data"),
 				numRows = data.length,
 				numCols = data[0].length;
