@@ -89,8 +89,8 @@ def base(request):
 			user = authenticate(username=username, password=password)
 			login(request, user)
 		else:
-			return render_to_response("game.html", {'form' : form, 'redirect':'register'}, context_instance=RequestContext(request))
-	return render_to_response("game.html", {'form' : form}, context_instance=RequestContext(request))
+			return render_to_response("base.html", {'form' : form, 'redirect':'register'}, context_instance=RequestContext(request))
+	return render_to_response("base.html", {'form' : form}, context_instance=RequestContext(request))
 
 def logout_journey(request):
 	logout(request)
