@@ -2,12 +2,6 @@
 	"use strict";
 
 	var colours = {
-		/*
-		red: '#ff0000',
-		green: '#00ff00',
-		blue: '#0000ff',
-		yellow: '#ffff00'
-		*/
 		red: '/static/img/blockred.png',
 		green: '/static/img/blockgreen.png',
 		blue: '/static/img/blockblue.png',
@@ -15,10 +9,7 @@
 	}
 
 	blokus.Shape = Backbone.View.extend({
-
-		/*
-		 *  Variables passed in initialize
-		 *  */
+		/*  Variables passed in initialize */
 		gameboard: undefined,
 		paper: undefined,
 		colour: undefined,

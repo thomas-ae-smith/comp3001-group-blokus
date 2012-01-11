@@ -108,7 +108,7 @@
 					if (newTimeNow) timeNow = new Date(newTimeNow);
 					else timeNow.setSeconds(timeNow.getSeconds() + 1);
 					this_.$(".duration").html(niceTime(dateDifference(startTime, timeNow)));
-					
+
 					if (playerStartTime != null) this_.$(".playerduration").html(niceTime(dateDifference(playerStartTime, timeNow)));
 				},
 				ticker = setInterval(updateDuration, 1000);
@@ -124,7 +124,7 @@
 				var dfds = [];
 
 				_(game.players.models).each(function (player) {
-					var user = player.user = new blokus.User({ id: player.get("user_id") }),
+					var user = player.user = new blokus.User({ id: player.getId() }),
 						d = new $.Deferred();
 					dfds.push(d);
 					user.fetch({ success: function () {
