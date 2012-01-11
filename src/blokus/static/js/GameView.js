@@ -21,7 +21,7 @@
 		game: undefined,
 
 		render: function () {
-			window.gameview = this;	
+			window.gameview = this;
 			var this_ = this,
 				el = this.el,
 				$el = $(el),
@@ -43,7 +43,7 @@
 
 			// Append to view
 			$el.append(gameboard.el);
-			
+
 
 			/* For player panels */
 			var playerPanels = {};
@@ -61,16 +61,20 @@
 						pieceMaster: pieceMaster,
 						gameboard: gameboard,
 						paper: paper,
-						colour: colour 
+						colour: colour
 					});
 					shape.bind("piece_placed", function (x, y, flip, rotation) {
+						/* FIXME temp turn progression */
+						var colourswitch = {"blue": "yellow", "yellow": "red", "red": "green", "green": "blue"};
+						blokus._exampleGames[1].colour_turn = colourswitch[blokus._exampleGames[1].colour_turn];
+
 						game.getPlayerOfColour(colour).pieces.create({
 							x: x,
-							y: y, 
+							y: y,
 							client_flip: flip,
-							client_rotation: rotation 
+							client_rotation: rotation
 						}, {
-							error: function () { blokus.showError("Piece failed to be placed.") } 
+							error: function () { blokus.showError("Piece failed to be placed.") }
 						});
 						poll();
 					});
@@ -210,7 +214,7 @@
 			this_.$(".game-help").click(function () {
 				if (this_.help == true) {
 					$("#helpscreen").slideUp();
-					this_.help = false;	
+					this_.help = false;
 				} else {
 					$("#helpscreen").slideDown();
 					this_.help = true;
