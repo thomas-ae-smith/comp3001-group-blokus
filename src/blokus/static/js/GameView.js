@@ -177,7 +177,7 @@
 					console.log("Player:", player)
 					// Move the panel
 					if (playerId == activePlayerId) {
-						panel.setPosition(0);
+						panel.setPosition(0);						
 					} else {
 						panel.setPosition(pos);
 						pos++;
@@ -188,12 +188,6 @@
 					});
 				});
 
-				// Indicate whose player's turn it is
-	        	if (activePlayer.get("user_id") == blokus.user.get("id")) {
-	        		blokus.showMsg(colour + ", it is now your turn");
-	        	} else {
-	        		blokus.showMsg(colour + "'s (" + activePlayer.user.get("username") + ") turn");
-	        	}
 				playerStartTime = new Date(timeNow);
 	        }
 
@@ -214,7 +208,7 @@
 	        function handleWinners (game, winningColours) {
 	        	if (!winningColours) return;
 	        	var colours = winningColours.split("|");
-	        	console.log("TODO Player wins: ", colours);  // TODO
+				blokus.showMsg(colours + " Wins!");
 	        }
 
 	        /* Setting up view */
