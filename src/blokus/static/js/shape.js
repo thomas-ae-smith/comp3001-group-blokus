@@ -49,6 +49,8 @@
 		canMove: false,
 		rotation: 0,
 		flipNum: 0,
+		flipHorz: false,
+		flipVert: false,
 		cells: undefined, //The set of cells or squares
 		visibleCells: undefined, //The set of visible cells or squares
 		invisibleCells: undefined, //The set of invisible cells or squares
@@ -652,14 +654,20 @@
 		},
 
 		changeFlipToScale: function(flipNum){
-			if (flipNum == 1 && this.curScale.x > 0) // Set animation values
-				this.curScale.x = this.fullScale ? -1 : -this.initScale.x;
+			/*
+			if (flipNum == 0)
+				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
+			else if (flipNum == 1 && this.curScale.x > 0) // Set animation values
+				this.curScale = this.fullScale ? {x:-1, y:1} : {x:-this.initScale.x, y:this.initScale.y};
 			else if (flipNum == 1)
-				this.curScale.x = this.fullScale ? 1 : this.initScale.x;
-			if (flipNum == 2 && this.curScale.y > 0)
-				this.curScale.y = this.fullScale ? -1 : -this.initScale.y;
+				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
+			else if (flipNum == 2 && this.curScale.y > 0)
+				this.curScale= this.fullScale ? {x:1, y:-1} : {x:this.initScale.x, y:-this.initScale.y};
 			else if (flipNum == 2)
-				this.curScale.y = this.fullScale ? 1 : this.initScale.y;
+				this.curScale= this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
+			else if (flipNum == 3)
+				this.curScale= this.fullScale ? {x:-1, y:-1} : {x:-this.initScale.x, y:-this.initScale.y};
+			*/
 
 			if (this.flipNum == 3) // Set the flipnum for server
 				this.flipNum -= flipNum
@@ -669,18 +677,30 @@
 				this.flipNum = 3;
 			else
 				this.flipNum = flipNum;
+
+			if (this.flipNum == 0)
+				this.curScale = this.fullScale ? {x:1, y:1} : {x:this.initScale.x, y:this.initScale.y};
+			if (this.flipNum == 1)
+				this.curScale = this.fullScale ? {x:-1, y:1} : {x:-this.initScale.x, y:this.initScale.y};
+			if (this.flipNum == 2)
+				this.curScale= this.fullScale ? {x:1, y:-1} : {x:this.initScale.x, y:-this.initScale.y};
+			if (this.flipNum == 3)
+				this.curScale= this.fullScale ? {x:-1, y:-1} : {x:-this.initScale.x, y:-this.initScale.y};
 		},
 
 		flip: function (flipNum){
 			if(this.isSelected){
 				var this_ = this;
 				this.changeFlipToScale(flipNum);
+				console.log(this.curScale.x, this.curScale.y);
 					
 				var cenPoint = this.getCenterOfShape();
-				//this.animate(this.distMoved.x, this.distMoved.y, this.curScale.x, this.curScale.y,
-						 //cenPoint.x, cenPoint.y, this.rotation*90,
-						 //cenPoint.x, cenPoint.y, 150);
-				this.cells.animate({transform: "...s"+this.curScale.x+" "+this.curScale.y+" "+cenPoint.x+" "+cenPoint.y}, 150);
+				var x = this.distMoved.x != 0 ? this.distMoved.x : this.pos.x;
+				var y = this.distMoved.y != 0 ? this.distMoved.y : this.pos.y;
+				this.animate(x, y, this.curScale.x, this.curScale.y,
+						 cenPoint.x, cenPoint.y, this.rotation*90,
+						 cenPoint.x, cenPoint.y, 150);
+				//this.cells.animate({transform: "...s"+this.curScale.x+" "+this.curScale.y+" "+cenPoint.x+" "+cenPoint.y}, 150);
 				setTimeout(function(){this_.inBoardValidation();}, 151);
 			}
 		},
@@ -703,6 +723,7 @@
 				this.haloCircle = this.paper.set();
 				this.boundaryCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
 				this.boundaryCircle.attr({fill:"#f00", opacity:0});
+				window.c = this;
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 0, 89)));
 				this.haloCircle[0].click(function(){
 					if(this_.haloOn){
@@ -750,9 +771,10 @@
 				this.haloCircle.animate({opacity: 0.3}, 500);
 			}
 			this.haloOn = true;
-			console.log(this.haloCircle);
-			//this.boundaryCircle.toFront();
-			//this.haloCircle.toFront();
+			if(this.haloCircle != undefined && this.boundaryCircle != undefined){
+				this.boundaryCircle.toFront();
+				this.haloCircle.toFront();
+			}
 			return this;
 		},
 
@@ -760,10 +782,10 @@
 			var this_ = this;
 			if (this.haloCircle != undefined && this.haloOn){
 				this.haloCircle.animate({opacity: 0}, 500);
-				//this.boundaryCircle.toBack();
-				//this.haloCircle.toBack();
+				this.boundaryCircle.toBack();
+				this.haloCircle.toBack();
 				this.haloOn = false;
-				//setTimeout(function (){this_.haloCircle.toBack()}, 501);
+				setTimeout(function (){this_.haloCircle.toBack()}, 501);
 				
 			}
 		},
@@ -805,13 +827,13 @@
 						if(blokus.haloArr.length != 0){
 							var i = 0;
 							_(blokus.haloArr).each(function (s){
-								//s.boundaryCircle.toFront();
+								s.boundaryCircle.toFront();
 								if (s.boundaryCircle != this_.paper.getElementByPoint(e.pageX, e.pageY)){
 									s.removeHalo();
 									s.haloOn = false;
 									blokus.haloArr[i] = undefined;
 								}
-								//s.boundaryCircle.toBack();
+								s.boundaryCircle.toBack();
 								i++;
 							});
 							blokus.haloArr.clean(undefined);	
@@ -846,9 +868,9 @@
 				}
 			);
 			this.cells.mouseover(function () {
-				if(!this_.isSelected){
-					//var s = this_.halo();
-					//blokus.haloArr.push(s);
+				if(!this_.isSelected && this_.canMove){
+					var s = this_.halo();
+					blokus.haloArr.push(s);
 				}
 			});
 			blokus.mapKeyDown(37,
