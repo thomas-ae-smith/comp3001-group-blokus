@@ -354,6 +354,8 @@ def social_extra_values(sender, user, response, details, **kwargs):
 	url = None
 	if sender == FacebookBackend and "id" in response:
 		url = "http://graph.facebook.com/%s/picture?type=square" % response.get('id')
+	elif sender == google.GoogleOAuth2Backend and "picture" in response:
+		url = response["picture"]
 	else:
 #		url = user.email
 		url = "http://www.gravatar.com/avatar/%s?s=40&d=identicon" % md5_constructor(user.email.strip().lower())
