@@ -65,7 +65,7 @@
 					});
 
 					// When this shape is placed on the board, update the model
-					shape.bind("piece_placed", function (pieceMaster, x, y, flip, rotation) {
+					shape.bind("piece_placed", function (pieceMaster, x, y, flip, rotation, successCallback, errorCallback) {
 						/* FIXME temp turn progression */
 						var colourswitch = {"blue": "yellow", "yellow": "red", "red": "green", "green": "blue"};
 						blokus._exampleGames[1].colour_turn = colourswitch[blokus._exampleGames[1].colour_turn];
@@ -73,9 +73,12 @@
 						// Create the piece in the game model
 						game.getPlayerOfColour(colour).pieces.create(
 								{ master: pieceMaster.url(), x: x, y: y, client_flip: flip, client_rotation: rotation },
-								{ error: function () {
-									blokus.showError(errors.placePiece); }
-
+								{
+									success: function () { successCallback.call(); },
+									error: function () {
+										blokus.showError(errors.placePiece);
+										errorCallback.call();
+									}
 								});
 
 						// Ask for the updated game model
