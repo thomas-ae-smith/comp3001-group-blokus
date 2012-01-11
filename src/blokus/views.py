@@ -10,6 +10,7 @@ from blokus.models import *
 from guest.utils import display_username
 
 from guest.decorators import guest_allowed
+from django.utils.hashcompat import md5_constructor
 
 import logging
 
@@ -87,10 +88,14 @@ def base(request):
 			username = request.POST['username']
 			password = request.POST['password1']
 			user = authenticate(username=username, password=password)
+
+			user.get_profile().profile_image_url = "http://www.gravatar.com/avatar/%s?s=40&d=identicon" % md5_constructor(request.POST['email'].strip().lower())
+			user.get_profile().save()
+
 			login(request, user)
 		else:
 			return render_to_response("game.html", {'form' : form, 'redirect':'register'}, context_instance=RequestContext(request))
-	return render_to_response("game.html", {'form' : form, 'profile_image_url': request.user.social_auth}, context_instance=RequestContext(request))
+	return render_to_response("game.html", {'form' : form}, context_instance=RequestContext(request))
 
 def logout_journey(request):
 	logout(request)

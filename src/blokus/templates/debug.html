@@ -19,7 +19,7 @@
 {% csrf_token %}
 <p>All profiles:
 <table>
-<tr><th>Profile ID</th><th>User ID</th><th>Status</th><th>Spoof Poll</th></tr>
+<tr><th>Profile ID</th><th>User ID</th><th>Status</th><th>Spoof Poll</th><th>profile_image_url</th></tr>
 {% for profile in profiles %}
 <tr><td>{{profile.id}}</td><td>-&gt; {{profile.user.id}}</td>
 
@@ -37,7 +37,9 @@
 
 
 
-<td><a href="{% url blokus.views.spoof_poll profile.user.id%}">spoof</a></td></tr>
+<td><a href="{% url blokus.views.spoof_poll profile.user.id%}">spoof</a></td>
+<td>{{profile.profile_image_url}}</td>
+</tr>
 {%endfor%}
 </table>
 </p>

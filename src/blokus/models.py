@@ -10,7 +10,9 @@ import logging
 
 from social_auth.signals import pre_update
 from social_auth.backends.facebook import FacebookBackend
-from social_auth.backends.google import GoogleBackend
+from social_auth.backends import google
+
+from django.utils.hashcompat import md5_constructor
 
 _colour_regex = r"^(blue|yellow|red|green)$"
 
@@ -111,7 +113,7 @@ class UserProfile(models.Model):
 	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
-	profile_image_url = models.CharField(max_length=255)
+	profile_image_url = models.CharField(max_length=255,default='/static/img/noavatar.jpg')
 
 	def save(self, *args, **kwargs):
 		try:
@@ -333,7 +335,32 @@ def cleanup_game(sender, instance, **kwargs):
 	for move in instance.move_set.all():
 		move.delete()
 
-@receiver(pre_update, sender=FacebookBackend)
+'''
 def facebook_extra_values(sender, user, response, details, **kwargs):
-	user.get_profile().profile_image_url = response.profile_image_url
+	user.get_profile().profile_image_url = "http://graph.facebook.com/%s/picture?type=square" % response.get('id')
+	user.get_profile().save()
 	return True
+pre_update.connect(facebook_extra_values, sender=FacebookBackend)
+
+def google_extra_values(sender, user, response, details, **kwargs):
+#	user.get_profile().profile_image_url = "http://graph.google.com/%s/picture?type=square" % response.get('id')
+	user.get_profile().save()
+	return True
+pre_update.connect(google_extra_values, sender=GoogleBackend)
+'''
+
+def social_extra_values(sender, user, response, details, **kwargs):
+	result = False
+	url = None
+	if sender == FacebookBackend and "id" in response:
+		url = "http://graph.facebook.com/%s/picture?type=square" % response.get('id')
+	else:
+#		url = user.email
+		url = "http://www.gravatar.com/avatar/%s?s=40&d=identicon" % md5_constructor(user.email.strip().lower())
+	if url:
+		user.get_profile().profile_image_url = url
+		user.get_profile().save()
+		result = True
+	return True #result
+
+pre_update.connect(social_extra_values, sender=None)

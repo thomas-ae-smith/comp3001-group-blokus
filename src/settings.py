@@ -35,29 +35,29 @@ STATIC_URL = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.twitter.TwitterBackend',
+#    'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
-    'social_auth.backends.google.GoogleOAuthBackend',
+#   'social_auth.backends.google.GoogleOAuthBackend',
     'social_auth.backends.google.GoogleOAuth2Backend',
     'social_auth.backends.google.GoogleBackend',
-    'social_auth.backends.yahoo.YahooBackend',
-    'social_auth.backends.contrib.linkedin.LinkedinBackend',
-    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
-    'social_auth.backends.contrib.orkut.OrkutBackend',
-    'social_auth.backends.contrib.foursquare.FoursquareBackend',
-    'social_auth.backends.contrib.github.GithubBackend',
-    'social_auth.backends.contrib.dropbox.DropboxBackend',
-    'social_auth.backends.contrib.flickr.FlickrBackend',
-    'social_auth.backends.OpenIDBackend',
+#    'social_auth.backends.yahoo.YahooBackend',
+#    'social_auth.backends.contrib.linkedin.LinkedinBackend',
+#    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+#    'social_auth.backends.contrib.orkut.OrkutBackend',
+#    'social_auth.backends.contrib.foursquare.FoursquareBackend',
+#    'social_auth.backends.contrib.github.GithubBackend',
+#    'social_auth.backends.contrib.dropbox.DropboxBackend',
+#    'social_auth.backends.contrib.flickr.FlickrBackend',
+#    'social_auth.backends.OpenIDBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
 FACEBOOK_APP_ID              = '3418123413'
 FACEBOOK_API_SECRET          = 'bf2d90de3f517b7981b5903508a991d3'
-GOOGLE_CONSUMER_KEY          = 'www.3001blokus.appspot.com'
-GOOGLE_CONSUMER_SECRET       = 'ikaCG3Y2XbODS6WuU0dSXx5s'
-GOOGLE_OAUTH2_CLIENT_ID      = ''
-GOOGLE_OAUTH2_CLIENT_SECRET  = ''
+#GOOGLE_CONSUMER_KEY          = 'www.3001blokus.appspot.com'
+#GOOGLE_CONSUMER_SECRET       = 'ikaCG3Y2XbODS6WuU0dSXx5s'
+GOOGLE_OAUTH2_CLIENT_ID      = '183343476835.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET  = 'uVfErdvGbh1mlfGiVe14LYlG'
 
 #These redirects are all currently set to root, as when they arrive there they will 
 # automatically become a Guest. We may later want to do something more interesting 
@@ -68,8 +68,9 @@ LOGIN_ERROR_URL    = '/'
 
 SOCIAL_AUTH_EXPIRATION = 'expires'
 
-FACEBOOK_EXTRA_DATA = [('profile_image_url', 'profile_image_url')]
-GOOGLE_EXTRA_DATA = [('profile_image_url', 'profile_image_url')]
+GOOGLE_OAUTH_EXTRA_SCOPE = 'https://www.googleapis.com/auth/userinfo.profile'
+#FACEBOOK_EXTRA_DATA = [('id', 'id')]
+#GOOGLE_EXTRA_DATA = [('profile_image_url', 'profile_image_url')]
 
 # The username of a guest user for display purposes.
 GUEST_USER_NAME = 'Guest'
