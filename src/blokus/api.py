@@ -139,15 +139,17 @@ class UserProfileResource(ModelResource):
 
 		#For each player set status to ingame and create their player object
 		colours = ['blue', 'yellow', 'red', 'green']
+		k = 0
 		for i, user_playing in enumerate(users_playing):
 			user_playing_profile = user_playing.get_profile()
 			user_playing_profile.status = 'ingame'
 			object_list[0].status = 'ingame'
 			user_playing_profile.save()
-			for j in xrange(game_attributes[status]['player_count'] % 3):
-				player = Player(game=game,user=user_playing,colour=colours[i])
+			for j in xrange(1 if game_attributes[status]['typeid'] == 2 else 2):
+				player = Player(game=game,user=user_playing,colour=colours[k])
 				player.save()
-
+				k += 1
+		
 		#Return the requested userProfiles object list
 		return object_list
 
@@ -190,10 +192,6 @@ class GameResource(ModelResource):
 	#Every time a user gets a game object of theirs, their player timestamp is updated.
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
-
-			from blokus.models import Game
-			Game.objects.get(id=1).delete()
-
 			games = super(GameResource, self).get_object_list(request)
 			player = request.user.player_set.all()[0]
 			game = player.game
@@ -202,10 +200,12 @@ class GameResource(ModelResource):
 
 			# If a player does not fetch a game model for 60 seconds, they are 
 			# considered disconnected.
-			for otherPlayer in Player.objects.filter(game=game):
+			"""for otherPlayer in Player.objects.filter(game=game):
 				if (datetime.now() - otherPlayer.last_activity).seconds > 60:
+					import sys
+					print >>sys.stderr, "THERE HAS BEEN NO RESPONSE FROM THE USER " + str(otherPlayer.user.id) + " FOR " + str((datetime.now() - otherPlayer.last_activity).seconds) + " SECONDS!"
 					otherPlayer.user.get_profile().status = 'offline'
-					otherPlayer.save()
+					otherPlayer.save()"""
 			return games
 		return Game.objects.none()
 
