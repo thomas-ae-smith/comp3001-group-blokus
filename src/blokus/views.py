@@ -19,12 +19,12 @@ def execute_garbage_collection(request):
 	TIMEOUT_IN_SECONDS = 60 * 15
 
 	# If any game contains a player who has not been seen online in TIMEOUT_IN_SECONDS,
-	# delete the game and all its players.
+	# or contains a null player, delete the game and all its players.
 	removed_game_ids = []
 	removed_player_ids = []
 	for game in Game.objects.all():
 		for player in game.player_set.all():
-			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
+			if (player is None) or (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS):
 				for player_dead in game.player_set.all():
 					removed_player_ids.append(player_dead.id)
 					player_dead.delete()
