@@ -171,8 +171,9 @@
 	        	/* Move panel to left if active player, otherwise right */
 	        	var pos = 1;
 				_(playerPanels).each(function (panel, playerId) {
-					var player = game.players.get(playerId),
+					var player = game.players.get(Number(playerId)),
 						colour = player.get("colour");
+					console.log("Player:", player)
 					// Move the panel
 					if (playerId == activePlayerId) {
 						panel.setPosition(0);
