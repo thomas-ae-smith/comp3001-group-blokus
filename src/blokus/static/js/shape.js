@@ -167,7 +167,7 @@
 			this.changeFlipToScale(0);
 
 			this.isSelected = false;
-			this.canMove = panel.isEnabled;
+			this.canMove = panel.isEnabled && panel.isActive;
 			this.inPanel = true;
 
 			var cenPoint = this.getCenterOfShape();
@@ -182,7 +182,7 @@
 			this.pos = panel.shapePositions[Number(this.pieceMaster.get("id"))];
 
 			this.transform(this.pos.x, this.pos.y, this.curScale.x, this.curScale.y,
-						 panel.isActive() ? cenPoint.x : 0, panel.isActive() ? cenPoint.y : 0, rotation,
+						 panel.isActive ? cenPoint.x : 0, panel.isActive ? cenPoint.y : 0, rotation,
 						 cenPoint.x, cenPoint.y);
 			this.setVisibleCellsOpacity(1, 500);
 		},

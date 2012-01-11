@@ -8,7 +8,7 @@
 		secHandle: undefined,
 		minHandle: undefined,
 		seconds: 0,
-		minutes: -1,
+		minutes: 0,
 
 		initialize: function(){
 			this.center = this.options.center;
@@ -41,8 +41,10 @@
 			this.minHandle = this.paper.path("M "+this.center.x+" "+this.center.y+" L "+to.x+" "+to.y+"z");
 			this.minHandle.attr({stroke:"#fff", "stroke-width": 2})
 			this.seconds += 1;
-			if(this.seconds > 59)
+			if(this.seconds > 59){
 				this.seconds = 0;
+				this.minutes -= 1;
+			}
 			if(this.seconds == 1)
 				this.minutes += 1;
 			if(this.minutes > 59)
