@@ -161,6 +161,7 @@
 			this.haloImgs.push(this.paper.image('/static/img/rotateR.png', 0, 0, 18, 18));
 			this.haloImgs.push(this.paper.image('/static/img/flipV.png', 0, 0, 18, 18));
 			this.haloImgs.push(this.paper.image('/static/img/flipH.png', 0, 0, 18, 18));
+			this.haloImgs.attr("opacity", 0);
 		},
 
 		render: function(){
@@ -733,11 +734,7 @@
 				imgCorArr.push(this.toCoords(cenPoint, 20, 135));//rlImg 
 				imgCorArr.push(this.toCoords(cenPoint, 20, 225));//brImg
 				imgCorArr.push(this.toCoords(cenPoint, 20, 315));//blImg
-				imgCorArr[0].x -= 2;
-				imgCorArr[1].x -= 10;
-				imgCorArr[2].x -= 10;
-				imgCorArr[2].y -= 5;
-				imgCorArr[3].y -= 5;
+				imgCorArr[0].x -= 2; imgCorArr[1].x -= 10; imgCorArr[2].x -= 10; imgCorArr[2].y -= 5; imgCorArr[3].y -= 5;
 				//imgCorArr[1].y += 5;
 				this.haloCircle = this.paper.set();
 				this.haloBCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
