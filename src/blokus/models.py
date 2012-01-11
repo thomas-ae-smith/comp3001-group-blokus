@@ -106,6 +106,7 @@ class UserProfile(models.Model):
 	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
+	is_guest = models.BooleanField(default=False)
 
 	def save(self, *args, **kwargs):
 		try:

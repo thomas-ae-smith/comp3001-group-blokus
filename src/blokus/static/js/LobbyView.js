@@ -20,7 +20,7 @@ blokus.LobbyView = Backbone.View.extend({
 		function renderTemplate () {
 			var name = blokus.user.get("username");
 			var userProfile = blokus.user.get("userprofile");
-			var isGuest = name == "Guest";
+			var isGuest = userProfile.is_guest
 			$(this_.el).html(template({
 				picsrc: "/static/img/noavatar.jpg",
 				name: name,
