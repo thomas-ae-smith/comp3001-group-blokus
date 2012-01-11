@@ -13,9 +13,9 @@
 		blue: '/static/img/blockblue.png',
 		yellow: '/static/img/blockyellow.png'
 	}
-	
+
 	blokus.Shape = Backbone.View.extend({
-		
+
 		/*
 		 *  Variables passed in initialize
 		 *  */
@@ -60,7 +60,7 @@
 		cellsOnGameboard: undefined, // the cells which are on the gameboard
 		dataArr: undefined, // The array of 0 or 1s which define the shape
 		//Position of the shape in the gameboard
-		posInGameboard: {x:undefined, y:undefined}, 
+		posInGameboard: {x:undefined, y:undefined},
 		destCor: {
 			x: undefined,
 			y: undefined
@@ -81,7 +81,7 @@
 		gameboardBBox: {
 			sx: undefined, // start x
 			sy: undefined, // start y
-			width: undefined, 
+			width: undefined,
 			height: undefined,
 			ex: undefined, // end x
 			ey: undefined  // end y
@@ -125,14 +125,14 @@
 			x: 0,
 			y: 0
 		},
-		
+
 		initialize: function(){
 			var this_ = this;
 			this.gameboard = this.options.gameboard;
 			this.paper = this.options.paper;
 			this.colour = colours[this.options.colour];
 			this.pieceMaster = this.options.pieceMaster;
-			
+
 			// initialization
 			this.cells = this.paper.set();
 			this.visibleCells = this.paper.set();
@@ -159,6 +159,9 @@
 			this.haloImgs = this.paper.set();
 			this.haloImgs.push(this.paper.image('/static/img/rotateL.png', 0, 0, 18, 18));
 			this.haloImgs.push(this.paper.image('/static/img/rotateR.png', 0, 0, 18, 18));
+			this.haloImgs.push(this.paper.image('/static/img/flipV.png', 0, 0, 18, 18));
+			this.haloImgs.push(this.paper.image('/static/img/flipH.png', 0, 0, 18, 18));
+			this.haloImgs.attr("opacity", 0);
 		},
 
 		render: function(){
@@ -171,10 +174,9 @@
 
 			this.rotation = 0;
 			this.changeFlipToScale(0);
-			
+
 			this.isSelected = false;
 			this.canMove = panel.isActive();// TODO FIX IT IS BROCKEN //&& panel.options.player.get("user_id") == blokus.user.get("id");
-			console.log(panel.options.player.get("colour"), panel.isActive(),panel.options.player.get("user_id") == blokus.user.get("id"))
 			this.inPanel = true;
 
 			var cenPoint = this.getCenterOfShape();
@@ -192,8 +194,8 @@
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y);
 			this.setVisibleCellsOpacity(1, 500);
-		}, 
-		moveToGameboard: function(x, y, flip, rotation){ 
+		},
+		moveToGameboard: function(x, y, flip, rotation){
 			this.posInGameboard = {x:x, y:y};
 			this.rotation = rotation;
 			this.changeFlipToScale(flip);
@@ -210,14 +212,14 @@
 						 cenPoint.x, cenPoint.y, 500);
 			this.setVisibleCellsOpacity(1, 500);
 		},
-		
+
 		isInPanel: function(){
 			return this.inPanel;
 		},
 		/* END GLOBAL METHODS */
 
 		renderShape: function(){
-			var data = this.pieceMaster.get("data"),
+			var data = this.pieceMaster.get("piece_data"),
 				numRows = data.length,
 				numCols = data[0].length;
 			this.cells.dataArr = _(data).clone();
@@ -323,8 +325,8 @@
 			}
 			else if(this.cells.getBBox(true).x < 132 && this.fullScale){
 				this.curScale = {
-					x: this.curScale.x > 0 ? this.initScale.x : -this.initScale.x, 
-					y: this.curScale.y > 0 ? this.initScale.y : -this.initScale.y  
+					x: this.curScale.x > 0 ? this.initScale.x : -this.initScale.x,
+					y: this.curScale.y > 0 ? this.initScale.y : -this.initScale.y
 				};
 				this.fullScale = false;
 				time = 75;
@@ -512,13 +514,13 @@
 						conflict = true; //Check for conflicting piece
 					}
 				});
-				
+
 				var corOnBoard = this.getCorOnBoard();
 				var validPosition = blokus.utils.valid(corOnBoard);
 				var colour = validPosition ? "#FFFFFF" : "#666666";
 				this.notInPanel = validPosition ? false : true;
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": colour});});
-			} 
+			}
 			else {
 				this.notInPanel = true;
 				this.notInPanel = true;
@@ -699,7 +701,7 @@
 				var this_ = this;
 				this.changeFlipToScale(flipNum);
 				console.log(this.curScale.x, this.curScale.y);
-					
+
 				var cenPoint = this.getCenterOfShape();
 				var x = this.distMoved.x != 0 ? this.distMoved.x : this.pos.x;
 				var y = this.distMoved.y != 0 ? this.distMoved.y : this.pos.y;
@@ -727,18 +729,19 @@
 					i = 0;
 				cenPoint.x += this.pos.x;
 				cenPoint.y += this.pos.y;
-				var imgCorArr = [];  
-				imgCorArr.push(this.toCoords(cenPoint, 20, 45)); // rrImg
-				imgCorArr.push(this.toCoords(cenPoint, 20, 135)); //rlImg 
-				imgCorArr[0].x -= 2;
-				imgCorArr[1].x -= 10;
+				var imgCorArr = [];
+				imgCorArr.push(this.toCoords(cenPoint, 20, 45)); //rrImg
+				imgCorArr.push(this.toCoords(cenPoint, 20, 135));//rlImg 
+				imgCorArr.push(this.toCoords(cenPoint, 20, 225));//brImg
+				imgCorArr.push(this.toCoords(cenPoint, 20, 315));//blImg
+				imgCorArr[0].x -= 2; imgCorArr[1].x -= 10; imgCorArr[2].x -= 10; imgCorArr[2].y -= 5; imgCorArr[3].y -= 5;
 				//imgCorArr[1].y += 5;
 				this.haloCircle = this.paper.set();
 				this.haloBCircle = this.paper.circle(cenPoint.x, cenPoint.y, 35);
 				this.haloBCircle.attr({fill:"#f00", opacity:0});
 				window.c = this;
 				this.haloImgs.forEach(function (img) {
-					img.transform("t"+imgCorArr[i].x+" "+imgCorArr[i].y); 
+					img.transform("t"+imgCorArr[i].x+" "+imgCorArr[i].y);
 					i++;
 				});
 				this.haloCircle.push(this.paper.path(this.arc(cenPoint, 25, 0, 89)));
@@ -761,32 +764,35 @@
 						console.log("Rotate Right");
 					}
 				};
-				this.haloCircle[0].click(rotLeftFunc);
-				this.haloImgs[0].click(rotLeftFunc);
-				this.haloCircle[1].click(rotRightFunc);
-				this.haloImgs[1].click(rotRightFunc);
-				this.haloCircle[2].click(function(){
+				var flipVFunc = function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
 						this_.flip(2);
 						this_.isSelected = false;
 						console.log("Flip Vertical");
 					}
-				});
-				this.haloCircle[3].click(function(){
+				};
+				var flipHFunc = function(){
 					if(this_.haloOn){
 						this_.isSelected = true;
 						this_.flip(1);
 						this_.isSelected = false;
 						console.log("Flip Horizantal");
 					}
-				});
+				}
+				this.haloCircle[0].click(rotLeftFunc);
+				this.haloImgs[0].click(rotLeftFunc);
+				this.haloCircle[1].click(rotRightFunc);
+				this.haloImgs[1].click(rotRightFunc);
+				this.haloCircle[2].click(flipVFunc);
+				this.haloImgs[2].click(flipVFunc);
+				this.haloCircle[3].click(flipHFunc);
+				this.haloImgs[3].click(flipHFunc);
 				this.haloCircle.attr({stroke:"#ddd", "stroke-width": 14, opacity: 0});
 				this.haloCircle.animate({opacity: 0.3}, 0);
 				this.haloCircle.mouseover( function(){
 						this_.haloOn = true;
-					}
-				);
+				});
 				this.haloImgs.scale(0.6, 0.6, 0, 0);
 			}
 			this.haloCircle.animate({opacity: 0.3}, 500);
@@ -810,10 +816,10 @@
 				this.haloImgs.toBack();
 				this.haloOn = false;
 				setTimeout(function (){this_.haloCircle.toBack()}, 501);
-				
+
 			}
 		},
-		
+
 		arc: function(center, radius, startAngle, endAngle) {
 			var angle = startAngle;
 			var coords = this.toCoords(center, radius, angle);
@@ -862,7 +868,7 @@
 								s.haloBCircle.toBack();
 								i++;
 							});
-							blokus.haloArr.clean(undefined);	
+							blokus.haloArr.clean(undefined);
 						}
 					}
 				}
@@ -879,7 +885,7 @@
 							blokus.haloArr[i] = undefined;
 							i++;
 						});
-						blokus.haloArr.clean(undefined);	
+						blokus.haloArr.clean(undefined);
 					}
 					else {
 						if(this_.notInPanel){

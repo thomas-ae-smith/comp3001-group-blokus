@@ -19,12 +19,13 @@
 		render: function () {
 			var $el = $(this.el),
 				player = this.options.player,
-				template = _.template($('#player-panel-template').html());
+				template = blokus.getTemplate("player-panel");
 
+			var profile = player.user.get("userprofile");
 			$el.html(template({
 				name: player.user.get("username"),
 				pic: "/static/img/noavatar.jpg",
-				stats: "wins: 0 losses: 0"
+				stats: profile != null ? "wins: " + profile.wins + " losses: " + profile.losses : ""
 			}));
 
 			return this;

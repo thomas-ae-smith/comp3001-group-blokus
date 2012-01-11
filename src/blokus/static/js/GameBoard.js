@@ -43,25 +43,6 @@
 				this.grid[x] = row;
 			}
 			return this;
-		},
-
-		renderPieces: function (colour, pieces) {
-			var this_ = this;
-			pieces.each(function (piece) {
-				this_.renderPiece(colour, piece);
-			});
-		},
-
-		renderPiece: function (colour, piece) {
-			var gameview = this.options.gameview,
-				cellSize = this.options.cellSize,
-				offset = this.offset,
-				x = offset.x + piece.get("x") * cellSize,
-				y = offset.y + piece.get("y") * cellSize,
-				pieceMaster = blokus.pieceMasters.get(piece.get("master_id"));
-
-			gameview.drawPiece(x, y, piece, colour, 1, 1, false);
-			add_piece_to_validation_grid(piece, colour)
 		}
 	});
 }(jQuery, _, Backbone, blokus));

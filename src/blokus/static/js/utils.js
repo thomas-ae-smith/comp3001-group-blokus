@@ -117,7 +117,7 @@ blokus.utils = (function ($, _, Backbone) {
 	//Given a piece populate the validation grid with the piece information for the given colour.
 	var add_piece_to_validation_grid = function (piece, colour) {
 		var	pieceMaster = blokus.pieceMasters.get(piece.get("master_id")),
-			tmpData = pieceMaster.get("data"),
+			tmpData = pieceMaster.get("piece_data"),
 			numRows = tmpData.length,
 			numCols = tmpData[0].length;
 
