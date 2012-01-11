@@ -101,7 +101,7 @@ class UserProfile(models.Model):
 		('private_4','In private lobby'),
 	)
 
-	private_queue = models.IntegerField(default=0)
+	private_hash = models.CharField(max_length=255,null=True)
 	user = models.OneToOneField(User)
 	status = models.CharField(max_length=255,choices=status_choices,default='offline')
 	wins = models.IntegerField(default=0)
@@ -113,9 +113,9 @@ class UserProfile(models.Model):
 				oldRecord = UserProfile.objects.get(id=self.id)
 				if (oldRecord.status != self.status) or (self.status == 'offline'):
 					self.user.player_set.all().delete()
-					self.user.get_profile().private_queue = None
+					self.user.get_profile().private_hash = None
 				if self.status not in set(['private_2', 'private_4']):
-					self.user.get_profile().private_queue = None
+					self.user.get_profile().private_hash = None
 		except UserProfile.DoesNotExist:
 			pass
 
