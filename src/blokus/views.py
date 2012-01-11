@@ -24,7 +24,7 @@ def execute_garbage_collection(request):
 	removed_player_ids = []
 	for game in Game.objects.all():
 		for player in game.player_set.all():
-			if (player is None) or (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS):
+			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS):
 				for player_dead in game.player_set.all():
 					removed_player_ids.append(player_dead.id)
 					player_dead.delete()
