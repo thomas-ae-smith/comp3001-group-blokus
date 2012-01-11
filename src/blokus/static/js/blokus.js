@@ -57,10 +57,16 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		blokus.router = new (Backbone.Router.extend({		// Make a new router, which binds hash-urls to events. Each hash-url should load a view.
 			routes: {
 				"": "lobby",								// When there is no hash url
+				"lobby/:hash": "privatelobby",
 				"game/:id": "game",
 				"register": "register"
 			},
 			lobby: function () { switchToView(new blokus.LobbyView()); },
+			privatelobby: function(hash) { 
+				var lobbyView = new blokus.LobbyView();
+				switchToView(lobbyView); 
+				lobbyView.handlehash(hash);
+			}, 
 			game: function (id) { switchToView(new blokus.GameView({ id: id })); },
 			register: function () { switchToView(new blokus.RegisterView()); }
 		}))();

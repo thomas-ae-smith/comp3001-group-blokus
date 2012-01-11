@@ -12,6 +12,14 @@ blokus.LobbyView = Backbone.View.extend({
         this.bind("close", function () { clearTimeout(poller); }); // Remove poller timeout when lobbyview is closed
     },
 
+    handlehash: function (hash) {
+        dfd = blokus.userProfile.save({ private_hash: hash },{ success: function () {
+             blokus.showError(blokus.userProfile.get('private_hash'));
+        }, error: function () {
+             blokus.showError("Failed to set userprofile hash");  
+        }});     
+    },
+
 	render: function () {
 		var this_ = this,
 			template = blokus.getTemplate("lobby"),
@@ -91,6 +99,7 @@ blokus.LobbyView = Backbone.View.extend({
                 dfd = blokus.userProfile.save({ status: "private_4" }, options);
             }
             dfd.then(function () {
+                this_.pollUser = true;
                 game = new blokus.Game({ id: blokus.userProfile.get("gameid") });
                 game.fetch({ success: function () {
                     this_.$("#privatelobby .p" + type).addClass("sel").siblings().removeClass("sel");

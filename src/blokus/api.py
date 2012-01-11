@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from guest.utils import display_username
 import logging
 import random
+import md5
 
 #Can only view own user/userprofile object and others you are playing with
 class AccountAuthorization(Authorization):
@@ -102,9 +103,10 @@ class UserProfileResource(ModelResource):
 		current_userprofile = object_list[0]
 		status = current_userprofile.status
 
-		#If setting status we dont try and make matches
+		#If setting status or not polling own profiles we dont try and make matches
 		if status in ['offline','ingame'] or request.method != 'GET' or request.user.id != current_userprofile.user.id:
 			return object_list
+
 
 		# Game Attributes: <status>:(<typeID>,<playerCount>)
 		# Must be added to if a new game type is introduced.
@@ -117,14 +119,22 @@ class UserProfileResource(ModelResource):
 
 		if status == 'looking_for_any':
 			status = ['looking_for_2','looking_for_4'][random.randint(0,1)]
-			current_userprofile.status = status
-			current_userprofile.save()
 
 		#Possible set of users to match against
-		possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
-		logging.debug(possible_users)
+		if status[:7] == 'private':
+			if current_userprofile.private_hash is None:
+				m = md5.new()
+				m.update(str(current_userprofile.id))
+				current_userprofile.private_hash = m.hexdigest()
+			possible_users = UserProfile.objects.filter(status=status,private_hash=current_userprofile.private_hash).exclude(id=current_userprofile.id)
+		else:
+			possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
+		
 		if len(possible_users) < game_attributes[status]['player_count'] - 1:
 			return object_list
+
+		current_userprofile.status = status
+		current_userprofile.save()
 
 		#Users to play include yourself
 		users_playing = [request.user]
