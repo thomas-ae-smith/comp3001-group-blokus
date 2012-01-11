@@ -168,7 +168,7 @@ class Piece(models.Model):
 	x = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 	y = models.PositiveIntegerField(validators=[MaxValueValidator(20)],null=True, default=0)
 
-	rotate = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
+	rotation = models.PositiveIntegerField(validators=[MaxValueValidator(3)], default=0)
 	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
@@ -239,9 +239,9 @@ class Piece(models.Model):
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotate and transpose.
 		if self.flip:
-			return transpose_bitmap(rotate_bitmap(bitmap, self.rotate))
+			return transpose_bitmap(rotate_bitmap(bitmap, self.rotation))
 		else:
-			return rotate_bitmap(bitmap, self.rotate)
+			return rotate_bitmap(bitmap, self.rotation)
 
 	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
 		self.rotate(not(bool(self.flip) ^ bool(horizontal)))
@@ -249,37 +249,9 @@ class Piece(models.Model):
 
 	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
 		if (clockwise):
-			self.rotate = (self.rotate + 1) % 4
+			self.rotation = (self.rotation + 1) % 4
 		else:
-			self.rotate = (self.rotate - 1) % 4
-
-	# Mapping between the way the orientation is stored on the server (rot and
-	# trans), and the way it is stored at the client (rot, v-flip and h-flip).
-	# (<rot>, <trans>):(<rot>, <flip>)
-	server_client_mapping = {
-		(0,False):(0,0),
-		(1,False):(1,0),
-		(2,False):(2,0),
-		(3,False):(3,0),
-		(0,True):(3,1),
-		(1,True):(2,1),
-		(2,True):(1,1),
-		(3,True):(0,1)
-	}
-
-	def get_client_flip(self):
-		return self.server_client_mapping[(self.rotate,self.flip)][1]
-
-	def get_client_rotate(self):
-		return self.server_client_mapping[(self.rotate,self.flip)][0]
-
-	def get_server_flip(self, rotate, flip):
-		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
-		return client_server_mapping[(rotate,flip)][1]
-
-	def get_server_rotate(self, rotate, flip):
-		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
-		return client_server_mapping[(rotate,flip)][0]
+			self.rotation = (self.rotation - 1) % 4
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)

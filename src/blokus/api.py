@@ -293,9 +293,82 @@ class PieceValidation(Validation):
             return {'__all__': 'Not quite what I had in mind.'}
         return {}
 
+#This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
+#Coversion is done here.
+class PieceJSONSerializer(Serializer):
+	# Mapping between the way the orientation is stored on the server (rot and
+	# trans), and the way it is stored at the client (rot, v-flip and h-flip).
+	# (<rot>, <trans>):(<rot>, <flip>)
+	server_client_mapping = {
+		(0,False):(0,0),
+		(1,False):(1,0),
+		(2,False):(2,0),
+		(3,False):(3,0),
+		(0,True):(3,1),
+		(1,True):(2,1),
+		(2,True):(1,1),
+		(3,True):(0,1)
+	}
+
+	def get_client_flip(self, rotation, flip):
+		return self.server_client_mapping[(rotation,flip)][1]
+
+	def get_client_rotation(self, rotation, flip):
+		return self.server_client_mapping[(rotation,flip)][0]
+
+	def get_server_flip(self, rotation, flip):
+		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
+		return client_server_mapping[(rotation,flip)][1]
+
+	def get_server_rotation(self, rotation, flip):
+		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
+		return client_server_mapping[(rotation,flip)][0]
+
+	def to_json(self, data, options=None):
+		options = options or {}
+		data = self.to_simple(data, options)
+
+		import sys
+		print >>sys.stderr, repr(data)
+
+		if data.get('objects') is not None:
+			for i, piece in enumerate(data.get('objects')):
+				data['objects'][i]['flip'] = self.get_client_flip(data['objects'][i]['rotation'], data['objects'][i]['flip'])
+				data['objects'][i]['rotation'] = self.get_client_rotation(data['objects'][i]['rotation'], data['objects'][i]['flip'])
+		else:
+			data['flip'] = self.get_client_flip(data['rotation'], data['flip'])
+			data['rotation'] = self.get_client_rotation(data['rotation'], data['flip'])
+
+		return simplejson.dumps(data, cls=json.DjangoJSONEncoder, sort_keys=True)
+
+	def from_json(self, content):
+		data = simplejson.loads(content)
+
+		if data.get('objects') is not None:
+			for i, piece in enumerate(data.get('objects')):
+				data['objects'][i]['flip'] = self.get_server_flip(data['objects'][i]['rotation'], data['objects'][i]['flip'])
+				data['objects'][i]['rotation'] = self.get_server_rotation(data['objects'][i]['rotation'], data['objects'][i]['flip'])
+		else:
+			data['flip'] = self.get_server_flip(data['rotation'], data['flip'])
+			data['rotation'] = self.get_server_rotation(data['rotation'], data['flip'])
+
+		return data
+
+
 class PieceResource(ModelResource):
 	master = fields.ForeignKey(PieceMasterResource, 'master')
 	player = fields.ForeignKey(PlayerResource, 'player')
+
+	server_client_mapping = {
+		(0,False):(0,0),
+		(1,False):(1,0),
+		(2,False):(2,0),
+		(3,False):(3,0),
+		(0,True):(3,1),
+		(1,True):(2,1),
+		(2,True):(1,1),
+		(3,True):(0,1)
+	}
 
 	class Meta:
 		queryset = Piece.objects.all()
@@ -305,14 +378,32 @@ class PieceResource(ModelResource):
 		detail_allowed_methods = []
 		validation = PieceValidation()
 		authorization = Authorization()
+		#serializer = PieceJSONSerializer()
+
+	def get_client_flip(self, rotation, flip):
+		return self.server_client_mapping[(rotation,flip)][1]
+
+	def get_client_rotation(self, rotation, flip):
+		return self.server_client_mapping[(rotation,flip)][0]
+
+	def get_server_flip(self, rotation, flip):
+		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
+		return client_server_mapping[(rotation,flip)][1]
+
+	def get_server_rotation(self, rotation, flip):
+		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
+		return client_server_mapping[(rotation,flip)][0]
 
 	def dehydrate(self, bundle):
-		import sys
-		bundle.data['rotate'] = bundle.obj.get_client_rotate()
-		bundle.data['flip'] = bundle.obj.get_client_flip()
+		bundle.data['rotation'] = bundle.obj.get_client_rotation(bundle.data['rotation'], bundle.data['flip'])
+		bundle.data['flip'] = bundle.obj.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
 		return bundle
 
 	def hydrate(self, bundle):
-		bundle.data['rotate'] = bundle.obj.get_server_rotate(bundle.data['rotate'], bundle.data['flip'])
-		bundle.data['flip'] = bundle.obj.get_server_flip(bundle.data['rotate'], bundle.data['flip'])
+		import models.PieceMaster
+		bundle.data['master'] = models.PieceMaster.objects.get(id=bundle.data['master'])	#HACK HACK HACK!!! Client returns master **ID**
+		bundle.data['rotation'] = self.get_server_rotation(bundle.data['rotation'], bundle.data['flip'])
+		bundle.data['flip'] = self.get_server_flip(bundle.data['rotation'], bundle.data['flip'])
+		import sys
+		print >>sys.stderr, "Bundle: " + repr(bundle)
 		return bundle
