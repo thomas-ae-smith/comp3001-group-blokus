@@ -72,7 +72,7 @@
 
 						// Create the piece in the game model
 						game.getPlayerOfColour(colour).pieces.create(
-								{ master: pieceMaster.url(), x: x, y: y, client_flip: flip, client_rotation: rotation },
+								{ master: pieceMaster.url(), x: x, y: y, client_flip: flip, client_rotate: rotation },
 								{
 									success: function () { successCallback.call(); },
 									error: function () {
@@ -204,7 +204,7 @@
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = piece.get("master_id");
 	        			// Move the piece onto the game board at specified location
-	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("client_flip"), piece.get("client_rotation"));
+	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("client_flip"), piece.get("client_rotate"));
 	        		});
 	        	});
 	        }
