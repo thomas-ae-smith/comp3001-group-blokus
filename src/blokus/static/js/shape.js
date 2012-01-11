@@ -548,6 +548,7 @@
 
 		returnToPanel: function (){
 			this.isSelected = false;
+			this.fullScale = false;
 			var cenPoint = this.getCenterOfShape();
 			if (this.cellsOnGameboard != undefined)
 				this.cellsOnGameboard.forEach(function (c) {c.attr({"fill": "#GGG"})});
