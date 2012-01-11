@@ -1,4 +1,4 @@
-(function ($, _, Backbone, blokus) {
+(function ($, _, Backbone, blokus, Raphael) {
 	"use strict";
 
 	// Prepends a 0 onto a number that is less that 10. Eg 9 becomes 09.
@@ -252,4 +252,4 @@
 		}
 
 	});
-}(jQuery, _, Backbone, blokus));
+}(jQuery, _, Backbone, blokus, Raphael));
