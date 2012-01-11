@@ -219,6 +219,7 @@
 		/* END GLOBAL METHODS */
 
 		renderShape: function(){
+			console.log(this.options.pieceMaster)
 			var data = this.pieceMaster.get("piece_data"),
 				numRows = data.length,
 				numCols = data[0].length;
@@ -881,7 +882,7 @@
 								_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
 								//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
 								this_.inPanel = false;
-								this_.trigger("piece_placed", this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
+								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation());
 							}
 						}
 					}
