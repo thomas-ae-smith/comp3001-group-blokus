@@ -126,8 +126,10 @@
 				_(game.players.models).each(function (player) {
 					var user = player.user = new blokus.User({ id: player.getId() }),
 						d = new $.Deferred();
+					console.log("created user:", user)
 					dfds.push(d);
 					user.fetch({ success: function () {
+						console.log("fetched user:", user)
 						d.resolve();
 					}, error: function () {
 						d.resolve();

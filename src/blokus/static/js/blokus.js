@@ -77,10 +77,11 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		});
 
 		$(window).bind('beforeunload', function(){
-			blokus.userProfile.set({status: "offline"});
-			blokus.userProfile.save();
-			if (blokus.userProfile.get("game_id") != null) {
-				return "Leaving this page will terminate the game."
+			if (blokus.userProfile.get("game_id") == null) {
+				blokus.userProfile.set({status: "offline"});
+				blokus.userProfile.save();
+			} else {
+				return "Are you sure you wish to quit."
 			}
 		});
 
