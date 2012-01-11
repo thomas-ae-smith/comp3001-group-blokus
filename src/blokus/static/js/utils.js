@@ -48,27 +48,27 @@ blokus.utils = (function ($, _, Backbone) {
 			blockWidth = w / 6;
 			blockHeight = h / 38;
 
-			pieceLocations[1] = {x: Math.floor(Number(x) + (blockWidth * 2)), y: Math.floor(Number(y) + (blockHeight * 6))};
-			pieceLocations[2] = {x: Math.floor(Number(x) + (blockWidth * 2)), y: Math.floor(Number(y) + (blockHeight * 3))};
-			pieceLocations[3] = {x: Math.floor(Number(x) + (blockWidth * 0)), y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[1] = {x: Math.floor(Number(x) + (blockWidth * 2.5)), y: Math.floor(Number(y) + (blockHeight * 27))};
+			pieceLocations[2] = {x: Math.floor(Number(x) + (blockWidth * 3)), y: Math.floor(Number(y) + (blockHeight * 4.5))};
+			pieceLocations[3] = {x: Math.floor(Number(x) + (blockWidth * 4.5)), y: Math.floor(Number(y) + (blockHeight * 1))};
 			pieceLocations[20] = {x: Math.floor(Number(x) + (blockWidth * 0)), y: Math.floor(Number(y) + (blockHeight * 11))};
 			pieceLocations[4] = {x: Math.floor(Number(x) + (blockWidth * 4)), y: Math.floor(Number(y) + (blockHeight * 34))};
-			pieceLocations[5] = {x: Math.floor(Number(x) + (blockWidth * 0)), y: Math.floor(Number(y) + (blockHeight * 6))};
-			pieceLocations[6] = {x: Math.floor(Number(x) + (blockWidth * 4)), y: Math.floor(Number(y) + (blockHeight * 1))};
-			pieceLocations[7] = {x: Math.floor(Number(x) + (blockWidth * 2)), y: Math.floor(Number(y) + (blockHeight * 8))};
-			pieceLocations[8] = {x: Math.floor(Number(x) + (blockWidth * 0)), y: Math.floor(Number(y) + (blockHeight * 15))};
-			pieceLocations[9] = {x: Math.floor(Number(x) + (blockWidth * 1)), y: Math.floor(Number(y) + (blockHeight * 0))};
-			pieceLocations[10] = {x: Math.floor(Number(x) + (blockWidth * 0)), y: Math.floor(Number(y) + (blockHeight * 18))};
+			pieceLocations[5] = {x: Math.floor(Number(x) + (blockWidth * 3)), y: Math.floor(Number(y) + (blockHeight * 8))};
+			pieceLocations[6] = {x: Math.floor(Number(x) + (blockWidth * 0.5)), y: Math.floor(Number(y) + (blockHeight * 2))};
+			pieceLocations[7] = {x: Math.floor(Number(x) + (blockWidth * 0.5)), y: Math.floor(Number(y) + (blockHeight * 6))};
+			pieceLocations[8] = {x: Math.floor(Number(x) + (blockWidth * 4)), y: Math.floor(Number(y) + (blockHeight * 29.5))};
+			pieceLocations[9] = {x: Math.floor(Number(x) + (blockWidth * 1.5)), y: Math.floor(Number(y) + (blockHeight * 0))};
+			pieceLocations[10] = {x: Math.floor(Number(x) + (blockWidth * 4.2)), y: Math.floor(Number(y) + (blockHeight * 18))};
 			pieceLocations[11] = {x: Math.floor(Number(x) + (blockWidth * 4)), y: Math.floor(Number(y) + (blockHeight * 9))};
-			pieceLocations[12] = {x: Math.floor(Number(x) + (blockWidth * 0)), y: Math.floor(Number(y) + (blockHeight * 28))};
+			pieceLocations[12] = {x: Math.floor(Number(x) + (blockWidth * 2)), y: Math.floor(Number(y) + (blockHeight * 29))};
 			pieceLocations[13] = {x: Math.floor(Number(x) + (blockWidth * 4)), y: Math.floor(Number(y) + (blockHeight * 25))};
 			pieceLocations[14] = {x: Math.floor(Number(x) + (blockWidth * 4)), y: Math.floor(Number(y) + (blockHeight * 5))};
 			pieceLocations[21] = {x: Math.floor(Number(x) + (blockWidth * 0)), y: Math.floor(Number(y) + (blockHeight * 24))};
-			pieceLocations[15] = {x: Math.floor(Number(x) + (blockWidth * 3)), y: Math.floor(Number(y) + (blockHeight * 29))};
-			pieceLocations[16] = {x: Math.floor(Number(x) + (blockWidth * 2)), y: Math.floor(Number(y) + (blockHeight * 17))};
+			pieceLocations[15] = {x: Math.floor(Number(x) + (blockWidth * 0.5)), y: Math.floor(Number(y) + (blockHeight * 28))};
+			pieceLocations[16] = {x: Math.floor(Number(x) + (blockWidth * 0.5)), y: Math.floor(Number(y) + (blockHeight * 16.5))};
 			pieceLocations[17] = {x: Math.floor(Number(x) + (blockWidth * 0)), y: Math.floor(Number(y) + (blockHeight * 33))};
-			pieceLocations[18] = {x: Math.floor(Number(x) + (blockWidth * 3)), y: Math.floor(Number(y) + (blockHeight * 14))};
-			pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 2)), y: Math.floor(Number(y) + (blockHeight * 21))};
+			pieceLocations[18] = {x: Math.floor(Number(x) + (blockWidth * 2)), y: Math.floor(Number(y) + (blockHeight * 14.5))};
+			pieceLocations[19] = {x: Math.floor(Number(x) + (blockWidth * 1)), y: Math.floor(Number(y) + (blockHeight * 21))};
 		}
 		return pieceLocations;
 	}
