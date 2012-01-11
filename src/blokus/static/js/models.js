@@ -12,7 +12,7 @@
         }
 	});
 
-	var User = Model.extend({ 
+	var User = Model.extend({
 			resourceUrl: blokus.urls.user,
 
 			// FIXME: Hacked in bootstrap, baby
@@ -102,9 +102,8 @@
 		PieceMaster = Model.extend({
 			resourceUrl: blokus.urls.pieceMaster,
 
-			parse: function (model) { // TODO: remove
+			parse: function (model) {
 				model.id = Number(model.id);
-				model.data = model.piece_data;
 				return model;
 			}
 		}),

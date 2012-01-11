@@ -216,7 +216,7 @@
 		/* END GLOBAL METHODS */
 
 		renderShape: function(){
-			var data = this.pieceMaster.get("data"),
+			var data = this.pieceMaster.get("piece_data"),
 				numRows = data.length,
 				numCols = data[0].length;
 			this.cells.dataArr = _(data).clone();

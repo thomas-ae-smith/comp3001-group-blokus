@@ -1,6 +1,5 @@
 (function ($, _, Backbone, blokus) {
 	"use strict";
-	var cellSize = 22;
 
 	// Prepends a 0 onto a number that is less that 10. Eg 9 becomes 09.
 	function prepend0 (i) {
@@ -37,10 +36,7 @@
 			var paper = Raphael(this.el, 800, 660);		// Make the Raphael element 800 x 600 in this view
 
 			/* Render game board */
-			var gameboard = new blokus.GameBoard({
-				paper: paper,
-				cellSize: cellSize,
-			}).render();
+			var gameboard = new blokus.GameBoard({ paper: paper, cellSize: 22 }).render();
 
 			// Append to view
 			$(this.el).append(gameboard.el);
@@ -172,6 +168,7 @@
 				_(playerPanels).each(function (panel, playerId) {
 					var player = game.players.get(playerId),
 						colour = player.get("colour");
+					// Move the panel
 					if (playerId == activePlayerId) {
 						panel.setPosition(0);
 					} else {
@@ -210,16 +207,19 @@
 	        function handleWinners (game, winningColours) {
 	        	if (!winningColours) return;
 	        	var colours = winningColours.split("|");
-	        	console.log("TODO Player wins: ", colours);
+	        	console.log("TODO Player wins: ", colours);  // TODO
 	        }
 
+	        /* Setting up view */
+	        // Fetch the game
 			game.fetch({ success: init, error: function () { blokus.showError(errors.fetchGame); } });
+			// Bind handlers
 			game.bind("change:colour_turn", handleTurn);
 	        game.bind("change:number_of_moves", handlePlacedPieces);
 	        game.bind("change:winning_colours", handleWinners);
 	        game.bind("change:time_now", function (game, timeNow) { updateDuration(timeNow); });
 
-
+	        /* Make help screen function */
 			this_.$(".game-help").click(function () {
 				if (this_.help == true) {
 					$("#helpscreen").slideUp();
@@ -235,6 +235,7 @@
 				this_.help = false;
 			});
 
+			/* Handle closing the game */
 			this_.$(".game-exit").click(function () {
 				if (confirm("Are you sure you want to quit the game?")) {
 					location.hash = "";
@@ -243,6 +244,7 @@
 
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
+			/* Indicate the url of this game */
 			this_.$(".uri").html(game.get("uri"));
 
 			window.gameview = this; // FIXME
