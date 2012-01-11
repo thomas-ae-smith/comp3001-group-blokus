@@ -15,7 +15,6 @@ class Game(models.Model):
 	game_type = models.IntegerField()
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
-	uri = models.CharField(max_length=56)
 	winning_colours = models.CharField(max_length=18, validators=[RegexValidator(regex=r"^((blue|yellow|red|green)(\|(blue|yellow|red|green))*)?$")])
 
 	def get_grid(self, limit_to_player=None):
@@ -68,11 +67,6 @@ class Game(models.Model):
 			profile = player.user.get_profile()
 			profile.losses += 1
 			profile.save()
-
-	def get_uri(self):
-		#md5Obj = hashlib.md5()
-		#md5Obj.update(self.player_set)
-		pass
 
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
@@ -319,7 +313,6 @@ def record_move(sender, instance, **kwargs):
 	instance.player.game.save()
 	instance.player.save()
 	move.save()
-	print kwargs
 
 # If a game is deleted, remove all hanging moves, pieces and players
 # associated with the game.
