@@ -90,7 +90,7 @@ def base(request):
 			login(request, user)
 		else:
 			return render_to_response("game.html", {'form' : form, 'redirect':'register'}, context_instance=RequestContext(request))
-	return render_to_response("game.html", {'form' : form}, context_instance=RequestContext(request))
+	return render_to_response("game.html", {'form' : form, 'profile_image_url': request.user.social_auth}, context_instance=RequestContext(request))
 
 def logout_journey(request):
 	logout(request)
