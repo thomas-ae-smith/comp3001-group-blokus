@@ -251,7 +251,7 @@ class Piece(models.Model):
 		return (
 			self.placed_in_corner(bitmap) or
 			self.is_inside_grid(bitmap) and
-			self.does_not_overlap(bitmap) and
+			self.does_not_overlap(bitmap) #and
 		#	self.is_only_adjacent(bitmap)
 			)
 

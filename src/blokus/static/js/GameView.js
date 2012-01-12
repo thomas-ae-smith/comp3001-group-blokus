@@ -93,20 +93,32 @@
 			var polling = true,
 				fetchFailedCount = 0,
 				waiting = false,
+				lastMove = 0,
 				// Fetch game model every few seconds to determined player turn, duration, winner etc
 				poll = function () {
-					if (polling && !waiting) {
-						waiting = true;
-						game.fetch({
-							success: function () {
+					if (polling) {
+						$.ajax({
+							url: "/get_move/" + game.get("id") + "/",
+							success: function (ret) {
+								var moveNumber = Number(ret);
 								fetchFailedCount = 0;
-								waiting = false;
+								if (moveNumber != lastMove && !waiting) {
+									waiting = true;
+									game.fetch({
+										success: function () {
+											waiting = false;
+											lastMove = moveNumber;
+										},
+										error: function () {
+											waiting = false;
+										}
+									})
+								}
 							},
 							error: function () {
 								if (fetchFailedCount > 3) blokus.showError(errors.fetchGame);
-								waiting = false;
 							}
-						}).always(function () { setTimeout(poll, 2000); }); // Call this function 2 seconds after fetch succeeded/failed
+						}).always(function () { setTimeout(poll, 1000); }); // Call this function 2 seconds after fetch succeeded/failed;
 					}
 				};
 
