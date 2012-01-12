@@ -282,10 +282,11 @@ class Move(models.Model):
 ############
 @receiver(post_save, sender=Move)
 def update_player_can_move(sender, instance, created, **kwargs):
-	players = instance.piece.player.game.player_set.all()
-	for player in players:
-		player.can_move = player.is_able_to_move()
-		player.save()
+	game = instance.piece.player.game
+	colour = game.get_next_colour_turn()
+	player = game.player_set.get(colour=colour)
+	player.can_move = player.is_able_to_move()
+	player.save()
 
 # If a Player object is created for a user with existing Player objects,
 # and the new object is attached to a different game to the old object(s),
