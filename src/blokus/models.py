@@ -200,15 +200,17 @@ class Piece(models.Model):
 
 	# Return TRUE if placing the piece would result in a square being placed in a corner of the board, otherwise false.
 	def placed_in_corner(self, bitmap):
-		height = len(bitmap)
-		width = len(bitmap[0])
+		height = len(bitmap) - 1
+		width = len(bitmap[0]) - 1
+		import sys
+		print >>sys.stderr, "Bitmap: " + repr(bitmap) + ", x: " + repr(self.x) + ", y: " + repr(self.y) + ", width: " + repr(width) + ", height: " + repr(height)
 		if self.x == 0 and self.y == 0:
 			return bitmap[0][0]
 		elif self.x + width == 19 and self.y == 0:
 			return bitmap[0][width]
-		elif self.x + width == 0 and self.y == 19:
+		elif self.x == 0 and self.y + width == 19:
 			return bitmap[height][0]
-		elif self.x + width == 19 and self.y == 19:
+		elif self.x + width == 19 and self.y + width == 19:
 			return bitmap[height][width]
 
 	def is_inside_grid(self, bitmap):
@@ -251,8 +253,8 @@ class Piece(models.Model):
 		return (
 			self.placed_in_corner(bitmap) or
 			self.is_inside_grid(bitmap) and
-			self.does_not_overlap(bitmap) #and
-		#	self.is_only_adjacent(bitmap)
+			self.does_not_overlap(bitmap) and
+			self.is_only_adjacent(bitmap)
 			)
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.

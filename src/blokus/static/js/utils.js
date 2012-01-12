@@ -2,7 +2,7 @@ blokus.utils = (function ($, _, Backbone) {
 	'use strict';
 
 	var pieceLocations = {},
-		use_validation = true, //Added for debugging the server. FIXME
+		use_validation = false, //Added for debugging the server. FIXME
 		blockWidth = 0,
 		blockHeight = 0;
 
