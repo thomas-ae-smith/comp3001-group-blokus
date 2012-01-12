@@ -211,7 +211,6 @@
 			//_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
 			var rdata = this.rotateMatrix(this.dataArr, this.getRotation());
 			var transData = this.flipMatrix(rdata, this.flipNum);
-			console.log(transData, this.dataArr, this.flipNum, this.rotation, this.colour, this.curScale.x, this.curScale.y, flip);
 			blokus.utils.add_piece_to_validation_grid(transData, this.posInGameboard.x, this.posInGameboard.y, this.colour);
 		},
 
@@ -882,7 +881,6 @@
 							if(validPosition){
 								this_.isSelected = false;
 								this_.goToPos();
-								console.log("r", this_.getRotation())
 								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation(),
 									function () { // success
 										// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR

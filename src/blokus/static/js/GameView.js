@@ -138,10 +138,8 @@
 				_(game.players.models).each(function (player) {
 					var user = player.user = new blokus.User({ id: player.getId() }),
 						d = new $.Deferred();
-					console.log("created user:", user)
 					dfds.push(d);
 					user.fetch({ success: function () {
-						console.log("fetched user:", user)
 						d.resolve();
 					}, error: function () {
 						d.resolve();
@@ -151,7 +149,6 @@
 
 				/* When all users are fetched */
 				$.when.apply(undefined, dfds).always(function () {
-					console.log("Users are all fetched")
 					// Set up panels for all players
 					_(game.players.models).each(function (player) {
 						var id = player.get("id");
@@ -179,14 +176,13 @@
 			function handleTurn (game, colour) {
 	        	var activePlayer = game.getPlayerOfColour(colour),
 	        		activePlayerId = activePlayer.get("id");
-	        	console.log("active", activePlayer)
 
 	        	/* Move panel to left if active player, otherwise right */
 	        	var pos = 1;
 				_(playerPanels).each(function (panel, playerId) {
 					var player = game.players.get(Number(playerId)),
 						colour = player.get("colour");
-					console.log("Player:", player)
+
 					// Move the panel
 					if (playerId == activePlayerId) {
 						panel.setPosition(0);
@@ -200,6 +196,13 @@
 					});
 				});
 
+				// Indicate whose player's turn it is
+	        	if (activePlayer.get("user_id") == blokus.user.get("id")) {
+	        		blokus.showMsg(colour + ", it is now your turn", 2500);
+	        	} else {
+	        		blokus.showMsg(colour + "'s (" + activePlayer.user.get("username") + ") turn", 2500);
+	        	}
+
 				playerStartTime = new Date(timeNow);
 	        }
 
@@ -207,11 +210,8 @@
 	        function handlePlacedPieces (game, numberOfMoves) {
 	        	_(game.players.models).each(function (player) {
 	        		var colour = player.get("colour");
-	        		console.log("1", player)
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = Number(piece.get("master_id"));
-	        			console.log("2", pieceMasterId, colour)
-	        			console.log("3", shapes[colour], shapes[colour][pieceMasterId])
 	        			// Move the piece onto the game board at specified location
 	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("flip"), piece.get("rotation"));
 	        		});
@@ -230,10 +230,13 @@
 	        // Fetch the game
 			game.fetch({ success: init, error: function () { blokus.showError(errors.fetchGame); } });
 			// Bind handlers
-	        game.bind("change:number_of_moves", handlePlacedPieces);
-			game.bind("change:colour_turn", handleTurn);
-	        game.bind("change:winning_colours", handleWinners);
-	        game.bind("change:time_now", function (game, timeNow) { updateDuration(timeNow); });
+			game.bind("change", function () {
+				if (game.hasChanged("number_of_moves")) handlePlacedPieces(game, game.get("number_of_moves"));
+				if (game.hasChanged("colour_turn")) setTimeout(function () { handleTurn(game, game.get("colour_turn")); }, 1000);
+				if (game.hasChanged("winning_colours")) handleWinners(game, game.get("winning_colours"));
+				if (game.hasChanged("time_now")) updateDuration(game.get("time_now"));
+			});
+			
 
 	        /* Make help screen function */
 			this_.$(".game-help").click(function () {
@@ -254,8 +257,9 @@
 			/* Handle closing the game */
 			this_.$(".game-exit").click(function () {
 				if (confirm("Are you sure you want to quit the game?")) {
-					blokus.userProfile.save({ status: "offline" })
-					blokus.router.navigate("", true);
+					blokus.userProfile.save({ status: "offline" }, { success: function () {
+						blokus.router.navigate("", true);
+					}});
 				}
 			});
 
