@@ -208,9 +208,9 @@ class Piece(models.Model):
 			return bitmap[0][0]
 		elif self.x + width == 19 and self.y == 0:
 			return bitmap[0][width]
-		elif self.x == 0 and self.y + width == 19:
+		elif self.x == 0 and self.y + height == 19:
 			return bitmap[height][0]
-		elif self.x + width == 19 and self.y + width == 19:
+		elif self.x + width == 19 and self.y + height == 19:
 			return bitmap[height][width]
 
 	def is_inside_grid(self, bitmap):
