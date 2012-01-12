@@ -346,6 +346,9 @@ h1 { font-weight:bold; font-size:24pt; }
 	.playerpanel div h1 {
 		font-size:12pt;
 		float:right;
+		width:90px;
+		overflow:hidden;
+		text-overflow:ellipsis;
 	}
 	.playerpanel div p { float:right; }
 .game-help {
