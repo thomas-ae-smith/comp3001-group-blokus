@@ -200,7 +200,7 @@
 	        	if (activePlayer.get("user_id") == blokus.user.get("id")) {
 	        		blokus.showMsg(colour + ", it is now your turn", 2500);
 	        	} else {
-	        		blokus.showMsg(colour + "'s (" + activePlayer.user.get("username") + ") turn", 2500);
+	        		blokus.showMsg(colour + "'s turn", 2500);
 	        	}
 
 				playerStartTime = new Date(timeNow);
