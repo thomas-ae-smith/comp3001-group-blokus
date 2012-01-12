@@ -75,8 +75,9 @@
 								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation},
 								{
 									success: function () { successCallback.call(); },
-									error: function () {
+									error: function (model, fail, xhr) {
 										blokus.showError(errors.placePiece);
+										blokus.showError(fail.responseText);
 										errorCallback.call();
 									}
 								});

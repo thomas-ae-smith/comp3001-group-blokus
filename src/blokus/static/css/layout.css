@@ -48,10 +48,12 @@ b{ font-weight: bold;}
 #errorstackcontainer {
 	position: fixed;
 	top: 10px; left: 0; right: 0;
+	z-index:300;
 }
 #errorstack {
 	margin: 0 auto;
 	width: 500px;
+	z-index:300;
 }
 .error {
 	background: #ffffaa; border: 1px dashed red; outline: 1px solid #ffffaa;
