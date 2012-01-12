@@ -79,16 +79,18 @@
 			},
 
 			parse: function (model) {
-				if (!this.players) {
-					this.players = new blokus.PlayerCollection(model.players);
-				}
+				this.players = new blokus.PlayerCollection(model.players);
+
 				_(this.players.models).each(function (player) {
+					console.log("Player:", player, player.get("pieces"));
 					var pieces = player.pieces = new blokus.PieceCollection(player.get("pieces"));
 					_(pieces.models).each(function (piece) {
+						console.log("Piece:", piece)
 						piece.set({ master_id: getIdFromUrl(piece.get("master")), player_id: getIdFromUrl(piece.get("player")) });
 					});
 					player.set({ user_id: getIdFromUrl(player.get("user")) });
 				});
+				
 				return model;
 			},
 

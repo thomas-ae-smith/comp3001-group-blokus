@@ -82,7 +82,7 @@
 								});
 
 						// Ask for the updated game model
-						poll();
+						poll(false);
 					});
 				});
 			});
@@ -91,13 +91,19 @@
 			/* Game polling */
 			var polling = true,
 				fetchFailedCount = 0,
+				waiting = false,
 				// Fetch game model every few seconds to determined player turn, duration, winner etc
 				poll = function () {
 					if (polling) {
+						waiting = true;
 						game.fetch({
-							success: function () { fetchFailedCount = 0; },
+							success: function () {
+								fetchFailedCount = 0;
+								waiting = false;
+							},
 							error: function () {
 								if (fetchFailedCount > 3) blokus.showError(errors.fetchGame);
+								waiting = false;
 							}
 						}).always(function () { setTimeout(poll, 2000); }); // Call this function 2 seconds after fetch succeeded/failed
 					}
