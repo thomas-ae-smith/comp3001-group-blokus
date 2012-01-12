@@ -5,6 +5,7 @@ from blokus.common import *
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.forms import ValidationError
 import hashlib
 import logging
 
@@ -36,8 +37,6 @@ class Game(models.Model):
 				piece_bitmap = piece.get_bitmap()
 				for row_number, row_data in enumerate(piece_bitmap):
 					for column_number, cell in enumerate(row_data):
-						import sys
-						print sys.stderr, grid
 						grid[piece.x+column_number][piece.y+row_number] = cell
 		return grid
 
@@ -192,22 +191,18 @@ class Piece(models.Model):
 	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
-	def does_not_overlap(self):
+	def does_not_overlap(self, bitmap):
 		grid = self.player.game.get_grid()
-		piece_bitmap = self.get_bitmap()
-		for row_number, row_data in enumerate(piece_bitmap):
-			for column_number, cell in enumerate(row_data):
-				if grid[self.x+column_number][self.y+row_number] and cell:
+		for rowNumber, rowData in enumerate(bitmap):
+			for columnNumber, cell in enumerate(rowData):
+				if grid[self.x+columnNumber][self.y+rowNumber] and cell:
 					return False
 		return True
 
 	# Return TRUE if placing the piece would result in a square being placed in a corner of the board, otherwise false.
-	def placed_in_corner(self):
-		bitmap = self.get_bitmap()
+	def placed_in_corner(self, bitmap):
 		height = len(bitmap)
 		width = len(bitmap[0])
-		import sys
-		print sys.stderr, "###########################\n" + repr(bitmap) + "\nHeight: " + repr(height) + "\nWidth: " + repr(width)
 		if self.x == 0 and self.y == 0:
 			return bitmap[0][0]
 		elif self.x + width == 19 and self.y == 0:
@@ -217,16 +212,16 @@ class Piece(models.Model):
 		elif self.x + width == 19 and self.y == 19:
 			return bitmap[height][width]
 
-	def is_inside_grid(self):
-		height = len(self.get_bitmap())
-		width = len(self.get_bitmap()[0])
+	def is_inside_grid(self, bitmap):
+		height = len(bitmap)
+		width = len(bitmap[0])
 		return (self.x >= 0 and self.y >= 0 and
 			self.x + width < 20 and self.y + height < 20)
 
 	# Returns TRUE if the piece is adjacent (touching the corner) of a
 	# piece of the same colour, but does not actually touch another
 	# piece of the same colour.
-	def is_only_adjacent(self):
+	def is_only_adjacent(self, bitmap):
 		#Construct grid of pieces of the same colour.
 		grid = self.player.get_grid()
 
@@ -252,14 +247,14 @@ class Piece(models.Model):
 		#logging.debug("Satisfies first move:" + str(self.satisfies_first_move()))
 		#logging.debug("Is inside grid:" + str(self.is_inside_grid()))
 		#logging.debug("Game is not over: " + str(self.player.game.winning_colours.strip()))
-		#return (self.does_not_overlap()
-		#and (self.is_only_adjacent() or self.satisfies_first_move())
-		#and self.is_inside_grid()
 		#and self.player.game.winning_colours.strip() == "") # Game is not over.
-		return True
-#(
-#			self.placed_in_corner()
-#			)
+		bitmap = self.get_bitmap()
+		return (
+			self.placed_in_corner(bitmap) or
+			self.is_inside_grid(bitmap) and
+			self.does_not_overlap(bitmap) and
+		#	self.is_only_adjacent(bitmap)
+			)
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotate and transpose.
@@ -271,7 +266,7 @@ class Piece(models.Model):
 	# Only saves if the positioning validates. Otherwise throw error.
 	def save(self, *args, **kwargs):
 		if not self.is_valid_position():
-			raise ValidationError
+			raise ValidationError("That is not a valid position for a piece!")
 		super(Piece, self).save(*args, **kwargs)
 
 
