@@ -1,6 +1,6 @@
 blokus.LobbyView = Backbone.View.extend({
     pollUser: false,
-    options: { error: function () { blokus.showError("Failed to save user profile"); } },
+    dict: { error: function () { blokus.showError("Failed to save user profile"); } },
 
     initialize: function () {
         var this_ = this,
@@ -10,6 +10,8 @@ blokus.LobbyView = Backbone.View.extend({
         blokus.userProfile.bind("change:game_id", function (up, game_id) {
             blokus.router.navigate("game/" + game_id, true);
         });
+
+
         this.bind("close", function () { clearTimeout(poller); }); // Remove poller timeout when lobbyview is closed
     },
 
@@ -18,8 +20,10 @@ blokus.LobbyView = Backbone.View.extend({
         var this_ = this;
         if (type == "private") {
             if (private_hash == null) {
-                blokus.userProfile.save({ status: "offline" }, this_.options);      
+                blokus.userProfile.save({ status: "offline" }, this_.dict);
             } else {
+                $("#privatelobby div .playerchoices").hide();
+                $("#privatelobby div > p").hide();
                 dfd = blokus.userProfile.save({ status: 'private', private_hash: private_hash },{ success: function () {
                     blokus.userProfile.fetch({success: function() {
                         if(blokus.userProfile.get('private_hash') == null) {
@@ -32,15 +36,13 @@ blokus.LobbyView = Backbone.View.extend({
                     blokus.showError("Failed to set userprofile hash");  
                 }}); 
             }
-
-            dfd = blokus.userProfile.save({ status: "private_2" }, this_.options);
             
             this_.pollUser = false;
             this_.$(".modelist").slideUp(200, function () { // Slide up
                 this_.$("#privatelobby").slideDown();
             });
         } else {
-            blokus.userProfile.save({ status: type }, this_.options);
+            blokus.userProfile.save({ status: type }, this_.dict);;
             this_.pollUser = true;
             this_.$(".modelist").slideUp(200, function () {
                 this_.$("#waiting .title").html(title)
@@ -50,13 +52,17 @@ blokus.LobbyView = Backbone.View.extend({
     },
 
     selectPrivateGameType: function (type) {
+        $("#privatelobby div .playerchoices").hide();
+        $("#privatelobby div > p").hide();
         var this_ = this;
-        var dfd = blokus.userProfile.save({ status: type });
+        var dfd = new  $.Deferred(); 
 
-        dfd.then(function() {
-            blokus.userProfile.fetch();  
-        })
-        alert(blokus.userProfile.get('private_hash'));
+        blokus.userProfile.save({ status: type }).then(function() {
+            blokus.userProfile.fetch().then(function() {
+                dfd.resolve();
+            });  
+        });
+
         dfd.then(function () {
             this_.pollUser = true;
             this_.$("#gameurl").val("http://"+window.location.hostname+":"+window.location.port+"/#lobby/"+blokus.userProfile.get('private_hash'));
@@ -143,6 +149,16 @@ blokus.LobbyView = Backbone.View.extend({
                 console.log("YYYY")
             }
         });
+
+        var other_users_change = function(up, other_user) {
+            alert($(".players").length);
+            $(".players div[data-online=\"false\"] .online .name").html(other_user)
+        }
+
+        blokus.userProfile.bind("change:private_user_0", other_users_change)
+        blokus.userProfile.bind("change:private_user_1", other_users_change)
+        blokus.userProfile.bind("change:private_user_2", other_users_change)
+        other_users_change(blokus.userProfile,blokus.userProfile.get('private_user_0'));
 
 		return this;
 	}

@@ -282,6 +282,9 @@ h1 { font-weight:bold; font-size:24pt; }
 		position: absolute;
 		top: 0;
 	}
+	#privatelobby div > .details input {
+		margin: 10px 0 10px 0;
+	}
 	#privatelobby #start { right: 0; display: none; }
 .loading {
 	position: absolute;

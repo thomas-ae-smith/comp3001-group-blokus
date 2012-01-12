@@ -90,6 +90,16 @@ class UserProfileResource(ModelResource):
 		authorization = UserProfileAuthorization()
 
 	def dehydrate(self, bundle):
+		if bundle.data['status'][:7] == 'private' and bundle.data['private_hash'] is not None:
+			other_users = UserProfile.objects.filter(status=bundle.data['status'],private_hash=bundle.data['private_hash']).exclude(id=bundle.data['id'])
+			for i in xrange(3):
+				try:
+					bundle.data['private_user_'+str(i)] = other_users[i].user.username
+				except IndexError:
+					bundle.data['private_user_'+str(i)] = None
+		else:
+			for i in xrange(3):
+				bundle.data['private_user_'+str(i)] = None
 		player_set = bundle.obj.user.player_set.all()
 		if len(player_set) > 0:
 			bundle.data['game_id'] = player_set.all()[0].game.id
