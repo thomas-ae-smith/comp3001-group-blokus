@@ -184,6 +184,5 @@ def get_number_of_moves(request, game_id):
 		return HttpResponseBadRequest()
 	if request.user.id is None:
 		return HttpResponseNotFound()
-	user = User.objects.get(pk=request.user.id)
-	game = user.player_set.all()[0].game
+	game = Game.objects.get(pk=game_id)
 	return HttpResponse(game.number_of_moves, content_type="text/plain")
