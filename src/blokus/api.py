@@ -234,7 +234,7 @@ class PlayerResource(ModelResource):
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):
-		bundle.data['can_move'] = bundle.obj.is_able_to_move()
+		bundle.data['can_move'] = True #bundle.obj.is_able_to_move() #TODO IT DOES NOT WORK IndexError: list assignment index out of range in get_grid
 		return bundle
 
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
@@ -405,15 +405,21 @@ class PieceResource(ModelResource):
 		return client_server_mapping[(rotation,flip)][0]
 
 	def dehydrate(self, bundle):
-		bundle.data['rotation'] = bundle.obj.get_client_rotation(bundle.data['rotation'], bundle.data['flip'])
-		bundle.data['flip'] = bundle.obj.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
+		if 'flip' in bundle.data:
+			bundle.data['rotation'] = self.get_client_rotation(bundle.data['rotation'], bundle.data['flip']) #TODO 'flip' does not exists so it needs to be fixed
+			bundle.data['flip'] = self.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
+		else:
+			bundle.data['rotation'] = 0
+			bundle.data['flip'] = 0
 		return bundle
 
 	def hydrate(self, bundle):
-		from blokus.models import PieceMaster
-		bundle.data['master'] = PieceMaster.objects.get(id=bundle.data['master'])	#HACK HACK HACK!!! Client returns master **ID**
+		from blokus.models import PieceMaster, Player
+		user = bundle.request.user
+		bundle.obj.master = PieceMaster.objects.get(id=bundle.data['master'].split('/')[-2])    #HACK HACK HACK!!! Client returns master **ID**
+		bundle.obj.player = Player.objects.filter(user = user)[0]
 		bundle.data['rotation'] = self.get_server_rotation(bundle.data['rotation'], bundle.data['flip'])
 		bundle.data['flip'] = self.get_server_flip(bundle.data['rotation'], bundle.data['flip'])
-		import sys
-		print >>sys.stderr, "Bundle: " + repr(bundle)
+		#import sys
+		#print >>sys.stderr, "Bundle: " + repr(bundle)
 		return bundle
