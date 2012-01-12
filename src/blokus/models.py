@@ -36,7 +36,9 @@ class Game(models.Model):
 				piece_bitmap = piece.get_bitmap()
 				for row_number, row_data in enumerate(piece_bitmap):
 					for column_number, cell in enumerate(row_data):
-						grid[piece.y+column_number][piece.x+row_number] = cell
+						import sys
+						print sys.stderr, grid
+						grid[piece.x+column_number][piece.y+row_number] = cell
 		return grid
 
 	# Returns whether or not anybody can make any moves.
@@ -199,20 +201,21 @@ class Piece(models.Model):
 					return False
 		return True
 
-	def satisfies_first_move(self):
-		if self.player.game.number_of_moves < 4:
-			height = len(self.get_bitmap())
-			width = len(self.get_bitmap()[0])
-			if self.x == 0 and self.y == 0:
-				return self.master.get_bitmap()[0][0]
-			elif self.x + width == 19 and self.y == 0:
-				return self.master.get_bitmap()[0][width]
-			elif self.x + width == 0 and self.y == 19:
-				return self.master.get_bitmap()[height][0]
-			elif self.x + width == 19 and self.y == 19:
-				return self.master.get_bitmap()[height][width]
-		else:
-			return False
+	# Return TRUE if placing the piece would result in a square being placed in a corner of the board, otherwise false.
+	def placed_in_corner(self):
+		bitmap = self.get_bitmap()
+		height = len(bitmap)
+		width = len(bitmap[0])
+		import sys
+		print sys.stderr, "###########################\n" + repr(bitmap) + "\nHeight: " + repr(height) + "\nWidth: " + repr(width)
+		if self.x == 0 and self.y == 0:
+			return bitmap[0][0]
+		elif self.x + width == 19 and self.y == 0:
+			return bitmap[0][width]
+		elif self.x + width == 0 and self.y == 19:
+			return bitmap[height][0]
+		elif self.x + width == 19 and self.y == 19:
+			return bitmap[height][width]
 
 	def is_inside_grid(self):
 		height = len(self.get_bitmap())
@@ -249,10 +252,14 @@ class Piece(models.Model):
 		#logging.debug("Satisfies first move:" + str(self.satisfies_first_move()))
 		#logging.debug("Is inside grid:" + str(self.is_inside_grid()))
 		#logging.debug("Game is not over: " + str(self.player.game.winning_colours.strip()))
-		return (self.does_not_overlap()
-		and (self.is_only_adjacent() or self.satisfies_first_move())
-		and self.is_inside_grid()
-		and self.player.game.winning_colours.strip() == "") # Game is not over.
+		#return (self.does_not_overlap()
+		#and (self.is_only_adjacent() or self.satisfies_first_move())
+		#and self.is_inside_grid()
+		#and self.player.game.winning_colours.strip() == "") # Game is not over.
+		return True
+#(
+#			self.placed_in_corner()
+#			)
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotate and transpose.
@@ -260,6 +267,13 @@ class Piece(models.Model):
 			return transpose_bitmap(rotate_bitmap(bitmap, self.rotation))
 		else:
 			return rotate_bitmap(bitmap, self.rotation)
+
+	# Only saves if the positioning validates. Otherwise throw error.
+	def save(self, *args, **kwargs):
+		if not self.is_valid_position():
+			raise ValidationError
+		super(Piece, self).save(*args, **kwargs)
+
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)

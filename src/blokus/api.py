@@ -282,17 +282,6 @@ class PieceMasterResource(ModelResource):
 		authorization = Authorization()
 		serializer = PieceJSONSerializer()
 
-class PieceForm(ModelForm):
-	class Meta:
-		model = Piece
-
-	def clean(self):
-		cleaned_data = self.cleaned_data
-		piece = self.save(commit=False)
-		if not piece.is_valid_position():
-			raise ValidationError("Not a valid move")
-		return cleaned_data
-
 class PieceValidation(Validation):
     def is_valid(self, bundle, request=None):
         if not bundle.data:
@@ -377,7 +366,7 @@ class PieceResource(ModelResource):
 		default_format = 'application/json'
 		list_allowed_methods = ['post']
 		detail_allowed_methods = []
-		validation = PieceValidation()
+		validation = Validation()
 		authorization = Authorization()
 		#serializer = PieceJSONSerializer()
 
