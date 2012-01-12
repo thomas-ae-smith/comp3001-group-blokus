@@ -120,7 +120,7 @@ class UserProfile(models.Model):
 		try:
 			if self.id is not None:
 				oldRecord = UserProfile.objects.get(id=self.id)
-				if self.private_hash is not None:
+				if self.status == 'private' and self.private_hash is not None:
 					other_player_profiles = UserProfile.objects.filter(private_hash=self.private_hash)
 					logging.error(len(other_player_profiles))
 					if len(other_player_profiles) == 0:
@@ -135,7 +135,6 @@ class UserProfile(models.Model):
 					self.user.get_profile().private_hash = None
 		except UserProfile.DoesNotExist:
 			pass
-
 		super(UserProfile, self).save(*args, **kwargs)
 
 
