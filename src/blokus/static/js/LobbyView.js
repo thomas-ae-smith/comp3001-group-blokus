@@ -1,5 +1,6 @@
 blokus.LobbyView = Backbone.View.extend({
     pollUser: false,
+    options: { error: function () { blokus.showError("Failed to save user profile"); } },
 
     initialize: function () {
         var this_ = this,
@@ -12,13 +13,61 @@ blokus.LobbyView = Backbone.View.extend({
         this.bind("close", function () { clearTimeout(poller); }); // Remove poller timeout when lobbyview is closed
     },
 
-    handlehash: function (hash) {
-        dfd = blokus.userProfile.save({ private_hash: hash },{ success: function () {
-             blokus.showError(blokus.userProfile.get('private_hash'));
-        }, error: function () {
-             blokus.showError("Failed to set userprofile hash");  
-        }});     
+
+    selectGameType: function (type, title, private_hash) {
+        var this_ = this;
+        if (type == "private") {
+            if (private_hash == null) {
+                blokus.userProfile.save({ status: "offline" }, this_.options);      
+            } else {
+                dfd = blokus.userProfile.save({ status: 'private', private_hash: private_hash },{ success: function () {
+                    blokus.userProfile.fetch({success: function() {
+                        if(blokus.userProfile.get('private_hash') == null) {
+                            blokus.showMsg("The private game no longer exists or is full.");   
+                        } else {
+                            this_.selectPrivateGameType(blokus.userProfile.get('status'));   
+                        }   
+                    }});           
+                }, error: function () {
+                    blokus.showError("Failed to set userprofile hash");  
+                }}); 
+            }
+
+            dfd = blokus.userProfile.save({ status: "private_2" }, this_.options);
+            
+            this_.pollUser = false;
+            this_.$(".modelist").slideUp(200, function () { // Slide up
+                this_.$("#privatelobby").slideDown();
+            });
+        } else {
+            blokus.userProfile.save({ status: type }, this_.options);
+            this_.pollUser = true;
+            this_.$(".modelist").slideUp(200, function () {
+                this_.$("#waiting .title").html(title)
+                this_.$("#waiting").slideDown();
+            });
+        }
     },
+
+    selectPrivateGameType: function (type) {
+        var this_ = this;
+        var dfd = blokus.userProfile.save({ status: type });
+
+        dfd.then(function() {
+            blokus.userProfile.fetch();  
+        })
+        alert(blokus.userProfile.get('private_hash'));
+        dfd.then(function () {
+            this_.pollUser = true;
+            this_.$("#gameurl").val("http://"+window.location.hostname+":"+window.location.port+"/#lobby/"+blokus.userProfile.get('private_hash'));
+            this_.$("#privatelobby .p" + type).addClass("sel").siblings().removeClass("sel");
+            this_.$("#privatelobby .details").slideDown();
+            this_.$("#privatelobby #start").show();
+        }).fail(function () {
+            blokus.showError("Unable to fetch user profile");
+        }); 
+    },
+
 
 	render: function () {
 		var this_ = this,
@@ -37,22 +86,7 @@ blokus.LobbyView = Backbone.View.extend({
 				hideProfile: isGuest ? "style=\"display:none;\"" : ""
 			}));
 		}
-        function selectGameType (type, title) {
-            if (type == "private") {
-                blokus.userProfile.save({ status: "offline" }, options);
-                this_.pollUser = false;
-                this_.$(".modelist").slideUp(200, function () { // Slide up
-                    this_.$("#privatelobby").slideDown();
-                });
-            } else {
-                blokus.userProfile.save({ status: type }, options);
-                this_.pollUser = true;
-                this_.$(".modelist").slideUp(200, function () {
-                    this_.$("#waiting .title").html(title)
-                    this_.$("#waiting").slideDown();
-                });
-            }
-        }
+        
 
         renderTemplate();
 		this.$("#loginForm").submit(function(event) {
@@ -81,51 +115,19 @@ blokus.LobbyView = Backbone.View.extend({
 	            this_.$("#privatelobby").slideUp();
 	        }
             switch (mode) {
-            case 0: selectGameType("looking_for_any", "quick play"); break;
-            case 1: selectGameType("looking_for_2", "2 player game"); break;
-            case 2: selectGameType("looking_for_4", "4 player game"); break;
-            case 3: selectGameType("private"); break;
+            case 0: this_.selectGameType("looking_for_any", "quick play"); break;
+            case 1: this_.selectGameType("looking_for_2", "2 player game"); break;
+            case 2: this_.selectGameType("looking_for_4", "4 player game"); break;
+            case 3: this_.selectGameType("private"); break;
             }
 		});
 
         var game = undefined;
         var $startButton = this.$("#privatelobby #start");
 
-        function selectPrivateGameType (type) {
-            var dfd;
-            if (type == 2) {
-                dfd = blokus.userProfile.save({ status: "private_2" }, options);
-            } else {
-                dfd = blokus.userProfile.save({ status: "private_4" }, options);
-            }
-            dfd.then(function () {
-                this_.pollUser = true;
-                game = new blokus.Game({ id: blokus.userProfile.get("gameid") });
-                game.fetch({ success: function () {
-                    this_.$("#privatelobby .p" + type).addClass("sel").siblings().removeClass("sel");
-                    this_.$("#privatelobby .details").slideDown();
-                    this_.$("#privatelobby #start").show();
-                    pollGame();
-                }, error: function () {
-                    blokus.showError("Unable to fetch game");
-                }});
-            }).fail(function () {
-                blokus.showError("Unable to fetch user profile");
-            });
-        }
 
-        function pollGame() {
-            game.fetch({ success: function () {
-                if (game.players.length === 4) {
-                    $startButton.removeClass("disabled");
-                } else {
-                    $startButton.addClass("disabled");
-                }
-            }})
-        }
-
-        this.$("#privatelobby .p2").click(function () { selectPrivateGameType(2); });
-        this.$("#privatelobby .p4").click(function () { selectPrivateGameType(4); });
+        this.$("#privatelobby .p2").click(function () { this_.selectPrivateGameType("private_2"); });
+        this.$("#privatelobby .p4").click(function () { this_.selectPrivateGameType("private_4"); });
 
         this.$("#privatelobby #cancel, #waiting #cancel").click(function () {
             blokus.userProfile.save({ status: "offline" });

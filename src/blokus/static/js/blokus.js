@@ -65,7 +65,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			privatelobby: function(hash) { 
 				var lobbyView = new blokus.LobbyView();
 				switchToView(lobbyView); 
-				lobbyView.handlehash(hash);
+				lobbyView.selectGameType("private", null, hash);
 			}, 
 			game: function (id) { switchToView(new blokus.GameView({ id: id })); },
 			register: function () { switchToView(new blokus.RegisterView()); }
