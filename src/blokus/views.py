@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from blokus.api import UserResource, UserProfileResource
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django import forms
 from django.template import RequestContext
@@ -176,3 +177,12 @@ def create_piece(request):
 	#flip
 	#rotate
 
+@require_http_methods("GET")
+@login_required
+def get_number_of_moves(request, game_id):
+	if not request.is_ajax():
+		return HttpResponseBadRequest()
+	if request.user.id is None:
+		return HttpResponseNotFound()
+	game = Game.objects.get(pk=game_id)
+	return HttpResponse(game.number_of_moves, content_type="text/plain")
