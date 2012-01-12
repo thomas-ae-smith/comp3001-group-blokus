@@ -339,7 +339,7 @@ class PieceJSONSerializer(Serializer):
 		data = self.to_simple(data, options)
 
 		import sys
-		print >>sys.stderr, repr(data)
+		print >>sys.stderr, "to_json in Serializer: repr(data): " + repr(data)
 
 		if data.get('objects') is not None:
 			for i, piece in enumerate(data.get('objects')):
@@ -353,6 +353,9 @@ class PieceJSONSerializer(Serializer):
 
 	def from_json(self, content):
 		data = simplejson.loads(content)
+
+		import sys
+		print >>sys.stderr, "from_json in Serializer: repr(data): " + repr(data)
 
 		if data.get('objects') is not None:
 			for i, piece in enumerate(data.get('objects')):
