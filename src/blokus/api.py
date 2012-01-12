@@ -234,7 +234,7 @@ class PlayerResource(ModelResource):
 		authorization = Authorization()
 
 	def dehydrate(self, bundle):
-		bundle.data['can_move'] = True #bundle.obj.is_able_to_move() #TODO IT DOES NOT WORK IndexError: list assignment index out of range in get_grid
+		bundle.data['can_move'] = bundle.obj.is_able_to_move() #TODO IT DOES NOT WORK IndexError: list assignment index out of range in get_grid
 		return bundle
 
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
@@ -337,10 +337,6 @@ class PieceJSONSerializer(Serializer):
 	def to_json(self, data, options=None):
 		options = options or {}
 		data = self.to_simple(data, options)
-
-		import sys
-		print >>sys.stderr, "to_json in Serializer: repr(data): " + repr(data)
-
 		if data.get('objects') is not None:
 			for i, piece in enumerate(data.get('objects')):
 				data['objects'][i]['flip'] = self.get_client_flip(data['objects'][i]['rotation'], data['objects'][i]['flip'])
@@ -353,10 +349,6 @@ class PieceJSONSerializer(Serializer):
 
 	def from_json(self, content):
 		data = simplejson.loads(content)
-
-		import sys
-		print >>sys.stderr, "from_json in Serializer: repr(data): " + repr(data)
-
 		if data.get('objects') is not None:
 			for i, piece in enumerate(data.get('objects')):
 				data['objects'][i]['flip'] = self.get_server_flip(data['objects'][i]['rotation'], data['objects'][i]['flip'])
@@ -423,6 +415,4 @@ class PieceResource(ModelResource):
 		bundle.obj.player = Player.objects.filter(user = user)[0]
 		bundle.data['rotation'] = self.get_server_rotation(bundle.data['rotation'], bundle.data['flip'])
 		bundle.data['flip'] = self.get_server_flip(bundle.data['rotation'], bundle.data['flip'])
-		#import sys
-		#print >>sys.stderr, "Bundle: " + repr(bundle)
 		return bundle

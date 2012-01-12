@@ -36,7 +36,7 @@ class Game(models.Model):
 				piece_bitmap = piece.get_bitmap()
 				for row_number, row_data in enumerate(piece_bitmap):
 					for column_number, cell in enumerate(row_data):
-						grid[piece.x+column_number][piece.y+row_number] = cell
+						grid[piece.y+column_number][piece.x+row_number] = cell
 		return grid
 
 	# Returns whether or not anybody can make any moves.

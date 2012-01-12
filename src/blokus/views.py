@@ -170,8 +170,6 @@ def create_piece(request):
 		return HttpResponseBadRequest()
 	if request.user.id is None:
 		return HttpResponseNotFound()
-	import sys
-	print >>sys.stderr, 'contents of request' + repr(request)
 	#master_id
 	#x
 	#y
