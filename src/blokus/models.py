@@ -83,8 +83,8 @@ class PieceMaster(models.Model):
 			rowlist = []
 			for number in row:
 				rowlist.append(bool(int(number)))
-			tup.append(rowlist)
-		return tup
+			tup.append(tuple(rowlist))
+		return tuple(tup)
 
 	def get_point_value(self):
 		bitmap = self.get_bitmap()
