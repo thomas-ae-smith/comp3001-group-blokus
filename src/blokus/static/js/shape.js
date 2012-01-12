@@ -882,7 +882,8 @@
 							if(validPosition){
 								this_.isSelected = false;
 								this_.goToPos();
-								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this.flipNum, this_.getRotation(),
+								console.log("r", this_.getRotation())
+								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation(),
 									function () { // success
 										// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
 										_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
