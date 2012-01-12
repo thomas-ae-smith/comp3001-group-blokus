@@ -230,8 +230,8 @@
 	        // Fetch the game
 			game.fetch({ success: init, error: function () { blokus.showError(errors.fetchGame); } });
 			// Bind handlers
-			game.bind("change:colour_turn", handleTurn);
 	        game.bind("change:number_of_moves", handlePlacedPieces);
+			game.bind("change:colour_turn", handleTurn);
 	        game.bind("change:winning_colours", handleWinners);
 	        game.bind("change:time_now", function (game, timeNow) { updateDuration(timeNow); });
 

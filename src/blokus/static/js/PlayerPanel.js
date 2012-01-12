@@ -45,7 +45,7 @@
 			} else {
 				turnText.show();
 			}
-			turnText.hide();
+			//turnText.hide();
 			this.isEnabled = true;
 			if (this.isActive) {
 				$(".playerpanelcontainer.left").append(this.el);
