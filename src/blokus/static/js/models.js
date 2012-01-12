@@ -48,7 +48,7 @@
 
 			url: function () {
 				return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "") +
-						(this.has("state") ? "?state=" + this.get("number_of_moves") : "");
+						(this.has("number_of_moves") ? "?state=" + this.get("number_of_moves") : "");
 			},
 
 			// FIXME: Hacked in bootstrap, baby
@@ -157,10 +157,6 @@
 		userProfile = new UserProfile(),
 		board = new Board();
 
-
-    userProfile.bind("change:game_id", function (user, gameId) {
-        //blokus.router.navigate(gameId ? "game/" + id : "", true);
-    });
 
 	_(window.blokus).extend({
 		User: User,
