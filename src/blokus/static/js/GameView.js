@@ -94,7 +94,7 @@
 				waiting = false,
 				// Fetch game model every few seconds to determined player turn, duration, winner etc
 				poll = function () {
-					if (polling) {
+					if (polling && !waiting) {
 						waiting = true;
 						game.fetch({
 							success: function () {
