@@ -397,10 +397,6 @@ class PieceResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		from blokus.models import Piece
-		import sys
-		print >>sys.stderr,"############### Deydrate:\n" + repr(bundle.data)
-		print >>sys.stderr,"#####################"
-		print >>sys.stderr, Piece.objects.get(id=bundle.data['id'])
 		if 'flip' in bundle.data:
 			bundle.data['rotation'] = self.get_client_rotation(bundle.data['rotation'], bundle.data['flip']) #TODO 'flip' does not exists so it needs to be fixed
 			bundle.data['flip'] = self.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
@@ -411,12 +407,9 @@ class PieceResource(ModelResource):
 
 	def hydrate(self, bundle):
 		from blokus.models import PieceMaster, Player
-		import sys
-		print >>sys.stderr, "############### Hydrate:\n" + repr(bundle.data)
 		user = bundle.request.user
 		bundle.obj.master = PieceMaster.objects.get(id=bundle.data['master'].split('/')[-2])    #HACK HACK HACK!!! Client returns master **ID**
 		players = Player.objects.filter(user=user)
-		print >>sys.stderr, '############# user: ' + repr(user) + ", players: " + repr([player.colour for player in players]) + ", players type: " + repr(type(players)) + ", colour: " + players[0].game.colour_turn
 		bundle.obj.player = players.get(colour=players[0].game.colour_turn)
 		bundle.data['rotation'] = self.get_server_rotation(bundle.data['rotation'], bundle.data['flip'])
 		bundle.data['flip'] = self.get_server_flip(bundle.data['rotation'], bundle.data['flip'])
