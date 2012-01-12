@@ -201,8 +201,6 @@ class Piece(models.Model):
 	def placed_in_corner(self, bitmap):
 		height = len(bitmap) - 1
 		width = len(bitmap[0]) - 1
-		import sys
-		print >>sys.stderr, "Bitmap: " + repr(bitmap) + ", x: " + repr(self.x) + ", y: " + repr(self.y) + ", width: " + repr(width) + ", height: " + repr(height)
 		if self.x == 0 and self.y == 0:
 			return bitmap[0][0]
 		elif self.x + width == 19 and self.y == 0:
