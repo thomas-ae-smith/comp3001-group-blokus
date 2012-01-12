@@ -261,16 +261,6 @@ class Piece(models.Model):
 		else:
 			return rotate_bitmap(bitmap, self.rotation)
 
-	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
-		self.rotate(not(bool(self.flip) ^ bool(horizontal)))
-		self.flip = not self.flip
-
-	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
-		if (clockwise):
-			self.rotation = (self.rotation + 1) % 4
-		else:
-			self.rotation = (self.rotation - 1) % 4
-
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
 	game = models.ForeignKey(Game)
