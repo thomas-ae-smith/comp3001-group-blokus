@@ -36,7 +36,7 @@
 			this.isActive = pos == 0;
 			this.isEnabled = this.isLoggedInPlayer();
 			
-			$(this.el).css('background', this.isEnabled && this.isActive ? 'rgba(125,125,125,0.8)' : 'transparent');
+			//$(this.el).css('background', this.isEnabled && this.isActive ? 'rgba(125,125,125,0.8)' : 'transparent');
 			
 			var turnText = $(this.el).find("#turntext");
 			turnText.find('div').html("Waiting for " + this.options.player.user.get("username") + "...");

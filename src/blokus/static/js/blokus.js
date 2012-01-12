@@ -126,8 +126,12 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			$error.slideDown();
 			setTimeout(function () { $error.slideUp(); }, 3000);
 		},
-		showMsg: function (msg) {
-			$("#msg").fadeIn().find(".content").html(msg);
+		showMsg: function (msg, timeout) {
+			var $msg = $("#msg").fadeIn();
+			$msg.find(".content").html(msg);
+			if (timeout) {
+				setTimeout(function() { $msg.fadeOut(); }, timeout);
+			}
 		},
 		getCurrentUser: getCurrentUser,
 		urls: {
