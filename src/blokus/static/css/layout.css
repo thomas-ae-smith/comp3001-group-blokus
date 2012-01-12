@@ -48,10 +48,12 @@ b{ font-weight: bold;}
 #errorstackcontainer {
 	position: fixed;
 	top: 10px; left: 0; right: 0;
+	z-index:300;
 }
 #errorstack {
 	margin: 0 auto;
 	width: 500px;
+	z-index:300;
 }
 .error {
 	background: #ffffaa; border: 1px dashed red; outline: 1px solid #ffffaa;
@@ -346,6 +348,9 @@ h1 { font-weight:bold; font-size:24pt; }
 	.playerpanel div h1 {
 		font-size:12pt;
 		float:right;
+		width:90px;
+		overflow:hidden;
+		text-overflow:ellipsis;
 	}
 	.playerpanel div p { float:right; }
 .game-help {

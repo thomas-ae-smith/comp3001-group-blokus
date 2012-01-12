@@ -124,7 +124,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			var $error = $('<div class="error">' + msg + '</div>').hide();
 			$("#errorstack").append($error);
 			$error.slideDown();
-			setTimeout(function () { $error.slideUp(); }, 3000);
+			$error.click(function() { $error.slideUp(); });
 		},
 		showMsg: function (msg, timeout) {
 			var $msg = $("#msg").fadeIn();

@@ -282,17 +282,6 @@ class PieceMasterResource(ModelResource):
 		authorization = Authorization()
 		serializer = PieceJSONSerializer()
 
-class PieceForm(ModelForm):
-	class Meta:
-		model = Piece
-
-	def clean(self):
-		cleaned_data = self.cleaned_data
-		piece = self.save(commit=False)
-		if not piece.is_valid_position():
-			raise ValidationError("Not a valid move")
-		return cleaned_data
-
 class PieceValidation(Validation):
     def is_valid(self, bundle, request=None):
         if not bundle.data:
@@ -377,7 +366,7 @@ class PieceResource(ModelResource):
 		default_format = 'application/json'
 		list_allowed_methods = ['post']
 		detail_allowed_methods = []
-		validation = PieceValidation()
+		validation = Validation()
 		authorization = Authorization()
 		#serializer = PieceJSONSerializer()
 
@@ -397,26 +386,15 @@ class PieceResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		from blokus.models import Piece
-		import sys
-		print >>sys.stderr,"############### Deydrate:\n" + repr(bundle.data)
-		print >>sys.stderr,"#####################"
-		print >>sys.stderr, Piece.objects.get(id=bundle.data['id'])
-		if 'flip' in bundle.data:
-			bundle.data['rotation'] = self.get_client_rotation(bundle.data['rotation'], bundle.data['flip']) #TODO 'flip' does not exists so it needs to be fixed
-			bundle.data['flip'] = self.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
-		else:
-			bundle.data['rotation'] = 0
-			bundle.data['flip'] = 0
+		bundle.data['rotation'] = self.get_client_rotation(bundle.data['rotation'], bundle.data['flip'])
+		bundle.data['flip'] = self.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
 		return bundle
 
 	def hydrate(self, bundle):
 		from blokus.models import PieceMaster, Player
-		import sys
-		print >>sys.stderr, "############### Hydrate:\n" + repr(bundle.data)
 		user = bundle.request.user
 		bundle.obj.master = PieceMaster.objects.get(id=bundle.data['master'].split('/')[-2])    #HACK HACK HACK!!! Client returns master **ID**
 		players = Player.objects.filter(user=user)
-		print >>sys.stderr, '############# user: ' + repr(user) + ", players: " + repr([player.colour for player in players]) + ", players type: " + repr(type(players)) + ", colour: " + players[0].game.colour_turn
 		bundle.obj.player = players.get(colour=players[0].game.colour_turn)
 		bundle.data['rotation'] = self.get_server_rotation(bundle.data['rotation'], bundle.data['flip'])
 		bundle.data['flip'] = self.get_server_flip(bundle.data['rotation'], bundle.data['flip'])

@@ -75,8 +75,9 @@
 								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation},
 								{
 									success: function () { successCallback.call(); },
-									error: function () {
+									error: function (model, fail, xhr) {
 										blokus.showError(errors.placePiece);
+										blokus.showError(fail.responseText);
 										errorCallback.call();
 									}
 								});
@@ -200,7 +201,7 @@
 	        	if (activePlayer.get("user_id") == blokus.user.get("id")) {
 	        		blokus.showMsg(colour + ", it is now your turn", 2500);
 	        	} else {
-	        		blokus.showMsg(colour + "'s (" + activePlayer.user.get("username") + ") turn", 2500);
+	        		blokus.showMsg(colour + "'s turn", 2500);
 	        	}
 
 				playerStartTime = new Date(timeNow);

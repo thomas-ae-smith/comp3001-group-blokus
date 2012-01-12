@@ -36,7 +36,9 @@ class Game(models.Model):
 				piece_bitmap = piece.get_bitmap()
 				for row_number, row_data in enumerate(piece_bitmap):
 					for column_number, cell in enumerate(row_data):
-						grid[piece.y+column_number][piece.x+row_number] = cell
+						import sys
+						print sys.stderr, grid
+						grid[piece.x+column_number][piece.y+row_number] = cell
 		return grid
 
 	# Returns whether or not anybody can make any moves.
@@ -198,20 +200,21 @@ class Piece(models.Model):
 					return False
 		return True
 
-	def satisfies_first_move(self):
-		if self.player.game.number_of_moves < 4:
-			height = len(self.get_bitmap())
-			width = len(self.get_bitmap()[0])
-			if self.x == 0 and self.y == 0:
-				return self.master.get_bitmap()[0][0]
-			elif self.x + width == 19 and self.y == 0:
-				return self.master.get_bitmap()[0][width]
-			elif self.x + width == 0 and self.y == 19:
-				return self.master.get_bitmap()[height][0]
-			elif self.x + width == 19 and self.y == 19:
-				return self.master.get_bitmap()[height][width]
-		else:
-			return False
+	# Return TRUE if placing the piece would result in a square being placed in a corner of the board, otherwise false.
+	def placed_in_corner(self):
+		bitmap = self.get_bitmap()
+		height = len(bitmap)
+		width = len(bitmap[0])
+		import sys
+		print sys.stderr, "###########################\n" + repr(bitmap) + "\nHeight: " + repr(height) + "\nWidth: " + repr(width)
+		if self.x == 0 and self.y == 0:
+			return bitmap[0][0]
+		elif self.x + width == 19 and self.y == 0:
+			return bitmap[0][width]
+		elif self.x + width == 0 and self.y == 19:
+			return bitmap[height][0]
+		elif self.x + width == 19 and self.y == 19:
+			return bitmap[height][width]
 
 	def is_inside_grid(self):
 		height = len(self.get_bitmap())
@@ -248,10 +251,14 @@ class Piece(models.Model):
 		#logging.debug("Satisfies first move:" + str(self.satisfies_first_move()))
 		#logging.debug("Is inside grid:" + str(self.is_inside_grid()))
 		#logging.debug("Game is not over: " + str(self.player.game.winning_colours.strip()))
-		return (self.does_not_overlap()
-		and (self.is_only_adjacent() or self.satisfies_first_move())
-		and self.is_inside_grid()
-		and self.player.game.winning_colours.strip() == "") # Game is not over.
+		#return (self.does_not_overlap()
+		#and (self.is_only_adjacent() or self.satisfies_first_move())
+		#and self.is_inside_grid()
+		#and self.player.game.winning_colours.strip() == "") # Game is not over.
+		return True
+#(
+#			self.placed_in_corner()
+#			)
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
 		bitmap = self.master.get_bitmap()	#Need to implement rotate and transpose.
@@ -260,15 +267,12 @@ class Piece(models.Model):
 		else:
 			return rotate_bitmap(bitmap, self.rotation)
 
-	def flip(self, horizontal):	#Flips the piece horizontally; horizontal is a bool where T flips horizontally and F flips vertically.
-		self.rotate(not(bool(self.flip) ^ bool(horizontal)))
-		self.flip = not self.flip
+	# Only saves if the positioning validates. Otherwise throw error.
+	def save(self, *args, **kwargs):
+		if not self.is_valid_position():
+			raise ValidationError
+		super(Piece, self).save(*args, **kwargs)
 
-	def rotate(self, clockwise):	#Rotates the piece clockwise; 'clockwise' is a bool; T for clockwise rotation, F for anticlockwise.
-		if (clockwise):
-			self.rotation = (self.rotation + 1) % 4
-		else:
-			self.rotation = (self.rotation - 1) % 4
 
 class Move(models.Model):
 	piece = models.ForeignKey(Piece)
@@ -281,10 +285,11 @@ class Move(models.Model):
 ############
 @receiver(post_save, sender=Move)
 def update_player_can_move(sender, instance, created, **kwargs):
-	players = instance.piece.player.game.player_set.all()
-	for player in players:
-		player.can_move = player.is_able_to_move()
-		player.save()
+	game = instance.piece.player.game
+	colour = game.get_next_colour_turn()
+	player = game.player_set.get(colour=colour)
+	player.can_move = player.is_able_to_move()
+	player.save()
 
 # If a Player object is created for a user with existing Player objects,
 # and the new object is attached to a different game to the old object(s),
