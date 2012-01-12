@@ -30,7 +30,6 @@ class Game(models.Model):
 			players = self.player_set.all()
 		else:
 			players = [limit_to_player]
-		players = self.player_set.all()
 		for player in players:
 			pieces = player.piece_set.all()
 			for piece in pieces:
