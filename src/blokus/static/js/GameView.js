@@ -72,7 +72,7 @@
 
 						// Create the piece in the game model
 						game.getPlayerOfColour(colour).pieces.create(
-								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation },
+								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation},
 								{
 									success: function () { successCallback.call(); },
 									error: function () {
