@@ -42,7 +42,7 @@ class Game(models.Model):
 	# Returns whether or not anybody can make any moves.
 	def is_game_over(self):
 		for player in self.player_set.all():
-			if player.is_able_to_move():
+			if player.can_move:
 				return False
 		return True
 
@@ -151,6 +151,7 @@ class Player(models.Model):
 	colour = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)])
 	last_activity = models.DateTimeField(default=datetime.now())
 	score = models.IntegerField(default=0)
+	can_move = models.BooleanField(default=True)
 
 	def get_grid(self):
 		return self.game.get_grid(limit_to_player = self)
@@ -159,22 +160,22 @@ class Player(models.Model):
 	def is_able_to_move(self):
 		grid = self.game.get_grid()
 		unplaced_pieces = set(PieceMaster.objects.all()) - set([p.master for p in self.piece_set.all()])
-		#if (len(unplaced_pieces) < 5)
-		for x in xrange(20):
-			for y in xrange(20):
-				if not grid[y][x]:
-					for master in unplaced_pieces:
-						piece = Piece(master=master,player=self)
-						for transposed in [False, True]:
-							piece.transposed = transposed
-							for rot in xrange(4):
-								piece.rotation = rot
-								for y_piece in xrange(len(piece.get_bitmap())):
-									piece.y = y_piece
-									for x_piece in xrange(len(piece.get_bitmap()[0])):
-										piece.x = x_piece
-										#if piece.is_valid_position():
-										return True
+		if (len(unplaced_pieces) < 8):
+			for x in xrange(20):
+				for y in xrange(20):
+					if not grid[y][x]:
+						for master in unplaced_pieces:
+							piece = Piece(master=master,player=self)
+							for transposed in [False, True]:
+								piece.transposed = transposed
+								for rot in xrange(4):
+									piece.rotation = rot
+									for y_piece in xrange(len(piece.get_bitmap())):
+										piece.y = y_piece
+										for x_piece in xrange(len(piece.get_bitmap()[0])):
+											piece.x = x_piece
+											if piece.is_valid_position():
+												return True
 		return False
 
 
@@ -279,6 +280,12 @@ class Move(models.Model):
 ############
 # SIGNALS  #
 ############
+@receiver(post_save, sender=Move)
+def update_player_can_move(sender, instance, created, **kwargs):
+	players = instance.piece.player.game.player_set.all()
+	for player in players:
+		player.can_move = player.is_able_to_move()
+		player.save()
 
 # If a Player object is created for a user with existing Player objects,
 # and the new object is attached to a different game to the old object(s),

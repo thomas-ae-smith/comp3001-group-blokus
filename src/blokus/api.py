@@ -233,10 +233,6 @@ class PlayerResource(ModelResource):
 		detail_allowed_methods = []
 		authorization = Authorization()
 
-	def dehydrate(self, bundle):
-		bundle.data['can_move'] = bundle.obj.is_able_to_move()
-		return bundle
-
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
 #Coversion is done here.
 class PieceJSONSerializer(Serializer):
