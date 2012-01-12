@@ -201,8 +201,11 @@
 	        function handlePlacedPieces (game, numberOfMoves) {
 	        	_(game.players.models).each(function (player) {
 	        		var colour = player.get("colour");
+	        		console.log("1", player)
 	        		_(player.pieces.models).each(function (piece) {
-	        			var pieceMasterId = piece.get("master_id");
+	        			var pieceMasterId = Number(piece.get("master_id"));
+	        			console.log("2", pieceMasterId, colour)
+	        			console.log("3", shapes[colour], shapes[colour][pieceMasterId])
 	        			// Move the piece onto the game board at specified location
 	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("flip"), piece.get("rotation"));
 	        		});
