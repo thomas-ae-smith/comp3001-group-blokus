@@ -397,12 +397,8 @@ class PieceResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		from blokus.models import Piece
-		if 'flip' in bundle.data:
-			bundle.data['rotation'] = self.get_client_rotation(bundle.data['rotation'], bundle.data['flip']) #TODO 'flip' does not exists so it needs to be fixed
-			bundle.data['flip'] = self.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
-		else:
-			bundle.data['rotation'] = 0
-			bundle.data['flip'] = 0
+		bundle.data['rotation'] = self.get_client_rotation(bundle.data['rotation'], bundle.data['flip'])
+		bundle.data['flip'] = self.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
 		return bundle
 
 	def hydrate(self, bundle):
