@@ -17,6 +17,7 @@
 		pieceMaster: undefined,
 
 		inPanel: true,
+		panel: undefined,
 
 		// initial Boundary box
 		initBBox: {
@@ -165,10 +166,10 @@
 		moveToPanel: function(panel){
 			var boundaries = panel.getBoundaries();
 
+			this.panel = panel;
 			this.rotation = 0;
 			this.keepTrackOfFlip(0);
 			this.changeFlipToScale();
-			console.log("moveToPanel", this.isSelected);
 			this.isSelected = false;
 			this.canMove = panel.isEnabled && panel.isActive;
 			this.inPanel = true;
@@ -190,7 +191,6 @@
 			this.setVisibleCellsOpacity(1, 500);
 		},
 		moveToGameboard: function(x, y, flip, rotation){
-			console.log("moveToGameboard");
 			var this_ = this;
 			this.posInGameboard = {x:x, y:y};
 			this.rotation = -rotation; //Beacaus of the way it is done
@@ -553,12 +553,10 @@
 				}
 				this.setVisibleCellsOpacity(0.5, 100);
 			}
-							console.log("selectShape", this.isSelected);
 
 		},
 
 		returnToPanel: function (){
-			console.log("returnToPanel")
 			this.isSelected = false;
 			this.fullScale = false;
 			var cenPoint = this.getCenterOfShape();
@@ -577,7 +575,6 @@
 		},
 
 		goToPos: function (){
-			console.log("goToPos");
 			this.isSelected = false;
 			this.canMove = false;
 			var cenPoint = this.getCenterOfShape();
@@ -865,7 +862,6 @@
 			this.cells.click(
 				function (e, x, y){
 					// on Start
-					console.log("Click", !this_.isSelected);
 					if(!this_.isSelected){
 						this_.selectShape(e);
 						var i = 0;
@@ -885,9 +881,7 @@
 						else{
 							var corOnBoard = this_.getCorOnBoard();
 							var validPosition = blokus.utils.valid(corOnBoard);
-							console.log("HERE", this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation())
 							if(validPosition){
-								console.log("HERE", this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation())
 								//this_.isSelected = false;
 								this_.goToPos();
 								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation(),

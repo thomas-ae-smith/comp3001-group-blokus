@@ -89,6 +89,12 @@
 						});
 
 
+						// Disable all pieces of that colour
+						_(shapes[colour]).each(function (shape) {
+							console.log("ster2", shape);
+							shape.canMove = false;
+						});
+
 						// Create the piece in the game model
 						game.getPlayerOfColour(colour).pieces.create(
 								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation, player:activePlayer.url()},
