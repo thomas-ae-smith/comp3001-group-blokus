@@ -125,7 +125,7 @@
 			getId: function () {
 				return getIdFromUrl(this.get("user"));
 			},
-			isLoggedInPlayer: function () { return this.user.get("id") == blokus.user.get("id"); },
+			isLoggedInPlayer: function () { return getIdFromUrl(this.get("user")) == blokus.user.get("id"); },
 		}),
 
 		Board = Model.extend({
