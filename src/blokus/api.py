@@ -93,7 +93,7 @@ class UserProfileResource(ModelResource):
 		for i in xrange(3):
 				bundle.data['private_user_'+str(i)] = None
 		if bundle.data['status'][:7] == 'private' and bundle.data['private_hash'] is not None:
-			other_users = UserProfile.objects.filter(status=bundle.data['status'],private_hash=bundle.data['private_hash']).exclude(id=bundle.data['id'])
+			other_users = UserProfile.objects.filter(status=bundle.data['status'],private_hash=bundle.data['private_hash'])
 			for i, other_user in enumerate(other_users):
 				bundle.data['private_user_'+str(i)] = other_user.user.username
 
