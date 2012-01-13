@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.6)  13 JAN 2012 12:12
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.7.6)  13 JAN 2012 18:06
 entering extended mode
  %&-line parsing enabled.
 **Report.tex
@@ -203,7 +203,7 @@ File: pdftex.def 2010/03/12 v0.04p Graphics/color for pdfTeX
 \Gread@gobject=\count105
 ))) (./Report.aux
 (./TitlePage.aux) (./ProjectDescription.aux) (./tools_and_techniques.aux)
-(./Relevant_Statistics.aux))
+(./Relevant_Statistics.aux) (./Design.aux) (./Eval.aux))
 \openout1 = `Report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 5.
@@ -359,7 +359,33 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 \openout2 = `Relevant_Statistics.aux'.
 
 
-(./Relevant_Statistics.tex) [3
+(./Relevant_Statistics.tex
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 28.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 28.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 28.
+) [3
+
+
+]
+\openout2 = `Design.aux'.
+
+ (./Design.tex
+Missing character: There is no â in font cmr12!
+Missing character: There is no € in font cmr12!
+Missing character: There is no ˜ in font cmr12!
+Missing character: There is no â in font cmr12!
+Missing character: There is no € in font cmr12!
+Missing character: There is no ™ in font cmr12!
+Missing character: There is no â in font cmr12!
+Missing character: There is no € in font cmr12!
+Missing character: There is no ™ in font cmr12!
+Missing character: There is no â in font cmr12!
+Missing character: There is no € in font cmr12!
+Missing character: There is no ™ in font cmr12!
+) [4
 
 
 ]
@@ -372,27 +398,34 @@ Missing character: There is no ™ in font cmr12!
 Missing character: There is no â in font cmr12!
 Missing character: There is no € in font cmr12!
 Missing character: There is no ™ in font cmr12!
-) [4
+) [5
 
 
-] (./Report.aux (./TitlePage.aux) (./ProjectDescription.aux) (./tools_and_techn
-iques.aux)
-(./Relevant_Statistics.aux) (./Eval.aux)) ) 
+]
+(./Report.aux (./TitlePage.aux) (./ProjectDescription.aux)
+(./tools_and_techniques.aux) (./Relevant_Statistics.aux) (./Design.aux)
+(./Eval.aux)) ) 
 Here is how much of TeX's memory you used:
- 5624 strings out of 493857
- 82814 string characters out of 1153306
+ 5665 strings out of 493857
+ 83289 string characters out of 1153306
  158572 words of memory out of 3000000
- 8806 multiletter control sequences out of 15000+50000
- 6616 words of font info for 24 fonts, out of 3000000 for 9000
+ 8825 multiletter control sequences out of 15000+50000
+ 8797 words of font info for 31 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 42i,5n,38p,1092b,304s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type
-1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/am
-sfonts/cm/cmcsc10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
-cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on Report.pdf (5 pages, 76364 bytes).
+ 42i,12n,38p,1092b,304s stack positions out of 5000i,500n,10000p,200000b,50000s
+pdfTeX warning (dest): name{subsubsection.4.2.2} has been refere
+nced but does not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.4.2.1} has been referenced but does n
+ot exist, replaced by a fixed one
+
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share
+/texmf-texlive/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texmf-tex
+live/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/t
+ype1/public/amsfonts/cm/cmsy10.pfb>
+Output written on Report.pdf (6 pages, 84273 bytes).
 PDF statistics:
- 105 PDF objects out of 1000 (max. 8388607)
- 20 named destinations out of 1000 (max. 500000)
- 113 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 133 PDF objects out of 1000 (max. 8388607)
+ 26 named destinations out of 1000 (max. 500000)
+ 161 words of extra memory for PDF output out of 10000 (max. 10000000)
 
