@@ -30,7 +30,7 @@ def execute_garbage_collection(request):
 			break
 		for player in game.player_set.all():
 			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
-				game.delete()
+				player.delete()
 				break
 
 	html = "<p><b>Players deleted:</b></p>"
