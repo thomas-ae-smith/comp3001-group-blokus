@@ -321,7 +321,7 @@ def record_move(sender, instance, **kwargs):
 	tmp_board = move.game.serializable_value("board_grid").split(",")
 	for i in range(rowI):
 		for j in range(colJ):	
-			if piece_bitmap[j][i]:
+			if piece_bitmap[i][j]:
 				tmp_board[start_pos+i+j*20] = instance.player.colour[0]
 	move.game.board_grid = ','.join(tmp_board)
 	#for i in range(len(move.game.get_board_game())): 
