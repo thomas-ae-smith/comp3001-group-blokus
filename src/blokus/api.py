@@ -397,8 +397,9 @@ class PieceResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		from blokus.models import Piece
-		bundle.data['rotation'] = self.get_client_rotation(bundle.data['rotation'], bundle.data['flip'])
-		bundle.data['flip'] = self.get_client_flip(bundle.data['rotation'], bundle.data['flip'])
+		tmp_rot, tmp_flip = bundle.data['rotation'], bundle.data['flip']
+		bundle.data['rotation'] = self.get_client_rotation(tmp_rot, tmp_flip)
+		bundle.data['flip'] = self.get_client_flip(tmp_rot, tmp_flip)
 		return bundle
 
 	def hydrate(self, bundle):
@@ -407,6 +408,7 @@ class PieceResource(ModelResource):
 		bundle.obj.master = PieceMaster.objects.get(id=bundle.data['master'].split('/')[-2])    #HACK HACK HACK!!! Client returns master **ID**
 		players = Player.objects.filter(user=user)
 		bundle.obj.player = players.get(colour=players[0].game.colour_turn)
-		bundle.data['rotation'] = self.get_server_rotation(bundle.data['rotation'], bundle.data['flip'])
-		bundle.data['flip'] = self.get_server_flip(bundle.data['rotation'], bundle.data['flip'])
+		tmp_rot, tmp_flip = bundle.data['rotation'], bundle.data['flip']
+		bundle.data['rotation'] = self.get_server_rotation(tmp_rot, tmp_flip)
+		bundle.data['flip'] = self.get_server_flip(tmp_rot, tmp_flip)
 		return bundle
