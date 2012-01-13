@@ -72,7 +72,7 @@
 
 						// Create the piece in the game model
 						game.getPlayerOfColour(colour).pieces.create(
-								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation},
+								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation },
 								{
 									success: function () { successCallback.call(); },
 									error: function (model, fail, xhr) {
@@ -148,6 +148,16 @@
 				// List of jQuery deferred objects used so that game does not render until all user information has been fetched
 				var dfds = [];
 
+				if (game.players.length < 4) {
+					blokus.showYesNo("Some players of this game have left so it has been ended. Would you like to return to the lobby?", function () {
+						blokus.waiting(true);
+						blokus.userProfile.save({ status: "offline" }, { success: function () {
+							blokus.router.navigate("lobby", true);
+							blokus.waiting(false);
+						} });
+					}, null, true);
+				}
+
 				_(game.players.models).each(function (player) {
 					var user = player.user = new blokus.User({ id: player.getId() }),
 						d = new $.Deferred();
@@ -195,7 +205,6 @@
 				_(playerPanels).each(function (panel, playerId) {
 					var player = game.players.get(Number(playerId)),
 						colour = player.get("colour");
-
 					// Move the panel
 					if (playerId == activePlayerId) {
 						panel.setPosition(0);
@@ -225,6 +234,7 @@
 	        		var colour = player.get("colour");
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = Number(piece.get("master_id"));
+	        			window.pkk = shapes[colour][pieceMasterId]
 	        			// Move the piece onto the game board at specified location
 	        			shapes[colour][pieceMasterId].moveToGameboard(piece.get("x"), piece.get("y"), piece.get("flip"), piece.get("rotation"));
 	        		});
@@ -236,12 +246,15 @@
 	        function handleWinners (game, winningColours) {
 	        	if (!winningColours) return;
 	        	var colours = winningColours.split("|");
-				blokus.showMsg(colours + " Wins!");
+				blokus.showMsg(colours.join(" and ") + " win" + (colours.length > 1 ? "s" : "") + "!");
 	        }
 
 	        /* Setting up view */
 	        // Fetch the game
-			game.fetch({ success: init, error: function () { blokus.showError(errors.fetchGame); } });
+			game.fetch({ success: init, error: function () {
+				blokus.router.navigate("lobby", true);
+				blokus.showMsg("This game does not exist any more.")
+			} });
 			// Bind handlers
 			game.bind("change", function () {
 				if (game.hasChanged("number_of_moves")) handlePlacedPieces(game, game.get("number_of_moves"));
@@ -249,7 +262,7 @@
 				if (game.hasChanged("winning_colours")) handleWinners(game, game.get("winning_colours"));
 				if (game.hasChanged("time_now")) updateDuration(game.get("time_now"));
 			});
-			
+
 
 	        /* Make help screen function */
 			this_.$(".game-help").click(function () {
@@ -270,8 +283,12 @@
 			/* Handle closing the game */
 			this_.$(".game-exit").click(function () {
 				if (confirm("Are you sure you want to quit the game?")) {
+					blokus.waiting(true);
 					blokus.userProfile.save({ status: "offline" }, { success: function () {
-						blokus.router.navigate("", true);
+						blokus.userProfile.fetch({ success: function () {
+							blokus.router.navigate("lobby", true);
+							blokus.waiting(false);
+						}})
 					}});
 				}
 			});

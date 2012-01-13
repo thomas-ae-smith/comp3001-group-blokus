@@ -27,16 +27,16 @@ blokus.LobbyView = Backbone.View.extend({
                 dfd = blokus.userProfile.save({ status: 'private', private_hash: private_hash },{ success: function () {
                     blokus.userProfile.fetch({success: function() {
                         if(blokus.userProfile.get('private_hash') == null) {
-                            blokus.showMsg("The private game no longer exists or is full.");   
+                            blokus.showMsg("The private game no longer exists or is full.");
                         } else {
-                            this_.selectPrivateGameType(blokus.userProfile.get('status'));   
-                        }   
-                    }});           
+                            this_.selectPrivateGameType(blokus.userProfile.get('status'));
+                        }
+                    }});
                 }, error: function () {
-                    blokus.showError("Failed to set userprofile hash");  
-                }}); 
+                    blokus.showError("Failed to set userprofile hash");
+                }});
             }
-            
+
             this_.pollUser = false;
             this_.$(".modelist").slideUp(200, function () { // Slide up
                 this_.$("#privatelobby").slideDown();
@@ -55,12 +55,12 @@ blokus.LobbyView = Backbone.View.extend({
         $("#privatelobby div .playerchoices").hide();
         $("#privatelobby div > p").hide();
         var this_ = this;
-        var dfd = new  $.Deferred(); 
+        var dfd = new  $.Deferred();
 
         blokus.userProfile.save({ status: type }).then(function() {
             blokus.userProfile.fetch().then(function() {
                 dfd.resolve();
-            });  
+            });
         });
 
         dfd.then(function () {
@@ -71,7 +71,7 @@ blokus.LobbyView = Backbone.View.extend({
             this_.$("#privatelobby #start").show();
         }).fail(function () {
             blokus.showError("Unable to fetch user profile");
-        }); 
+        });
     },
 
 
@@ -92,7 +92,7 @@ blokus.LobbyView = Backbone.View.extend({
 				hideProfile: isGuest ? "style=\"display:none;\"" : ""
 			}));
 		}
-        
+
 
         renderTemplate();
 		this.$("#loginForm").submit(function(event) {
@@ -151,7 +151,7 @@ blokus.LobbyView = Backbone.View.extend({
         });
 
         var other_users_change = function(up, other_user) {
-            alert($(".players").length);
+            console.log("player length (adam's alert)", $(".players").length);
             $(".players div[data-online=\"false\"] .online .name").html(other_user)
         }
 

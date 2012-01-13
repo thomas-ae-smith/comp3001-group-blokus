@@ -32,7 +32,16 @@
 		<img src="{{ STATIC_URL }}img/logo.png" id="logo"/>
 		<div class="vignette"></div>
 		<div id="errorstackcontainer"><div id="errorstack"></div></div>
-		<div id="msgcontainer"><div id="msg" style="display: none"><div class="content">Message</div><div class="buttons"><a href="javascript:;" class="button close">OK</a></div></div></div>
+		<div id="msgcontainer" style="display: none">
+			<div id="msg">
+				<div class="content">Message</div>
+				<div>
+					<div class="okButtons buttons"><a href="javascript:;" class="button close">OK</a></div>
+					<div class="yesNoButtons buttons"><a href="javascript:;" class="button yes">Yes</a><a href="javascript:;" class="button no">No</a></div>
+				</div>
+			</div>
+		</div>
+		<div id="blokuswaiting" class="loading" style="display: none"></div>
 		<div id="container"></div>
 		<div class="templates">
 			<script type="text/html" id="lobby-template">

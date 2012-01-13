@@ -28,10 +28,17 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 	$(document).ready(function () {							// Note below, a "view" in the following context is what might be considered a "page" - lobby, game, help etc
 		var currentView,									// Reference to the current view
 			blokus = window.blokus,
-			switchToView = function (view) {				// Switch to a different view
+			switchToView = function (view, new_game_id) {				// Switch to a different view
 				var game_id = blokus.userProfile.get("game_id");
-				if (game_id != null) {
-					view = new blokus.GameView({ id: game_id });
+				if (game_id != null && new_game_id != game_id) {
+					blokus.showYesNo("You are currently in a game. Would you like to continue it?", function () {
+						blokus.router.navigate("game/" + game_id, true);
+					}, function () {
+						blokus.waiting(true);
+						blokus.userProfile.save({ status: "offline" }, { success: function () {
+							blokus.waiting(false);
+						}});
+					}, true);
 				}
 				var oldView = currentView,
 					$newview = $(view.render().el);			// Render new view
@@ -57,17 +64,18 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		blokus.router = new (Backbone.Router.extend({		// Make a new router, which binds hash-urls to events. Each hash-url should load a view.
 			routes: {
 				"": "lobby",								// When there is no hash url
+				"lobby": "lobby",
 				"lobby/:hash": "privatelobby",
 				"game/:id": "game",
 				"register": "register"
 			},
 			lobby: function () { switchToView(new blokus.LobbyView()); },
-			privatelobby: function(hash) { 
+			privatelobby: function(hash) {
 				var lobbyView = new blokus.LobbyView();
-				switchToView(lobbyView); 
+				switchToView(lobbyView);
 				lobbyView.selectGameType("private", null, hash);
-			}, 
-			game: function (id) { switchToView(new blokus.GameView({ id: id })); },
+			},
+			game: function (id) { switchToView(new blokus.GameView({ id: id }), id); },
 			register: function () { switchToView(new blokus.RegisterView()); }
 		}))();
 
@@ -84,8 +92,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 
 		$(window).bind('beforeunload', function(){
 			if (blokus.userProfile.get("game_id") == null) {
-				blokus.userProfile.set({status: "offline"});
-				blokus.userProfile.save();
+				blokus.userProfile.save({status: "offline"});
 			} else {
 				return "Are you sure you wish to quit."
 			}
@@ -116,6 +123,8 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		return this;
 	};
 
+	var msgPersist = false;
+
 	return {
 		DEBUG: DEBUG,
 		log: function () { if (DEBUG) console.log.apply(console, arguments); },
@@ -126,12 +135,28 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			$error.slideDown();
 			$error.click(function() { $error.slideUp(); });
 		},
-		showMsg: function (msg, timeout) {
-			var $msg = $("#msg").fadeIn();
+		showMsg: function (msg, timeout, persist) {
+			if (msgPersist) return;
+			var $msg = $("#msgcontainer").fadeIn();
 			$msg.find(".content").html(msg);
+			$msg.find(".okButtons").show().siblings().hide();
 			if (timeout) {
 				setTimeout(function() { $msg.fadeOut(); }, timeout);
 			}
+			msgPersist = persist || false;
+		},
+		showYesNo: function (msg, yesCallback, noCallback, persist) {
+			if (msgPersist) return;
+			var $msg = $("#msgcontainer").fadeIn();
+			$msg.find(".content").html(msg);
+			$msg.find(".yesNoButtons").show().siblings().hide();
+			$msg.find(".yes").unbind("click").click(yesCallback).click(function() { $msg.fadeOut() });
+			$msg.find(".no").unbind("click").click(noCallback).click(function () { $msg.fadeOut() });
+			msgPersist = persist || false;
+		},
+		waiting: function (on) {
+			if (on) $("#blokuswaiting").fadeIn();
+			else $("#blokuswaiting").fadeOut();
 		},
 		getCurrentUser: getCurrentUser,
 		urls: {
