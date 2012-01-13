@@ -23,6 +23,15 @@ class Game(models.Model):
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
 	winning_colours = models.CharField(max_length=18, validators=[RegexValidator(regex=r"^((blue|yellow|red|green)(\|(blue|yellow|red|green))*)?$")])
+	board_grid = models.TextField(default=','.join(["0"]*400))
+
+
+	def get_board_game(self):
+		board_grid_arr = self.board_grid.split(',')
+		ret_arr = []
+		for i in range(0, len(board_grid_arr), 20):
+			ret_arr.append(board_grid_arr[i:i+20])
+		return ret_arr
 
 	def get_grid(self, limit_to_player=None):
 		grid = [[False]*20 for x in xrange(20)]
@@ -303,6 +312,22 @@ def record_move(sender, instance, **kwargs):
 	move.piece = instance
 	move.game = instance.player.game
 	move.move_number = instance.player.game.number_of_moves + 1
+	## Do the Grid 
+	piece_bitmap = [list(r) for r in instance.get_bitmap()]
+	pos = {'x':int(move.piece.x), 'y':int(move.piece.y)}
+	start_pos = pos['x'] + pos['y']*20
+	rowI = len(piece_bitmap)
+	colJ = len(piece_bitmap[0])
+	tmp_board = move.game.serializable_value("board_grid").split(",")
+	for i in range(rowI):
+		for j in range(colJ):	
+			if piece_bitmap[j][i]:
+				tmp_board[start_pos+i+j*20] = instance.player.colour[0]
+	move.game.board_grid = ','.join(tmp_board)
+	#for i in range(len(move.game.get_board_game())): 
+		#logging.error(repr(move.game.get_board_game()[i]))
+	#End of hte Grid
+
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
 	instance.player.game.colour_turn = instance.player.game.get_next_colour_turn()
 	instance.player.score += instance.master.get_point_value()
