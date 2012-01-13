@@ -3,11 +3,16 @@ blokus.utils = (function ($, _, Backbone) {
 
 	var pieceLocations = {},
 		use_validation = true, //Added for debugging the server. FIXME
+		block_validation = false,
 		blockWidth = 0,
 		blockHeight = 0;
 
 	var set_use_validation = function (value) {
 		use_validation = value;
+	};
+
+	var set_block_validation = function (value) {
+		block_validation = value;
 	};
 
 	function makePositionArray(x, y, w, h) {
@@ -200,6 +205,8 @@ blokus.utils = (function ($, _, Backbone) {
 		//FIXME: Should not really allow users to turn validation off.
 		if (!arr.length > 0 || !use_validation) {
 			return true;
+		}else if (block_validation){
+			return false;
 		}
 
 		//If first turn ensure corner placement
@@ -239,6 +246,7 @@ blokus.utils = (function ($, _, Backbone) {
 		add_cell_to_validation_grid: add_cell_to_validation_grid,
 		add_piece_to_validation_grid: add_piece_to_validation_grid,
 		set_use_validation: set_use_validation,
+		set_block_validation: set_block_validation,
 		makePositionArray: makePositionArray
 	};
 }(jQuery, _, Backbone));

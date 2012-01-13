@@ -128,6 +128,8 @@
 								var moveNumber = Number(ret);
 								fetchFailedCount = 0;
 								if (moveNumber != lastMove && !waiting) {
+									// It is set to false when the turn has been handled
+									blokus.utils.set_block_validation(true);
 									waiting = true;
 									game.fetch({
 										success: function () {
@@ -251,6 +253,8 @@
 					blokus.showMsg(colour + "'s turn", 2500);
 				}
 
+				//Note it is set to true when the turn has changed in polling 
+				blokus.utils.set_block_validation(false);
 				playerStartTime = new Date(timeNow);
 			}
 

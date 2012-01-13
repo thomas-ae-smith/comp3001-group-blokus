@@ -185,7 +185,8 @@ def get_number_of_moves(request, game_id):
 	if request.user.id is None:
 		return HttpResponseNotFound()
 	game = Game.objects.get(pk=game_id)
-	if (datetime.now() - game.last_move_time).seconds > 80:
+
+	if (datetime.now() - game.last_move_time).seconds > 10:
 		game.number_of_moves += 1
 		game.colour_turn = game.get_next_colour_turn()
 		game.last_move_time = datetime.now()
