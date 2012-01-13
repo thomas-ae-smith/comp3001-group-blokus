@@ -15,6 +15,7 @@ import time
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.utils.hashcompat import md5_constructor
+# - removed reference to default_settings
 from django.conf import settings
 
 from .models import Guest
@@ -31,7 +32,7 @@ MAX_SESSION_KEY = 18446744073709551616L     # 2 << 63
 def _get_new_username():
     "Returns a username that isn't being used."
     # The random module is seeded when this Apache child is created.
-    # Use settings.SECRET_KEY as added salt.
+    # Use settings.SECRET_KEY as added salt. - removed reference to default_settings
     try:
         pid = os.getpid()
     except AttributeError:
@@ -47,6 +48,7 @@ def _get_new_username():
             break
     return username[:30]
 
+# - removed all references to default_settings
 def create_guest():
     """Creates a guest user."""
     user = User.objects.create_user(_get_new_username(),
@@ -79,6 +81,7 @@ def is_a_guest(user):
     except NotAGuest:
         return False
 
+# - removed reference to default_settings
 def display_username(user):
     """Returns a username suitable for display (the guest usernames are not)."""
     if is_a_guest(user):
@@ -98,6 +101,7 @@ def delete_guest(user, deletable_classes):
     get_guest(user).delete()
     user.delete()
 
+# - removed reference to default_settings
 def cleanup_guests():
     """Delete guest users who have not interacted with the site for at least
     GUEST_DELETE_TIME"""
