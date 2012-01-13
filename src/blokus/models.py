@@ -180,6 +180,8 @@ class Player(models.Model):
 											piece.x = x_piece
 											if piece.is_valid_position():
 												return True
+		else:
+			return True
 		return False
 
 
