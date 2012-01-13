@@ -163,22 +163,19 @@ class Player(models.Model):
 	# Returns whether the player is able to make a move or not
 	def is_able_to_move(self):
 		grid = self.game.get_grid()
-		unplaced_pieces = set(PieceMaster.objects.all()) - set([p.master for p in self.piece_set.all()])
-		for x in xrange(20):
-			for y in xrange(20):
-				if not grid[y][x]:
-					for master in unplaced_pieces:
-						piece = Piece(master=master,player=self)
-						for transposed in [False, True]:
+		unplaced_piece_masters = set(PieceMaster.objects.all()) - set([p.master for p in self.piece_set.all()])
+		for grid_x in xrange(20):
+			for grid_y in xrange(20):
+				for master in unplaced_piece_masters:
+					piece = Piece(master=master,player=self)
+					for transposed in [False, True]:
+						for rot in xrange(4):
 							piece.transposed = transposed
-							for rot in xrange(4):
-								piece.rotation = rot
-								for y_piece in xrange(len(piece.get_bitmap())):
-									piece.y = y_piece
-									for x_piece in xrange(len(piece.get_bitmap()[0])):
-										piece.x = x_piece
-										if piece.is_valid_position():
-											return True
+							piece.rotation = rot
+							piece.x = grid_x
+							piece.y = grid_y
+							if piece.is_valid_position():
+								return True
 		return False
 
 
