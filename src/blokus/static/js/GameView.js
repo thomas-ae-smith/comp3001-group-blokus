@@ -182,7 +182,7 @@
 					startTime = new Date(game.get("start_time"));// FIXME Date time check compatbility
 					timeNow = new Date(game.get("time_now"));
 					handleTurn(game, game.get("colour_turn"));
-		        	handlePlacedPieces(game, game.get("number_of_moves"));
+		        	handlePlacedPieces(game, game.get("number_of_moves"), true);
 		        	handleWinners(game, game.get("winning_colours"));
 
 					// Start polling
@@ -229,8 +229,9 @@
 	        }
 
 	        /* Handle pieces being placed */
-	        function handlePlacedPieces (game, numberOfMoves) {
+	        function handlePlacedPieces (game, numberOfMoves, init) {
 	        	_(game.players.models).each(function (player) {
+	        		if (player.isLoggedInPlayer() && !init) return;
 	        		var colour = player.get("colour");
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = Number(piece.get("master_id"));
@@ -282,15 +283,15 @@
 
 			/* Handle closing the game */
 			this_.$(".game-exit").click(function () {
-				if (confirm("Are you sure you want to quit the game?")) {
+				blokus.showYesNo("Are you sure you want to quit the game?", function () {
 					blokus.waiting(true);
 					blokus.userProfile.save({ status: "offline" }, { success: function () {
 						blokus.userProfile.fetch({ success: function () {
 							blokus.router.navigate("lobby", true);
 							blokus.waiting(false);
-						}})
+						}});
 					}});
-				}
+				}, null, true);
 			});
 
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed

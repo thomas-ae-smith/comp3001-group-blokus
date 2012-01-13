@@ -88,7 +88,7 @@
 					});
 					player.set({ user_id: getIdFromUrl(player.get("user")) });
 				});
-				
+
 				return model;
 			},
 
@@ -124,7 +124,8 @@
 		Player = Model.extend({
 			getId: function () {
 				return getIdFromUrl(this.get("user"));
-			}
+			},
+			isLoggedInPlayer: function () { return getIdFromUrl(this.get("user")) == blokus.user.get("id"); },
 		}),
 
 		Board = Model.extend({
