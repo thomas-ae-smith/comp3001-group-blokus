@@ -177,7 +177,7 @@
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 
-			var scale = panel.isActive ? 0.7 : 0.4;
+			var scale = panel.isActive ? 0.6 : 0.4;
 			this.curScale.x = scale;
 			this.curScale.y = scale;
 			this.initScale.x = scale;
