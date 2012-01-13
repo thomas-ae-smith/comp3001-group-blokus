@@ -173,16 +173,6 @@
 				// List of jQuery deferred objects used so that game does not render until all user information has been fetched
 				var dfds = [];
 
-				if (game.players.length < 4) {
-					blokus.showYesNo("Some players of this game have left so it has been ended. Would you like to return to the lobby?", function () {
-						blokus.waiting(true);
-						blokus.userProfile.save({ status: "offline" }, { success: function () {
-							blokus.router.navigate("lobby", true);
-							blokus.waiting(false);
-						} });
-					}, null, true);
-				}
-
 				_(game.players.models).each(function (player) {
 					var user = player.user = new blokus.User({ id: player.getId() }),
 						d = new $.Deferred();
@@ -284,6 +274,18 @@
 			} });
 			// Bind handlers
 			game.bind("change", function () {
+				if (game.players.length < 4) {
+					blokus.showYesNo("Some players of this game have left so it has been ended. Would you like to return to the lobby?", function () {
+						blokus.waiting(true);
+						blokus.userProfile.save({ status: "offline" }, { success: function () {
+							blokus.userProfile.fetch({ success: function () {
+								blokus.router.navigate("lobby", true);
+								blokus.waiting(false);
+							}});
+						} });
+					}, null, true);
+				}
+
 				if (game.hasChanged("number_of_moves")) handlePlacedPieces(game, game.get("number_of_moves"));
 				if (game.hasChanged("colour_turn")) setTimeout(function () { handleTurn(game, game.get("colour_turn")); }, 1000);
 				if (game.hasChanged("winning_colours")) handleWinners(game, game.get("winning_colours"));
@@ -311,6 +313,7 @@
 			this_.$(".game-exit").click(function () {
 				blokus.showYesNo("Are you sure you want to quit the game?", function () {
 					blokus.waiting(true);
+					console.log(blokus.userProfile)
 					blokus.userProfile.save({ status: "offline" }, { success: function () {
 						blokus.userProfile.fetch({ success: function () {
 							blokus.router.navigate("lobby", true);

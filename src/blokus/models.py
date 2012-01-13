@@ -134,6 +134,12 @@ class UserProfile(models.Model):
 					self.status = other_player_profiles[0].status
 					logging.error(self.status)
 				elif (oldRecord.status != self.status) or (self.status == 'offline'):
+					try:
+						game = self.user.player_set.all()[0].game
+						game.number_of_moves += 1
+						game.save()
+					except IndexError:
+						pass
 					self.user.player_set.all().delete()
 					self.private_hash = None
 				elif self.status not in set(['private_2', 'private_4']):
