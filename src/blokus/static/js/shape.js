@@ -17,6 +17,7 @@
 		pieceMaster: undefined,
 
 		inPanel: true,
+		panel: undefined,
 
 		// initial Boundary box
 		initBBox: {
@@ -165,10 +166,10 @@
 		moveToPanel: function(panel){
 			var boundaries = panel.getBoundaries();
 
+			this.panel = panel;
 			this.rotation = 0;
 			this.keepTrackOfFlip(0);
 			this.changeFlipToScale();
-			console.log("moveToPanel", this.isSelected);
 			this.isSelected = false;
 			this.canMove = panel.isEnabled && panel.isActive;
 			this.inPanel = true;
@@ -190,7 +191,6 @@
 			this.setVisibleCellsOpacity(1, 500);
 		},
 		moveToGameboard: function(x, y, flip, rotation){
-			console.log("moveToGameboard");
 			var this_ = this;
 			this.posInGameboard = {x:x, y:y};
 			this.rotation = -rotation; //Beacaus of the way it is done
@@ -388,11 +388,13 @@
 			for (var rowI = 0; rowI < numRows; rowI++){
 				for (var colJ = 0; colJ < numCols; colJ++) {
 					if (transData[rowI][colJ] == 1) {
-						newSet.push(this.gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
-						this.gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
-							x:this.posInGameboard.x+colJ,
-							y:this.posInGameboard.y+rowI
-						};
+						if (this.posInGameboard.x+colJ < 20 && this.posInGameboard.y+rowI < 20){
+							newSet.push(this.gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI]);
+							this.gameboard.grid[this.posInGameboard.x+colJ][this.posInGameboard.y+rowI].posOnBoard = {
+								x:this.posInGameboard.x+colJ,
+								y:this.posInGameboard.y+rowI
+							};
+						}
 						// TODO for validation, make the "r" something variable for different players
 						//shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 					}
@@ -553,12 +555,10 @@
 				}
 				this.setVisibleCellsOpacity(0.5, 100);
 			}
-							console.log("selectShape", this.isSelected);
 
 		},
 
 		returnToPanel: function (){
-			console.log("returnToPanel")
 			this.isSelected = false;
 			this.fullScale = false;
 			var cenPoint = this.getCenterOfShape();
@@ -577,7 +577,6 @@
 		},
 
 		goToPos: function (){
-			console.log("goToPos");
 			this.isSelected = false;
 			this.canMove = false;
 			var cenPoint = this.getCenterOfShape();
@@ -788,7 +787,8 @@
 			this.haloImgs.animate({opacity:1}, 500);
 			this.haloOn = true;
 			if(this.haloCircle != undefined && this.haloBCircle != undefined && this.haloImgs != undefined){
-				this.haloCircle.toBack();
+				this.haloCircle.toFront();
+				this.haloImgs.toFront();
 				this.haloBCircle.toBack();
 				//this.haloImgs.toFront();
 			}
@@ -865,7 +865,6 @@
 			this.cells.click(
 				function (e, x, y){
 					// on Start
-					console.log("Click", !this_.isSelected);
 					if(!this_.isSelected){
 						this_.selectShape(e);
 						var i = 0;
@@ -885,9 +884,7 @@
 						else{
 							var corOnBoard = this_.getCorOnBoard();
 							var validPosition = blokus.utils.valid(corOnBoard);
-							console.log("HERE", this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation())
 							if(validPosition){
-								console.log("HERE", this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation())
 								//this_.isSelected = false;
 								this_.goToPos();
 								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation(),
