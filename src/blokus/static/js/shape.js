@@ -192,7 +192,7 @@
 		moveToGameboard: function(x, y, flip, rotation){
 			var this_ = this;
 			this.posInGameboard = {x:x, y:y};
-			this.rotation = rotation;
+			this.rotation = -rotation; //Beacaus of the way it is done
 			this.fullScale = true;
 			this.flipNum = flip;
 			this.changeFlipToScale(); //Don't need to keep track of flip
