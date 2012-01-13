@@ -23,7 +23,7 @@ class Game(models.Model):
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
 	winning_colours = models.CharField(max_length=18, validators=[RegexValidator(regex=r"^((blue|yellow|red|green)(\|(blue|yellow|red|green))*)?$")])
-	board_grid = models.TextField(default=','.join(["0"]*400))
+#	board_grid = models.TextField(default=','.join(["0"]*400))
 
 
 	def get_board_game(self):
@@ -234,13 +234,19 @@ class Piece(models.Model):
 				if cell:
 					#If cell touches another cell of the same colour, invalid placement.
 					for x_offset, y_offset in ((-1,0),(1,0),(0,1),(0,-1)):
-						if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
-							return False
+						try:
+							if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
+								return False
+						except IndexError:
+							pass
 
 					#If cell is adjacent to cell of the same colour, allow placement.
 					for x_offset, y_offset in ((1,1),(1,-1),(-1,1),(-1,-1)):
-						if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
-							return True
+						try:
+							if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
+								return True
+						except IndexError:
+							pass
 
 		return False
 
@@ -318,12 +324,12 @@ def record_move(sender, instance, **kwargs):
 	start_pos = pos['x'] + pos['y']*20
 	rowI = len(piece_bitmap)
 	colJ = len(piece_bitmap[0])
-	tmp_board = move.game.serializable_value("board_grid").split(",")
+	"""tmp_board = move.game.serializable_value("board_grid").split(",")
 	for i in range(rowI):
 		for j in range(colJ):	
 			if piece_bitmap[i][j]:
 				tmp_board[start_pos+i+j*20] = instance.player.colour[0]
-	move.game.board_grid = ','.join(tmp_board)
+	move.game.board_grid = ','.join(tmp_board)"""
 	#for i in range(len(move.game.get_board_game())): 
 		#logging.error(repr(move.game.get_board_game()[i]))
 	#End of hte Grid
