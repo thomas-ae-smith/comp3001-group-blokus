@@ -283,15 +283,15 @@
 
 			/* Handle closing the game */
 			this_.$(".game-exit").click(function () {
-				if (confirm("Are you sure you want to quit the game?")) {
+				blokus.showYesNo("Are you sure you want to quit the game?", function () {
 					blokus.waiting(true);
 					blokus.userProfile.save({ status: "offline" }, { success: function () {
 						blokus.userProfile.fetch({ success: function () {
 							blokus.router.navigate("lobby", true);
 							blokus.waiting(false);
-						}})
+						}});
 					}});
-				}
+				}, null, true);
 			});
 
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
