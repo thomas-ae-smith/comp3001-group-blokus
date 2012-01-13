@@ -164,24 +164,21 @@ class Player(models.Model):
 	def is_able_to_move(self):
 		grid = self.game.get_grid()
 		unplaced_pieces = set(PieceMaster.objects.all()) - set([p.master for p in self.piece_set.all()])
-		if (len(unplaced_pieces) < 8):
-			for x in xrange(20):
-				for y in xrange(20):
-					if not grid[y][x]:
-						for master in unplaced_pieces:
-							piece = Piece(master=master,player=self)
-							for transposed in [False, True]:
-								piece.transposed = transposed
-								for rot in xrange(4):
-									piece.rotation = rot
-									for y_piece in xrange(len(piece.get_bitmap())):
-										piece.y = y_piece
-										for x_piece in xrange(len(piece.get_bitmap()[0])):
-											piece.x = x_piece
-											if piece.is_valid_position():
-												return True
-		else:
-			return True
+		for x in xrange(20):
+			for y in xrange(20):
+				if not grid[y][x]:
+					for master in unplaced_pieces:
+						piece = Piece(master=master,player=self)
+						for transposed in [False, True]:
+							piece.transposed = transposed
+							for rot in xrange(4):
+								piece.rotation = rot
+								for y_piece in xrange(len(piece.get_bitmap())):
+									piece.y = y_piece
+									for x_piece in xrange(len(piece.get_bitmap()[0])):
+										piece.x = x_piece
+										if piece.is_valid_position():
+											return True
 		return False
 
 
