@@ -9,5 +9,5 @@ user accounts are created so that they can test the site out.
 # They default to those in guest.default_settings.py but are
 # overridden by DJANGO_SETTINGS_MODULE.
 # REMOVED from gyroid_utils.conf import Settings, module_from_env_var
-from . import default_settings
+# REMOVED from . import default_settings
 # REMOVED settings = Settings([module_from_env_var(), default_settings])
