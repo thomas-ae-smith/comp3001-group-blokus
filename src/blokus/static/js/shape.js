@@ -193,13 +193,13 @@
 			var this_ = this;
 			this.posInGameboard = {x:x, y:y};
 			this.rotation = rotation;
+			this.fullScale = true;
+			this.flipNum = flip;
 			this.changeFlipToScale(); //Don't need to keep track of flip
 			this.getDestCor();
 			this.isSelected = false;
 			this.canMove = false;
 			this.inPanel = false;
-			this.curScale.x = 1;
-			this.curScale.y = 1;
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 			this.animate(this.destCor.x, this.destCor.y, this.curScale.x, this.curScale.y,
