@@ -231,6 +231,7 @@
 	        /* Handle pieces being placed */
 	        function handlePlacedPieces (game, numberOfMoves) {
 	        	_(game.players.models).each(function (player) {
+	        		if (player.isLoggedInPlayer()) return;
 	        		var colour = player.get("colour");
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = Number(piece.get("master_id"));

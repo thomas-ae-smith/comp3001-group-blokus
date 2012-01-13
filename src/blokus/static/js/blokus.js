@@ -108,8 +108,6 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 
 		$.when.apply(undefined, blokusDeferreds).then(function () { Backbone.history.start(); }) // Start blokus when everything is loaded
 				.fail(function () { blokus.showError("Error initializing. Failed to get pieceMasters? (Have you run syncdb?)"); });
-
-		$("#msg .close").click(function () { $("#msg").fadeOut(); });
 	});
 
 
@@ -140,8 +138,9 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			var $msg = $("#msgcontainer").fadeIn();
 			$msg.find(".content").html(msg);
 			$msg.find(".okButtons").show().siblings().hide();
+			$msg.find(".close").unbind("click").click(function () { $msg.fadeOut(); });
 			if (timeout) {
-				setTimeout(function() { $msg.fadeOut(); }, timeout);
+				setTimeout(function() { msgPersist = false; $msg.fadeOut(); }, timeout);
 			}
 			msgPersist = persist || false;
 		},
@@ -150,8 +149,8 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			var $msg = $("#msgcontainer").fadeIn();
 			$msg.find(".content").html(msg);
 			$msg.find(".yesNoButtons").show().siblings().hide();
-			$msg.find(".yes").unbind("click").click(yesCallback).click(function() { $msg.fadeOut() });
-			$msg.find(".no").unbind("click").click(noCallback).click(function () { $msg.fadeOut() });
+			$msg.find(".yes").unbind("click").click(yesCallback).click(function() { msgPersist = false; $msg.fadeOut() });
+			$msg.find(".no").unbind("click").click(noCallback).click(function () { msgPersist = false; $msg.fadeOut() });
 			msgPersist = persist || false;
 		},
 		waiting: function (on) {
