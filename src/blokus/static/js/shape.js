@@ -554,6 +554,7 @@
 					this.mousePageY = e.pageY - e.layerY + this.initBBox.y;
 				}
 				this.setVisibleCellsOpacity(0.5, 100);
+				this.cells.toFront();
 			}
 
 		},
