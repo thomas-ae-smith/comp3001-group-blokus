@@ -19,6 +19,9 @@ blokus.LobbyView = Backbone.View.extend({
     selectGameType: function (type, title, private_hash) {
         var this_ = this;
         if (type == "private") {
+            $("#privatelobby div .playerchoices").show();
+            $("#privatelobby div > p").show();
+            $("#privatelobby div .details").hide();
             if (private_hash == null) {
                 blokus.userProfile.save({ status: "offline" }, this_.dict);
             } else {
@@ -29,7 +32,7 @@ blokus.LobbyView = Backbone.View.extend({
                         if(blokus.userProfile.get('private_hash') == null) {
                             blokus.showMsg("The private game no longer exists or is full.");
                         } else {
-                            this_.selectPrivateGameType(blokus.userProfile.get('status'));
+                            this_.selectPrivateGameType(blokus.userProfile.get('status'), false);
                         }
                     }});
                 }, error: function () {
@@ -51,14 +54,18 @@ blokus.LobbyView = Backbone.View.extend({
         }
     },
 
-    selectPrivateGameType: function (type) {
+    selectPrivateGameType: function (type, new_game) {
         $("#privatelobby div .playerchoices").hide();
         $("#privatelobby div > p").hide();
         var this_ = this;
         var dfd = new  $.Deferred();
-
-        blokus.userProfile.save({ status: type }).then(function() {
+        var data = { status: type }
+        if(new_game) {
+           data["private_hash"] = null;
+        }
+        blokus.userProfile.save(data).then(function() {
             blokus.userProfile.fetch().then(function() {
+                console.log(blokus.userProfile.toJSON());
                 dfd.resolve();
             });
         });
@@ -132,8 +139,8 @@ blokus.LobbyView = Backbone.View.extend({
         var $startButton = this.$("#privatelobby #start");
 
 
-        this.$("#privatelobby .p2").click(function () { this_.selectPrivateGameType("private_2"); });
-        this.$("#privatelobby .p4").click(function () { this_.selectPrivateGameType("private_4"); });
+        this.$("#privatelobby .p2").click(function () { this_.selectPrivateGameType("private_2", true); });
+        this.$("#privatelobby .p4").click(function () { this_.selectPrivateGameType("private_4", true); });
 
         this.$("#privatelobby #cancel, #waiting #cancel").click(function () {
             blokus.userProfile.save({ status: "offline" });
@@ -143,16 +150,16 @@ blokus.LobbyView = Backbone.View.extend({
             });
         });
 
-
-        $startButton.click(function () {
-            if (!$startButton.hasClass("disabled")) {
-                console.log("YYYY")
-            }
-        });
-
         var other_users_change = function(up, other_user) {
-            console.log("player length (adam's alert)", $(".players").length);
-            $(".players div[data-online=\"false\"] .online .name").html(other_user)
+            $.each(this_.$(".players > div .online .name"),function (index, element) {
+                user = blokus.userProfile.get('private_user_'+index);
+                $(element).html(user);
+                if(user != null) {
+                    $(element).parent().siblings('.offline').html("&nbsp;"); 
+                } else {
+                    $(element).parent().siblings('.offline').html("Waiting for player...");
+                }
+            });
         }
 
         blokus.userProfile.bind("change:private_user_0", other_users_change)

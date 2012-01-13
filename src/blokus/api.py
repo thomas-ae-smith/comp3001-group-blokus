@@ -90,16 +90,13 @@ class UserProfileResource(ModelResource):
 		authorization = UserProfileAuthorization()
 
 	def dehydrate(self, bundle):
+		for i in xrange(3):
+				bundle.data['private_user_'+str(i)] = None
 		if bundle.data['status'][:7] == 'private' and bundle.data['private_hash'] is not None:
 			other_users = UserProfile.objects.filter(status=bundle.data['status'],private_hash=bundle.data['private_hash']).exclude(id=bundle.data['id'])
-			for i in xrange(3):
-				try:
-					bundle.data['private_user_'+str(i)] = other_users[i].user.username
-				except IndexError:
-					bundle.data['private_user_'+str(i)] = None
-		else:
-			for i in xrange(3):
-				bundle.data['private_user_'+str(i)] = None
+			for i, other_user in enumerate(other_users):
+				bundle.data['private_user_'+str(i)] = other_user.user.username
+
 		player_set = bundle.obj.user.player_set.all()
 		if len(player_set) > 0:
 			bundle.data['game_id'] = player_set.all()[0].game.id
@@ -134,8 +131,9 @@ class UserProfileResource(ModelResource):
 		if status[:7] == 'private':
 			if current_userprofile.private_hash is None:
 				m = md5.new()
-				m.update(str(current_userprofile.id))
+				m.update(str(current_userprofile.id)+str(datetime.now()))
 				current_userprofile.private_hash = m.hexdigest()
+				current_userprofile.save()
 			possible_users = UserProfile.objects.filter(status=status,private_hash=current_userprofile.private_hash).exclude(id=current_userprofile.id)
 		else:
 			possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
