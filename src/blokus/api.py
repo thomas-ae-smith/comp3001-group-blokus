@@ -370,6 +370,25 @@ class PieceResource(ModelResource):
 		(3,True):(0,1)
 	}
 
+	client_server_mapping = {
+		(0,0):(0,False),
+		(1,0):(3,False),
+		(2,0):(2,False),
+		(3,0):(1,False),
+		(0,1):(3,True),
+		(1,1):(2,True),
+		(2,1):(1,True),
+		(3,1):(0,True),
+		(0,2):(2,True),
+		(1,2):(1,True),
+		(2,2):(4,True),
+		(3,2):(3,True),
+		(0,3):(2,False),
+		(1,3):(1,False),
+		(2,3):(0,False),
+		(3,3):(3,False)
+	}
+
 	class Meta:
 		queryset = Piece.objects.all()
 		resource_name = 'piece'
@@ -387,12 +406,10 @@ class PieceResource(ModelResource):
 		return self.server_client_mapping[(rotation,flip)][0]
 
 	def get_server_flip(self, rotation, flip):
-		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
-		return client_server_mapping[(rotation,flip)][1]
+		return self.client_server_mapping[(rotation,flip)][1]
 
 	def get_server_rotation(self, rotation, flip):
-		client_server_mapping = dict((v,k) for k, v in self.server_client_mapping.iteritems())
-		return client_server_mapping[(rotation,flip)][0]
+		return self.client_server_mapping[(rotation,flip)][0]
 
 	def dehydrate(self, bundle):
 		from blokus.models import Piece
