@@ -23,6 +23,7 @@ class Game(models.Model):
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
 	winning_colours = models.CharField(max_length=18, validators=[RegexValidator(regex=r"^((blue|yellow|red|green)(\|(blue|yellow|red|green))*)?$")])
+	last_move_time = models.DateTimeField(default=datetime.now())
 #	board_grid = models.TextField(default=','.join(["0"]*400))
 
 
@@ -336,6 +337,7 @@ def record_move(sender, instance, **kwargs):
 	if instance.player.game.is_game_over():
 		instance.player.game.end_game()
 
+	instance.player.game.last_move_time = datetime.now()
 	instance.player.game.save()
 	instance.player.save()
 	move.save()

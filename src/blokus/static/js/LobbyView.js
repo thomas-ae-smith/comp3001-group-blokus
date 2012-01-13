@@ -72,7 +72,7 @@ blokus.LobbyView = Backbone.View.extend({
 
         dfd.then(function () {
             this_.pollUser = true;
-            this_.$("#gameurl").val("http://"+window.location.hostname+":"+window.location.port+"/#lobby/"+blokus.userProfile.get('private_hash'));
+            this_.$("#gameurl").val("http://"+window.location.hostname+(window.location.port != "" ? ":"+window.location.port : "")+"/#lobby/"+blokus.userProfile.get('private_hash'));
             this_.$("#privatelobby .p" + type).addClass("sel").siblings().removeClass("sel");
             this_.$("#privatelobby .details").slideDown();
             this_.$("#privatelobby #start").show();

@@ -185,4 +185,10 @@ def get_number_of_moves(request, game_id):
 	if request.user.id is None:
 		return HttpResponseNotFound()
 	game = Game.objects.get(pk=game_id)
+	if (datetime.now() - game.last_move_time).seconds > 30:
+		game.number_of_moves += 1
+		game.colour_turn = game.get_next_colour_turn()
+		game.last_move_time = datetime.now()
+		game.save()
+
 	return HttpResponse(game.number_of_moves, content_type="text/plain")
