@@ -7,9 +7,9 @@
 	var Model = Backbone.Model.extend({
 		url: function () {
 			if (this.resourceUrl) return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
-            else if (this.collection) return this.collection.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
-            else throw "Does not have resource url or collection";
-        }
+			else if (this.collection) return this.collection.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
+			else throw "Does not have resource url or collection";
+		}
 	});
 
 	var User = Model.extend({
@@ -122,6 +122,8 @@
 		}),
 
 		Player = Model.extend({
+			resourceUrl: blokus.urls.player,
+
 			getId: function () {
 				return getIdFromUrl(this.get("user"));
 			},
