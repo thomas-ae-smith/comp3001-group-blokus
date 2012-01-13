@@ -131,10 +131,11 @@ class UserProfile(models.Model):
 				if self.status == 'private' and self.private_hash is not None:
 					other_player_profiles = UserProfile.objects.filter(private_hash=self.private_hash).exclude(id=self.id)
 					self.status = other_player_profiles[0].status
-				if (oldRecord.status != self.status) or (self.status == 'offline'):
+					logging.error(self.status)
+				elif (oldRecord.status != self.status) or (self.status == 'offline'):
 					self.user.player_set.all().delete()
 					self.private_hash = None
-				if self.status not in set(['private_2', 'private_4']):
+				elif self.status not in set(['private_2', 'private_4']):
 					self.private_hash = None
 		except UserProfile.DoesNotExist:
 			pass

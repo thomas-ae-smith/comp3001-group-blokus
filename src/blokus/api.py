@@ -134,6 +134,7 @@ class UserProfileResource(ModelResource):
 				m.update(str(current_userprofile.id)+str(datetime.now()))
 				current_userprofile.private_hash = m.hexdigest()
 				current_userprofile.save()
+				logging.error(current_userprofile.private_hash)
 			possible_users = UserProfile.objects.filter(status=status,private_hash=current_userprofile.private_hash).exclude(id=current_userprofile.id)
 		else:
 			possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
