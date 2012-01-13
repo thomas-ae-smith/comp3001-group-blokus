@@ -18,7 +18,7 @@ import logging
 # Garbage collection function called by cronjob.
 def execute_garbage_collection(request):
 	# The amount of time which a single player may be disconnected for before the game is garbage-collected.
-	TIMEOUT_IN_SECONDS = 60 * 15
+	TIMEOUT_IN_SECONDS = 60 * 5
 
 	# If any game contains a player who has not been seen online in TIMEOUT_IN_SECONDS,
 	# or contains a null player, delete the game and all its players.
@@ -185,7 +185,7 @@ def get_number_of_moves(request, game_id):
 	if request.user.id is None:
 		return HttpResponseNotFound()
 	game = Game.objects.get(pk=game_id)
-	if (datetime.now() - game.last_move_time).seconds > 30:
+	if (datetime.now() - game.last_move_time).seconds > 80:
 		game.number_of_moves += 1
 		game.colour_turn = game.get_next_colour_turn()
 		game.last_move_time = datetime.now()

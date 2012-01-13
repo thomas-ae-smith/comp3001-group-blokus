@@ -271,6 +271,8 @@ class Piece(models.Model):
 
 	# Only saves if the positioning validates. Otherwise throw error.
 	def save(self, *args, **kwargs):
+		self.player.last_activity = datetime.now()
+		self.player.save()
 		if not self.is_valid_position():
 			raise ValidationError("That is not a valid position for a piece!")
 		super(Piece, self).save(*args, **kwargs)
@@ -315,21 +317,6 @@ def record_move(sender, instance, **kwargs):
 	move.piece = instance
 	move.game = instance.player.game
 	move.move_number = instance.player.game.number_of_moves + 1
-	## Do the Grid 
-	piece_bitmap = [list(r) for r in instance.get_bitmap()]
-	pos = {'x':int(move.piece.x), 'y':int(move.piece.y)}
-	start_pos = pos['x'] + pos['y']*20
-	rowI = len(piece_bitmap)
-	colJ = len(piece_bitmap[0])
-	"""tmp_board = move.game.serializable_value("board_grid").split(",")
-	for i in range(rowI):
-		for j in range(colJ):	
-			if piece_bitmap[i][j]:
-				tmp_board[start_pos+i+j*20] = instance.player.colour[0]
-	move.game.board_grid = ','.join(tmp_board)"""
-	#for i in range(len(move.game.get_board_game())): 
-		#logging.error(repr(move.game.get_board_game()[i]))
-	#End of hte Grid
 
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
 	instance.player.game.colour_turn = instance.player.game.get_next_colour_turn()
@@ -347,14 +334,12 @@ def record_move(sender, instance, **kwargs):
 @receiver(post_delete, sender=Game)
 def cleanup_game(sender, instance, **kwargs):
 	for player in instance.player_set.all():
-		for piece in player.piece_set.all():
-			piece.delete()
+		player.piece_set.all().delete()
 		userProfile = player.user.get_profile()
 		userProfile.status = 'offline'
 		userProfile.save()
 		player.delete()
-	for move in instance.move_set.all():
-		move.delete()
+	instance.move_set.all().delete()
 
 '''
 def facebook_extra_values(sender, user, response, details, **kwargs):

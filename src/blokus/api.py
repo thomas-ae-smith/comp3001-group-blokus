@@ -209,24 +209,9 @@ class GameResource(ModelResource):
 					del bundle.data['players'][i].data['pieces'][j]
 		return bundle
 
-	#Every time a user gets a game object of theirs, their player timestamp is updated.
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
-			games = super(GameResource, self).get_object_list(request)
-			player = request.user.player_set.all()[0]
-			game = player.game
-			player.last_activity = datetime.now()
-			player.save()
-
-			# If a player does not fetch a game model for 60 seconds, they are
-			# considered disconnected.
-			"""for otherPlayer in Player.objects.filter(game=game):
-				if (datetime.now() - otherPlayer.last_activity).seconds > 60:
-					import sys
-					print >>sys.stderr, "THERE HAS BEEN NO RESPONSE FROM THE USER " + str(otherPlayer.user.id) + " FOR " + str((datetime.now() - otherPlayer.last_activity).seconds) + " SECONDS!"
-					otherPlayer.user.get_profile().status = 'offline'
-					otherPlayer.save()"""
-			return games
+			return super(GameResource, self).get_object_list(request)
 		return Game.objects.none()
 
 class PlayerResource(ModelResource):
