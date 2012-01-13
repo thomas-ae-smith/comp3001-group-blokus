@@ -785,7 +785,8 @@
 			this.haloImgs.animate({opacity:1}, 500);
 			this.haloOn = true;
 			if(this.haloCircle != undefined && this.haloBCircle != undefined && this.haloImgs != undefined){
-				this.haloCircle.toBack();
+				this.haloCircle.toFront();
+				this.haloImgs.toFront();
 				this.haloBCircle.toBack();
 				//this.haloImgs.toFront();
 			}
