@@ -319,6 +319,7 @@
 						blokus.userProfile.fetch({ success: function () {
 							blokus.router.navigate("lobby", true);
 							blokus.waiting(false);
+							this_.paper.clear();
 						}});
 					}});
 				}, null, true);
