@@ -35,9 +35,9 @@
 			this.pos = pos;
 			this.isActive = pos == 0;
 			this.isEnabled = this.isLoggedInPlayer();
-			
+
 			//$(this.el).css('background', this.isEnabled && this.isActive ? 'rgba(125,125,125,0.8)' : 'transparent');
-			
+
 			var turnText = $(this.el).find("#turntext");
 			turnText.find('div').html("Waiting for " + this.options.player.user.get("username") + "...");
 			if (this.isEnabled || !this.isActive) {
@@ -61,7 +61,7 @@
 		isEnabled: false,
 		isActive: false,
 
-		isLoggedInPlayer: function () { return this.options.player.user.get("id") == blokus.user.get("id"); },
+		isLoggedInPlayer: function () { return this.options.player.isLoggedInPlayer(); },
 
 		getBoundaries: function () {
 			var offsets = _offsets[this.pos],
