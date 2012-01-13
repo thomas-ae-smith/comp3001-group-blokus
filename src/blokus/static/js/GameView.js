@@ -212,6 +212,7 @@
 						panel.setPosition(pos);
 						pos++;
 					}
+					gameboard.makeTransparent();
 					// Move all players unplaced shapes to new panel position
 					_(shapes[colour]).each(function (shape) {
 						if (shape.isInPanel()) shape.moveToPanel(panel);
