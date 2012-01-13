@@ -22,8 +22,6 @@ def execute_garbage_collection(request):
 
 	# If any game contains a player who has not been seen online in TIMEOUT_IN_SECONDS,
 	# or contains a null player, delete the game and all its players.
-	removed_game_ids = []
-	removed_player_ids = []
 	for game in Game.objects.all():
 		if len (game.player_set.all()) < 4:
 			game.delete()
@@ -31,18 +29,11 @@ def execute_garbage_collection(request):
 		for player in game.player_set.all():
 			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
 				player.delete()
-				break
+				#Trigger clients to update game
+				game.number_of_moves += 1
+				game.save()
 
-	html = "<p><b>Players deleted:</b></p>"
-	for player_id in removed_player_ids:
-		html = html + "<p>" + repr(player_id) + "</p>"
-
-	html = html + "<p><p><b>Games deleted:</b></p>"
-	for game_id in removed_game_ids:
-		html = html + "<p>" + repr(game_id) + "</p>"
-
-	# A view must return a "web response".
-	return HttpResponse(html)
+	return HttpResponse("Cron executed")
 
 class UserCreationForm(forms.ModelForm):
 	username = forms.RegexField(label="Username", max_length=30, regex=r'^[\w.@+-]+$',
@@ -185,8 +176,7 @@ def get_number_of_moves(request, game_id):
 	if request.user.id is None:
 		return HttpResponseNotFound()
 	game = Game.objects.get(pk=game_id)
-
-	if (datetime.now() - game.last_move_time).seconds > 10:
+	if (datetime.now() - game.last_move_time).seconds > 120:
 		game.number_of_moves += 1
 		game.colour_turn = game.get_next_colour_turn()
 		game.last_move_time = datetime.now()

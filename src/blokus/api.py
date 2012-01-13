@@ -279,11 +279,17 @@ class PieceMasterResource(ModelResource):
 		authorization = Authorization()
 		serializer = PieceJSONSerializer()
 
+#Can only place pieces on own game
 class PieceValidation(Validation):
-    def is_valid(self, bundle, request=None):
-        if not bundle.data:
-            return {'__all__': 'Not quite what I had in mind.'}
-        return {}
+	def is_valid(self, bundle, request=None):
+		if request is None or request.user is None:
+			return {'__all__': 'Not logged in.'}
+
+		if long(bundle.data['player'].split('/')[-2]) not in request.user.player_set.all().values_list('id',flat=True):
+			return {'__all__': 'You can only put a piece in a game you are playing in'}
+
+		return {}
+		
 
 class PieceResource(ModelResource):
 	master = fields.ForeignKey(PieceMasterResource, 'master')
@@ -325,7 +331,7 @@ class PieceResource(ModelResource):
 		default_format = 'application/json'
 		list_allowed_methods = ['post']
 		detail_allowed_methods = []
-		validation = Validation()
+		validation = PieceValidation()
 		authorization = Authorization()
 
 	def get_client_flip(self, rotation, flip):
