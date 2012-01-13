@@ -182,7 +182,7 @@
 					startTime = new Date(game.get("start_time"));// FIXME Date time check compatbility
 					timeNow = new Date(game.get("time_now"));
 					handleTurn(game, game.get("colour_turn"));
-		        	handlePlacedPieces(game, game.get("number_of_moves"));
+		        	handlePlacedPieces(game, game.get("number_of_moves"), true);
 		        	handleWinners(game, game.get("winning_colours"));
 
 					// Start polling
@@ -229,9 +229,9 @@
 	        }
 
 	        /* Handle pieces being placed */
-	        function handlePlacedPieces (game, numberOfMoves) {
+	        function handlePlacedPieces (game, numberOfMoves, init) {
 	        	_(game.players.models).each(function (player) {
-	        		if (player.isLoggedInPlayer()) return;
+	        		if (player.isLoggedInPlayer() && !init) return;
 	        		var colour = player.get("colour");
 	        		_(player.pieces.models).each(function (piece) {
 	        			var pieceMasterId = Number(piece.get("master_id"));
