@@ -403,7 +403,7 @@ class PieceResource(ModelResource):
 
 	def hydrate(self, bundle):
 		user = bundle.request.user
-		bundle.obj.master = PieceMaster.objects.get(id=bundle.data['master'].split('/')[-2])    #HACK HACK HACK!!! Client returns master **ID**
+		#bundle.obj.master = PieceMaster.objects.get(id=bundle.data['master'].split('/')[-2])    #HACK HACK HACK!!! Client returns master **ID**
 		players = Player.objects.filter(user=user)
 		#bundle.obj.player = players.get(colour=players[0].game.colour_turn)
 		tmp_rot, tmp_flip = bundle.data['rotation'], bundle.data['flip']
