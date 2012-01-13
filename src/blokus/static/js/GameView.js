@@ -69,10 +69,19 @@
 						/* FIXME temp turn progression */
 						var colourswitch = {"blue": "yellow", "yellow": "red", "red": "green", "green": "blue"};
 						blokus._exampleGames[1].colour_turn = colourswitch[blokus._exampleGames[1].colour_turn];
+						var activePlayer = game.getPlayerOfColour(game.get("colour_turn"));
+						var activePlayerId = activePlayer.get("id");
+
+						_(game.players.models).each(function (player) {
+							if (player.get("id") == activePlayerId){
+								activePlayer = player;
+							}
+						});
+				
 
 						// Create the piece in the game model
 						game.getPlayerOfColour(colour).pieces.create(
-								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation },
+								{ master: pieceMaster.url(), x: x, y: y, flip: flip, rotation: rotation, player:activePlayer.url()},
 								{
 									success: function () { successCallback.call(); },
 									error: function (model, fail, xhr) {

@@ -122,6 +122,8 @@
 		}),
 
 		Player = Model.extend({
+			resourceUrl: blokus.urls.player,
+
 			getId: function () {
 				return getIdFromUrl(this.get("user"));
 			},
