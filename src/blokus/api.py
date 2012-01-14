@@ -318,7 +318,7 @@ class PieceResource(ModelResource):
 		(0,2):(1,True), 
 		(1,2):(0,True),
 		(2,2):(3,True), 
-		(3,2):(3,True),
+		(3,2):(2,True), 
 		(0,3):(2,False),
 		(1,3):(1,False),
 		(2,3):(0,False),
