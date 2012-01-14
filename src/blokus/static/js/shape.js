@@ -909,26 +909,11 @@
 					blokus.haloArr.push(s);
 				}
 			});
-			blokus.mapKeyDown(37,
-				function () {
-					this_.rotate(-1);
-				}
-			);
-			blokus.mapKeyDown(39,
-				function () {
-					this_.rotate(1);
-				}
-			);
-			blokus.mapKeyDown(86, // v
-				function (){
-					this_.flip(2);
-				}
-			);
-			blokus.mapKeyDown(72, // h
-				function (){
-					this_.flip(1);
-				}
-			);
+			blokus.mapKeyDown(37, function () { this_.rotate(-1); });
+			blokus.mapKeyDown(39, function () { this_.rotate(1); });
+			blokus.mapKeyDown(86, function (){ this_.flip(2); }); // v
+			blokus.mapKeyDown(72, function (){ this_.flip(1); }); // h
+			blokus.mapKeyDown(27, function (){ if (this_.isSelected) this_.returnToPanel(); }); // ECS
 		}
 	});
 
