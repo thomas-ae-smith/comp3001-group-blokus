@@ -217,16 +217,16 @@ class Piece(models.Model):
 
 		return False
 
+	def has_this_piece(self):
+		if self.master in (set(PieceMaster.objects.all()) - set([p.master for p in self.player.piece_set.all()])):
+			return True
+		return False
+
 	def is_valid_position(self, grid_all, grid_player):
-		#logging.debug("Does not overlap:" + str(self.does_not_overlap()))
-		#logging.debug("Is only adjancent:" + str(self.is_only_adjacent()))
-		#logging.debug("Satisfies first move:" + str(self.satisfies_first_move()))
-		#logging.debug("Is inside grid:" + str(self.is_inside_grid()))
-		#logging.debug("Game is not over: " + str(self.player.game.winning_colours.strip()))
-		#and self.player.game.winning_colours.strip() == "") # Game is not over.
 		bitmap = self.get_bitmap()
 		return (
 			self.is_inside_grid(bitmap) and
+			self.has_this_piece() and
 			self.does_not_overlap(bitmap, grid_all) and
 			(self.is_only_adjacent(bitmap, grid_player) or
 			self.placed_in_corner(bitmap))
