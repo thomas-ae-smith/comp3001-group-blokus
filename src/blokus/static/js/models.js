@@ -12,36 +12,7 @@
 		}
 	});
 
-	var User = Model.extend({
-			resourceUrl: blokus.urls.user,
-
-			// FIXME: Hacked in bootstrap, baby
-			fetch: function (options) {
-				if (this.get("id") > 13) { // TODO remove
-					return Model.prototype.fetch.apply(this, arguments);
-				}
-				var this_ = this,
-					dfd = new $.Deferred();
-					id = Number(this_.get("id")),
-					model = _(blokus._exampleUsers).find(function (user) {
-						return user.id === id;
-					});
-
-				if (!model) {
-					if (options && options.error) {
-						options.error.call(undefined, {}, {status: 404});
-						dfd.reject();
-					}
-				} else {
-					this.set(this.parse(model));
-					if (options && options.success) {
-						options.success.call();
-						dfd.resolve();
-					}
-				}
-				return dfd;
-			},
-		}),
+	var User = Model.extend({ resourceUrl: blokus.urls.user }),
 		UserProfile = Model.extend({ resourceUrl: blokus.urls.userProfile }),
 		Game = Model.extend({
 			resourceUrl: blokus.urls.game,
@@ -49,33 +20,6 @@
 			url: function () {
 				return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "") +
 						(this.has("number_of_moves") ? "?state=" + this.get("number_of_moves") : "");
-			},
-
-			// FIXME: Hacked in bootstrap, baby
-			fetch: function (options) {
-				if (this.get("id") > 1) { // TODO remove
-					return Model.prototype.fetch.apply(this, arguments);
-				}
-				var this_ = this,
-					dfd = new $.Deferred();
-					id = Number(this_.get("id")),
-					model = _(blokus._exampleGames).find(function (game) {
-						return game.id === id;
-					});
-
-				if (!model) {
-					if (options && options.error) {
-						options.error.call(undefined, {}, {status: 404});
-						dfd.reject();
-					}
-				} else {
-					this.set(this.parse(model));
-					if (options && options.success) setTimeout(function(){
-						options.success.call();
-						dfd.resolve();
-					},100);
-				}
-				return dfd;
 			},
 
 			parse: function (model) {
@@ -99,14 +43,7 @@
 			}
 		}),
 
-		PieceMaster = Model.extend({
-			resourceUrl: blokus.urls.pieceMaster,
-
-			parse: function (model) {
-				model.id = Number(model.id);
-				return model;
-			}
-		}),
+		PieceMaster = Model.extend({ resourceUrl: blokus.urls.pieceMaster }),
 
 		Piece = Model.extend({
 			defaults: { rotation: 0, flip: 0 },
@@ -123,43 +60,9 @@
 
 		Player = Model.extend({
 			resourceUrl: blokus.urls.player,
-
-			getId: function () {
-				return getIdFromUrl(this.get("user"));
-			},
+			getId: function () { return getIdFromUrl(this.get("user")); },
 			isLoggedInPlayer: function () { return getIdFromUrl(this.get("user")) == blokus.user.get("id"); },
-		}),
-
-		Board = Model.extend({
-		initialize: function(){
-						var numXCells = 20;
-						var numYCells = 20;
-						var grid = new Array(numXCells);
-						var gridPlaced = new Array(numXCells);
-
-						for (var iBoard=0; iBoard<numXCells ; iBoard++) {
-							grid[iBoard] = new Array(numYCells);
-							gridPlaced[iBoard] = new Array(numYCells);
-							for (var jBoard=0; jBoard<numYCells; jBoard++) {
-								var cell = 0;
-								grid[iBoard][jBoard] = cell;
-								gridPlaced[iBoard][jBoard] = '0';
-							}
-						}
-						this.set({
-									numXCells: numXCells,
-									numYCells: numYCells,
-									grid: grid,
-									gridPlaced: gridPlaced
-								});
-					}
-		}),
-
-		// Will be the logged in user
-		user = new User(),
-		userProfile = new UserProfile(),
-		board = new Board();
-
+		});
 
 	_(window.blokus).extend({
 		User: User,
@@ -167,9 +70,6 @@
 		Game: Game,
 		PieceMaster: PieceMaster,
 		Piece: Piece,
-		Player: Player,
-		user: user,
-		userProfile: userProfile,
-		board: board
+		Player: Player
 	});
 }(jQuery, _, Backbone));

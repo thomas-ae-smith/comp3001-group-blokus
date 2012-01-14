@@ -101,7 +101,7 @@
 									success: function () { successCallback.call(); },
 									error: function (model, fail, xhr) {
 										blokus.showError(errors.placePiece);
-										blokus.showError(fail.responseText);
+										if (blokus.DEBUG) blokus.showError(fail.responseText);
 										errorCallback.call();
 									}
 								});
