@@ -359,6 +359,8 @@ class PieceResource(ModelResource):
 		try:
 			players = Player.objects.filter(user=bundle.request.user)
 			current_player = players.get(colour=players[0].game.colour_turn)
+			if players[0].game.game_over:
+				raise ImmediateHttpResponse(HttpBadRequest("This game is over."))
 		except Player.DoesNotExist:
 			raise ImmediateHttpResponse(HttpBadRequest("It is not your turn!"))
 		tmp_rot, tmp_flip = bundle.data['rotation'], bundle.data['flip']

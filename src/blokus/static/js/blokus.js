@@ -135,12 +135,12 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			$error.slideDown();
 			$error.click(function() { $error.slideUp(); });
 		},
-		showMsg: function (msg, timeout, persist) {
+		showMsg: function (msg, timeout, persist, callback) {
 			if (msgPersist) return;
 			var $msg = $("#msgcontainer").fadeIn();
 			$msg.find(".content").html(msg);
 			$msg.find(".okButtons").show().siblings().hide();
-			$msg.find(".close").unbind("click").click(function () { $msg.fadeOut(); });
+			$msg.find(".close").unbind("click").click(function () { $msg.fadeOut(); if(callback) callback.call(); });
 			if (timeout) { setTimeout(function() { msgPersist = false; $msg.fadeOut(); }, timeout); }
 			msgPersist = persist || false;
 		},

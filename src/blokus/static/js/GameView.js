@@ -297,6 +297,34 @@
 				},
 				ticker = setInterval(updateDuration, 1000);
 
+			/* Handle winners */
+			function handleGameOver (game, is_over) {
+				if (!is_over) return;
+				polling = false;
+				clearTimeout(ticker);
+				blokus.utils.set_block_validation(true);
+				var msg = "<h4>SCORES</h4>";
+				_(game.players.models).each(function (player) {
+					console.log(player);
+					window.p = player;
+					if(p.user == undefined)
+						setTimeout(function(){msg += "<p>"+player.user.get("username")+": "+player.get("score")+"</p>";}, 100);
+					else {
+						msg += "<p>"+player.user.get("username")+": "+player.get("score")+"</p>";
+					}
+				});
+
+				blokus.showMsg(msg, undefined, true, function() {
+					blokus.waiting(true);
+					blokus.userProfile.save({ status: "offline" }, { success: function () {
+						blokus.userProfile.fetch({ success: function () {
+							blokus.router.navigate("lobby", true);
+							blokus.waiting(false);
+						}});
+					}});
+				});
+			}
+
 
 			/* Initial setting up of game */
 			var isInit = true;
@@ -319,6 +347,8 @@
 					} });
 				});
 
+				//handleGameOver(game, game.get("game_over"));
+
 				/* When all users are fetched */
 				$.when.apply(undefined, dfds).always(function () {
 					// Set up panels for all players
@@ -332,7 +362,6 @@
 					timeNow = new Date(game.get("time_now"));
 					handleTurn(game, game.get("colour_turn"));
 					handlePlacedPieces(game, game.get("number_of_moves"), true);
-					handleWinners(game, game.get("winning_colours"));
 
 					// Start polling
 					poll();
@@ -399,14 +428,6 @@
 				});
 			}
 
-
-			/* Handle winners */
-			function handleWinners (game, winningColours) {
-				if (!winningColours) return;
-				var colours = winningColours.split("|");
-				blokus.showMsg(colours.join(" and ") + " win" + (colours.length > 1 ? "s" : "") + "!");
-			}
-
 			/* Setting up view */
 			// Fetch the game
 			game.fetch({ success: init, error: function () {
@@ -429,7 +450,7 @@
 
 				if (game.hasChanged("number_of_moves")) handlePlacedPieces(game, game.get("number_of_moves"));
 				if (game.hasChanged("colour_turn")) setTimeout(function () { handleTurn(game, game.get("colour_turn")); }, 1000);
-				if (game.hasChanged("winning_colours")) handleWinners(game, game.get("winning_colours"));
+				//if (game.hasChanged("game_over")) handleGameOver(game, game.get("game_over"));
 				if (game.hasChanged("time_now")) updateDuration(game.get("time_now"));
 			});
 
@@ -454,7 +475,6 @@
 			this_.$(".game-exit").click(function () {
 				blokus.showYesNo("Are you sure you want to quit the game?", function () {
 					blokus.waiting(true);
-					console.log(blokus.userProfile)
 					blokus.userProfile.save({ status: "offline" }, { success: function () {
 						blokus.userProfile.fetch({ success: function () {
 							blokus.router.navigate("lobby", true);

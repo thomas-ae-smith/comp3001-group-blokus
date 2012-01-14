@@ -15,7 +15,6 @@ blokus.utils = (function ($, _, Backbone) {
 	var set_use_validation = function (value) { use_validation = value; }; // FIXME remove
 
 	var set_block_validation = function (value) {
-		console.log(value);
 		block_validation = value;
 	};
 

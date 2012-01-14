@@ -378,12 +378,10 @@
 								y:this.posInGameboard.y+rowI
 							};
 						}
-						// TODO for validation, make the "r" something variable for different players
-						//shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 					}
 				}
 			}
-			var cell = this.gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
+			//var cell = this.gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
 			this.getDestCor();
 			this.cellsOnGameboard = newSet;
 			this.notInPanel = false;
