@@ -162,9 +162,12 @@ class Player(models.Model):
 		return self.game.get_grid(limit_to_player = self)
 
 	# Returns whether the player is able to make a move or not
-	def is_able_to_move(self):
-		grid = self.game.get_grid()
+	def is_able_to_move(self, grid_all, grid_player):
+		import sys
+		print >>sys.stderr, "Checking if " + repr(self.colour) + " can move"
+		print >>sys.stderr, "line 168 worked"
 		unplaced_piece_masters = set(PieceMaster.objects.all()) - set([p.master for p in self.piece_set.all()])
+		print >>sys.stderr, "line 170 worked"
 		for grid_x in xrange(20):
 			for grid_y in xrange(20):
 				for master in unplaced_piece_masters:
@@ -175,7 +178,9 @@ class Player(models.Model):
 							piece.rotation = rot
 							piece.x = grid_x
 							piece.y = grid_y
-							if piece.is_valid_position():
+							print >>sys.stderr, "trying to validate " + repr(piece.master.id)
+							if piece.is_valid_position(grid):
+								print >>sys.stderr, "Valid Move: Transposed: " + repr(transposed) + ", Rotation: " + repr(rot) + ", x: " + repr(grid_x) + ", y: " + repr(grid_y) + ", masterID: " + repr(piece.master.id)
 								return True
 		return False
 
@@ -191,8 +196,7 @@ class Piece(models.Model):
 	flip = models.BooleanField(default=False) #Represents a TRANSPOSITION; flipped pieces are flipped along the axis runing from top left to bottom right.
 
 	#Returns TRUE if the piece does not overlap with any other piece on the board.
-	def does_not_overlap(self, bitmap):
-		grid = self.player.game.get_grid()
+	def does_not_overlap(self, bitmap, grid):
 		for rowNumber, rowData in enumerate(bitmap):
 			for columnNumber, cell in enumerate(rowData):
 				if grid[self.x+columnNumber][self.y+rowNumber] and cell:
@@ -221,10 +225,7 @@ class Piece(models.Model):
 	# Returns TRUE if the piece is adjacent (touching the corner) of a
 	# piece of the same colour, but does not actually touch another
 	# piece of the same colour.
-	def is_only_adjacent(self, bitmap):
-		#Construct grid of pieces of the same colour.
-		grid = self.player.get_grid()
-
+	def is_only_adjacent(self, bitmap, grid):
 		#Compare piece being placed to pieces near it on the grid.
 		for row_number, row_data in enumerate(self.get_bitmap()):
 			for column_number, cell in enumerate(row_data):
@@ -247,7 +248,7 @@ class Piece(models.Model):
 
 		return False
 
-	def is_valid_position(self):
+	def is_valid_position(self, grid_all, grid_player):
 		#logging.debug("Does not overlap:" + str(self.does_not_overlap()))
 		#logging.debug("Is only adjancent:" + str(self.is_only_adjacent()))
 		#logging.debug("Satisfies first move:" + str(self.satisfies_first_move()))
@@ -256,10 +257,10 @@ class Piece(models.Model):
 		#and self.player.game.winning_colours.strip() == "") # Game is not over.
 		bitmap = self.get_bitmap()
 		return (
-			self.placed_in_corner(bitmap) or
 			self.is_inside_grid(bitmap) and
-			self.does_not_overlap(bitmap) and
-			self.is_only_adjacent(bitmap)
+			self.does_not_overlap(bitmap, grid_all) and
+			(self.is_only_adjacent(bitmap, grid_player) or
+			self.placed_in_corner(bitmap))
 			)
 
 	def get_bitmap(self):	#Returns the bitmap of the master piece which has been appropriately flipped and rotated.
@@ -273,7 +274,7 @@ class Piece(models.Model):
 	def save(self, *args, **kwargs):
 		self.player.last_activity = datetime.now()
 		self.player.save()
-		if not self.is_valid_position():
+		if not self.is_valid_position(self.player.get_grid(), self.player.game.get_grid()):
 			raise ValidationError("That is not a valid position for a piece!")
 		super(Piece, self).save(*args, **kwargs)
 
@@ -290,10 +291,12 @@ class Move(models.Model):
 @receiver(post_save, sender=Move)
 def update_player_can_move(sender, instance, created, **kwargs):
 	game = instance.piece.player.game
-	colour = game.get_next_colour_turn()
-	player = game.player_set.get(colour=colour)
-	player.can_move = player.is_able_to_move()
-	player.save()
+#	colour = game.get_next_colour_turn()
+	grid_all = instance.game.get_grid()
+	for player in game.player_set.all():
+		grid_player = player.get_grid()
+		player.can_move = player.is_able_to_move(grid_all, grid_player)
+		player.save()
 
 # If a Player object is created for a user with existing Player objects,
 # and the new object is attached to a different game to the old object(s),
