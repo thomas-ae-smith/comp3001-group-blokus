@@ -9,7 +9,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 	var getCurrentUser = function(callback) {				// Get currently logged in user (or anonymous user if not logged in)
 		$.ajax({
 			url: "/get_logged_in_user/",
-  			dataType: 'json',
+			dataType: 'json',
 			success: function (model) {
 				blokus.user.set(model);
 				blokus.userProfile.set(model.userprofile);
@@ -116,10 +116,14 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 	});
 
 
-	Array.prototype.clean = function (deleteValue) { // Remove a given value from the array
-		return _(this).reject(function (v) {
-			return (v == deleteValue);
-		});
+	Array.prototype.clean = function (deleteValue) { // Remove all occurrences of specified value from an array
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] == deleteValue) {
+				this.splice(i, 1);
+				i--;
+			}
+		}
+		return this;
 	};
 
 	var msgPersist = false;

@@ -21,6 +21,139 @@
 		placePiece: "Piece failed to be placed."
 	};
 
+	var _panelOffsets = [
+		{ x: 0, y: 95 },
+		{ x: 670, y: 95 },
+		{ x: 670, y: 295 },
+		{ x: 670, y: 495 },
+	];
+	var _panelDimensions = [
+		{ w: 132, h: 565 },
+		{ w: 132, h: 165 },
+		{ w: 132, h: 165 },
+		{ w: 132, h: 165 }
+	];
+
+
+	var GameBoard = Backbone.View.extend({
+		offset: { x: 175, y: 125 },
+		borderWidth: 30,
+		width: undefined,
+		height: undefined,
+		cellSize: undefined,
+		border: 1,
+		className: "gameboard",
+		grid: undefined,
+
+		initialize: function(){
+			this.cellSize = this.options.cellSize;
+			this.width = this.cellSize * 20;
+			this.height = this.cellSize * 20;
+		},
+
+		render: function () {
+			var paper = this.options.paper,
+				cellSize = this.options.cellSize,
+				cols = [];
+			this.grid = new Array(20);
+			// Render the border
+			paper.rect(this.offset.x - this.borderWidth, this.offset.y - this.borderWidth, this.width + this.borderWidth * 2,this.height + this.borderWidth * 2, 10)
+				 .attr("fill", "url('/static/img/wood.jpg')").glow();
+			// Render the background
+			paper.rect(this.offset.x, this.offset.y, this.width, this.height)
+				 .attr("fill", "url('/static/img/wood_light.jpg')").glow();
+			// Render the inset border
+			paper.rect(this.offset.x, this.offset.y, this.width, this.height)
+				 .attr("stroke", "black").glow();
+
+			// Render 20x20 grid
+			for (var x = 0; x < 20; x++) {
+				var row = [];
+				cols.push(row);
+				for (var y = 0; y < 20; y++) {
+					var cell = paper.rect(this.offset.x + x * cellSize, this.offset.y + y * cellSize, cellSize - this.border, cellSize - this.border);
+					cell.attr("fill", "#GGG");
+					row.push(cell);
+				}
+				this.grid[x] = row;
+			}
+			return this;
+		},
+
+		makeTransparent: function(){
+			for (var x = 0; x < 20; x++) {
+				for (var y = 0; y < 20; y++) {
+					this.grid[x][y].attr("fill", "#GGG");
+				}
+			}
+		}
+	});
+
+
+	var PlayerPanel = Backbone.View.extend({
+		className: "playerpanel",
+		shapes: {},
+		pos: 0,
+
+		render: function () {
+			var $el = $(this.el),
+				player = this.options.player,
+				template = blokus.getTemplate("player-panel");
+
+			var profile = player.user.get("userprofile");
+			$el.html(template({
+				name: player.user.get("username"),
+				pic: "/static/img/noavatar.jpg",
+				stats: profile != null ? "wins: " + profile.wins + " losses: " + profile.losses : ""
+			}));
+
+			return this;
+		},
+
+		setPosition: function (pos) {
+			this.pos = pos;
+			this.isActive = pos == 0;
+			this.isEnabled = this.isLoggedInPlayer();
+
+			var turnText = $(this.el).find("#turntext");
+			turnText.find('div').html("Waiting for " + this.options.player.user.get("username") + "...");
+			if (this.isEnabled || !this.isActive) {
+				turnText.hide();
+			} else {
+				turnText.show();
+			}
+			this.isEnabled = true;
+			if (this.isActive) {
+				$(".playerpanelcontainer.left").append(this.el);
+			} else {
+				$(".playerpanelcontainer.right").append(this.el);
+			}
+			var boundaries = this.getBoundaries();
+			this.shapePositions = blokus.utils.makePositionArray(boundaries.sx, boundaries.sy, boundaries.width, boundaries.height);
+		},
+
+		getPosition: function () { return this.pos; },
+
+		isEnabled: false,
+		isActive: false,
+
+		isLoggedInPlayer: function () { return this.options.player.isLoggedInPlayer(); },
+
+		getBoundaries: function () {
+			var offsets = _panelOffsets[this.pos],
+				dimensions = _panelDimensions[this.pos];
+			return {
+				sx: offsets.x,
+				sy: offsets.y,
+				ex: offsets.x + dimensions.w,
+				ey: offsets.y + dimensions.h,
+				width: dimensions.w,
+				height: dimensions.h
+			};
+		}
+
+	});
+
 	// The game screen
 	blokus.GameView = Backbone.View.extend({
 		className: "gameview",
@@ -36,7 +169,7 @@
 			var paper = Raphael(this.el, 800, 660);		// Make the Raphael element 800 x 600 in this view
 
 			/* Render game board */
-			var gameboard = new blokus.GameBoard({ paper: paper, cellSize: 22 }).render();
+			var gameboard = new GameBoard({ paper: paper, cellSize: 22 }).render();
 
 			// Append to view
 			$(this.el).append(gameboard.el);
@@ -77,7 +210,7 @@
 								activePlayer = player;
 							}
 						});
-				
+
 
 						var activePlayer = game.getPlayerOfColour(game.get("colour_turn"));
 						var activePlayerId = activePlayer.get("id");
@@ -201,7 +334,7 @@
 					// Set up panels for all players
 					_(game.players.models).each(function (player) {
 						var id = player.get("id");
-						playerPanels[id] = new blokus.PlayerPanel({ player: player }).render();
+						playerPanels[id] = new PlayerPanel({ player: player }).render();
 					});
 
 					// Initialize game view
@@ -252,7 +385,7 @@
 					blokus.showMsg(colour + "'s turn", 2500);
 				}
 
-				//Note it is set to true when the turn has changed in polling 
+				//Note it is set to true when the turn has changed in polling
 				blokus.utils.set_block_validation(false);
 				playerStartTime = new Date(timeNow);
 			}
@@ -335,4 +468,6 @@
 		}
 
 	});
+
+
 }(jQuery, _, Backbone, blokus, Raphael));

@@ -767,8 +767,8 @@
 				});
 				this.haloImgs.scale(0.6, 0.6, 0, 0);
 			}
-			this.haloCircle.animate({opacity: 0.3}, 500);
-			this.haloImgs.animate({opacity:1}, 500);
+			this.haloCircle.animate({opacity: 0.3}, 100);
+			this.haloImgs.animate({opacity:1}, 100);
 			this.haloOn = true;
 			if(this.haloCircle != undefined && this.haloBCircle != undefined && this.haloImgs != undefined){
 				this.haloCircle.toFront();
@@ -782,8 +782,8 @@
 		removeHalo: function(){
 			var this_ = this;
 			if (this.haloCircle != undefined && this.haloOn){
-				this.haloCircle.animate({opacity: 0}, 500);
-				this.haloImgs.animate({opacity: 0}, 500);
+				this.haloCircle.animate({opacity: 0}, 100);
+				this.haloImgs.animate({opacity: 0}, 100);
 				this.haloBCircle.toBack();
 				this.haloCircle.toBack();
 				this.haloImgs.toBack();

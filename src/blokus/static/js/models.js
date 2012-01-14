@@ -1,16 +1,20 @@
-// Define the models used by blokus
+// Define the models and collections used by blokus
 (function ($, _, Backbone) {
 	function getIdFromUrl (url) {
 		return Number((url.charAt(url.length-1) === "/" ? url.slice(0, url.length-1) : url).split("/").pop());
 	}
 
 	var Model = Backbone.Model.extend({
-		url: function () {
-			if (this.resourceUrl) return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
-			else if (this.collection) return this.collection.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
-			else throw "Does not have resource url or collection";
-		}
-	});
+			url: function () {
+				if (this.resourceUrl) return this.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
+				else if (this.collection) return this.collection.resourceUrl + (this.hasOwnProperty("id") ? this.id + "/" : "");
+				else throw "Does not have resource url or collection";
+			}
+		}),
+		Collection = Backbone.Collection.extend({
+			url: function () { return this.resourceUrl + "?limit=0"; },
+			parse: function(response) { return response.objects; }
+		});
 
 	var User = Model.extend({ resourceUrl: blokus.urls.user }),
 		UserProfile = Model.extend({ resourceUrl: blokus.urls.userProfile }),
@@ -70,6 +74,12 @@
 		Game: Game,
 		PieceMaster: PieceMaster,
 		Piece: Piece,
-		Player: Player
+		Player: Player,
+		UserCollection: Collection.extend({ model: User, resourceUrl: blokus.urls.user }),
+		UserProfileCollection: Collection.extend({ model: UserProfile, resourceUrl: blokus.urls.user }),
+		GameCollection: Collection.extend({ model: Game, resourceUrl: blokus.urls.game }),
+		PieceMasterCollection: Collection.extend({ model: PieceMaster, resourceUrl: blokus.urls.pieceMaster }),
+		PieceCollection: Collection.extend({ model: Piece, resourceUrl: blokus.urls.piece }),
+		PlayerCollection: Backbone.Collection.extend({ model: Player, resourceUrl: blokus.urls.player })
 	});
 }(jQuery, _, Backbone));
