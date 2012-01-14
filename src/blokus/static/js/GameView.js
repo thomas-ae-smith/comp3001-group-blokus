@@ -91,7 +91,6 @@
 
 						// Disable all pieces of that colour
 						_(shapes[colour]).each(function (shape) {
-							console.log("ster2", shape);
 							shape.canMove = false;
 						});
 

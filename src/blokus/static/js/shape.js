@@ -60,16 +60,6 @@
 		},
 		notInPanel: true,
 
-		prevDist: {
-			x: undefined,
-			y: undefined
-		},
-
-		mousePage: {
-			x: undefined,
-			y: undefined
-		},
-
 		// gameboard boundary box the grid
 		gameboardBBox: {
 			sx: undefined, // start x
@@ -136,13 +126,6 @@
 			this.initScale = _(this.curScale).clone();
 			this.addMouseListeners()
 
-			//this.canMove = this.options.canMove;
-			//this.dataArr = this.options.dataArr;
-			//this.destCor = this.options.destCor;
-			this.prevDist = this.options.prevDist;
-			this.mousePage = this.options.mousePage;
-			//this.gameboardBBox = this.options.gameboardBBox;
-			//this.gameboardCellSize = this.options.gameboardCellSize;
 			this.gameboard = this.options.gameboard;
 			// Apply the current scale given
 			var cenPoint = this.getCenterOfShape();
