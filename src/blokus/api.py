@@ -161,7 +161,7 @@ class UserProfileResource(ModelResource):
 		game.save()
 
 		#For each player set status to ingame and create their player object
-		if len(user_playing) == 2:
+		if len(users_playing) == 2:
 			colours = ['blue', 'red', 'yellow', 'green']
 		else:
 			colours = ['blue', 'yellow', 'red', 'green']

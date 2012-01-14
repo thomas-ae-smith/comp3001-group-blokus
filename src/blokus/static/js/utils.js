@@ -15,6 +15,7 @@ blokus.utils = (function ($, _, Backbone) {
 	var set_use_validation = function (value) { use_validation = value; }; // FIXME remove
 
 	var set_block_validation = function (value) {
+		console.log(value);
 		block_validation = value;
 	};
 
@@ -207,6 +208,7 @@ blokus.utils = (function ($, _, Backbone) {
 		add_piece_to_validation_grid: add_piece_to_validation_grid,
 		set_use_validation: set_use_validation,
 		set_block_validation: set_block_validation,
+		gridPlaced: gridPlaced,
 		makePositionArray: makePositionArray
 	};
 }(jQuery, _, Backbone));
