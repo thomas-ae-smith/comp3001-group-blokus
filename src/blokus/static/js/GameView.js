@@ -22,13 +22,13 @@
 	};
 
 	var _panelOffsets = [
-		{ x: 0, y: 95 },
+		{ x: 0, y: 125 },
 		{ x: 670, y: 95 },
 		{ x: 670, y: 295 },
 		{ x: 670, y: 495 },
 	];
 	var _panelDimensions = [
-		{ w: 132, h: 565 },
+		{ w: 132, h: 535 },
 		{ w: 132, h: 165 },
 		{ w: 132, h: 165 },
 		{ w: 132, h: 165 }
@@ -379,13 +379,18 @@
 				});
 
 				// Indicate whose player's turn it is
+				var skipButton = $(".game-skip");
 				if (activePlayer.get("user_id") == blokus.user.get("id")) {
+					skipButton.show();
+					blokus.utils.set_block_validation(false);
 					blokus.showMsg(colour + ", it is now your turn", 2500);
 				} else {
+					skipButton.hide()
 					blokus.showMsg(colour + "'s turn", 2500);
 				}
 
 				//Note it is set to true when the turn has changed in polling
+				blokus.waiting(false)
 				blokus.utils.set_block_validation(false);
 				playerStartTime = new Date(timeNow);
 			}
@@ -454,6 +459,17 @@
 						}});
 					}});
 				}, null, true);
+			});
+
+			this_.$(".game-skip").click(function () {
+				blokus.waiting(true);
+				$.ajax({
+					url: "/skip_move/" + this_.game.getPlayerTurn().get("id") + "/",
+					error: function() {
+						blokus.waiting(false);
+						blokus.showError("Failed to skip move");
+					}
+				});
 			});
 
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed

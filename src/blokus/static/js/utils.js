@@ -34,7 +34,6 @@ blokus.utils = (function ($, _, Backbone) {
 				x: Math.floor(x + (blockWidth * xOff)),
 				y: Math.floor(y + (blockHeight * yOff))
 			};
-			console.log(pieceLocations[i+1])
 		});
 
 		return pieceLocations;

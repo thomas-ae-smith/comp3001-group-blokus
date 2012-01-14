@@ -22,17 +22,9 @@ class Game(models.Model):
 	game_type = models.IntegerField()
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
 	number_of_moves = models.PositiveIntegerField(default=0)
-	winning_colours = models.CharField(max_length=18, validators=[RegexValidator(regex=r"^((blue|yellow|red|green)(\|(blue|yellow|red|green))*)?$")])
+	game_over = models.BooleanField(default=False)
 	last_move_time = models.DateTimeField(default=datetime.now())
-#	board_grid = models.TextField(default=','.join(["0"]*400))
-
-
-	def get_board_game(self):
-		board_grid_arr = self.board_grid.split(',')
-		ret_arr = []
-		for i in range(0, len(board_grid_arr), 20):
-			ret_arr.append(board_grid_arr[i:i+20])
-		return ret_arr
+	continuous_skips = models.PositiveIntegerField(default=0)
 
 	def get_grid(self, limit_to_player=None):
 		grid = [[False]*20 for x in xrange(20)]
@@ -51,10 +43,8 @@ class Game(models.Model):
 
 	# Returns whether or not anybody can make any moves.
 	def is_game_over(self):
-		for player in self.player_set.all():
-			if player.can_move:
-				return False
-		return True
+		if self.continuous_skips >= 4:
+			return True
 
 	# Returns the players with the highest score. Will only return multiple players if they share the same score.
 	def get_winning_players(self):
@@ -63,10 +53,10 @@ class Game(models.Model):
 		highscore = 0
 		for player in players:
 			if player.score > highscore:
-				winner = [player]
+				winners = [player]
 				highscore = player.score
 			elif player.score == highscore:
-				winner.append(player)
+				winners.append(player)
 		return winners
 
 	def get_next_colour_turn(self):
@@ -78,11 +68,18 @@ class Game(models.Model):
 			winnerProfile = winner.user.get_profile()
 			winnerProfile.wins += 1
 			winnerProfile.save()
-		self.winning_colours = "|".join([winner.colour] for winner in winners)
 		for player in set(self.player_set.all()) - set(winners):
 			profile = player.user.get_profile()
 			profile.losses += 1
 			profile.save()
+		self.game_over = True;
+		self.save()
+
+	def turn_complete(self):
+		if self.is_game_over():
+			self.end_game()
+		self.last_move_time = datetime.now()
+		self.save()
 
 class PieceMaster(models.Model):
 	piece_data = models.CharField(max_length=12)	#Represented by '1', '0' and ','; '1' represents a block, '0' represents no block, ',' represents newline.
@@ -142,14 +139,6 @@ class UserProfile(models.Model):
 			pass
 		super(UserProfile, self).save(*args, **kwargs)
 
-
-
-# Colours MUST correspond to positions:
-# Red - Top Left
-# Green - Top Right
-# Blue - Bottom Right
-# Yellow - Bottom Left
-
 class Player(models.Model):
 	game = models.ForeignKey(Game)
 	user = models.ForeignKey(User)
@@ -160,30 +149,6 @@ class Player(models.Model):
 
 	def get_grid(self):
 		return self.game.get_grid(limit_to_player = self)
-
-	# Returns whether the player is able to make a move or not
-	def is_able_to_move(self, grid_all, grid_player):
-		import sys
-		print >>sys.stderr, "Checking if " + repr(self.colour) + " can move"
-		print >>sys.stderr, "line 168 worked"
-		unplaced_piece_masters = set(PieceMaster.objects.all()) - set([p.master for p in self.piece_set.all()])
-		print >>sys.stderr, "line 170 worked"
-		for grid_x in xrange(20):
-			for grid_y in xrange(20):
-				for master in unplaced_piece_masters:
-					piece = Piece(master=master,player=self)
-					for transposed in [False, True]:
-						for rot in xrange(4):
-							piece.transposed = transposed
-							piece.rotation = rot
-							piece.x = grid_x
-							piece.y = grid_y
-							print >>sys.stderr, "trying to validate " + repr(piece.master.id)
-							if piece.is_valid_position(grid):
-								print >>sys.stderr, "Valid Move: Transposed: " + repr(transposed) + ", Rotation: " + repr(rot) + ", x: " + repr(grid_x) + ", y: " + repr(grid_y) + ", masterID: " + repr(piece.master.id)
-								return True
-		return False
-
 
 class Piece(models.Model):
 	master = models.ForeignKey(PieceMaster)
@@ -222,15 +187,13 @@ class Piece(models.Model):
 		return (self.x >= 0 and self.y >= 0 and
 			self.x + width < 20 and self.y + height < 20)
 
-	# Returns TRUE if the piece is adjacent (touching the corner) of a
-	# piece of the same colour, but does not actually touch another
-	# piece of the same colour.
+	# Returns TRUE if the piece shares a vertex but not a flat side with a piece of own colour
 	def is_only_adjacent(self, bitmap, grid):
 		#Compare piece being placed to pieces near it on the grid.
 		for row_number, row_data in enumerate(self.get_bitmap()):
 			for column_number, cell in enumerate(row_data):
 				if cell:
-					#If cell touches another cell of the same colour, invalid placement.
+					#If cell touches another cell of the same colour on a flat side, invalid placement.
 					for x_offset, y_offset in ((-1,0),(1,0),(0,1),(0,-1)):
 						try:
 							if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
@@ -238,7 +201,7 @@ class Piece(models.Model):
 						except IndexError:
 							pass
 
-					#If cell is adjacent to cell of the same colour, allow placement.
+					#If cell is shares a vertex of a cell of the same colour, allow placement.
 					for x_offset, y_offset in ((1,1),(1,-1),(-1,1),(-1,-1)):
 						try:
 							if grid[column_number + self.x + x_offset][row_number + self.y + y_offset]:
@@ -288,15 +251,6 @@ class Move(models.Model):
 ############
 # SIGNALS  #
 ############
-@receiver(post_save, sender=Move)
-def update_player_can_move(sender, instance, created, **kwargs):
-	game = instance.piece.player.game
-#	colour = game.get_next_colour_turn()
-	grid_all = instance.game.get_grid()
-	for player in game.player_set.all():
-		grid_player = player.get_grid()
-		player.can_move = player.is_able_to_move(grid_all, grid_player)
-		player.save()
 
 # If a Player object is created for a user with existing Player objects,
 # and the new object is attached to a different game to the old object(s),
@@ -321,16 +275,14 @@ def record_move(sender, instance, **kwargs):
 	move.game = instance.player.game
 	move.move_number = instance.player.game.number_of_moves + 1
 
+	instance.player.game.continuous_skips = 0
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
 	instance.player.game.colour_turn = instance.player.game.get_next_colour_turn()
 	instance.player.score += instance.master.get_point_value()
-	if instance.player.game.is_game_over():
-		instance.player.game.end_game()
-
-	instance.player.game.last_move_time = datetime.now()
-	instance.player.game.save()
 	instance.player.save()
+	
 	move.save()
+	instance.player.game.turn_complete()
 
 # If a game is deleted, remove all hanging moves, pieces and players
 # associated with the game.
@@ -344,29 +296,12 @@ def cleanup_game(sender, instance, **kwargs):
 		player.delete()
 	instance.move_set.all().delete()
 
-'''
-def facebook_extra_values(sender, user, response, details, **kwargs):
-	user.get_profile().profile_image_url = "http://graph.facebook.com/%s/picture?type=square" % response.get('id')
-	user.get_profile().save()
-	return True
-pre_update.connect(facebook_extra_values, sender=FacebookBackend)
-
-def google_extra_values(sender, user, response, details, **kwargs):
-#	user.get_profile().profile_image_url = "http://graph.google.com/%s/picture?type=square" % response.get('id')
-	user.get_profile().save()
-	return True
-pre_update.connect(google_extra_values, sender=GoogleBackend)
-'''
-
 def social_extra_values(sender, user, response, details, **kwargs):
 	result = False
 	url = None
 	if sender == FacebookBackend and "id" in response:
 		url = "http://graph.facebook.com/%s/picture?type=square" % response.get('id')
-	elif sender == google.GoogleOAuth2Backend and "picture" in response:
-		url = response["picture"]
 	else:
-#		url = user.email
 		url = "http://www.gravatar.com/avatar/%s?s=40&d=identicon" % md5_constructor(user.email.strip().lower())
 	if url:
 		user.get_profile().profile_image_url = url

@@ -44,6 +44,10 @@
 				return _(this.players.models).find(function (player) {
 					return player.get("colour") === colour;
 				});
+			},
+
+			getPlayerTurn: function () {
+				return this.getPlayerOfColour(this.get("colour_turn"));
 			}
 		}),
 

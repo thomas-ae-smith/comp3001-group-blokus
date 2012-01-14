@@ -161,7 +161,10 @@ class UserProfileResource(ModelResource):
 		game.save()
 
 		#For each player set status to ingame and create their player object
-		colours = ['blue', 'yellow', 'red', 'green']
+		if len(user_playing) == 2:
+			colours = ['blue', 'red', 'yellow', 'green']
+		else:
+			colours = ['blue', 'yellow', 'red', 'green']
 		k = 0
 		for i, user_playing in enumerate(users_playing):
 			user_playing_profile = user_playing.get_profile()
