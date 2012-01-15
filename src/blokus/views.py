@@ -1,7 +1,9 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from blokus.api import UserResource, UserProfileResource
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django import forms
 from django.template import RequestContext
@@ -17,31 +19,22 @@ import logging
 # Garbage collection function called by cronjob.
 def execute_garbage_collection(request):
 	# The amount of time which a single player may be disconnected for before the game is garbage-collected.
-	TIMEOUT_IN_SECONDS = 60 * 15
+	TIMEOUT_IN_SECONDS = 60 * 5
 
 	# If any game contains a player who has not been seen online in TIMEOUT_IN_SECONDS,
 	# or contains a null player, delete the game and all its players.
-	removed_game_ids = []
-	removed_player_ids = []
 	for game in Game.objects.all():
 		if len (game.player_set.all()) < 4:
 			game.delete()
 			break
 		for player in game.player_set.all():
 			if (datetime.now() - player.last_activity).seconds > TIMEOUT_IN_SECONDS:
-				game.delete()
-				break
+				player.delete()
+				#Trigger clients to update game
+				game.number_of_moves += 1
+				game.save()
 
-	html = "<p><b>Players deleted:</b></p>"
-	for player_id in removed_player_ids:
-		html = html + "<p>" + repr(player_id) + "</p>"
-
-	html = html + "<p><p><b>Games deleted:</b></p>"
-	for game_id in removed_game_ids:
-		html = html + "<p>" + repr(game_id) + "</p>"
-
-	# A view must return a "web response".
-	return HttpResponse(html)
+	return HttpResponse("Cron executed")
 
 class UserCreationForm(forms.ModelForm):
 	username = forms.RegexField(label="Username", max_length=30, regex=r'^[\w.@+-]+$',
@@ -163,3 +156,56 @@ def get_logged_in_user(request):
 	full_bundle = ur.full_dehydrate(ur_bundle)
 
 	return HttpResponse(ur.serialize(None, ur.full_dehydrate(ur_bundle), 'application/json'))
+
+@require_http_methods(["GET", "POST"])
+def create_piece(request):
+	if not request.is_ajax():
+		return HttpResponseBadRequest()
+	if request.user.id is None:
+		return HttpResponseNotFound()
+	#master_id
+	#x
+	#y
+	#flip
+	#rotate
+
+@require_http_methods("GET")
+@login_required
+def get_number_of_moves(request, game_id):
+	if not request.is_ajax():
+		return HttpResponseBadRequest()
+	if request.user.id is None:
+		return HttpResponseNotFound()
+	game = Game.objects.get(pk=game_id)
+	if (datetime.now() - game.last_move_time).seconds > 120:
+		game.continuous_skips += 1
+		game.number_of_moves += 1
+		game.colour_turn = game.get_next_colour_turn()
+		game.turn_complete()
+		game.save()
+
+	return HttpResponse(game.number_of_moves, content_type="text/plain")
+
+@require_http_methods("GET")
+@login_required
+def skip_move(request, player_id):
+	if not request.is_ajax():
+		return HttpResponseBadRequest()
+	if request.user.id is None:
+		return HttpResponseNotFound()
+	try:
+		player = Player.objects.get(pk=player_id)
+		game = player.game
+		if not game.colour_turn == player.colour:
+			return HttpResponseBadRequest()
+		player.last_activity = datetime.now()
+		player.save()
+		game.continuous_skips += 1
+		game.colour_turn = game.get_next_colour_turn()
+		game.number_of_moves += 1
+		game.save()
+		game.turn_complete()
+		return HttpResponse("", content_type="text/plain")
+	except ObjectDoesNotExist:
+		return HttpResponseNotFound()
+			

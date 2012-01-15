@@ -5,11 +5,14 @@ from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.validation import CleanedDataFormValidation, Validation
 from tastypie.serializers import Serializer
+from tastypie.http import HttpBadRequest
 from django.forms import ModelForm, ValidationError
 from django.core.serializers import json
 from django.utils import simplejson
 from datetime import datetime, timedelta
 from guest.utils import display_username
+from tastypie.exceptions import ImmediateHttpResponse
+from tastypie.http import HttpBadRequest
 import logging
 import random
 import md5
@@ -90,6 +93,13 @@ class UserProfileResource(ModelResource):
 		authorization = UserProfileAuthorization()
 
 	def dehydrate(self, bundle):
+		for i in xrange(3):
+				bundle.data['private_user_'+str(i)] = None
+		if bundle.data['status'][:7] == 'private' and bundle.data['private_hash'] is not None:
+			other_users = UserProfile.objects.filter(status=bundle.data['status'],private_hash=bundle.data['private_hash'])
+			for i, other_user in enumerate(other_users):
+				bundle.data['private_user_'+str(i)] = other_user.user.username
+
 		player_set = bundle.obj.user.player_set.all()
 		if len(player_set) > 0:
 			bundle.data['game_id'] = player_set.all()[0].game.id
@@ -124,12 +134,14 @@ class UserProfileResource(ModelResource):
 		if status[:7] == 'private':
 			if current_userprofile.private_hash is None:
 				m = md5.new()
-				m.update(str(current_userprofile.id))
+				m.update(str(current_userprofile.id)+str(datetime.now()))
 				current_userprofile.private_hash = m.hexdigest()
+				current_userprofile.save()
+				logging.error(current_userprofile.private_hash)
 			possible_users = UserProfile.objects.filter(status=status,private_hash=current_userprofile.private_hash).exclude(id=current_userprofile.id)
 		else:
 			possible_users = UserProfile.objects.filter(status=status).exclude(id=current_userprofile.id)
-		
+
 		if len(possible_users) < game_attributes[status]['player_count'] - 1:
 			return object_list
 
@@ -149,7 +161,10 @@ class UserProfileResource(ModelResource):
 		game.save()
 
 		#For each player set status to ingame and create their player object
-		colours = ['blue', 'yellow', 'red', 'green']
+		if len(users_playing) == 2:
+			colours = ['blue', 'red', 'yellow', 'green']
+		else:
+			colours = ['blue', 'yellow', 'red', 'green']
 		k = 0
 		for i, user_playing in enumerate(users_playing):
 			user_playing_profile = user_playing.get_profile()
@@ -160,7 +175,7 @@ class UserProfileResource(ModelResource):
 				player = Player(game=game,user=user_playing,colour=colours[k])
 				player.save()
 				k += 1
-		
+
 		#Return the requested userProfiles object list
 		return object_list
 
@@ -200,24 +215,9 @@ class GameResource(ModelResource):
 					del bundle.data['players'][i].data['pieces'][j]
 		return bundle
 
-	#Every time a user gets a game object of theirs, their player timestamp is updated.
 	def get_object_list(self, request):
 		if request and request.user.id is not None:
-			games = super(GameResource, self).get_object_list(request)
-			player = request.user.player_set.all()[0]
-			game = player.game
-			player.last_activity = datetime.now()
-			player.save()
-
-			# If a player does not fetch a game model for 60 seconds, they are 
-			# considered disconnected.
-			"""for otherPlayer in Player.objects.filter(game=game):
-				if (datetime.now() - otherPlayer.last_activity).seconds > 60:
-					import sys
-					print >>sys.stderr, "THERE HAS BEEN NO RESPONSE FROM THE USER " + str(otherPlayer.user.id) + " FOR " + str((datetime.now() - otherPlayer.last_activity).seconds) + " SECONDS!"
-					otherPlayer.user.get_profile().status = 'offline'
-					otherPlayer.save()"""
-			return games
+			return super(GameResource, self).get_object_list(request)
 		return Game.objects.none()
 
 class PlayerResource(ModelResource):
@@ -232,10 +232,6 @@ class PlayerResource(ModelResource):
 		list_allowed_methods = []
 		detail_allowed_methods = []
 		authorization = Authorization()
-
-	def dehydrate(self, bundle):
-		bundle.data['can_move'] = bundle.obj.is_able_to_move()
-		return bundle
 
 #This allows the client to recieve/send piece data in json array format rarther than the 01 DB format.
 #Coversion is done here.
@@ -286,26 +282,51 @@ class PieceMasterResource(ModelResource):
 		authorization = Authorization()
 		serializer = PieceJSONSerializer()
 
-class PieceForm(ModelForm):
-	class Meta:
-		model = Piece
-
-	def clean(self):
-		cleaned_data = self.cleaned_data
-		piece = self.save(commit=False)
-		if not piece.is_valid_position():
-			raise ValidationError("Not a valid move")
-		return cleaned_data
-
+#Can only place pieces on own game
 class PieceValidation(Validation):
-    def is_valid(self, bundle, request=None):
-        if not bundle.data:
-            return {'__all__': 'Not quite what I had in mind.'}
-        return {}
+	def is_valid(self, bundle, request=None):
+		if request is None or request.user is None:
+			return {'__all__': 'Not logged in.'}
+
+		if long(bundle.data['player'].split('/')[-2]) not in request.user.player_set.all().values_list('id',flat=True):
+			return {'__all__': 'You can only put a piece in a game you are playing in'}
+
+		return {}
+		
 
 class PieceResource(ModelResource):
 	master = fields.ForeignKey(PieceMasterResource, 'master')
 	player = fields.ForeignKey(PlayerResource, 'player')
+
+	server_client_mapping = {
+		(0,False):(0,0),
+		(1,False):(1,3),
+		(2,False):(2,0),
+		(3,False):(1,0),
+		(0,True):(3,1),
+		(1,True):(2,1),
+		(2,True):(1,1),
+		(3,True):(0,1)
+	}
+
+	client_server_mapping = {
+		(0,0):(0,False),
+		(1,0):(3,False),
+		(2,0):(2,False),
+		(3,0):(1,False),
+		(0,1):(3,True),
+		(1,1):(2,True),
+		(2,1):(1,True), 
+		(3,1):(0,True),
+		(0,2):(1,True), 
+		(1,2):(0,True),
+		(2,2):(3,True), 
+		(3,2):(2,True), 
+		(0,3):(2,False),
+		(1,3):(1,False),
+		(2,3):(0,False),
+		(3,3):(3,False)
+	}
 
 	class Meta:
 		queryset = Piece.objects.all()
@@ -316,13 +337,33 @@ class PieceResource(ModelResource):
 		validation = PieceValidation()
 		authorization = Authorization()
 
+	def get_client_flip(self, rotation, flip):
+		return self.server_client_mapping[(rotation,flip)][1]
+
+	def get_client_rotation(self, rotation, flip):
+		return self.server_client_mapping[(rotation,flip)][0]
+
+	def get_server_flip(self, rotation, flip):
+		return self.client_server_mapping[(rotation,flip)][1]
+
+	def get_server_rotation(self, rotation, flip):
+		return self.client_server_mapping[(rotation,flip)][0]
+
 	def dehydrate(self, bundle):
-		import sys
-		bundle.data['rotate'] = bundle.obj.get_client_rotate()
-		bundle.data['flip'] = bundle.obj.get_client_flip()
+		tmp_rot, tmp_flip = bundle.data['rotation'], bundle.data['flip']
+		bundle.data['rotation'] = self.get_client_rotation(tmp_rot, tmp_flip)
+		bundle.data['flip'] = self.get_client_flip(tmp_rot, tmp_flip)
 		return bundle
 
 	def hydrate(self, bundle):
-		bundle.data['rotate'] = bundle.obj.get_server_rotate(bundle.data['rotate'], bundle.data['flip'])
-		bundle.data['flip'] = bundle.obj.get_server_flip(bundle.data['rotate'], bundle.data['flip'])
+		try:
+			players = Player.objects.filter(user=bundle.request.user)
+			current_player = players.get(colour=players[0].game.colour_turn)
+			if players[0].game.game_over:
+				raise ImmediateHttpResponse(HttpBadRequest("This game is over."))
+		except Player.DoesNotExist:
+			raise ImmediateHttpResponse(HttpBadRequest("It is not your turn!"))
+		tmp_rot, tmp_flip = bundle.data['rotation'], bundle.data['flip']
+		bundle.data['rotation'] = self.get_server_rotation(tmp_rot, tmp_flip)
+		bundle.data['flip'] = self.get_server_flip(tmp_rot, tmp_flip)
 		return bundle

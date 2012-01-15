@@ -48,10 +48,12 @@ b{ font-weight: bold;}
 #errorstackcontainer {
 	position: fixed;
 	top: 10px; left: 0; right: 0;
+	z-index:300;
 }
 #errorstack {
 	margin: 0 auto;
 	width: 500px;
+	z-index:300;
 }
 .error {
 	background: #ffffaa; border: 1px dashed red; outline: 1px solid #ffffaa;
@@ -60,19 +62,24 @@ b{ font-weight: bold;}
 }
 #msgcontainer {
 	position: fixed;
-	top: 200px; left: 0; right: 0;
+	top: 0px; left: 0; right: 0; bottom: 0;
+	padding-top: 200px;
 	z-index: 1000;
+	background: rgba(0, 0, 0, 0.2);
 }
 #msg {
 	margin: 0 auto; padding: 40px 10px;
 	width: 300px; height: 80px;
-	background: rgba(0, 0, 0, 0.85);
+	background: rgba(0, 0, 0, 0.9);
 	border-radius: 5px;
 	font-weight: bold; text-align: center; color: white;
 }
 	#msg .buttons {
 		margin: 30px 0;
 		text-align: center;
+	}
+	#msg .yes {
+		margin-right: 40px;
 	}
 .error {
 	padding: 5px; margin: 10px;
@@ -280,11 +287,18 @@ h1 { font-weight:bold; font-size:24pt; }
 		position: absolute;
 		top: 0;
 	}
+	#privatelobby div > .details input {
+		margin: 10px 0 10px 0;
+	}
 	#privatelobby #start { right: 0; display: none; }
 .loading {
 	position: absolute;
 	left: 0; top: 0; right: 0; bottom: 0;
 	background: transparent url(../img/loading.gif) no-repeat center;
+}
+#blokuswaiting {
+	background: rgba(0, 0, 0, 0.5) url(../img/loading.gif) no-repeat center;
+	z-index: 10000;
 }
 /* Game View */
 .gameview { top:-40px; }
@@ -346,6 +360,9 @@ h1 { font-weight:bold; font-size:24pt; }
 	.playerpanel div h1 {
 		font-size:12pt;
 		float:right;
+		width:90px;
+		overflow:hidden;
+		text-overflow:ellipsis;
 	}
 	.playerpanel div p { float:right; }
 .game-help {
@@ -357,6 +374,13 @@ h1 { font-weight:bold; font-size:24pt; }
 	position:absolute;
 	top: 6px; right: 160px;
 	z-index:101;
+}
+.game-skip {
+	display:none;
+	position:absolute;
+	top:40px;
+	left:33px;
+	z-index: 200;
 }
 .panel {
 	position:absolute;
