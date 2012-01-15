@@ -199,9 +199,6 @@
 
 					// When this shape is placed on the board, update the model
 					shape.bind("piece_placed", function (pieceMaster, x, y, flip, rotation, successCallback, errorCallback) {
-						/* FIXME temp turn progression */
-						var colourswitch = {"blue": "yellow", "yellow": "red", "red": "green", "green": "blue"};
-						blokus._exampleGames[1].colour_turn = colourswitch[blokus._exampleGames[1].colour_turn];
 						var activePlayer = game.getPlayerOfColour(game.get("colour_turn"));
 						var activePlayerId = activePlayer.get("id");
 
@@ -399,13 +396,14 @@
 
 				// Indicate whose player's turn it is
 				var skipButton = $(".game-skip");
+				var prettyColourName = colour.charAt(0).toUpperCase() + colour.slice(1);
 				if (activePlayer.get("user_id") == blokus.user.get("id")) {
 					skipButton.show();
 					blokus.utils.set_block_validation(false);
-					blokus.showMsg(colour + ", it is now your turn", 2500);
+					blokus.showMsg(prettyColourName + ", it is now your turn", 2500);
 				} else {
 					skipButton.hide()
-					blokus.showMsg(colour + "'s turn", 2500);
+					blokus.showMsg(prettyColourName + "'s turn", 2500);
 				}
 
 				//Note it is set to true when the turn has changed in polling
