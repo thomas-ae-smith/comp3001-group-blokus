@@ -158,6 +158,9 @@ class UserProfileResource(ModelResource):
 
 		#Create game
 		game = Game(game_type=game_attributes[status]['typeid'])
+		game.start_time = datetime.now()
+		game.turn_start = game.start_time
+		game.last_move_time = game.start_time
 		game.save()
 
 		#For each player set status to ingame and create their player object
