@@ -190,9 +190,6 @@
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
 			this.setVisibleCellsOpacity(1, 500);
-			// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
-			//var corOnBoard = this_.getCorOnBoard();
-			//_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
 			var rdata = this.rotateMatrix(this.dataArr, this.getRotation());
 			var transData = this.flipMatrix(rdata, this.flipNum);
 			blokus.utils.add_piece_to_validation_grid(transData, this.posInGameboard.x, this.posInGameboard.y, this.colour);
@@ -871,9 +868,8 @@
 								this_.goToPos();
 								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation(),
 									function () { // success
-										// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
+										//Change game view to current colour
 										_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
-										//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
 										this_.inPanel = false;
 									}, function () { // error
 										this_.returnToPanel();
