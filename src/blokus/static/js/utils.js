@@ -12,7 +12,7 @@ blokus.utils = (function ($, _, Backbone) {
 		lXOffsets = [2.5, 3, 4.5, 4, 3, 0.5, 0.5, 4, 1.5, 4.2, 4, 2, 4, 4, 0, 0.5, 0.5, 0, 2, 1, 0],
 		lYOffsets = [27, 4.5, 1, 34, 8, 2, 6, 29.5, 0, 18, 9, 29, 25, 5, 24, 28, 16.5, 33, 14.5, 21, 11];
 
-	var set_use_validation = function (value) { use_validation = value; }; // FIXME remove
+	var set_use_validation = function (value) { use_validation = value; };
 
 	var set_block_validation = function (value) {
 		block_validation = value;
