@@ -21,6 +21,7 @@ class Game(models.Model):
 	start_time = models.DateTimeField(default=datetime.now())
 	game_type = models.IntegerField()
 	colour_turn = models.CharField(max_length=6, validators=[RegexValidator(regex=_colour_regex)], default="blue")
+	turn_start = models.DateTimeField(default=datetime.now())
 	number_of_moves = models.PositiveIntegerField(default=0)
 	game_over = models.BooleanField(default=False)
 	last_move_time = models.DateTimeField(default=datetime.now())
@@ -284,6 +285,7 @@ def record_move(sender, instance, **kwargs):
 	instance.player.game.continuous_skips = 0
 	instance.player.game.number_of_moves = instance.player.game.number_of_moves + 1
 	instance.player.game.colour_turn = instance.player.game.get_next_colour_turn()
+	instance.player.game.turn_start = datetime.now()
 	instance.player.score += instance.master.get_point_value()
 	instance.player.save()
 	

@@ -355,7 +355,7 @@
 					});
 
 					// Initialize game view
-					startTime = new Date(game.get("start_time"));// FIXME Date time check compatbility
+					startTime = new Date(game.get("start_time"));
 					timeNow = new Date(game.get("time_now"));
 					handleTurn(game, game.get("colour_turn"));
 					handlePlacedPieces(game, game.get("number_of_moves"), true);
@@ -409,7 +409,7 @@
 				//Note it is set to true when the turn has changed in polling
 				blokus.waiting(false)
 				blokus.utils.set_block_validation(false);
-				playerStartTime = new Date(timeNow);
+				playerStartTime = new Date(game.get("turn_start"));
 			}
 
 			/* Handle pieces being placed */
