@@ -88,6 +88,11 @@ blokus.utils = (function ($, _, Backbone) {
 		gridPlaced[x][y] = colour[0];
 	}
 
+	//Remove a single square defined by (x,y) from the validation grid
+	function remove_cell_from_validation_grid(x, y) {
+		gridPlaced[x][y] = '0';
+	}
+
 	//Given a piece populate the validation grid with the piece information for the given colour.
 	var add_piece_to_validation_grid = function (pieceData, x, y, colour) {
 		var	numRows = pieceData.length,
@@ -101,6 +106,18 @@ blokus.utils = (function ($, _, Backbone) {
 			}
 		}
 	};
+
+	//Reset the validation grid
+	function reset_validation_grid() {
+		var colI = 0,
+			rowJ = 0;
+
+		for (colI = 0; colI < 20; colI++) {
+			for (rowJ = 0; rowJ <= 20; rowJ++) {
+				remove_cell_from_validation_grid(colI, rowJ);
+			}
+		}
+	}
 
 	//True if no pieces on the board are of the current player's colour.
 	var is_first_turn = function () {
@@ -208,6 +225,7 @@ blokus.utils = (function ($, _, Backbone) {
 		set_use_validation: set_use_validation,
 		set_block_validation: set_block_validation,
 		gridPlaced: gridPlaced,
+		reset_validation_grid: reset_validation_grid,
 		makePositionArray: makePositionArray
 	};
 }(jQuery, _, Backbone));

@@ -359,6 +359,7 @@
 					timeNow = new Date(game.get("time_now"));
 					handleTurn(game, game.get("colour_turn"));
 					handlePlacedPieces(game, game.get("number_of_moves"), true);
+					blokus.utils.reset_validation_grid();
 
 					// Start polling
 					poll();
