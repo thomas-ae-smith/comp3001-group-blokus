@@ -357,6 +357,9 @@
 					// Initialize game view
 					startTime = new Date(game.get("start_time"));
 					timeNow = new Date(game.get("time_now"));
+					var clock = new blokus.Clock({paper:paper, center:{x:773, y:30}}).render();
+					clock.minutes = timeNow.getMinutes() - startTime.getMinutes();
+					clock.seconds = timeNow.getSeconds() - startTime.getMinutes();
 					handleTurn(game, game.get("colour_turn"));
 					handlePlacedPieces(game, game.get("number_of_moves"), true);
 					blokus.utils.reset_validation_grid();
@@ -497,7 +500,6 @@
 			this_.bind("close", function () { polling = false; clearTimeout(ticker); }); // Remove poller timeout when lobbyview is closed
 
 			//Add the game clock
-			var clock = new blokus.Clock({paper:paper, center:{x:773, y:30}}).render();
 			window.gameview = this;
 
 			return this;
