@@ -31,7 +31,7 @@
 				if(!this.players) {
 					this.players = new blokus.PlayerCollection(model.players);
 				} else {
-					_(model.player).each(function (player) {
+					_(model.players).each(function (player) {
 						this_.players.get(player.id).set(player);
 					});
 				}
