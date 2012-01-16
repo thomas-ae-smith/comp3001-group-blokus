@@ -158,10 +158,16 @@ class UserProfileResource(ModelResource):
 
 		#Create game
 		game = Game(game_type=game_attributes[status]['typeid'])
+		game.start_time = datetime.now()
+		game.turn_start = game.start_time
+		game.last_move_time = game.start_time
 		game.save()
 
 		#For each player set status to ingame and create their player object
-		colours = ['blue', 'yellow', 'red', 'green']
+		if len(users_playing) == 2:
+			colours = ['blue', 'red', 'yellow', 'green']
+		else:
+			colours = ['blue', 'yellow', 'red', 'green']
 		k = 0
 		for i, user_playing in enumerate(users_playing):
 			user_playing_profile = user_playing.get_profile()
@@ -318,7 +324,7 @@ class PieceResource(ModelResource):
 		(0,2):(1,True), 
 		(1,2):(0,True),
 		(2,2):(3,True), 
-		(3,2):(3,True),
+		(3,2):(2,True), 
 		(0,3):(2,False),
 		(1,3):(1,False),
 		(2,3):(0,False),
@@ -356,6 +362,8 @@ class PieceResource(ModelResource):
 		try:
 			players = Player.objects.filter(user=bundle.request.user)
 			current_player = players.get(colour=players[0].game.colour_turn)
+			if players[0].game.game_over:
+				raise ImmediateHttpResponse(HttpBadRequest("This game is over."))
 		except Player.DoesNotExist:
 			raise ImmediateHttpResponse(HttpBadRequest("It is not your turn!"))
 		tmp_rot, tmp_flip = bundle.data['rotation'], bundle.data['flip']

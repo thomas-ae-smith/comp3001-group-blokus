@@ -1,20 +1,18 @@
 window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core module
 	"use strict";
-	var DEBUG = true,										// DEBUG = true for logging to console
-		restRootUrl = "/api/rest/",
+	var restRootUrl = "/api/rest/",
 		keyDownMappings = {},								// Maps of key-codes to array of functions to call when key is released
-		authDfd = undefined,
 		keyUpMappings = {},									// Maps of key-codes to array of functions to call when key is pressed
-		blokusDeferreds = [];								// List of jQuery Deferred objects to be resolved before starting blokus
+		blokusDeferreds = [],								// List of jQuery Deferred objects to be resolved before starting blokus
+		authDfd = undefined;								// Deferred object that will prevent blokus loading before logged in user is known
 
-	var getCurrentUser = function(callback) {
-		$.ajax({ // Get currently logged in user (or anonymous user if not logged in)
+	var getCurrentUser = function(callback) {				// Get currently logged in user (or anonymous user if not logged in)
+		$.ajax({
 			url: "/get_logged_in_user/",
-  			dataType: 'json',
+			dataType: 'json',
 			success: function (model) {
 				blokus.user.set(model);
 				blokus.userProfile.set(model.userprofile);
-				blokus._exampleGames[1].players[0].user = blokus.user.get("id"); // FIXME TEMP
 				authDfd.resolve();
 				if (callback != null) callback();
 			},
@@ -30,6 +28,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 			blokus = window.blokus,
 			switchToView = function (view, new_game_id) {				// Switch to a different view
 				var game_id = blokus.userProfile.get("game_id");
+
 				if (game_id != null && new_game_id != game_id) {
 					blokus.showYesNo("You are currently in a game. Would you like to continue it?", function () {
 						blokus.router.navigate("game/" + game_id, true);
@@ -40,6 +39,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 						}});
 					}, true);
 				}
+
 				var oldView = currentView,
 					$newview = $(view.render().el);			// Render new view
 				if (oldView) {
@@ -49,6 +49,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 						oldView.unbind();					// Unbind any event bindings (to avoid object not being garbage-collected)
 					});
 				}
+
 				currentView = view;
 				$("#container").append($newview);
 
@@ -82,8 +83,12 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 		authDfd = new $.Deferred();
 		blokusDeferreds.push(authDfd);
 
+		blokus.user = new blokus.User();		// Will be the logged in user
+		blokus.userProfile = new blokus.UserProfile();
+
 		getCurrentUser(null);
 
+		// Bind all key mappings
 		$(window).keyup(function (e) {
 			_(keyUpMappings[e.keyCode]).each(function (f) { f.call(); });
 		}).keydown(function (e) {
@@ -111,7 +116,7 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 	});
 
 
-	Array.prototype.clean = function(deleteValue) { //remove a given value from the files
+	Array.prototype.clean = function (deleteValue) { // Remove all occurrences of specified value from an array
 		for (var i = 0; i < this.length; i++) {
 			if (this[i] == deleteValue) {
 				this.splice(i, 1);
@@ -124,24 +129,19 @@ window.blokus = (function ($, _, Backbone, Raphael) {		// Create the blokus core
 	var msgPersist = false;
 
 	return {
-		DEBUG: DEBUG,
-		log: function () { if (DEBUG) console.log.apply(console, arguments); },
-		error: function () { if (DEBUG) console.error.apply(console, arguments); },
 		showError: function (msg) {
 			var $error = $('<div class="error">' + msg + '</div>').hide();
 			$("#errorstack").append($error);
 			$error.slideDown();
 			$error.click(function() { $error.slideUp(); });
 		},
-		showMsg: function (msg, timeout, persist) {
+		showMsg: function (msg, timeout, persist, callback) {
 			if (msgPersist) return;
 			var $msg = $("#msgcontainer").fadeIn();
 			$msg.find(".content").html(msg);
 			$msg.find(".okButtons").show().siblings().hide();
-			$msg.find(".close").unbind("click").click(function () { $msg.fadeOut(); });
-			if (timeout) {
-				setTimeout(function() { msgPersist = false; $msg.fadeOut(); }, timeout);
-			}
+			$msg.find(".close").unbind("click").click(function () { $msg.fadeOut(); if(callback) callback.call(); });
+			if (timeout) { setTimeout(function() { msgPersist = false; $msg.fadeOut(); }, timeout); }
 			msgPersist = persist || false;
 		},
 		showYesNo: function (msg, yesCallback, noCallback, persist) {

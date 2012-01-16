@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from blokus.api import UserResource, UserProfileResource
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -177,9 +178,34 @@ def get_number_of_moves(request, game_id):
 		return HttpResponseNotFound()
 	game = Game.objects.get(pk=game_id)
 	if (datetime.now() - game.last_move_time).seconds > 120:
+		game.continuous_skips += 1
 		game.number_of_moves += 1
 		game.colour_turn = game.get_next_colour_turn()
-		game.last_move_time = datetime.now()
+		game.turn_complete()
 		game.save()
 
 	return HttpResponse(game.number_of_moves, content_type="text/plain")
+
+@require_http_methods("GET")
+@login_required
+def skip_move(request, player_id):
+	if not request.is_ajax():
+		return HttpResponseBadRequest()
+	if request.user.id is None:
+		return HttpResponseNotFound()
+	try:
+		player = Player.objects.get(pk=player_id)
+		game = player.game
+		if not game.colour_turn == player.colour:
+			return HttpResponseBadRequest()
+		player.last_activity = datetime.now()
+		player.save()
+		game.continuous_skips += 1
+		game.colour_turn = game.get_next_colour_turn()
+		game.number_of_moves += 1
+		game.save()
+		game.turn_complete()
+		return HttpResponse("", content_type="text/plain")
+	except ObjectDoesNotExist:
+		return HttpResponseNotFound()
+			

@@ -10,23 +10,22 @@
 		<link rel="shortcut icon" href="{{ STATIC_URL }}img/icon.ico" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" type="text/css"/>
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css"/>
-		<script src="{{ STATIC_URL }}js/jquery.js"></script>
-		<script src="{{ STATIC_URL }}js/raphael.js"></script>
-		<script src="{{ STATIC_URL }}js/underscore.js"></script>
-		<script src="{{ STATIC_URL }}js/backbone.js"></script>
+		<script src="{{ STATIC_URL }}js/lib/jquery.js"></script>
+		<script src="{{ STATIC_URL }}js/lib/raphael.js"></script>
+		<script src="{{ STATIC_URL }}js/lib/underscore.js"></script>
+		<script src="{{ STATIC_URL }}js/lib/backbone.js"></script>
+		<script src="{{ STATIC_URL }}js/lib/labels.js"></script>
 		<!-- blokus core -->
 		<script src="{{ STATIC_URL }}js/blokus.js"></script>
 		<script src="{{ STATIC_URL }}js/models.js"></script>
-		<script src="{{ STATIC_URL }}js/collections.js"></script>
 		<script src="{{ STATIC_URL }}js/shape.js"></script>
 		<script src="{{ STATIC_URL }}js/GameView.js"></script>
 		<script src="{{ STATIC_URL }}js/LobbyView.js"></script>
 		<script src="{{ STATIC_URL }}js/RegisterView.js"></script>
-		<script src="{{ STATIC_URL }}js/GameBoard.js"></script>
-		<script src="{{ STATIC_URL }}js/PlayerPanel.js"></script>
 		<script src="{{ STATIC_URL }}js/utils.js"></script>
-		<script src="{{ STATIC_URL }}js/labels.js"></script>
 		<script src="{{ STATIC_URL }}js/clock.js"></script>
+
+		<script src="{{ STATIC_URL }}js/bootstrap.js"></script>
 	</head>
 	<body>
 		<img src="{{ STATIC_URL }}img/logo.png" id="logo"/>
@@ -80,7 +79,7 @@
 							<h2>quick<br/>play</h2>
 						</div>
 						<p>Start playing a 2 or 4 player game with anyone</p>
-						<a href="#game/1" class="button">Play Now</a>
+						<a href="javascript:;" class="button">Play Now</a>
 					</li>
 					<li class="box">
 						<div>
@@ -208,7 +207,9 @@
 					</div>
 					<div class="buttons"><a class="button close" href="javascript:;">Close</a></div>
 				</div>
-				<div class="playerpanelcontainer left"></div>
+				<div class="playerpanelcontainer left">
+					<input type="button" class="button game-skip" value="Skip">
+				</div>
 				<div class="playerpanelcontainer right"></div>
 			</script>
 			<script type="text/html" id="player-panel-template">

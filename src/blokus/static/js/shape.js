@@ -60,16 +60,6 @@
 		},
 		notInPanel: true,
 
-		prevDist: {
-			x: undefined,
-			y: undefined
-		},
-
-		mousePage: {
-			x: undefined,
-			y: undefined
-		},
-
 		// gameboard boundary box the grid
 		gameboardBBox: {
 			sx: undefined, // start x
@@ -136,13 +126,6 @@
 			this.initScale = _(this.curScale).clone();
 			this.addMouseListeners()
 
-			//this.canMove = this.options.canMove;
-			//this.dataArr = this.options.dataArr;
-			//this.destCor = this.options.destCor;
-			this.prevDist = this.options.prevDist;
-			this.mousePage = this.options.mousePage;
-			//this.gameboardBBox = this.options.gameboardBBox;
-			//this.gameboardCellSize = this.options.gameboardCellSize;
 			this.gameboard = this.options.gameboard;
 			// Apply the current scale given
 			var cenPoint = this.getCenterOfShape();
@@ -177,7 +160,7 @@
 			var cenPoint = this.getCenterOfShape();
 			var rotation = this.rotation * 90;
 
-			var scale = panel.isActive ? 0.7 : 0.4;
+			var scale = panel.isActive ? 0.6 : 0.4;
 			this.curScale.x = scale;
 			this.curScale.y = scale;
 			this.initScale.x = scale;
@@ -207,9 +190,6 @@
 						 cenPoint.x, cenPoint.y, rotation,
 						 cenPoint.x, cenPoint.y, 500);
 			this.setVisibleCellsOpacity(1, 500);
-			// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
-			//var corOnBoard = this_.getCorOnBoard();
-			//_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
 			var rdata = this.rotateMatrix(this.dataArr, this.getRotation());
 			var transData = this.flipMatrix(rdata, this.flipNum);
 			blokus.utils.add_piece_to_validation_grid(transData, this.posInGameboard.x, this.posInGameboard.y, this.colour);
@@ -395,12 +375,10 @@
 								y:this.posInGameboard.y+rowI
 							};
 						}
-						// TODO for validation, make the "r" something variable for different players
-						//shapeSet.board_piece_set.push({x:cellIndex.x+colJ, y:cellIndex.y+rowI});
 					}
 				}
 			}
-			var cell = this.gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
+			//var cell = this.gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
 			this.getDestCor();
 			this.cellsOnGameboard = newSet;
 			this.notInPanel = false;
@@ -784,8 +762,8 @@
 				});
 				this.haloImgs.scale(0.6, 0.6, 0, 0);
 			}
-			this.haloCircle.animate({opacity: 0.3}, 500);
-			this.haloImgs.animate({opacity:1}, 500);
+			this.haloCircle.animate({opacity: 0.3}, 100);
+			this.haloImgs.animate({opacity:1}, 100);
 			this.haloOn = true;
 			if(this.haloCircle != undefined && this.haloBCircle != undefined && this.haloImgs != undefined){
 				this.haloCircle.toFront();
@@ -799,8 +777,8 @@
 		removeHalo: function(){
 			var this_ = this;
 			if (this.haloCircle != undefined && this.haloOn){
-				this.haloCircle.animate({opacity: 0}, 500);
-				this.haloImgs.animate({opacity: 0}, 500);
+				this.haloCircle.animate({opacity: 0}, 100);
+				this.haloImgs.animate({opacity: 0}, 100);
 				this.haloBCircle.toBack();
 				this.haloCircle.toBack();
 				this.haloImgs.toBack();
@@ -890,9 +868,8 @@
 								this_.goToPos();
 								this_.trigger("piece_placed", this_.pieceMaster, this_.posInGameboard.x, this_.posInGameboard.y, this_.flipNum, this_.getRotation(),
 									function () { // success
-										// TODO CHANGE GAME VIEW TO THE CURRENT COLOUR
+										//Change game view to current colour
 										_(corOnBoard).forEach(function (cor) {blokus.utils.add_cell_to_validation_grid(cor.x, cor.y, gameview.game.get("colour_turn"))});
-										//this_.moveToGameboard(this_.destCor.x, this_.destCor.y, this_.flipNum, this_.rotation);
 										this_.inPanel = false;
 									}, function () { // error
 										this_.returnToPanel();
@@ -909,26 +886,11 @@
 					blokus.haloArr.push(s);
 				}
 			});
-			blokus.mapKeyDown(37,
-				function () {
-					this_.rotate(-1);
-				}
-			);
-			blokus.mapKeyDown(39,
-				function () {
-					this_.rotate(1);
-				}
-			);
-			blokus.mapKeyDown(86, // v
-				function (){
-					this_.flip(2);
-				}
-			);
-			blokus.mapKeyDown(72, // h
-				function (){
-					this_.flip(1);
-				}
-			);
+			blokus.mapKeyDown(37, function () { this_.rotate(-1); });
+			blokus.mapKeyDown(39, function () { this_.rotate(1); });
+			blokus.mapKeyDown(86, function (){ this_.flip(2); }); // v
+			blokus.mapKeyDown(72, function (){ this_.flip(1); }); // h
+			blokus.mapKeyDown(27, function (){ if (this_.isSelected) this_.returnToPanel(); }); // ECS
 		}
 	});
 
