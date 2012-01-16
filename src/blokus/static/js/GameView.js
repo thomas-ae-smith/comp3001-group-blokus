@@ -104,7 +104,7 @@
 			$el.html(template({
 				name: player.user.get("username"),
 				pic: "/static/img/noavatar.jpg",
-				stats: profile != null ? "wins: " + profile.wins + " losses: " + profile.losses : ""
+				stats: profile != null ? "w: " + profile.wins + " l: " + profile.losses : ""
 			}));
 
 			return this;
@@ -302,20 +302,18 @@
 				blokus.utils.set_block_validation(true);
 				var msg = "<h4>SCORES</h4>";
 				_(game.players.models).each(function (player) {
-					window.p = player;
-					console.log(player.user);
 					msg += "<p>"+player.user.get("username")+": "+player.get("score")+"</p>";
 				});
 
-						blokus.showMsg(msg, undefined, true, function() {
-							blokus.waiting(true);
-							blokus.userProfile.save({ status: "offline" }, { success: function () {
-								blokus.userProfile.fetch({ success: function () {
-									blokus.router.navigate("lobby", true);
-									blokus.waiting(false);
-								}});
-							}});
-						});
+				blokus.showMsg(msg, undefined, true, function() {
+					blokus.waiting(true);
+					blokus.userProfile.save({ status: "offline" }, { success: function () {
+						blokus.userProfile.fetch({ success: function () {
+							blokus.router.navigate("lobby", true);
+							blokus.waiting(false);
+						}});
+					}});
+				});
 			}
 
 
