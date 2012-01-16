@@ -338,6 +338,7 @@
 
 		/** END MOVEMENT **/
 		getDestCor: function(){
+			window.grid = this.gameboard.grid;
 			var cell = this.gameboard.grid[this.posInGameboard.x][this.posInGameboard.y];
 			if(this.rotation%2 == 0){
 				this.destCor = {

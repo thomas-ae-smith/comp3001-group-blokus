@@ -113,7 +113,7 @@ blokus.utils = (function ($, _, Backbone) {
 			rowJ = 0;
 
 		for (colI = 0; colI < 20; colI++) {
-			for (rowJ = 0; rowJ <= 20; rowJ++) {
+			for (rowJ = 0; rowJ < 20; rowJ++) {
 				remove_cell_from_validation_grid(colI, rowJ);
 			}
 		}

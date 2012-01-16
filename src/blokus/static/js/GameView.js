@@ -274,7 +274,7 @@
 							error: function () {
 								if (fetchFailedCount > 3) blokus.showError(errors.fetchGame);
 							}
-						}).always(function () { if (!dontPollAgain) setTimeout(poll, 1000); }); // Call this function 2 seconds after fetch succeeded/failed;
+						}).always(function () { if (!dontPollAgain) {setTimeout(function(){poll(false);}, 1000);blokus.utils.set_block_validation(false);}; }); // Call this function 2 seconds after fetch succeeded/failed;
 					}
 				};
 
@@ -360,9 +360,9 @@
 					var clock = new blokus.Clock({paper:paper, center:{x:773, y:30}}).render();
 					clock.minutes = timeNow.getMinutes() - startTime.getMinutes();
 					clock.seconds = timeNow.getSeconds() - startTime.getMinutes();
+					blokus.utils.reset_validation_grid();
 					handleTurn(game, game.get("colour_turn"));
 					handlePlacedPieces(game, game.get("number_of_moves"), true);
-					blokus.utils.reset_validation_grid();
 
 					// Start polling and iterativly
 					poll(false);
@@ -484,7 +484,7 @@
 						blokus.userProfile.fetch({ success: function () {
 							blokus.router.navigate("lobby", true);
 							blokus.waiting(false);
-							this_.paper.clear();
+							//this_.paper.clear();
 						}});
 					}});
 				}, null, true);
