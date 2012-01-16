@@ -65,7 +65,6 @@ blokus.LobbyView = Backbone.View.extend({
         }
         blokus.userProfile.save(data).then(function() {
             blokus.userProfile.fetch().then(function() {
-                console.log(blokus.userProfile.toJSON());
                 dfd.resolve();
             });
         });

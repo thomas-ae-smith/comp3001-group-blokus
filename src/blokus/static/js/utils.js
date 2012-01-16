@@ -2,7 +2,7 @@ blokus.utils = (function ($, _, Backbone) {
 	'use strict';
 
 	var pieceLocations = {},
-		use_validation = true, //Added for debugging the server. FIXME
+		use_validation = true, //Added for debugging the server.
 		block_validation = false,
 		blockWidth = 0,
 		blockHeight = 0,
@@ -179,7 +179,6 @@ blokus.utils = (function ($, _, Backbone) {
 			firstTurn = is_first_turn();
 
 		//If not in board area or validation is turned off then do not validate
-		//FIXME: Should not really allow users to turn validation off.
 		if (!arr.length > 0 || !use_validation) {
 			return true;
 		}else if (block_validation){
