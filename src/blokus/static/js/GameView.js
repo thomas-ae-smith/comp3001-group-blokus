@@ -302,24 +302,20 @@
 				blokus.utils.set_block_validation(true);
 				var msg = "<h4>SCORES</h4>";
 				_(game.players.models).each(function (player) {
-					console.log(player);
 					window.p = player;
-					if(p.user == undefined)
-						setTimeout(function(){msg += "<p>"+player.user.get("username")+": "+player.get("score")+"</p>";}, 100);
-					else {
-						msg += "<p>"+player.user.get("username")+": "+player.get("score")+"</p>";
-					}
+					console.log(player.user);
+					msg += "<p>"+player.user.get("username")+": "+player.get("score")+"</p>";
 				});
 
-				blokus.showMsg(msg, undefined, true, function() {
-					blokus.waiting(true);
-					blokus.userProfile.save({ status: "offline" }, { success: function () {
-						blokus.userProfile.fetch({ success: function () {
-							blokus.router.navigate("lobby", true);
-							blokus.waiting(false);
-						}});
-					}});
-				});
+						blokus.showMsg(msg, undefined, true, function() {
+							blokus.waiting(true);
+							blokus.userProfile.save({ status: "offline" }, { success: function () {
+								blokus.userProfile.fetch({ success: function () {
+									blokus.router.navigate("lobby", true);
+									blokus.waiting(false);
+								}});
+							}});
+						});
 			}
 
 
@@ -344,10 +340,12 @@
 					} });
 				});
 
-				//handleGameOver(game, game.get("game_over"));
-
 				/* When all users are fetched */
 				$.when.apply(undefined, dfds).always(function () {
+					handleGameOver (game, game.get("game_over"));
+					game.bind("change:game_over", function() {
+						handleGameOver(game, game.get("game_over"));
+					}); 
 					// Set up panels for all players
 					_(game.players.models).each(function (player) {
 						var id = player.get("id");
@@ -455,7 +453,6 @@
 
 				if (game.hasChanged("number_of_moves")) handlePlacedPieces(game, game.get("number_of_moves"));
 				if (game.hasChanged("colour_turn")) setTimeout(function () { handleTurn(game, game.get("colour_turn")); }, 1000);
-				//if (game.hasChanged("game_over")) handleGameOver(game, game.get("game_over"));
 				if (game.hasChanged("time_now")) updateDuration(game.get("time_now"));
 			});
 

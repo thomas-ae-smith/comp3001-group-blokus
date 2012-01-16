@@ -27,7 +27,15 @@
 			},
 
 			parse: function (model) {
-				this.players = new blokus.PlayerCollection(model.players);
+				var this_ = this;
+				if(!this.players) {
+					this.players = new blokus.PlayerCollection(model.players);
+				} else {
+					_(model.player).each(function (player) {
+						this_.players.get(player.id).set(player);
+					});
+				}
+				
 
 				_(this.players.models).each(function (player) {
 					var pieces = player.pieces = new blokus.PieceCollection(player.get("pieces"));
