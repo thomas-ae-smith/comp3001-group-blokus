@@ -244,11 +244,9 @@ class Piece(models.Model):
 	def save(self, *args, **kwargs):
 		self.player.last_activity = datetime.now()
 		self.player.save()
-		if(len(User.objects.filter(username="test_user")) > 0):
-			super(Piece, self).save(*args, **kwargs)
-		else:
-			if not self.is_valid_position(self.player.get_grid(), self.player.game.get_grid()):
-				raise ValidationError("That is not a valid position for a piece!")
+		if not self.is_valid_position(self.player.get_grid(), self.player.game.get_grid()):
+				if(len(User.objects.filter(username="test_user")) == 0):
+					raise ValidationError("That is not a valid position for a piece!")
 		super(Piece, self).save(*args, **kwargs)
 
 
