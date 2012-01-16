@@ -369,6 +369,9 @@
 
 					// Remove loading animation
 					this_.$(".loading").remove();
+
+					//Allow placing of pieces
+					blokus.utils.set_block_validation(false);
 				});
 
 				isInit = false;
