@@ -364,8 +364,8 @@
 					handlePlacedPieces(game, game.get("number_of_moves"), true);
 					blokus.utils.reset_validation_grid();
 
-					// Start polling
-					poll();
+					// Start polling and iterativly
+					poll(false);
 
 					// Remove loading animation
 					this_.$(".loading").remove();
